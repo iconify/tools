@@ -1,0 +1,22 @@
+{
+  "name": "simple-svg-tools",
+  "description": "Collection of functions for cleaning up and parsing SVG images",
+  "author": "Vjacheslav Trushkin",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "src/modules.js",
+  "scripts": {
+    "test": "mocha tests/**/*.js"
+  },
+  "devDependencies": {
+    "chai": "*",
+    "mocha": "*"
+  },
+  "dependencies": {
+    "cyberalien-color": "*",
+    "simple-tokenizer": "*",
+    "cheerio": "^0.22.0",
+    "svgo": "*",
+    "tmp": "0.0.31"
+  }
+}
