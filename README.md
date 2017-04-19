@@ -455,6 +455,12 @@ Primary use of this tool in SimpleSVG is to replace all colors in monotone with 
     });
 
 
+## Sample
+
+In directory "sample" you will find a sample script that parses directory of SVG images. It optimizes images, exports
+them as optimized SVG images and as JSON collection. 
+
+
 ## More tools
 
 If you need any other tool to help with custom SVG icon sets development, suggest it by opening an issue on GitHub repository.
