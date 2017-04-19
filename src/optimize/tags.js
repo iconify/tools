@@ -414,7 +414,7 @@ module.exports = (svg, options) => {
             preserveAspectRatio: 'xMidYMid meet',
             width: svg.width,
             height: svg.height,
-            viewBox: rootAttributes.viewBox === void 0 ? '0 0 ' + svg.width + ' ' + svg.height : rootAttributes.viewBox
+            viewBox: rootAttributes.viewBox === void 0 ? svg.left + ' ' + svg.top + ' ' + svg.width + ' ' + svg.height : rootAttributes.viewBox
         };
         if (xlink) {
             attributes['xmlns:xlink'] = 'http://www.w3.org/1999/xlink';
