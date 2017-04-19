@@ -435,6 +435,6 @@ module.exports = (svg, options) => {
             options.log('Style with complex selectors was found.');
         }
 
-        fulfill();
+        fulfill(svg);
     });
 };
