@@ -23,7 +23,9 @@ module.exports = (svg, scale) => {
         try {
             let width = svg.width * scale,
                 height = svg.height * scale,
-                content = '<svg width="' + width + '" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '" xmlns="http://www.w3.org/2000/svg">' +
+                left = svg.left * scale,
+                top = svg.top * scale,
+                content = '<svg width="' + width + '" height="' + height + '" viewBox="' + left + ' ' + top + ' ' + width + ' ' + height + '" xmlns="http://www.w3.org/2000/svg">' +
                     '<g transform="scale(' + scale + ')">' +
                     svg.getBody() +
                     '</g></svg>';

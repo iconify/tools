@@ -45,6 +45,15 @@ module.exports = (collection, target, options) => {
                 width: svg.width,
                 height: svg.height
             };
+
+            // Add top/left
+            ['left', 'top'].forEach(attr => {
+                if (svg[attr] !== 0) {
+                    json.icons[key][attr] = svg[attr];
+                }
+            });
+
+            // Include inline attributes
             if (options['include-inline']) {
                 ['inlineHeight', 'inlineTop', 'verticalAlign'].forEach(attr => {
                     if (svg[attr] !== void 0) {

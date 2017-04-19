@@ -113,25 +113,26 @@ class SVG {
             throw new Error('Invalid SVG file');
         }
 
-        // Get width and height
-        let width = $root.attr('width'),
-            height = $root.attr('height');
+        // Get dimensions and origin
+        let viewBox = $root.attr('viewBox');
+        if (viewBox !== void 0) {
+            let list = viewBox.split(' ');
 
-        if (width === void 0 || height === void 0) {
-            let viewBox = $root.attr('viewBox');
-            if (viewBox !== void 0) {
-                let list = viewBox.split(' ');
-
-                width = list[2];
-                height = list[3];
-            }
+            this.left = parseFloat(list[0]);
+            this.top = parseFloat(list[1]);
+            this.width = parseFloat(list[2]);
+            this.height = parseFloat(list[3]);
+        } else {
+            this.left = this.top = 0;
+            this.width = parseFloat($root.attr('width'));
+            this.height = parseFloat($root.attr('height'));
         }
 
-        width = parseFloat(width);
-        height = parseFloat(height);
-
-        this.width = isNaN(width) ? 0 : width;
-        this.height = isNaN(height) ? 0 : height;
+        ['width', 'height', 'left', 'top'].forEach(attr => {
+            if (isNaN(this[attr])) {
+                this[attr] = 0;
+            }
+        });
     }
 }
 

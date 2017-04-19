@@ -129,13 +129,17 @@ module.exports = (svg, options) => {
                 item.source = {
                     body: obj.getBody(),
                     width: obj.width,
-                    height: obj.height
+                    height: obj.height,
+                    left: obj.left,
+                    top: obj.top,
                 };
             } else if (item.source instanceof SVG) {
                 item.source = {
                     body: item.source.getBody(),
                     width: item.source.width,
-                    height: item.source.height
+                    height: item.source.height,
+                    left: item.source.left,
+                    top: item.source.top,
                 };
             } else {
                 item.source = Object.assign({}, item.source);
@@ -321,7 +325,7 @@ module.exports = (svg, options) => {
         }
 
         /**
-         * Crop results
+         * Crop results and move origin to 0 0
          */
         function cropResults() {
             // fs.writeFileSync(__dirname + '/_results' + Object.keys(items).length + '.json', JSON.stringify(items, null, '\t'));
@@ -402,8 +406,10 @@ module.exports = (svg, options) => {
             function generateResultObject(item) {
                 return Object.assign({
                     body: !item.body ? item.source.body : item.body,
+                    left: 0,
+                    top: 0,
                     width: item.result.right - item.result.left,
-                    height: item.result.bottom - item.result.top
+                    height: item.result.bottom - item.result.top,
                 }, item.result);
             }
 

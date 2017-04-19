@@ -117,6 +117,7 @@ function next() {
         descent,
         offset = 0 - item.descent;
 
+    // Calculate height from ascent/descent attributes from font
     if (item.descent === void 0 || item.descent > 0) {
         itemHeight = item.height === void 0 ? item.ascent : item.height;
         ascent = itemHeight;
@@ -127,6 +128,15 @@ function next() {
         itemHeight = item.height === void 0 ? ascent + descent : item.height;
     }
 
+    // Add origin
+    if (item.top === void 0) {
+        item.top = 0;
+    }
+    if (item.left === void 0) {
+        item.left = 0;
+    }
+
+    // Calculate divisions and grid
     var division = findDivisionPoints(key),
         scale = 1,
         grid = item.grid === void 0 ? 1 : item.grid;
@@ -138,6 +148,7 @@ function next() {
         }
     });
 
+    // Get item dimensions rounded to grid, offset (change in any direction when extending viewBox)
     itemWidth = item.width === void 0 ? (item['horiz-adv-x'] === void 0 ? itemHeight : item['horiz-adv-x']) : item.width;
     if (descent) {
         offset = descent;
@@ -271,8 +282,8 @@ function next() {
         var size = {
             width: roundedItemWidth + offsetLeft + offsetRight,
             height: roundedItemHeight + offsetTop + offsetBottom,
-            left: 0 - offsetLeft,
-            top: 0 - offsetTop
+            left: item.left - offsetLeft,
+            top: item.top - offsetTop
         };
         var limits;
 

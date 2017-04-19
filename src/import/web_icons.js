@@ -91,7 +91,9 @@ module.exports = (source, options) => {
 
                 // Get dimensions
                 let width = false,
-                    height = false;
+                    height = false,
+                    left = 0,
+                    top = 0;
 
                 if (symbolAttributes.width !== void 0) {
                     width = parseFloat(symbolAttributes.width);
@@ -103,10 +105,10 @@ module.exports = (source, options) => {
                     let list = symbolAttributes.viewBox.split(' ');
                     if (list.length === 4) {
                         list = list.map(item => parseFloat(item));
-                        if (list[0] === 0 && list[1] === 0) {
-                            width = list[2];
-                            height = list[3];
-                        }
+                        left = list[0];
+                        top = list[1];
+                        width = list[2];
+                        height = list[3];
                     }
                 }
                 if (!width || !height) {
@@ -116,7 +118,7 @@ module.exports = (source, options) => {
                     return;
                 }
                 // Generate SVG
-                let svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '" viewBox="0 0 ' + width + ' ' + height + '">' + $symbol.html() + '</svg>';
+                let svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '" viewBox="' + left + ' ' + top + ' ' + width + ' ' + height + '">' + $symbol.html() + '</svg>';
 
                 // Get keyword
                 let keyword = options.keywordCallback(id);
