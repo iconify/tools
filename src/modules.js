@@ -34,6 +34,11 @@ let Modules = {
     ImportFont: require('./import/font'),
     ImportWebIcon: require('./import/web_icons'),
 
+    // Shapes
+    IndexShapes: require('./shapes/index'),
+    ShapeLengths: require('./shapes/length'),
+    ConvertShapes: require('./shapes/convert'),
+
     // Misc
     Scale: require('./optimize/scale'),
 };
