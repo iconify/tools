@@ -455,6 +455,40 @@ Primary use of this tool in SimpleSVG is to replace all colors in monotone with 
     });
 
 
+## Indexing shapes and getting shape lengths 
+ 
+If you are doing stroke animations, you might need to index shapes (add unique class names for them to apply different
+animations to different shapes) and get length of those shapes.
+
+tools.IndexShapes adds custom attribute to all shapes:
+
+    tools.IndexShapes(svg, {
+        // Attribute to set
+        shapeAttribute: 'data-shape-index',
+        // Attribute value. {index} is replaced with index, incrementing with each shape
+        shapeAttributeValue: '{index}',
+    }).then(shapesCount => {
+        console.log('Added data-shape-index attribute to ' + shapesCount + ' shapes.');
+    }).catch(err => {
+        console.log(err);
+    });
+
+You can also get those shapes by setting option returnNodes to true. Instead of number of shapes Promise will return
+array of nodes. Each node is cheerio node object. See cheerio documentation for details. 
+
+tools.ShapeLengths counts lengths of all shapes. It also returns all nodes, so you can change shapes (add/remove 
+attributes or class name):
+
+    tools.ShapeLength(svg).then(results => {
+        console.log('Found ' + results.length + ' shapes:');
+        results.forEach(result => {
+            console.log('Shape ' + result.$node.get(0).tagName + ' has length of ' + result.length);
+        });
+    }).catch(err => {
+        console.log(err);
+    });
+
+
 ## Sample
 
 In directory "sample" you will find a sample script that parses directory of SVG images. It optimizes images, exports
