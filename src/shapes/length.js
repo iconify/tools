@@ -591,6 +591,8 @@ module.exports = (svg, options) => {
                 shapes[key].forEach(shape => {
                     results[key].push({
                         length: shape.length,
+                        fill: shape.fill,
+                        stroke: shape.stroke,
                         $node: shape.node
                     })
                 });
