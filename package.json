@@ -6,7 +6,7 @@
   "license": "MIT",
   "main": "src/modules.js",
   "scripts": {
-    "test": "mocha tests/**/*.js"
+    "test": "mocha tests/**/*_test.js"
   },
   "devDependencies": {
     "chai": "*",
