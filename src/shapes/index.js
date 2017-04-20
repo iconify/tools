@@ -20,6 +20,10 @@ const changeOptions = require('./options');
 const defaults = {
     // True if nodes should be returned instead of number of nodes
     returnNodes: false,
+
+    // True if shapes should be checked for fill/stroke. Works only if shapeCallback is set.
+    // fill/stroke properties are added to callback argument. Value is false if disabled, string if set
+    checkFillStroke: false,
 };
 
 /**
@@ -41,7 +45,7 @@ module.exports = (svg, options) => {
             total = 0,
             nodes = [];
 
-        function checkChildElements($node) {
+        function checkChildElements($node, style) {
             $node.children().each((index, child) => {
                 let $child = cheerio(child),
                     tag = child.tagName;
@@ -50,16 +54,43 @@ module.exports = (svg, options) => {
                     return;
                 }
 
+                // Merge fill/stroke
+                let childStyle;
+                if (options.checkFillStroke) {
+                    childStyle = {};
+                    ['fill', 'stroke'].forEach(attr => {
+                        if (child.attribs && child.attribs[attr] !== void 0) {
+                            let value = child.attribs[attr].toLowerCase();
+                            childStyle[attr] = value === '' || value === 'inherit' ? style[attr] : (
+                                value === 'none' ? false : child.attribs[attr]
+                            );
+                        } else {
+                            childStyle[attr] = style[attr];
+                        }
+                    });
+                } else {
+                    childStyle = style;
+                }
+
+                // Check if item is a shape
                 if (options.shapeTags.indexOf(tag) !== -1) {
                     // Callback should add/remove attributes
-                    if (options.shapeCallback === null || options.shapeCallback({
-                        $node: $child,
-                        node: child,
-                        svg: svg,
-                        index: shapeIndex,
-                        tag: tag,
-                        options: options
-                    }) !== false) {
+                    let callbackData;
+                    if (options.shapeCallback !== null) {
+                        callbackData = {
+                            $node: $child,
+                            node: child,
+                            svg: svg,
+                            index: shapeIndex,
+                            tag: tag,
+                            options: options
+                        };
+                        if (options.checkFillStroke) {
+                            callbackData.fill = childStyle.fill;
+                            callbackData.stroke = childStyle.stroke;
+                        }
+                    }
+                    if (options.shapeCallback === null || options.shapeCallback(callbackData) !== false) {
                         // Add/remove attribute
                         if (options.remove) {
                             $child.removeAttr(options.shapeAttribute);
@@ -75,12 +106,16 @@ module.exports = (svg, options) => {
                     total ++;
                 }
 
-                checkChildElements($child);
+                // Check child elements
+                checkChildElements($child, childStyle);
             });
         }
 
         try {
-            checkChildElements($root);
+            checkChildElements($root, {
+                fill: '#000',
+                stroke: false
+            });
         } catch (err) {
             reject(err);
             return;

@@ -464,13 +464,16 @@ module.exports = (svg, options) => {
 
         // Copy options to overwrite shapeCallback
         let indexOptions = Object.assign({}, options);
+        indexOptions.checkFillStroke = true;
 
         // Callback for finding shapes
         indexOptions.shapeCallback = item => {
             let key = item.svg[tempKeyAttribute],
                 result = {
                     node: item.$node,
-                    index: item.index
+                    index: item.index,
+                    fill: item.fill,
+                    stroke: item.stroke
                 },
                 returnValue = true;
 

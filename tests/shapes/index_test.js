@@ -24,7 +24,7 @@
         });
 
         it('adding indexes to SVG with nested shapes and custom options, then removing indexes', done => {
-            let original = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16"><path fill="#444" d="M9 3h6v2h-6v-2z"/><g><path fill="#444" d="M9 11h6v2h-6v-2z"/></g><path fill="#444" d="M5 1h-2v2h-2v2h2v2h2v-2h2v-2h-2z"/></svg>';
+            let original = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16"><path fill="#444" d="M9 3h6v2h-6v-2z"/><g stroke="red"><path fill="none" d="M9 11h6v2h-6v-2z"/></g><path d="M5 1h-2v2h-2v2h2v2h2v-2h2v-2h-2z"/></svg>';
             let svg = new SVG(original);
 
             // Add indexes
@@ -32,9 +32,33 @@
                 shapeStartIndex: 10,
                 shapeAttribute: 'data-test',
                 shapeAttributeValue: 'shape-{index}',
+                checkFillStroke: true,
+                shapeCallback: item => {
+                    // Test index
+                    expect(item.index < 10).to.be.equal(false);
+
+                    // Test fill and stroke
+                    switch (item.index) {
+                        case 10:
+                            expect(item.fill).to.be.equal('#444');
+                            expect(item.stroke).to.be.equal(false);
+                            break;
+
+                        case 11:
+                            expect(item.fill).to.be.equal(false);
+                            expect(item.stroke).to.be.equal('red');
+                            break;
+
+                        case 12:
+                            expect(item.fill).to.be.equal('#000');
+                            expect(item.stroke).to.be.equal(false);
+                            break;
+                    }
+                    return true;
+                }
             }).then(shapesCount => {
                 expect(shapesCount).to.be.equal(3);
-                expect(svg.toMinifiedString()).to.be.equal('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16"><path fill="#444" d="M9 3h6v2h-6v-2z" data-test="shape-10"/><g><path fill="#444" d="M9 11h6v2h-6v-2z" data-test="shape-11"/></g><path fill="#444" d="M5 1h-2v2h-2v2h2v2h2v-2h2v-2h-2z" data-test="shape-12"/></svg>');
+                expect(svg.toMinifiedString()).to.be.equal('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16" height="16" viewBox="0 0 16 16"><path fill="#444" d="M9 3h6v2h-6v-2z" data-test="shape-10"/><g stroke="red"><path fill="none" d="M9 11h6v2h-6v-2z" data-test="shape-11"/></g><path d="M5 1h-2v2h-2v2h2v2h2v-2h2v-2h-2z" data-test="shape-12"/></svg>');
 
                 // Remove indexes
                 Index(svg, {
