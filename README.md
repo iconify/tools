@@ -22,6 +22,8 @@ Then you can use it in your Node.js files:
 * Crop images
 * Clean up images
 * Get/change color palette
+* Find shapes, get lengths of shapes
+* Convert shapes to paths
 
 
 ## Core
