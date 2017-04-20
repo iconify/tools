@@ -40,7 +40,7 @@ convert.rect = attr => {
         path += 'H ' + attr.x + ' ';
         // Vertical line
         path += 'V ' + attr.y + ' ';
-        // Cloth path
+        // Close path
         path += 'Z';
     } else {
         let right = attr.x + attr.width,
@@ -66,7 +66,7 @@ convert.rect = attr => {
          path += 'V ' + (attr.y + attr.ry) + ' ';
          // Arc
          path += 'Q ' + attr.x + ' ' + attr.y + ' ' + (attr.x + attr.rx) + ' ' + attr.y + ' ';
-         // Cloth path
+         // Close path
          path += 'Z';
          */
 
@@ -100,7 +100,7 @@ convert.rect = attr => {
         path += 'c 0 ' + (0 - dy) + ' ' +
             (attr.rx - dx) + ' ' + (0 - attr.ry) + ' ' +
             attr.rx + ' ' + (0 - attr.ry) + ' ';
-        // Cloth path
+        // Close path
         path += 'Z';
     }
 
