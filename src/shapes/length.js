@@ -450,8 +450,8 @@ module.exports = (svg, options) => {
         let collection = svg instanceof Collection;
         let items;
         if (collection) {
-            items = collection;
-            collection.forEach((svg, key) => {
+            items = svg;
+            items.forEach((svg, key) => {
                 svg[tempKeyAttribute] = key;
                 shapes[key] = [];
             });
