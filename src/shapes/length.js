@@ -47,7 +47,7 @@ function cleanupString(value) {
  *
  * @param {string} value Value as string
  * @param {number} total Total length for percentage calculations
- * @param {number} defaultValue Value to return if value is empty
+ * @param {*} defaultValue Value to return if value is empty
  * @return {number|null}
  */
 function normalizeNumber(value, total, defaultValue) {
@@ -174,6 +174,11 @@ function calcLineLength(attributes) {
  */
 calculate.line = $element => {
     let attributes = normalizeAttributes($element, {
+        x1: 0,
+        x2: 0,
+        y1: 0,
+        y2: 0
+    }, {
         x1: 0,
         x2: 0,
         y1: 0,
@@ -342,15 +347,42 @@ let converter = {},
                 ry: '',
             },
             def: {
+                x: 0,
+                y: 0,
                 rx: '',
                 ry: '',
             },
             test: attributes => {
-                if ((attributes.rx = normalizeNumber(attributes.rx, attributes.width, 0)) === null) {
+                if ((attributes.rx = normalizeNumber(attributes.rx, attributes.width, 'auto')) === null) {
                     return false;
                 }
-                if ((attributes.ry = normalizeNumber(attributes.ry, attributes.height, 0)) === null) {
+                if ((attributes.ry = normalizeNumber(attributes.ry, attributes.height, 'auto')) === null) {
                     return false;
+                }
+
+                // rx and rx are not set
+                if (attributes.rx === 'auto' && attributes.ry === 'auto') {
+                    attributes.rx = attributes.ry = 0;
+                }
+
+                // rx and ry are set
+                if (attributes.rx !== 'auto' && attributes.ry !== 'auto') {
+                    return true;
+                }
+
+                // one attribute is set
+                if (attributes.ry === 'auto') {
+                    // rx is set
+                    if (attributes.width === 0) {
+                        return false;
+                    }
+                    attributes.ry = attributes.height * attributes.rx / attributes.width;
+                } else {
+                    // ry is set
+                    if (attributes.height === 0) {
+                        return false;
+                    }
+                    attributes.rx = attributes.width * attributes.ry / attributes.height;
                 }
                 return true;
             }
@@ -360,6 +392,10 @@ let converter = {},
                 cx: 0,
                 cy: 0,
                 r: 0,
+            },
+            def: {
+                cx: 0,
+                cy: 0,
             }
         },
         ellipse: {
@@ -368,10 +404,20 @@ let converter = {},
                 cy: 0,
                 rx: 0,
                 ry: 0,
+            },
+            def: {
+                cx: 0,
+                cy: 0,
             }
         },
         line: {
             attr: {
+                x1: 0,
+                x2: 0,
+                y1: 0,
+                y2: 0,
+            },
+            def: {
                 x1: 0,
                 x2: 0,
                 y1: 0,

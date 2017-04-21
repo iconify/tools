@@ -83,6 +83,7 @@
                     '<rect x="200" y="500" width="100" height="200" rx="10" ry="20" />' +
                     '<polyline points="0,40 40,40 40,80 80,80 80,120 120,120 120,160" />' +
                     '<path d="M9 3h6v2h-6v-2z" />' +
+                    '<rect x="80" width="80" height="32" rx="16" />' +
                 '</svg>');
 
             // Set timeout because this function will use PhantomJS
@@ -90,7 +91,7 @@
 
             ShapeLengths(svg).then(results => {
                 expect(typeof results).to.be.equal('object');
-                expect(results.length).to.be.equal(5);
+                expect(results.length).to.be.equal(6);
 
                 // ellipse
                 expect(Math.round(results[0].length)).to.be.equal(969);
@@ -104,6 +105,10 @@
 
                 // path
                 expect(results[4].length).to.be.equal(16);
+
+                // another rect
+                expect(Math.round(results[5].length)).to.be.equal(208);
+
                 done();
             }).catch(err => {
                 done(err);
