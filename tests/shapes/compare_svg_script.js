@@ -141,7 +141,8 @@ function next() {
             if (debug || sourceData[key].debug) {
                 debugOutput = '<!DOCTYPE html>' +
                     '<html lang="en">' +
-                    '   <head><meta charset="UTF-8"></head>' +
+                    '   <head>' +
+                    '   <meta charset="UTF-8">' +
                     '   <style>' +
                     '       html, body { margin: 0; padding: 0; } ' +
                     '       p { clear: both; }' +
@@ -149,6 +150,7 @@ function next() {
                     '       div { position: relative; }' +
                     '       div svg { position: absolute; top: 0; left: 0; opacity: ' + (1 / html.length) + '; border-width: 0; margin: 0; } '+
                     '   </style>' +
+                    '   </head>' +
                     '   <body>' +
                     '       <p>Each SVG image has gray border. Compare them visually.</p>';
 
