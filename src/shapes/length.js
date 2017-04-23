@@ -521,7 +521,7 @@ module.exports = (svg, options) => {
                     fill: item.fill,
                     stroke: item.stroke
                 },
-                returnValue = true;
+                returnValue = false;
 
             shapes[key].push(result);
 
