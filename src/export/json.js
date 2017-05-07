@@ -10,6 +10,7 @@
 "use strict";
 
 const fs = require('fs');
+const Optimize = require('simple-svg-cdn').optimize;
 
 const defaults = {
     'include-chars': true,
@@ -20,7 +21,6 @@ const defaults = {
 };
 
 const aliasKeys = ['rotate', 'vFlip', 'hFlip'];
-const optimizeProps = ['width', 'height', 'top', 'left', 'inlineHeight', 'inlineTop', 'verticalAlign'];
 
 /**
  * Export collection to json file
@@ -123,57 +123,14 @@ module.exports = (collection, target, options) => {
             });
         }
 
-        // Optimize width/height by moving duplicate items to root
+        // Optimize common attributes by moving duplicate items to root
         if (options.optimize) {
-            optimizeProps.forEach(prop => {
-                let maxCount = 0,
-                    maxValue = false,
-                    counters = {},
-                    invalid = false;
-
-                Object.keys(json.icons).forEach(key => {
-                    if (invalid || json.icons[key][prop] === void 0) {
-                        invalid = true;
-                        return;
-                    }
-
-                    let value = json.icons[key][prop];
-
-                    if (!maxCount) {
-                        // First item
-                        maxCount = 1;
-                        maxValue = value;
-                        return;
-                    }
-
-                    if (counters[value] === void 0) {
-                        // First entry for new value
-                        counters[value] = 1;
-                        return;
-                    }
-
-                    counters[value] ++;
-                    if (counters[value] > maxCount) {
-                        maxCount = counters[value];
-                        maxValue = value;
-                    }
-                });
-
-                if (!invalid && maxCount > 1) {
-                    // Remove duplicate values
-                    json[prop] = maxValue;
-                    Object.keys(json.icons).forEach(key => {
-                        if (json.icons[key][prop] === maxValue) {
-                            delete json.icons[key][prop];
-                        }
-                    });
-                }
-            });
+            Optimize(json);
         }
 
         // Export
         let content = options.minify ? JSON.stringify(json) : JSON.stringify(json, null, '\t');
-        if (target !== null) {
+        if (target) {
             try {
                 fs.writeFileSync(target, content, 'utf8');
             } catch (err) {

@@ -13,9 +13,12 @@
     "mocha": "*"
   },
   "dependencies": {
-    "cyberalien-color": "*",
-    "simple-tokenizer": "*",
+    "babel-core": "^6.24.1",
+    "babili": "0.0.12",
     "cheerio": "^0.22.0",
+    "cyberalien-color": "*",
+    "simple-svg-cdn": "^0.2.1",
+    "simple-tokenizer": "*",
     "svgo": "*",
     "tmp": "0.0.31"
   }

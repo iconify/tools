@@ -33,6 +33,7 @@ let Modules = {
     ImportDir: require('./import/dir'),
     ImportFont: require('./import/font'),
     ImportWebIcon: require('./import/web_icons'),
+    ImportJSON: require('./import/json'),
 
     // Shapes
     IndexShapes: require('./shapes/index'),
