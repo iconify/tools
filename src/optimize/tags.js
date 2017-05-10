@@ -15,6 +15,7 @@ const Tokenizer = require('simple-tokenizer');
 
 const defaults = {
     'strict-tags-validation': true,
+    allowFont: false,
     browserCSSPrefixes: ['-webkit-', '-moz-', '-ms-', '-o-', '-inkscape-'],
     debug: false,
     log: console.log, // function for logging
@@ -374,6 +375,13 @@ module.exports = (svg, options) => {
                         checkShape($child, child, extra);
                         return;
 
+                    case 'text':
+                        if (!options.allowFont) {
+                            throw new Error('Unexpected tag "' + child.tagName + '"');
+                        }
+                        checkShape($child, child, extra);
+                        return;
+
                     case 'linearGradient':
                     case 'radialGradient':
                         checkShape($child, child, Object.assign({}, extra, {gradient: true}));
@@ -392,6 +400,17 @@ module.exports = (svg, options) => {
                     case 'defs':
                     case 'clipPath':
                         checkChildElements($child, extra);
+                        return;
+
+                    case 'font':
+                        if (!options.allowFont) {
+                            throw new Error('Unexpected tag "' + child.tagName + '"');
+                        }
+                        // Ignore font
+                        return;
+
+                    case 'filter':
+                        // Ignore filter
                         return;
 
                     default:

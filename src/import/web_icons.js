@@ -14,9 +14,11 @@ const cheerio = require('cheerio');
 const SVGImporter = require('./svg');
 const SVG = require('../svg');
 const Collection = require('../collection');
+const Crop = require('../optimize/crop');
 
 const defaults = {
     keywordCallback: key => key.toLowerCase().replace(/_/g, '-').replace(/[^a-zA-Z0-9\-_]/g, '').replace(/--*/, '-'),
+    crop: null,
     headless: true,
     minify: true,
     debug: false,
@@ -139,12 +141,70 @@ module.exports = (source, options) => {
                 }
             });
 
-            // Done
+            // Loaded
             if (!collection.length()) {
                 reject('No images found.');
-            } else {
-                fulfill(collection);
+                return;
             }
+            if (options.crop === null) {
+                fulfill(collection);
+                return;
+            }
+
+            // Crop like SVG font
+            let rejected = false;
+            ['ascent', 'descent'].forEach(attr => {
+                if (!rejected && options.crop[attr] === void 0) {
+                    reject('Missing crop option: ' + attr);
+                    rejected = true;
+                }
+            });
+            if (rejected) {
+                return;
+            }
+
+            let cropQueue = [];
+            let verticalAlign = options.crop.verticalAlign === void 0 ? Math.round(options.crop.descent / (options.crop.ascent - options.crop.descent) * 1000) / 1000 : options.crop.verticalAlign;
+            collection.forEach((svg, key) => {
+                cropQueue[key] = {
+                    body: svg.getBody(),
+                    ascent: options.crop.ascent,
+                    descent: options.crop.descent,
+                    width: svg.width,
+                    originalHeight: svg.height,
+                    verticalAlign: verticalAlign
+                };
+                ['width', 'originalHeight'].forEach(attr => {
+                    if (options.crop[attr] !== void 0) {
+                        cropQueue[key][attr] = options.crop[attr];
+                    }
+                })
+            });
+
+            let cropOptions = Object.assign({
+                defaultRightLimit: false,
+                defaultLeftLimit: false
+            }, options.crop);
+
+            cropOptions.multiple = true;
+            cropOptions.format = 'svg';
+
+            Crop(cropQueue, cropOptions).then(results => {
+                Object.keys(results).forEach(key => {
+                    let svg = results[key];
+
+                    // top > 0 - something was cropped above icon
+                    svg.inlineTop = svg._cropData.top <= 0 ? 0 : 0 - svg._cropData.top;
+                    svg.inlineHeight = cropQueue[key].originalHeight;
+                    svg.verticalAlign = cropQueue[key].verticalAlign;
+
+                    collection.items[key] = svg;
+                });
+                fulfill(collection);
+            }).catch(err => {
+                reject(err);
+            });
+
         }).catch(err => {
             reject(err);
         });

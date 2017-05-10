@@ -101,6 +101,7 @@ module.exports = (svg, palette) => {
                     case 'mask': // mask
                     case 'clipPath': // clip path
                     case 'defs': // definitions
+                    case 'filter': // filters
                         return;
 
                     case 'style':
