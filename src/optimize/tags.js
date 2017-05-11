@@ -65,7 +65,7 @@ module.exports = (svg, options) => {
             let clr = Color.fromString(value);
             if (clr === null && options['strict-tags-validation']) {
                 value = value.toLowerCase();
-                if (value === 'transparent' || value.slice(0, 3) === 'url') {
+                if (value === 'transparent' || value === 'currentcolor' || value.slice(0, 3) === 'url') {
                     return;
                 }
                 throw new Error('Invalid color value: "' + value + '"');
