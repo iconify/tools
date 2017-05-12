@@ -376,6 +376,7 @@ module.exports = (svg, options) => {
                         return;
 
                     case 'text':
+                    case 'tspan':
                         if (!options.allowFont) {
                             throw new Error('Unexpected tag "' + child.tagName + '"');
                         }

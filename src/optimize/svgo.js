@@ -17,7 +17,9 @@ const svgo = require('svgo');
  * @type {object}
  */
 const defaults = {
-    'id-prefix': 'svg-'
+    'id-prefix': 'svg-',
+    mergePaths: false,
+    convertShapeToPath: true
 };
 
 /**
@@ -46,9 +48,9 @@ module.exports = (svg, options) => {
                 }, {
                     removeRasterImages: true
                 }, {
-                    convertShapeToPath: true
+                    convertShapeToPath: options.convertShapeToPath
                 }, {
-                    mergePaths: false
+                    mergePaths: options.mergePaths
                 }];
 
             if (options['id-prefix'] !== null) {
