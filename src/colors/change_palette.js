@@ -61,7 +61,7 @@ module.exports = (svg, palette) => {
                         case 'stop-color':
                         case 'fill':
                         case 'stroke':
-                            let color = Color.fromString(value);
+                            let color = Color.fromString(token.value);
                             if (color === null) {
                                 return;
                             }
