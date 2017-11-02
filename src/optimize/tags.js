@@ -400,6 +400,7 @@ module.exports = (svg, options) => {
                     case 'mask':
                     case 'defs':
                     case 'clipPath':
+                    case 'symbol':
                         checkChildElements($child, extra);
                         return;
 
