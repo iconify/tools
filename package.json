@@ -2,7 +2,7 @@
   "name": "simple-svg-tools",
   "description": "Collection of functions for cleaning up and parsing SVG images",
   "author": "Vjacheslav Trushkin",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "license": "MIT",
   "main": "src/modules.js",
   "scripts": {
@@ -19,7 +19,7 @@
     "cyberalien-color": "*",
     "simple-svg-cdn": "^0.2.1",
     "simple-tokenizer": "*",
-    "svgo": "*",
+    "svgo": "^1.0.1",
     "tmp": "0.0.31"
   }
 }

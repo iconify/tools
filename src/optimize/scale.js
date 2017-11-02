@@ -34,7 +34,7 @@ module.exports = (svg, scale) => {
                 plugins: [{
                     mergePaths: false
                 }]
-            })).optimize(content, result => {
+            })).optimize(content).then(result => {
                 if (!result || !result.info || !result.data) {
                     return reject(result.error ? result.error : 'Invalid SVG file');
                 }
@@ -42,6 +42,8 @@ module.exports = (svg, scale) => {
                 // Update SVG object
                 svg.load(result.data);
                 fulfill(svg);
+            }).catch(err => {
+                return reject(err);
             });
         } catch (err) {
             reject(err);
