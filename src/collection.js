@@ -125,6 +125,84 @@ class Collection {
     }
 
     /**
+     * Run custom promise on all items.
+     * Same as promiseAll(), but executes each promise separately and result is different.
+     *
+     * Result is an object: {
+     *      success: list of successful promises,
+     *      error: list of failed promises
+     *  }
+     *
+     * Each list in result is object where key is icon key, value is result or error.
+     *
+     * Rejected object only contains "error" part of result.
+     *
+     * @param {function} promise Callback to return Promise for item: callback(svg, key)
+     * @param {boolean} [stopOnError] True if execution should halt upon finding error. Default = false
+     *      If false, promise will be fulfilled unless all promises fail
+     * @returns {Promise}
+     */
+    promiseEach(promise, stopOnError) {
+        let items = this.items;
+
+        stopOnError = stopOnError === true;
+
+        return new Promise((fulfill, reject) => {
+            // Convert to arrays
+            let keys = Object.keys(items),
+                failed = 0,
+                success = 0,
+                results = {
+                    success: {},
+                    error: {},
+                    skipped: {}
+                };
+
+            function next() {
+                let key = keys.shift();
+                if (key === void 0) {
+                    return done();
+                }
+
+                // Get promise
+                let func = promise(items[key], key);
+                if (func === null) {
+                    results.skipped[key] = true;
+                    process.nextTick(next);
+                    return;
+                }
+
+                // Run promise
+                func.then(result => {
+                    results.success[key] = result;
+                    success ++;
+
+                    process.nextTick(next);
+                }).catch(err => {
+                    results.error[key] = err;
+                    failed ++;
+
+                    if (stopOnError) {
+                        reject(results.error);
+                    } else {
+                        process.nextTick(next);
+                    }
+                });
+            }
+
+            function done() {
+                if (!success && failed) {
+                    reject(results.error);
+                } else {
+                    fulfill(results);
+                }
+            }
+
+            next();
+        });
+    }
+
+    /**
      * Run promise on all items
      *
      * @param {function} callback Function that returns Promise for one item
