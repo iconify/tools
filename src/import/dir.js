@@ -14,8 +14,12 @@ const Importer = require('./svg');
 const Collection = require('../collection');
 
 const defaults = {
-    'include-subdirs': true,
-    keywordCallback: key => key.toLowerCase().replace(/_/g, '-').replace(/[^a-zA-Z0-9\-_]/g, '').replace(/--*/, '-'),
+    includeSubDirs: true,
+    directoryAsPrefix: false,
+    // If directoryAsPrefix is enabled and filename includes prefix, such as "fa-pro/fa-pro-home"
+    // this option will remove duplicate prefix
+    removeDirectoryPrefix: false,
+    keywordCallback: key => key.toLowerCase().replace(/_/g, '-').replace(/[^a-zA-Z0-9\-_:]/g, '').replace(/--*/, '-'),
     ignoreDuplicates: false,
     ignoreFiles: false,
     contentCallback: null, // callback to call to test content
@@ -30,17 +34,17 @@ const defaults = {
  *
  * @param dir
  * @param prefix
- * @param includeChildren
+ * @param options
  * @return {Array}
  */
-function scan(dir, prefix, includeChildren) {
+function scan(dir, prefix, options) {
     let results = [];
 
     fs.readdirSync(dir).forEach(file => {
         let filename = dir + '/' + file;
         if (fs.lstatSync(filename).isDirectory()) {
-            if (includeChildren) {
-                results = results.concat(scan(filename, prefix + file + '/', includeChildren));
+            if (options.includeSubDirs) {
+                results = results.concat(scan(filename, prefix + file + '/', options));
             }
         } else {
             if (file.toLowerCase().slice(-4) === '.svg') {
@@ -63,6 +67,11 @@ module.exports = (source, options) => {
         }
     });
 
+    // Old option
+    if (options['include-subdirs'] !== void 0) {
+        options.includeSubDirs = options['include-subdirs'];
+    }
+
     return new Promise((fulfill, reject) => {
         let promises = [],
             keywords = [],
@@ -73,12 +82,23 @@ module.exports = (source, options) => {
         if (source.slice(-1) === '/') {
             source = source.slice(0, source.length - 1);
         }
-        let files = scan(source, '', options['include-subdirs']);
+        let files = scan(source, '', options);
 
         // Get promise for each file
         files.forEach(file => {
             // Get keyword
-            let keyword = options.keywordCallback(file.split('/').pop().split('.')[0], file);
+            let fileSplit = file.split('/'),
+                keyword = fileSplit.pop().split('.')[0];
+
+            if (options.directoryAsPrefix && fileSplit.length) {
+                let dir = fileSplit.pop();
+                if (options.removeDirectoryPrefix && keyword.slice(0, dir.length + 1) === dir + '-') {
+                    keyword = keyword.slice(dir.length + 1);
+                }
+                keyword = dir + ':' + keyword;
+            }
+            keyword = options.keywordCallback(keyword, file);
+
             if (typeof keyword !== 'string') {
                 return;
             }
