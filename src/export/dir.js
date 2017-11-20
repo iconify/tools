@@ -13,7 +13,7 @@ const fs = require('fs');
 const Exporter = require('./svg');
 
 const defaults = {
-    'export-filename': key => key + '.svg'
+    'export-filename': key => key.replace(':', '/') + '.svg'
 };
 
 /**

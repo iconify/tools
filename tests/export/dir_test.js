@@ -26,12 +26,17 @@
          * Delete temporary files
          */
         function cleanup() {
-            ['key1', 'another-key', 'export3'].forEach(key => {
+            ['key1', 'another-key', 'export3', 'icon-test/export4-icon'].forEach(key => {
                 try {
                     fs.unlinkSync(dir + '/' + key + '.svg');
                 } catch(err) {
                 }
             });
+
+            try {
+                fs.rmdirSync(dir + '/icon-test');
+            } catch (err) {
+            }
         }
 
         /**
@@ -54,17 +59,19 @@
             items.add('key1', new SVG(content1));
             items.add('another-key', new SVG(content2));
             items.add('export3', new SVG(content2));
+            items.add('icon-test:export4-icon', new SVG(content2));
 
             Exporter(items, dir).then(count => {
                 expect(count).to.be.equal(3);
 
-                ['key1', 'another-key', 'export3'].forEach(key => {
+                ['key1', 'another-key', 'export3', 'icon-test/export4-icon'].forEach(key => {
                     expect(exists(dir + '/' + key + '.svg')).to.be.equal(true);
                 });
 
                 expect(fs.readFileSync(dir + '/key1.svg', 'utf8')).to.be.equal(content1.replace(' enable-background="new 0 0 64 64"', ' width="64" height="64"'));
                 expect(fs.readFileSync(dir + '/another-key.svg', 'utf8')).to.be.equal(content2);
                 expect(fs.readFileSync(dir + '/export3.svg', 'utf8')).to.be.equal(content2);
+                expect(fs.readFileSync(dir + '/icon-test/export4-icon.svg', 'utf8')).to.be.equal(content2);
 
                 cleanup();
                 done();
