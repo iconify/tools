@@ -35,7 +35,7 @@
                 expect(newContent).to.be.equal(oldContent);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -65,7 +65,7 @@
                 expect(newContent).to.be.equal(oldContent);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -84,7 +84,7 @@
                 expect(newContent).to.be.equal(oldContent);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -99,7 +99,7 @@
                 expect(newContent).to.equal('<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" width="512" height="512" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512"><style>.st0{fill:#010101;}</style><path d="M416 80h-48V32h-64v48h-48v64h48v48h64v-48h48z" fill="currentColor"/><path d="M304 240c0 38.6-4.5 42.3-14.4 50.3-7.4 6-22.2 7.1-39.4 8.3-9.5.7-20.4 1.5-31.4 3.3-9.4 1.5-18.4 4.7-26.8 8.8V151.4c19.1-11.1 32-31.7 32-55.4 0-35.3-28.7-64-64-64S96 60.7 96 96c0 23.7 12.9 44.3 32 55.4v209.2c-19.1 11.1-32 31.7-32 55.4 0 35.3 28.7 64 64 64s64-28.7 64-64c0-15.7-5.7-30.1-15-41.2 6.7-4.8 13.9-8.7 20.2-9.7 8.1-1.3 16.6-1.9 25.6-2.6 24.4-1.7 52.1-3.7 75.2-22.5 30.9-25.1 37.5-52.1 38-94.9V240h-64zM160 64c17.6 0 32 14.4 32 32s-14.4 32-32 32-32-14.4-32-32 14.4-32 32-32zm0 384c-17.6 0-32-14.4-32-32s14.4-32 32-32 32 14.4 32 32-14.4 32-32 32z" fill="currentColor"/></svg>');
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -114,7 +114,7 @@
                 expect(newContent).to.be.equal('<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" width="47.5" height="47.5" viewBox="0 0 47.5 47.5"><defs><clipPath id="SVGVa"><path d="M0 38h38V0H0v38z"/></clipPath></defs><g clip-path="url(#SVGVa)" transform="matrix(1.25 0 0 -1.25 0 47.5)"><path d="M12 1.5c-.194 0-.639.037-.825.114C10.615 1.847 10 2.394 10 3v7H3c-.607 0-1.154.615-1.386 1.176-.233.56-.104 1.331.325 1.76L25 36c1 1 3 1 4 0l7-7c1-1 1-3 0-4L13.145 2.146C12.774 1.65 12.39 1.5 12 1.5" fill="#123"/></g></svg>');
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -137,7 +137,7 @@
                 expect(newContent).to.be.equal(oldContent.replace('#000', '#123').replace(/\s*\n\s*/g, ''));
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -155,7 +155,7 @@
                 expect(newContent).to.be.equal(oldContent.replace('9.978z"/>', '9.978z" fill="#000"/>').replace(/\s*\n\s*/g, ''));
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -176,7 +176,7 @@
                 expect(newContent).to.be.equal(oldContent.replace('9.978z"/>', '9.978z" fill="#000"/>').replace('231F20', '000').replace(/\s*\n\s*/g, ''));
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -198,7 +198,7 @@
                 expect(newContent).to.be.equal(oldContent.replace(/\s*\n\s*/g, ''));
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
     });

@@ -40,31 +40,7 @@
                     .trim());
                 done();
             }).catch(err => {
-                done(err);
-            });
-        });
-
-        it('exporting file with error', done => {
-            const filename = 'tests/temp/foo/export.svg';
-
-            let svg = new SVG(content);
-
-            Exporter(svg, filename).then(() => {
-                done('Export should have returned error!');
-            }).catch(err => {
-                done();
-            });
-        });
-
-        it('exporting file with suppressed error', done => {
-            const filename = 'tests/temp/foo/export.svg';
-
-            let svg = new SVG(content);
-
-            Exporter(svg, filename, {reject: false}).then(() => {
-                done();
-            }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
     });

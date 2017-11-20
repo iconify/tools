@@ -23,7 +23,7 @@
                 expect(keys.includes('sub-dir-octicon-jersey')).to.be.equal(true);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -40,7 +40,7 @@
                 expect(keys.includes('octicon-jersey')).to.be.equal(false);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -55,7 +55,7 @@
                 expect(keys.includes('sub-dir:sub-dir-octicon-jersey')).to.be.equal(true);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -71,7 +71,7 @@
                 expect(keys.includes('sub-dir:octicon-jersey')).to.be.equal(true);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 

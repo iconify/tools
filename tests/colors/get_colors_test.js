@@ -33,7 +33,7 @@
                 expect(results.notices).to.be.eql([]);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -53,7 +53,7 @@
                 expect(results.notices).to.be.eql([]);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -77,7 +77,7 @@
                 expect(results.notices).to.be.eql([]);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
     });

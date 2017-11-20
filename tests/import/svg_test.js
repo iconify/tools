@@ -18,7 +18,7 @@
                 expect(svg.toString()).to.be.equal(content.replace(' enable-background="new 0 0 48 48"', ' width="48" height="48"'));
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 

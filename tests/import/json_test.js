@@ -15,7 +15,7 @@
                 expect(collection.keys().indexOf('websymbol-user') === -1).to.be.equal(false);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
     });

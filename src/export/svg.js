@@ -29,11 +29,32 @@ module.exports = (svg, target, options) => {
     return new Promise((fulfill, reject) => {
         fs.writeFile(target, svg.toString(), 'utf8', err => {
             if (err) {
-                if (options.reject) {
-                    reject(err);
-                } else {
-                    fulfill(null);
+                // Attempt to create directories
+                let dirs = target.split('/'),
+                    dir;
+
+                dirs.pop(); // remove file name
+                dir = '';
+
+                while (dirs.length) {
+                    dir += (dir.length ? '/' : '') + dirs.shift();
+                    try {
+                        fs.mkdirSync(dir);
+                    } catch (err) {
+                    }
                 }
+
+                fs.writeFile(target, svg.toString(), 'utf8', err => {
+                    if (err) {
+                        if (options.reject) {
+                            reject(err);
+                        } else {
+                            fulfill(null);
+                        }
+                    } else {
+                        fulfill(svg);
+                    }
+                });
             } else {
                 fulfill(svg);
             }

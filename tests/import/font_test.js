@@ -34,7 +34,7 @@
                 expect(items.items['f03a'].inlineHeight).to.be.equal(1792);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -56,7 +56,7 @@
 
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
     });

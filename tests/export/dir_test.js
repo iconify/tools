@@ -62,7 +62,7 @@
             items.add('icon-test:export4-icon', new SVG(content2));
 
             Exporter(items, dir).then(count => {
-                expect(count).to.be.equal(3);
+                expect(count).to.be.equal(4);
 
                 ['key1', 'another-key', 'export3', 'icon-test/export4-icon'].forEach(key => {
                     expect(exists(dir + '/' + key + '.svg')).to.be.equal(true);
@@ -76,27 +76,7 @@
                 cleanup();
                 done();
             }).catch(err => {
-                done(err);
-            });
-        });
-
-        it('exporting directory with error', done => {
-            let extra = '-stuff/nested/dir/';
-
-            let items = new Collection();
-            items.add('key1', new SVG(content1));
-            items.add('another-key', new SVG(content2));
-
-            Exporter(items, dir + extra).then(count => {
-                expect(count).to.be.equal(0);
-
-                ['key1', 'another-key', 'export3'].forEach(key => {
-                    expect(exists(dir + extra + key + '.svg')).to.be.equal(false);
-                });
-
-                done();
-            }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
     });

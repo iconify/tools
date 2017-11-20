@@ -18,7 +18,7 @@
                 expect(keys.includes('briefcase')).to.be.equal(true);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
