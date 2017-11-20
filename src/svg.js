@@ -27,6 +27,21 @@ class SVG {
      * @return {string}
      */
     toString() {
+        let $root = this.$svg(':root');
+
+        // Add missing viewBox attribute
+        if ($root.attr('viewBox') === void 0) {
+            $root.attr('viewBox', '0 0 ' + this.width + ' ' + this.height);
+        }
+
+        // Add missing width/height
+        if ($root.attr('width') === void 0) {
+            $root.attr('width', this.width);
+        }
+        if ($root.attr('height') === void 0) {
+            $root.attr('height', this.height);
+        }
+
         return this.$svg.html();
     }
 
@@ -36,7 +51,7 @@ class SVG {
      * @return {string}
      */
     toMinifiedString() {
-        return this.$svg.html().replace(/\s*\n\s*/g, '');
+        return this.toString().replace(/\s*\n\s*/g, '');
     }
 
     /**

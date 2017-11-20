@@ -62,7 +62,7 @@
                     expect(exists(dir + '/' + key + '.svg')).to.be.equal(true);
                 });
 
-                expect(fs.readFileSync(dir + '/key1.svg', 'utf8')).to.be.equal(content1.replace(' enable-background="new 0 0 64 64"', ''));
+                expect(fs.readFileSync(dir + '/key1.svg', 'utf8')).to.be.equal(content1.replace(' enable-background="new 0 0 64 64"', ' width="64" height="64"'));
                 expect(fs.readFileSync(dir + '/another-key.svg', 'utf8')).to.be.equal(content2);
                 expect(fs.readFileSync(dir + '/export3.svg', 'utf8')).to.be.equal(content2);
 

@@ -15,7 +15,7 @@
 
             Importer('tests/files/fci-biomass.svg').then(svg => {
                 expect(svg instanceof SVG).to.be.equal(true);
-                expect(svg.toString()).to.be.equal(content.replace(' enable-background="new 0 0 48 48"', ''));
+                expect(svg.toString()).to.be.equal(content.replace(' enable-background="new 0 0 48 48"', ' width="48" height="48"'));
                 done();
             }).catch(err => {
                 done(err);
