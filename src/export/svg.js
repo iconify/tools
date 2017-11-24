@@ -17,6 +17,8 @@ const defaults = {
 
 /**
  * Export to .svg file
+ *
+ * @returns {Promise}
  */
 module.exports = (svg, target, options) => {
     options = options === void 0 ? {} : options;

@@ -21,7 +21,7 @@
                 expect(results[0].length).to.be.equal(50);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -38,7 +38,7 @@
                 expect(Math.round(results[1].length)).to.be.equal(314);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -55,7 +55,7 @@
                 expect(results[1].length).to.be.equal(130);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -72,7 +72,7 @@
                 expect(results[1].length).to.be.equal(240);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -111,7 +111,7 @@
 
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
     });

@@ -14,8 +14,11 @@ const SVG = require('../svg');
 const Collection = require('../collection');
 
 const defaults = {
-    reject: true
+    reject: true,
+    detectPrefix: false
 };
+
+const extraAttributes = ['inlineHeight', 'inlineTop', 'verticalAlign', 'rotate', 'vFlip', 'hFlip'];
 
 /**
  * Import icons from json file or string
@@ -40,13 +43,13 @@ module.exports = (source, options) => {
                 return;
             }
 
-            let collection = new Collection();
+            let collection = new Collection(json.prefix === void 0 ? '' : json.prefix);
 
             try {
                 // Expand all keys
                 Object.keys(json).forEach(attr => {
                     let value = json[attr];
-                    if (typeof value === 'object') {
+                    if (typeof value === 'object' || attr === 'prefix') {
                         return;
                     }
 
@@ -68,7 +71,7 @@ module.exports = (source, options) => {
                     let svg = new SVG('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="' + viewbox + '">' + data.body + '</svg>');
 
                     // Copy additional attributes
-                    ['inlineHeight', 'inlineTop', 'verticalAlign'].forEach(attr => {
+                    extraAttributes.forEach(attr => {
                         if (data[attr] !== void 0) {
                             svg[attr] = data[attr];
                         }
@@ -114,6 +117,11 @@ module.exports = (source, options) => {
                 }
                 return;
             }
+
+            if (options.detectPrefix) {
+                collection.findCommonPrefix(true);
+            }
+
             fulfill(collection);
         }
 

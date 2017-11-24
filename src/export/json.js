@@ -13,17 +13,36 @@ const fs = require('fs');
 const Optimize = require('simple-svg-cdn').optimize;
 
 const defaults = {
-    'include-chars': true,
-    'include-aliases': true,
-    'include-inline': true,
+    // True if characters table added by importing fonts should be included in JSON output
+    includeChars: true,
+
+    // True if aliases should be included in JSON output
+    includeAliases: true,
+
+    // True if inlineHeight, inlineTop and verticalAlign attributes should be included in output
+    includeInline: true,
+
+    // True if prefix should be included separately
+    // If enabled and collection has no prefix, exporter will try to detect common prefix (result is saved in collection)
+    separatePrefix: true,
+
+    // If true, common values would be moved to root scope to make JSON file smaller
     optimize: false,
-    minify: true
+
+    // If true all white space is removed, making file smaller, but harder to read
+    minify: false
 };
 
-const aliasKeys = ['rotate', 'vFlip', 'hFlip'];
+const transformKeys = ['rotate', 'vFlip', 'hFlip'];
+
+const positionAttributes = ['left', 'top'];
+
+const inlineAttributes = ['inlineHeight', 'inlineTop', 'verticalAlign'];
 
 /**
  * Export collection to json file
+ *
+ * @returns {Promise}
  */
 module.exports = (collection, target, options) => {
     options = options === void 0 ? {} : options;
@@ -33,44 +52,67 @@ module.exports = (collection, target, options) => {
         }
     });
 
+    // Function to add prefix to name if needed
+    let prefix = key => options.separatePrefix ? key : (collection.prefix === '' ? '' : collection.prefix + ':') + key;
+
+    // Return promise
     return new Promise((fulfill, reject) => {
-        let json = {
-            icons: {}
-        };
+        let json = {};
+
+        if (options.separatePrefix) {
+            if (collection.prefix === '' && collection.findCommonPrefix(true) === '') {
+                options.separatePrefix = false;
+            } else {
+                json.prefix = collection.prefix;
+            }
+        }
+
+        json.icons = {};
 
         // Export all files
         collection.forEach((svg, key) => {
-            json.icons[key] = {
+            let iconKey = prefix(key);
+
+            json.icons[iconKey] = {
                 body: svg.getBody().replace(/\s*\n\s*/g, ''),
                 width: svg.width,
                 height: svg.height
             };
 
-            // Add top/left
-            ['left', 'top'].forEach(attr => {
+            // Add left/top
+            positionAttributes.forEach(attr => {
                 if (svg[attr] !== 0) {
-                    json.icons[key][attr] = svg[attr];
+                    json.icons[iconKey][attr] = svg[attr];
+                }
+            });
+
+            // Add transformations
+            transformKeys.forEach(attr => {
+                if (svg[attr] !== void 0) {
+                    json.icons[iconKey][attr] = svg[attr];
                 }
             });
 
             // Include inline attributes
-            if (options['include-inline']) {
-                ['inlineHeight', 'inlineTop', 'verticalAlign'].forEach(attr => {
+            if (options.includeInline) {
+                inlineAttributes.forEach(attr => {
                     if (svg[attr] !== void 0) {
-                        json.icons[key][attr] = svg[attr];
+                        json.icons[iconKey][attr] = svg[attr];
                     }
                 });
             }
         });
 
         // Add aliases
-        if (options['include-aliases']) {
+        if (options.includeAliases) {
             collection.forEach((svg, key) => {
                 if (svg.aliases) {
+                    let parentKey = prefix(key);
+
                     svg.aliases.forEach(alias => {
                         // Check alias format
                         let item = {
-                                parent: key
+                                parent: parentKey
                             },
                             name;
 
@@ -84,7 +126,7 @@ module.exports = (collection, target, options) => {
                                     return;
                                 }
                                 name = alias.name;
-                                aliasKeys.forEach(key => {
+                                transformKeys.forEach(key => {
                                     if (alias[key] !== void 0) {
                                         item[key] = alias[key];
                                     }
@@ -94,6 +136,9 @@ module.exports = (collection, target, options) => {
                             default:
                                 return;
                         }
+
+                        // Add prefix
+                        name = prefix(name);
 
                         // Check for duplicate
                         if (json.icons[name] !== void 0) {
@@ -111,7 +156,7 @@ module.exports = (collection, target, options) => {
         }
 
         // Add characters
-        if (options['include-chars']) {
+        if (options.includeChars) {
             collection.forEach((svg, key) => {
                 if (svg.char === void 0) {
                     return;
@@ -119,7 +164,7 @@ module.exports = (collection, target, options) => {
                 if (json.chars === void 0) {
                     json.chars = {};
                 }
-                json.chars[svg.char] = key;
+                json.chars[svg.char] = prefix(key);
             });
         }
 

@@ -18,30 +18,26 @@ class Collection {
     /**
      * Constructor
      *
-     * @param {Collection|object} [parent] Items to copy
+     * @param {string|Collection} [param] Items prefix or collection to clone
      */
-    constructor(parent) {
+    constructor(param) {
         this.items = {};
+        this.prefix = typeof param === 'string' ? param : '';
 
-        if (parent instanceof Collection) {
+        if (param instanceof Collection) {
             // Clone collection
-            parent.forEach((item, key) => {
+            param.forEach((item, key) => {
                 this.items[key] = item;
             });
-        } else if (typeof parent === 'object') {
-            // Copy from object
-            Object.keys(parent).forEach(key => {
-                if (parent.hasOwnProperty(key) && parent[key] instanceof SVG) {
-                    this.items[key] = parent[key];
-                }
-            });
+            this.prefix = param.prefix;
         }
     }
 
     /**
      * Add item to collection
      *
-     * @param {string} key
+     * @param {string} key Item name.
+     *      If collection has prefix set, item name should not have prefix.
      * @param {SVG} item
      */
     add(key, item) {
@@ -53,7 +49,8 @@ class Collection {
     /**
      * Remove item from collection
      *
-     * @param {string} key
+     * @param {string} key Item name.
+     *      If collection has prefix set, item name should not have prefix.
      */
     remove(key) {
         delete this.items[key];
@@ -62,8 +59,8 @@ class Collection {
     /**
      * Change key
      *
-     * @param {string} oldKey
-     * @param {string} newKey
+     * @param {string} oldKey Old key.
+     * @param {string} newKey New key.
      * @return {boolean}
      */
     rename(oldKey, newKey) {
@@ -73,6 +70,101 @@ class Collection {
         this.items[newKey] = this.items[oldKey];
         delete this.items[oldKey];
         return true;
+    }
+
+    /**
+     * Find common prefix in icon names.
+     * This function works only if all icons use "-" as prefix.
+     * Important: this function ignores icon aliases and other custom properties.
+     *
+     * @param {boolean} [updateIcons] True if function should update prefix in collection. Default = true
+     * @return {string}
+     */
+    findCommonPrefix(updateIcons) {
+        if (this.prefix !== '') {
+            // Prefix is already set
+            return this.prefix;
+        }
+
+        // Find all possible prefixes
+        let commonPrefix = {},
+            complexPrefix = '';
+
+        let keys = this.keys();
+        for (let i = 0; i < keys.length; i++) {
+            let parts = keys[i].split(':');
+            if (parts.length > 1) {
+                if (complexPrefix === '' || parts[0] === complexPrefix) {
+                    complexPrefix = parts[0];
+                    continue;
+                }
+                // Cannot combine items with complex prefixes
+                return '';
+            }
+
+            parts = keys[i].split('-');
+            let key = parts.shift(),
+                count = 1;
+            while (parts.length) {
+                if (commonPrefix[count] === void 0) {
+                    commonPrefix[count] = key;
+                } else if (commonPrefix[count] !== key) {
+                    break;
+                }
+
+                key = key + '-' + parts.shift();
+                count ++;
+            }
+            commonPrefix[count] = false;
+        }
+
+        // Find smallest counter with only 1 item
+        let count = 1;
+        while (typeof commonPrefix[count] === 'string') {
+            count ++;
+        }
+
+        let newPrefix;
+
+        // Still 1? Nothing to do
+        if (count === 1) {
+            if (commonPrefix[1] !== void 0) {
+                // No items with simple prefixes
+                return '';
+            }
+            // All items had complex prefixes?
+            newPrefix = complexPrefix;
+        } else {
+            // More than 1? Found some common parts
+            newPrefix = commonPrefix[count - 1];
+            if (complexPrefix !== '') {
+                // Both complex and simple prefixes are found, check if they match
+                if (
+                    newPrefix !== complexPrefix &&
+                    (newPrefix.slice(0, complexPrefix.length + 1) !== (complexPrefix + '-'))
+                ) {
+                    // Prefixes don't match
+                    return '';
+                }
+                newPrefix = complexPrefix;
+            }
+        }
+
+        if (!updateIcons) {
+            return newPrefix;
+        }
+
+        // Update all items
+        this.prefix = newPrefix;
+
+        let items = {};
+        let start = newPrefix.length + 1;
+        Object.keys(this.items).forEach(key => {
+            items[key.slice(start)] = this.items[key];
+        });
+        this.items = items;
+
+        return this.prefix;
     }
 
     /**
@@ -87,10 +179,15 @@ class Collection {
     /**
      * Get item keys
      *
+     * @param {boolean} [prefixed] True if results must include prefix
      * @return {Array}
      */
-    keys() {
-        return Object.keys(this.items);
+    keys(prefixed) {
+        let results = Object.keys(this.items);
+        if (prefixed && this.prefix !== '') {
+            results = results.map(item => this.prefix + ':' + item);
+        }
+        return results;
     }
 
     /**
@@ -100,7 +197,7 @@ class Collection {
      */
     forEach(callback) {
         Object.keys(this.items).forEach(key => {
-            callback(this.items[key], key);
+            callback(this.items[key], key, this.prefix);
         });
     }
 
@@ -117,11 +214,11 @@ class Collection {
      *  );
      *
      *
-     * @param {function} promise Callback to return Promise for item: callback(svg, key)
+     * @param {function} promise Callback to return Promise for item: callback(svg, key, prefix)
      * @return {Promise}
      */
     promiseAll(promise) {
-        return this._runPromises(key => promise(this.items[key], key));
+        return this._runPromises(key => promise(this.items[key], key, this.prefix));
     }
 
     /**
@@ -137,13 +234,14 @@ class Collection {
      *
      * Rejected object only contains "error" part of result.
      *
-     * @param {function} promise Callback to return Promise for item: callback(svg, key)
+     * @param {function} promise Callback to return Promise for item: callback(svg, key, prefix)
      * @param {boolean} [stopOnError] True if execution should halt upon finding error. Default = false
      *      If false, promise will be fulfilled unless all promises fail
      * @returns {Promise}
      */
     promiseEach(promise, stopOnError) {
-        let items = this.items;
+        let items = this.items,
+            prefix = this.prefix;
 
         stopOnError = stopOnError === true;
 
@@ -165,7 +263,7 @@ class Collection {
                 }
 
                 // Get promise
-                let func = promise(items[key], key);
+                let func = promise(items[key], key, prefix);
                 if (func === null) {
                     results.skipped[key] = true;
                     process.nextTick(next);
@@ -205,11 +303,13 @@ class Collection {
     /**
      * Run promise on all items
      *
-     * @param {function} callback Function that returns Promise for one item
+     * @param {function} callback Function that returns Promise for one item (key, prefix)
      * @return {Promise}
      * @private
      */
     _runPromises(callback) {
+        let prefix = this.prefix;
+
         return new Promise((fulfill, reject) => {
             // Convert to arrays
             let keys = Object.keys(this.items),
@@ -217,7 +317,7 @@ class Collection {
                 resultKeys = [];
 
             keys.forEach((key, index) => {
-                let result = callback(key);
+                let result = callback(key, prefix);
                 if (result !== null) {
                     promises.push(result);
                     resultKeys.push(key);

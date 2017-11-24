@@ -17,7 +17,8 @@ const Collection = require('../collection');
 const Crop = require('../optimize/crop');
 
 const defaults = {
-    keywordCallback: key => key.toLowerCase().replace(/_/g, '-').replace(/[^a-zA-Z0-9\-_]/g, '').replace(/--*/, '-'),
+    prefix: '',
+    keywordCallback: (key, options) => key.toLowerCase().replace(/_/g, '-').replace(/[^a-zA-Z0-9\-_]/g, '').replace(/--*/, '-'),
     crop: null,
     headless: true,
     minify: true,
@@ -79,7 +80,7 @@ module.exports = (source, options) => {
                 return reject('Missing definitions');
             }
 
-            let collection = new Collection();
+            let collection = new Collection(options.prefix);
 
             // Check each symbol
             $defs.children('symbol').each((index, symbol) => {
@@ -123,7 +124,7 @@ module.exports = (source, options) => {
                 let svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '" viewBox="' + left + ' ' + top + ' ' + width + ' ' + height + '">' + $symbol.html() + '</svg>';
 
                 // Get keyword
-                let keyword = options.keywordCallback(id);
+                let keyword = options.keywordCallback(id, options);
                 if (keyword === false || keyword === '') {
                     return;
                 }

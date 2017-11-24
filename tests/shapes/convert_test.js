@@ -184,7 +184,7 @@
                 testResults = results;
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 

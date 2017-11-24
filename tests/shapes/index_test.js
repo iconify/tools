@@ -19,7 +19,7 @@
 
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -70,11 +70,11 @@
 
                     done();
                 }).catch(err => {
-                    done(err);
+                    done(err ? err : 'exception');
                 });
 
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
     });

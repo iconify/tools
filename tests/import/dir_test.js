@@ -59,6 +59,21 @@
             });
         });
 
+        it('using directory as prefix', done => {
+            Importer('tests/files', {
+                directoryAsPrefix: true
+            }).then(items => {
+                expect(items instanceof Collection).to.be.equal(true);
+                let keys = items.keys();
+                expect(keys.includes('unused:emoji-u26fa')).to.be.equal(true);
+                expect(keys.includes('sub-dir:map-ice-skating')).to.be.equal(true);
+                expect(keys.includes('sub-dir:sub-dir-octicon-jersey')).to.be.equal(true);
+                done();
+            }).catch(err => {
+                done(err ? err : 'exception');
+            });
+        });
+
         it('using directory as prefix, items have prefix too', done => {
             Importer('tests/files', {
                 directoryAsPrefix: true,
@@ -69,6 +84,47 @@
                 expect(keys.includes('unused:emoji-u26fa')).to.be.equal(true);
                 expect(keys.includes('sub-dir:map-ice-skating')).to.be.equal(true);
                 expect(keys.includes('sub-dir:octicon-jersey')).to.be.equal(true);
+                done();
+            }).catch(err => {
+                done(err ? err : 'exception');
+            });
+        });
+
+        it('automatically detecting prefix', done => {
+            Importer('tests/files/same-prefix').then(items => {
+                expect(items instanceof Collection).to.be.equal(true);
+                expect(items.prefix).to.be.equal('16-arc');
+                let keys = items.keys();
+                expect(keys.includes('90')).to.be.equal(true);
+                done();
+            }).catch(err => {
+                done(err ? err : 'exception');
+            });
+        });
+
+        it('removing prefix from file names', done => {
+            Importer('tests/files/same-prefix', {
+                prefix: '16',
+                removePrefix: true
+            }).then(items => {
+                expect(items instanceof Collection).to.be.equal(true);
+                expect(items.prefix).to.be.equal('16');
+                let keys = items.keys();
+                expect(keys.includes('arc-90')).to.be.equal(true);
+                done();
+            }).catch(err => {
+                done(err ? err : 'exception');
+            });
+        });
+
+        it('directory as prefix and files with same prefix', done => {
+            Importer('tests/files/same-prefix', {
+                directoryAsPrefix: true
+            }).then(items => {
+                expect(items instanceof Collection).to.be.equal(true);
+                expect(items.prefix).to.be.equal('same-prefix');
+                let keys = items.keys();
+                expect(keys.includes('16-arc-180')).to.be.equal(true);
                 done();
             }).catch(err => {
                 done(err ? err : 'exception');

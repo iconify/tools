@@ -14,7 +14,7 @@
             content2 = '<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8"><path d="M3 0v1h4v5h-4v1h5v-7h-5zm1 2v1h-4v1h4v1l2-1.5-2-1.5z"/></svg>';
 
         it('collection manipulation', () => {
-            let lib = new Collection();
+            let lib = new Collection('item-prefix');
 
             // Add few files
             lib.add('file1', new SVG(content1));
@@ -40,11 +40,14 @@
 
             // Test length
             expect(lib.length()).to.be.equal(4);
+
+            // Test list of keys
             expect(lib.keys()).to.be.eql(['file1', 'test1', 'test2', 'test3']);
+            expect(lib.keys(true)).to.be.eql(['item-prefix:file1', 'item-prefix:test1', 'item-prefix:test2', 'item-prefix:test3']);
 
             // Test forEach
             let parsed = [];
-            lib.forEach((item, key) => {
+            lib.forEach((item, key, prefix) => {
                 parsed.push(key);
                 expect(item instanceof SVG).to.be.equal(true);
                 expect(item).to.be.equal(lib.items[key]);
@@ -53,14 +56,14 @@
         });
 
         it('promises', done => {
-            let lib = new Collection();
+            let lib = new Collection('foo');
 
             // Add few files
             lib.add('file1', new SVG(content1));
             lib.add('file2', new SVG(content2));
 
             // Promises
-            lib.promiseAll((svg, name) => {
+            lib.promiseAll((svg, name, prefix) => {
                 return new Promise((fulfill, reject) => {
                     fulfill(svg.getDimensions());
                 });
@@ -82,14 +85,14 @@
         });
 
         it('partial promises', done => {
-            let lib = new Collection();
+            let lib = new Collection('bar');
 
             // Add few files
             lib.add('file1', new SVG(content1));
             lib.add('file2', new SVG(content2));
 
             // Promises
-            lib.promiseAll((svg, name) => {
+            lib.promiseAll((svg, name, prefix) => {
                 return name === 'file1' ? null : new Promise((fulfill, reject) => {
                     fulfill(svg.getDimensions());
                 });

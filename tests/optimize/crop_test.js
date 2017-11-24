@@ -23,7 +23,7 @@
                 expect(result.toMinifiedString()).to.be.equal(croppedHome);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -36,7 +36,7 @@
                 expect(result).to.be.equal(croppedHome);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
 
@@ -46,13 +46,13 @@
 
             this.timeout(10000);
 
-            collection.add('home', svg);
+            collection.add('icon:home', svg);
             Crop(collection).then(result => {
                 expect(result instanceof Collection).to.be.equal(true);
-                expect(result.items.home.toString()).to.be.equal(croppedHome);
+                expect(result.items['icon:home'].toString()).to.be.equal(croppedHome);
                 done();
             }).catch(err => {
-                done(err);
+                done(err ? err : 'exception');
             });
         });
     });

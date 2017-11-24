@@ -21,10 +21,15 @@ const crop = require('../optimize/crop');
  * @type {object}
  */
 const defaults = {
+    // Collection prefix
+    prefix: '',
+
     // Array of characters to ignore, false if none
     ignoreCharacters: false,
+
     // List of changes for font: {height: 1000}, false if no changes
     fontChanges: false,
+
     // List of changes for each character: [hex] = {height: 1000}
     characterChanges: {},
 
@@ -137,7 +142,7 @@ module.exports = (source, options) => {
             let cropQueue = {};
 
             // Find fonts
-            let glyphs = new Collection();
+            let glyphs = new Collection(options.prefix);
 
             try {
                 $root.children('defs').each((index, def) => {

@@ -14,6 +14,7 @@
             const content = fs.readFileSync('tests/files/fa.svg', 'utf8');
 
             Importer('tests/files/fa.svg', {
+                prefix: 'fa',
                 fontChanges: {
                     // Adjustments for web font configuration
                     height: 1792,
@@ -24,6 +25,7 @@
                 ignoreCharacters: ['f036']
             }).then(items => {
                 expect(items instanceof Collection).to.be.equal(true);
+                expect(items.prefix).to.be.equal('fa');
 
                 let keys = items.keys();
                 expect(keys.includes('f000')).to.be.equal(true);

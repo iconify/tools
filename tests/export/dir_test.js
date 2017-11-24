@@ -16,27 +16,47 @@
 
         const dir = 'tests/temp';
 
+        const cleanupFiles = {
+            test1: {
+                files: ['key1', 'another-key', 'export3', 'icon-test/export4-icon', 'icon-test-export4-icon'],
+                dirs: ['icon-test']
+            },
+            test2: {
+                files: ['test2/icon1', 'test2/another-icon'],
+                dirs: ['test2']
+            },
+            test3: {
+                files: ['test3b/test3-icon', 'test3b/icon-home'],
+                dirs: ['test3b']
+            },
+            test4: {
+                files: ['test4-icon', 'custom4-prefix/icon-arrow-left'],
+                dirs: ['custom4-prefix']
+            }
+        };
+
         try {
             fs.mkdirSync(dir, 0o775);
         } catch (err) {
-
         }
 
         /**
          * Delete temporary files
          */
-        function cleanup() {
-            ['key1', 'another-key', 'export3', 'icon-test/export4-icon'].forEach(key => {
+        function cleanup(key) {
+            cleanupFiles[key].files.forEach(file => {
                 try {
-                    fs.unlinkSync(dir + '/' + key + '.svg');
+                    fs.unlinkSync(dir + '/' + file + '.svg');
                 } catch(err) {
                 }
             });
 
-            try {
-                fs.rmdirSync(dir + '/icon-test');
-            } catch (err) {
-            }
+            cleanupFiles[key].dirs.forEach(childDir => {
+                try {
+                    fs.rmdirSync(dir + '/' + childDir);
+                } catch (err) {
+                }
+            });
         }
 
         /**
@@ -64,18 +84,86 @@
             Exporter(items, dir).then(count => {
                 expect(count).to.be.equal(4);
 
-                ['key1', 'another-key', 'export3', 'icon-test/export4-icon'].forEach(key => {
-                    expect(exists(dir + '/' + key + '.svg')).to.be.equal(true);
+                ['key1', 'another-key', 'export3', 'icon-test-export4-icon'].forEach(file => {
+                    expect(exists(dir + '/' + file + '.svg')).to.be.equal(true, 'Missing file: ' + file);
                 });
 
                 expect(fs.readFileSync(dir + '/key1.svg', 'utf8')).to.be.equal(content1.replace(' enable-background="new 0 0 64 64"', ' width="64" height="64"'));
                 expect(fs.readFileSync(dir + '/another-key.svg', 'utf8')).to.be.equal(content2);
                 expect(fs.readFileSync(dir + '/export3.svg', 'utf8')).to.be.equal(content2);
-                expect(fs.readFileSync(dir + '/icon-test/export4-icon.svg', 'utf8')).to.be.equal(content2);
+                expect(fs.readFileSync(dir + '/icon-test-export4-icon.svg', 'utf8')).to.be.equal(content2);
 
-                cleanup();
+                cleanup('test1');
                 done();
             }).catch(err => {
+                cleanup('test1');
+                done(err ? err : 'exception');
+            });
+        });
+
+        it('exporting directory with prefix as sub-dir', done => {
+            let items = new Collection('test2');
+            items.add('icon1', new SVG(content1));
+            items.add('another-icon', new SVG(content2));
+
+            Exporter(items, dir, {
+                prefixAsDirectory: true
+            }).then(count => {
+                expect(count).to.be.equal(2);
+
+                ['test2/icon1', 'test2/another-icon'].forEach(file => {
+                    expect(exists(dir + '/' + file + '.svg')).to.be.equal(true, 'Missing file: ' + file);
+                });
+
+                cleanup('test2');
+                done();
+            }).catch(err => {
+                cleanup('test2');
+                done(err ? err : 'exception');
+            });
+        });
+
+        it('exporting directory with custom prefix', done => {
+            let items = new Collection('test3');
+            items.add('test3-icon', new SVG(content1));
+            items.add('icon-home', new SVG(content2));
+
+            Exporter(items, dir, {
+                prefixAsDirectory: true,
+                customPrefix: 'test3b'
+            }).then(count => {
+                expect(count).to.be.equal(2);
+
+                ['test3b/test3-icon', 'test3b/icon-home'].forEach(file => {
+                    expect(exists(dir + '/' + file + '.svg')).to.be.equal(true, 'Missing file: ' + file);
+                });
+
+                cleanup('test3');
+                done();
+            }).catch(err => {
+                cleanup('test3');
+                done(err ? err : 'exception');
+            });
+        });
+
+        it('exporting icons with complex prefix', done => {
+            let items = new Collection();
+            items.add('test4-icon', new SVG(content1));
+            items.add('custom4-prefix:icon-arrow-left', new SVG(content2));
+
+            Exporter(items, dir, {
+                prefixAsDirectory: true
+            }).then(count => {
+                expect(count).to.be.equal(2);
+
+                ['test4-icon', 'custom4-prefix/icon-arrow-left'].forEach(file => {
+                    expect(exists(dir + '/' + file + '.svg')).to.be.equal(true, 'Missing file: ' + file);
+                });
+
+                cleanup('test4');
+                done();
+            }).catch(err => {
+                cleanup('test4');
                 done(err ? err : 'exception');
             });
         });
