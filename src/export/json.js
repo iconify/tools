@@ -10,7 +10,7 @@
 "use strict";
 
 const fs = require('fs');
-const Optimize = require('simple-svg-cdn').optimize;
+const Optimize = require('../ssvg/optimize');
 
 const defaults = {
     // True if characters table added by importing fonts should be included in JSON output
@@ -42,6 +42,9 @@ const inlineAttributes = ['inlineHeight', 'inlineTop', 'verticalAlign'];
 /**
  * Export collection to json file
  *
+ * @param {Collection} collection Collection to export
+ * @param {string} [target] Target filename
+ * @param {object} [options] Options
  * @returns {Promise}
  */
 module.exports = (collection, target, options) => {
@@ -164,6 +167,13 @@ module.exports = (collection, target, options) => {
                 if (json.chars === void 0) {
                     json.chars = {};
                 }
+                if (options.includeAliases && svg.aliases) {
+                    svg.aliases.forEach(alias => {
+                        if (typeof alias === 'object' && alias.char !== void 0 && alias.name !== void 0) {
+                            json.chars[alias.char] = prefix(alias.name);
+                        }
+                    });
+                }
                 json.chars[svg.char] = prefix(key);
             });
         }
@@ -175,7 +185,7 @@ module.exports = (collection, target, options) => {
 
         // Export
         let content = options.minify ? JSON.stringify(json) : JSON.stringify(json, null, '\t');
-        if (target) {
+        if (typeof target === 'string') {
             try {
                 fs.writeFileSync(target, content, 'utf8');
             } catch (err) {

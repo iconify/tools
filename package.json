@@ -2,7 +2,7 @@
   "name": "simple-svg-tools",
   "description": "Collection of functions for cleaning up and parsing SVG images",
   "author": "Vjacheslav Trushkin",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "license": "MIT",
   "main": "src/modules.js",
   "scripts": {
@@ -17,7 +17,6 @@
     "babili": "0.0.12",
     "cheerio": "^0.22.0",
     "cyberalien-color": "*",
-    "simple-svg-cdn": "^0.2.1",
     "simple-tokenizer": "*",
     "svgo": "^1.0.1",
     "tmp": "0.0.31"
