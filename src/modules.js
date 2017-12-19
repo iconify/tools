@@ -42,6 +42,12 @@ let Modules = {
 
     // Misc
     Scale: require('./optimize/scale'),
+
+    // SimpleSVG
+    Scriptify: require('./ssvg/scriptify'),
+    SSVGOptimize: require('./ssvg/optimize'),
+    SSVGDeOptimize: require('./ssvg/deoptimize'),
+    SSVGPrefix: require('./ssvg/prefix'),
 };
 
 module.exports = Modules;
