@@ -48,6 +48,7 @@ let Modules = {
     SSVGOptimize: require('./ssvg/optimize'),
     SSVGDeOptimize: require('./ssvg/deoptimize'),
     SSVGPrefix: require('./ssvg/prefix'),
+    SSVGBundle: require('./ssvg/bundle')
 };
 
 module.exports = Modules;
