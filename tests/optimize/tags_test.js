@@ -134,6 +134,19 @@
             });
         });
 
+        it('root attributes', done => {
+            const code = '<svg id="i-search" viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="14" cy="14" r="12" /><path d="M23 23 L30 30"  /></svg>';
+            let svg = new SVG(code);
+
+            Tags(svg).then(() => {
+                let content = svg.toMinifiedString();
+                expect(content).to.be.equal('<svg viewBox="0 0 32 32" width="32" height="32" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"><g fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="14" cy="14" r="12"/><path d="M23 23 L30 30"/></g></svg>');
+                done();
+            }).catch(err => {
+                done(err ? err : 'exception');
+            });
+        });
+
         it('bad svg', done => {
             let content = '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 2048 2048"><foo bar="baz" /></svg>',
                 svg = new SVG(content);

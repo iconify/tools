@@ -422,6 +422,34 @@ module.exports = (svg, options) => {
             });
         }
 
+        // Check root attributes
+        let groupAttributes = {};
+
+        Object.keys(rootAttributes).forEach(attr => {
+            if (attr.toLowerCase().slice(0, 6) === 'stroke' || attr.toLowerCase().slice(0, 4) === 'fill') {
+                groupAttributes[attr] = rootAttributes[attr];
+                $root.removeAttr(attr);
+                return;
+            }
+            if (attr.toLowerCase().slice(0, 4) === 'aria') {
+                $root.removeAttr(attr);
+                return;
+            }
+            switch (attr.toLowerCase()) {
+                case 'id':
+                    $root.removeAttr(attr);
+                    break;
+            }
+        });
+
+        if (Object.keys(groupAttributes).length) {
+            let group = '<g';
+            Object.keys(groupAttributes).forEach(attr => {
+                group += ' ' + attr + '="' + groupAttributes[attr] + '"';
+            });
+            $root.html(group + '>' + $root.html() + '</g>');
+        }
+
         // Do stuff
         try {
             checkChildElements($root, {});
