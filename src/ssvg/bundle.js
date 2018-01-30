@@ -27,11 +27,18 @@ const defaults = {
     // Array of custom collections. key = prefix, value = location of json file
     customCollections: {},
 
+    // Array of custom icons. key = icon name with prefix, value = JSON data
+    // If icon with same name exists in collection, custom icon will be used instead
+    customIcons: {},
+
     // File to write output to, null if none. Optional because content will also be result of returned Promise
     target: null,
 
+    // Function to add before JSON data
+    collectionCode: 'SimpleSVG.addCollection',
+
     // Function to log errors
-    log: console.log
+    log: console.log,
 };
 
 /**
@@ -78,10 +85,39 @@ module.exports = (icons, options) => {
             }
         });
 
+        // Sort custom icons
+        let customIcons = {};
+        Object.keys(options.customIcons).forEach(key => {
+            let data = getPrefix(key);
+            if (customIcons[data.prefix] === void 0) {
+                customIcons[data.prefix] = {};
+            }
+            customIcons[data.prefix][data.icon] = options.customIcons[key];
+        });
+
+        // Save custom icons
+        let customResults = [];
+        Object.keys(customIcons).forEach(prefix => {
+            let json = {
+                prefix: prefix,
+                icons: {}
+            };
+            Object.keys(customIcons[prefix]).forEach(icon => {
+                json.icons[icon] = customIcons[data.prefix][data.icon];
+            });
+            customResults.push(options.collectionCode + '(' + JSON.stringify(json) + ');');
+        });
+
         // Sort icons by prefix
         let sorted = {};
         icons.forEach(icon => {
             let data = getPrefix(icon);
+
+            if (customIcons[data.prefix] !== void 0 && customIcons[data.prefix][data.icon]) {
+                // Overwritten by custom icon
+                return;
+            }
+
             if (sorted[data.prefix] === void 0) {
                 sorted[data.prefix] = {};
             }
@@ -126,10 +162,10 @@ module.exports = (icons, options) => {
         Promise.all(promises).then(results => {
             results = results.filter(item => item !== null).map(item => {
                 optimize(item);
-                return 'SimpleSVG.addCollection(' + JSON.stringify(item) + ');';
+                return options.collectionCode + '(' + JSON.stringify(item) + ');';
             });
 
-            let result = results.join('\n');
+            let result = customResults.concat(results).join('\n');
 
             if (options.target) {
                 try {

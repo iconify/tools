@@ -14,13 +14,32 @@ const getPrefix = require('./prefix');
 const Optimize = require('./optimize');
 
 /**
+ * Default options
+ *
+ * @type {object}
+ */
+const defaults = {
+    // Function to add before JSON data
+    collectionCode: 'SimpleSVG.addCollection',
+};
+
+/**
  * Convert SVG icons to JS script to move icons to separate file
  *
  * @param {object} icons List of icons. Key = icon name, value = SVG object or string
+ * @param {object} [options] Options
  * @returns {Promise}
  */
-module.exports = icons => {
+module.exports = (icons, options) => {
     return new Promise((fulfill, reject) => {
+        // Merge options
+        options = options === void 0 ? {} : options;
+        Object.keys(defaults).forEach(key => {
+            if (options[key] === void 0) {
+                options[key] = defaults[key];
+            }
+        });
+
         let results = {},
             rejected = false;
         Object.keys(icons).forEach(key => {
@@ -61,7 +80,7 @@ module.exports = icons => {
                     icons: results[prefix]
                 };
                 Optimize(data);
-                jsonp.push('SimpleSVG.addCollection(' + JSON.stringify(data) + ');');
+                jsonp.push(options.collectionCode + '(' + JSON.stringify(data) + ');');
             });
 
             fulfill(jsonp.join('\n'));
