@@ -16,7 +16,7 @@
     "cheerio": "^0.22.0",
     "cyberalien-color": "*",
     "simple-tokenizer": "*",
-    "svgo": "^1.0.1",
-    "tmp": "0.0.31"
+    "svgo": "^1.0.5",
+    "tmp": "0.0.33"
   }
 }
