@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "babel-core": "^6.24.1",
-    "babili": "0.0.12",
+    "babel-minify": "0.4.3",
     "cheerio": "^0.22.0",
     "cyberalien-color": "*",
     "simple-tokenizer": "*",
