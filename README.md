@@ -2,18 +2,16 @@
 
 This library is a collection of tools for importing, exporting and processing SVG images.
 
-
 ## Installation
 
 First install it by running this command:
 
     npm install simple-svg-tools --save
-    
+
 Then you can use it in your Node.js files:
 
     const tools = require('simple-svg-tools');
 
-    
 ## What tools are available?
 
 * Import SVG from various sources
@@ -25,7 +23,6 @@ Then you can use it in your Node.js files:
 * Find shapes, get lengths of shapes
 * Convert shapes to paths
 
-
 ## Core
 
 Core of tools are SVG and Collections classes. All tools create or manipulate instances of SVG or Collection classes.
@@ -33,9 +30,8 @@ Core of tools are SVG and Collections classes. All tools create or manipulate in
 All tools are based on Promises. If you are not familiar with JavaScript Promises, do read up. There are many tutorials
 available online. Make sure you are reading something from 2016 or newer, not tutorials for old implementations.
 
+### SVG class
 
-#### SVG class
- 
 SVG class represents one SVG image. It is a simple class, it does not manipulate anything, except for
 cleaning up junk code that could otherwise cause XML parser to fail.
 
@@ -44,7 +40,7 @@ You can find code in src/svg.js
 Creating SVG instance is easy:
 
     let svg = new tools.SVG('<svg ...></svg>');
-    
+
 That code will load SVG from string, extract image dimensions and clean up a bit, removing all junk image editors left
 behind.
 
@@ -52,7 +48,7 @@ SVG instance has multiple methods to get SVG as string:
 
 * svg.toString() - returns SVG as string
 * svg.toMinifiedString() - same as toString(), but without white spaces
-* svg.getBody() - returns body as string: child elements of <svg> element.
+* svg.getBody() - returns body as string: child elements of `<svg>` element.
 
 Then you can get dimensions:
 
@@ -66,8 +62,7 @@ Last method replaces content of SVG instance:
 
 You can see usage examples in unit tests: tests/core/svg_test.js
 
-
-#### Collection class
+### Collection class
 
 Collection is a set of SVG instances.
 
@@ -76,13 +71,13 @@ You can find code in src/collection.js
 To create Collection instance use this:
 
     let collection = new tools.Collection();
-    
+
 That will create empty collection.
 
 To clone another collection add collection as parameter to constructor:
 
     let newCollection = new tools.Collection(oldCollection);
-    
+
 To add/remove items there are several methods:
 
 * collection.add('icon-name', svg) - add new item to collection
@@ -120,23 +115,21 @@ How to use promiseAll():
         });
     }).then(results => {
         // Results of all promises as object. Key = icon name, value = result for that icon
-        
+
         Object.keys(results).forEach(name => {
             console.log('Result for icon ' + name + ':', results[name]);
         });
     }).catch(err => {
         console.log('Promise failed:', err);
     });
-    
-You can find examples throughout this library and unit tests. Everything in this library is based on promises.
 
+You can find examples throughout this library and unit tests. Everything in this library is based on promises.
 
 ## Importing
 
 There are several importers available. Some import one file, some import collections.
 
-
-#### Importing one SVG file
+### Importing one SVG file
 
     tools.ImportSVG('path-to-file.svg').then(svg => {
         // SVG was imported
@@ -145,9 +138,8 @@ There are several importers available. Some import one file, some import collect
     }).catch(err => {
         console.log(err);
     });
-    
-    
-#### Importing directory
+
+### Importing directory
 
     tools.ImportDir('directory').then(collection => {
         // Collection was imported
@@ -166,7 +158,6 @@ function:
 * ignoreFiles - array of files to ignore. Values are keywords, not file names.
 * contentCallback - callback to change content. Use it if content contains some weird stuff you need to remove before importing SVG. function(content). Function should return modified content as string.
 
-
     tools.ImportDir('directory', {
         'include-subdirs': false,
         ignoreFiles: ['bad-icon'],
@@ -179,8 +170,7 @@ function:
         console.log(err);
     });
 
-
-#### Importing WebIcon
+### Importing WebIcon
 
 WebIcon format is one big SVG image that contains multiple images.
 
@@ -192,8 +182,7 @@ WebIcon format is one big SVG image that contains multiple images.
         console.log(err);
     });
 
-
-#### Importing SVG font
+### Importing SVG font
 
 There are many popular glyph fonts, such as FontAwesome, that are not available as individual files. This importer will
 import SVG font as collection. It will not import keywords though for each icon - that is different for every
@@ -215,6 +204,7 @@ function:
 * fontChanges - changes for all characters
 
 Keys for characterChanges and fontChanges objects are similar:
+
 * height, width - custom height and width
 * left, bottom - custom left and bottom indexes. Why bottom instead of top? SVG fonts flip icons vertically, so height is counted from bottom
 
@@ -240,13 +230,11 @@ Example:
 
 If you are going to crop images after import, there is no point in worrying about fixing characters. Crop will fix it (unless font is really badly messed up).
 
-
 ## Exporting
 
 There are several exporters available that work with Collection or SVG instances:
 
-
-#### Exporting SVG
+### Exporting SVG
 
 Exports one SVG instance.
 
@@ -255,9 +243,8 @@ Exports one SVG instance.
     }).catch(err => {
         console.log(err);
     });
-    
-    
-#### Exporting collection to directory
+
+### Exporting collection to directory
 
     tools.ExportDir(collection, 'directory').then(count => {
         console.log('Exported ' + count + ' files');
@@ -265,8 +252,7 @@ Exports one SVG instance.
         console.log(err);
     });
 
-
-#### Exporting collection to JSON file
+### Exporting collection to JSON file
 
 This is main export function, it exports collection to JSON format used by SimpleSVG.
 
@@ -276,13 +262,11 @@ This is main export function, it exports collection to JSON format used by Simpl
         console.log(err);
     });
 
-
 ## Manipulating
 
 Most functions require SVG to be optimized. Therefore before doing anything else, you should optimize icon.
 
-
-#### SVGO optimization
+### SVGO optimization
 
 This module optimizes SVG images, removing any unnecessary code and cleaning up stuff. It does not merge shapes to avoid
 potential problems with images that rely on specific order of shapes.
@@ -293,7 +277,7 @@ potential problems with images that rely on specific order of shapes.
     }).catch(err => {
         console.log(err);
     });
-    
+
 Want to optimize entire collection? Use collection's promiseAll function:
 
     collection.promiseAll(svg => tools.SVGO(svg)).then(results => {
@@ -301,9 +285,8 @@ Want to optimize entire collection? Use collection's promiseAll function:
     }).catch(err => {
         console.log(err);
     });
-    
-    
-#### Cropping images
+
+### Cropping images
 
 This module crops SVG icons imported from fonts.
 
@@ -316,7 +299,7 @@ How to crop one image:
     }).catch(err => {
         console.log(err);
     });
-    
+
 How to crop entire collection:
 
     tools.Crop(colleciton).then(colleciton => {
@@ -335,8 +318,7 @@ that you might want to use later: _cropData. _cropData is an object with list of
 Node.js is not a browser, it does not support canvas and cannot render SVG images. Because of that calculations are
 done in PhantomJS and script requires PhantomJS to be installed.
 
-
-#### Tags validation
+### Tags validation
 
 This module checks elements used in SVG image, changes stylesheet into inline style and removes useless attributes.
 
@@ -355,13 +337,13 @@ Usage:
 
 This function is used for optimizing SVG images that contain a lot of junk code.
 
-
-#### Extracting palette from SVG
+### Extracting palette from SVG
 
 If you don't know if SVG is colored or monotone or maybe doesn't have any colors at all, this tool will find all colors
 used in SVG and return you array of used colors.
 
 Result is object with 2 properties:
+
 * colors - array of color strings
 * notices - array of error messages
 
@@ -376,7 +358,6 @@ Usage:
         console.log(err);
     });
 
-
 Using it with collection:
 
     collection.promiseAll(svg => tools.GetPalette(svg)).then(result => {
@@ -387,8 +368,7 @@ Using it with collection:
         console.log(err);
     });
 
-
-#### Replacing palette in SVG
+### Replacing palette in SVG
 
 This tool can be used to change colors in SVG or add colors to shapes that are missing color values.
 
@@ -444,7 +424,7 @@ Or you can combine all those attributes:
     }).catch(err => {
         console.log(err);
     });
-    
+
 Primary use of this tool in SimpleSVG is to replace all colors in monotone with "currentColor" keyword and add it to shapes that are missing color values:
 
     collection.promiseAll(svg => tools.ChangePalette(svg, {
@@ -456,9 +436,8 @@ Primary use of this tool in SimpleSVG is to replace all colors in monotone with 
         console.log(err);
     });
 
+## Indexing shapes and getting shape lengths
 
-## Indexing shapes and getting shape lengths 
- 
 If you are doing stroke animations, you might need to index shapes (add unique class names for them to apply different
 animations to different shapes) and get length of those shapes.
 
@@ -490,20 +469,17 @@ attributes or class name):
         console.log(err);
     });
 
-
 ## Sample
 
-In directory "sample" you will find a sample script that parses directory of SVG images. It optimizes images, exports
-them as optimized SVG images and as JSON collection. 
-
+In directory "sample" you will find a sample script that parses the directory of SVG images. It optimizes images, exports
+them as optimized SVG images and as JSON collection.
 
 ## More tools
 
 If you need any other tool to help with custom SVG icon sets development, suggest it by opening an issue on GitHub repository.
- 
 
 ## License
- 
+
 Library is released with MIT license.
 
 © 2016, 2017 Vjacheslav Trushkin
