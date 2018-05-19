@@ -471,8 +471,8 @@ attributes or class name):
 
 ## Sample
 
-In directory "sample" you will find a sample script that parses directory of SVG images. It optimizes images, exports
-them as optimized SVG images and as JSON collection. 
+In directory "sample" you will find a sample script that parses the directory of SVG images. It optimizes images, exports
+them as optimized SVG images and as JSON collection.
 
 ## More tools
 
