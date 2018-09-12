@@ -39,6 +39,8 @@ const positionAttributes = ['left', 'top'];
 
 const inlineAttributes = ['inlineHeight', 'inlineTop', 'verticalAlign'];
 
+const extraAttributes = ['deprecated', 'hidden', 'renamed'];
+
 /**
  * Export collection to json file
  *
@@ -73,8 +75,11 @@ module.exports = (collection, target, options) => {
         json.icons = {};
 
         // Export all files
-        collection.forEach((svg, key) => {
-            let iconKey = prefix(key);
+        let keys = collection.keys();
+        keys.sort((a, b) => a.localeCompare(b));
+        keys.forEach(key => {
+            let svg = collection.items[key],
+                iconKey = prefix(key);
 
             json.icons[iconKey] = {
                 body: svg.getBody().replace(/\s*\n\s*/g, ''),
@@ -104,10 +109,19 @@ module.exports = (collection, target, options) => {
                     }
                 });
             }
+
+            // Extra attributes
+            extraAttributes.forEach(attr => {
+                if (svg[attr] !== void 0) {
+                    json.icons[iconKey][attr] = svg[attr];
+                }
+            });
         });
 
         // Add aliases
         if (options.includeAliases) {
+            let aliases = {};
+
             collection.forEach((svg, key) => {
                 if (svg.aliases) {
                     let parentKey = prefix(key);
@@ -149,33 +163,48 @@ module.exports = (collection, target, options) => {
                         }
 
                         // Add alias
-                        if (json.aliases === void 0) {
-                            json.aliases = {};
-                        }
-                        json.aliases[name] = item;
+                        aliases[name] = item;
                     });
                 }
             });
+
+            // Sort keys
+            let keys = Object.keys(aliases);
+            if (keys.length) {
+                keys.sort((a, b) => a.localeCompare(b));
+                json.aliases = {};
+                keys.forEach(key => {
+                    json.aliases[key] = aliases[key];
+                });
+            }
         }
 
         // Add characters
         if (options.includeChars) {
+            let chars = {};
             collection.forEach((svg, key) => {
                 if (svg.char === void 0) {
                     return;
                 }
-                if (json.chars === void 0) {
-                    json.chars = {};
-                }
                 if (options.includeAliases && svg.aliases) {
                     svg.aliases.forEach(alias => {
                         if (typeof alias === 'object' && alias.char !== void 0 && alias.name !== void 0) {
-                            json.chars[alias.char] = prefix(alias.name);
+                            chars[alias.char] = prefix(alias.name);
                         }
                     });
                 }
-                json.chars[svg.char] = prefix(key);
+                chars[svg.char] = prefix(key);
             });
+
+            // Sort keys
+            let keys = Object.keys(chars);
+            if (keys.length) {
+                keys.sort((a, b) => a.localeCompare(b));
+                json.chars = {};
+                keys.forEach(key => {
+                    json.chars[key] = chars[key];
+                })
+            }
         }
 
         // Optimize common attributes by moving duplicate items to root

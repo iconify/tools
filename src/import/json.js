@@ -18,7 +18,7 @@ const defaults = {
     detectPrefix: false
 };
 
-const extraAttributes = ['inlineHeight', 'inlineTop', 'verticalAlign', 'rotate', 'vFlip', 'hFlip'];
+const extraAttributes = ['inlineHeight', 'inlineTop', 'verticalAlign', 'rotate', 'vFlip', 'hFlip', 'deprecated', 'hidden', 'renamed'];
 
 /**
  * Import icons from json file or string
