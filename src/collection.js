@@ -502,7 +502,9 @@ class Collection {
             }
 
             // Item was deleted
-            results.removed ++;
+            if (!oldSVG.hidden) {
+                results.removed ++;
+            }
             this.add(oldKey, new SVG(oldSVG.toString()));
 
             let newSVG = this.items[oldKey];
