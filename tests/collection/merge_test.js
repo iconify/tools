@@ -12,7 +12,8 @@
     describe('Testing merging SVG collections', () => {
         const content1 = fs.readFileSync(__dirname + '/../files/1f1e6.svg', 'utf8'),
             content2 = fs.readFileSync(__dirname + '/../files/1f6b2.svg', 'utf8'),
-            content3 = fs.readFileSync(__dirname + '/../files/elegant-chat.svg', 'utf8');
+            content3 = fs.readFileSync(__dirname + '/../files/elegant-chat.svg', 'utf8'),
+            content4 = fs.readFileSync(__dirname + '/../files/1f3eb.svg', 'utf8');
 
         it('simple merge with different icons', () => {
             let lib1 = new Collection('foo'),
@@ -224,6 +225,52 @@
                 hFlip: true
             }]);
             expect(lib1.items.file2.aliases === void 0).to.be.equal(true);
+        });
+
+        it('several icons with same alias and character', () => {
+            let lib1 = new Collection('foo'),
+                lib2 = new Collection('foo');
+
+            // Add few files
+            lib1.add('file1', new SVG(content1));
+            lib1.add('file2', new SVG(content2));
+            lib2.add('file3', new SVG(content3));
+            lib2.add('file4', new SVG(content4));
+
+            lib1.items.file2.aliases = ['file6', 'file7', {
+                name: 'file5',
+                rotate: 2
+            }];
+            lib1.items.file1.char = 'a';
+            lib1.items.file2.char = 'b';
+
+            lib2.items.file3.aliases = ['file5', {
+                name: 'file6',
+                hFlip: true
+            }, 'file2'];
+            lib2.items.file3.char = 'c';
+            lib2.items.file4.char = 'b';
+
+            let result = lib1.merge(lib2);
+            expect(result).to.be.eql({
+                identical: 0,
+                removed: 2,
+                renamed: 0,
+                updated: 0
+            });
+
+            expect(lib1.keys()).to.be.eql(['file1', 'file2', 'file3', 'file4']);
+
+            expect(lib1.items.file2.aliases).to.be.eql(['file6', 'file7', {
+                name: 'file5',
+                rotate: 2
+            }]);
+            expect(lib1.items.file3.aliases).to.be.eql([]);
+
+            expect(lib1.items.file1.char).to.be.equal('a');
+            expect(lib1.items.file2.char).to.be.equal('b');
+            expect(lib1.items.file3.char).to.be.equal('c');
+            expect(lib1.items.file4.char).to.be.equal(void 0);
         });
     });
 })();

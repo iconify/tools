@@ -27,6 +27,9 @@ const defaultMergeOptions = {
     // True if aliases should be checked
     checkAliases: true,
 
+    // True if characters should be checked
+    checkChars: true,
+
     // Function to hash SVG content to compare different icons
     // viewBox and body are merged because order of attributes in toString() might be different for identical icons
     hashCallback: (key, svg) => crypto.createHash('md5').update('<viewBox="' + svg.left + ' ' + svg.top + ' ' + svg.width + ' ' + svg.height + '"/>' + svg.getBody()).digest('hex')
@@ -391,7 +394,8 @@ class Collection {
         // Find all aliases and hash all icons
         let newAliases = {},
             newHashes = {},
-            oldHashes = {};
+            oldHashes = {},
+            newChars = {};
 
         newKeys.forEach(key => {
             let svg = this.items[key];
@@ -404,6 +408,9 @@ class Collection {
                         newAliases[alias.name] = key;
                     }
                 });
+            }
+            if (options.checkChars && svg.char !== void 0) {
+                newChars[svg.char] = key;
             }
         });
         oldKeys.forEach(key => {
@@ -423,6 +430,7 @@ class Collection {
                     results.identical ++;
                 }
 
+                // Check all aliases
                 if (options.checkAliases && oldSVG.aliases) {
                     oldSVG.aliases.forEach(alias => {
                         let name = typeof alias === 'string' ? alias : alias.name;
@@ -436,6 +444,16 @@ class Collection {
                         }
                     });
                 }
+
+                // Add character if its missing
+                if (options.checkChars && oldSVG.char !== void 0) {
+                    let char = oldSVG.char;
+                    if (newChars[char] === void 0 && this.items[oldKey].char === void 0) {
+                        this.items[oldKey].char = oldSVG.char;
+                        newChars[char] = oldKey;
+                    }
+                }
+
                 return;
             }
 
@@ -472,6 +490,14 @@ class Collection {
                         }
                     });
                 }
+
+                if (options.checkChars && oldSVG.char !== void 0) {
+                    let char = oldSVG.char;
+                    if (newChars[char] === void 0 && this.items[newKey].char === void 0) {
+                        this.items[newKey].char = oldSVG.char;
+                        newChars[char] = newKey;
+                    }
+                }
                 return;
             }
 
@@ -484,6 +510,7 @@ class Collection {
                 newSVG.hidden = true;
             }
             newHashes[oldKey] = oldHashes[oldKey];
+
             if (oldSVG.aliases) {
                 newSVG.aliases = [];
                 oldSVG.aliases.forEach(alias => {
@@ -494,6 +521,15 @@ class Collection {
                         newAliases[name] = oldKey;
                     }
                 });
+            }
+
+            // Add character if its missing
+            if (options.checkChars && oldSVG.char !== void 0) {
+                let char = oldSVG.char;
+                if (newChars[char] === void 0) {
+                    this.items[oldKey].char = oldSVG.char;
+                    newChars[char] = oldKey;
+                }
             }
         });
 
