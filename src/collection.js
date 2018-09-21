@@ -30,6 +30,9 @@ const defaultMergeOptions = {
     // True if characters should be checked
     checkChars: true,
 
+    // True if categories should be checked
+    checkCategories: true,
+
     // Function to hash SVG content to compare different icons
     // viewBox and body are merged because order of attributes in toString() might be different for identical icons
     hashCallback: (key, svg) => crypto.createHash('md5').update('<viewBox="' + svg.left + ' ' + svg.top + ' ' + svg.width + ' ' + svg.height + '"/>' + svg.getBody()).digest('hex')
@@ -454,6 +457,11 @@ class Collection {
                     }
                 }
 
+                // Add category if its missing
+                if (options.checkCategories && oldSVG.category !== void 0) {
+                    this.items[oldKey].category = oldSVG.category;
+                }
+
                 return;
             }
 
@@ -532,6 +540,11 @@ class Collection {
                     this.items[oldKey].char = oldSVG.char;
                     newChars[char] = oldKey;
                 }
+            }
+
+            // Add category if its missing
+            if (options.checkCategories && oldSVG.category !== void 0) {
+                this.items[oldKey].category = oldSVG.category;
             }
         });
 
