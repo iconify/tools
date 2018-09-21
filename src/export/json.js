@@ -19,6 +19,9 @@ const defaults = {
     // True if aliases should be included in JSON output
     includeAliases: true,
 
+    // True if categories should be included in JSON output
+    includeCategories: false,
+
     // True if inlineHeight, inlineTop and verticalAlign attributes should be included in output
     includeInline: true,
 
@@ -62,7 +65,8 @@ module.exports = (collection, target, options) => {
 
     // Return promise
     return new Promise((fulfill, reject) => {
-        let json = {};
+        let json = {},
+            categories = {};
 
         if (options.separatePrefix) {
             if (collection.prefix === '' && collection.findCommonPrefix(true) === '') {
@@ -116,6 +120,14 @@ module.exports = (collection, target, options) => {
                     json.icons[iconKey][attr] = svg[attr];
                 }
             });
+
+            // Category
+            if (options.includeCategories && svg.category !== void 0) {
+                if (categories[svg.category] === void 0) {
+                    categories[svg.category] = [];
+                }
+                categories[svg.category].push(iconKey);
+            }
         });
 
         // Add aliases
@@ -205,6 +217,11 @@ module.exports = (collection, target, options) => {
                     json.chars[key] = chars[key];
                 })
             }
+        }
+
+        // Add categories
+        if (options.includeCategories && Object.keys(categories).length) {
+            json.categories = categories;
         }
 
         // Optimize common attributes by moving duplicate items to root
