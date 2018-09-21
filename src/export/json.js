@@ -221,7 +221,13 @@ module.exports = (collection, target, options) => {
 
         // Add categories
         if (options.includeCategories && Object.keys(categories).length) {
-            json.categories = categories;
+            let categoryKeys = Object.keys(categories);
+            categoryKeys.sort((a, b) => a.localeCompare(b));
+            json.categories = {};
+            categoryKeys.forEach(key => {
+                categories[key].sort((a, b) => a.localeCompare(b));
+                json.categories[key] = categories[key];
+            });
         }
 
         // Optimize common attributes by moving duplicate items to root
