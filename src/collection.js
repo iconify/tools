@@ -9,7 +9,34 @@
 
 "use strict";
 
+const crypto = require('crypto');
 const SVG = require('./svg');
+
+/**
+ * Default values for merge() options
+ *
+ * @type {object}
+ */
+const defaultMergeOptions = {
+    // True if icons that exist in older collection, but missing in new collection should be marked as hidden
+    markAsHidden: true,
+
+    // True if missing icons should be copied. If false, missing icons will be added as aliases instead.
+    copyMissingIcons: false,
+
+    // True if aliases should be checked
+    checkAliases: true,
+
+    // True if characters should be checked
+    checkChars: true,
+
+    // True if categories should be checked
+    checkCategories: true,
+
+    // Function to hash SVG content to compare different icons
+    // viewBox and body are merged because order of attributes in toString() might be different for identical icons
+    hashCallback: (key, svg) => crypto.createHash('md5').update('<viewBox="' + svg.left + ' ' + svg.top + ' ' + svg.width + ' ' + svg.height + '"/>' + svg.getBody()).digest('hex')
+};
 
 /**
  * Class for storing collection of SVG objects
@@ -335,6 +362,193 @@ class Collection {
                 reject(err);
             });
         });
+    }
+
+    /**
+     * Merge collection with older version of same collection
+     *
+     * @param {Collection} oldCollection Collection to merge with
+     * @param {object} [options]
+     * @returns {object|string} String on error, object with statistics on success
+     */
+    merge(oldCollection, options) {
+        if (this.prefix !== oldCollection.prefix) {
+            return 'Cannot merge collections with different prefixes.';
+        }
+
+        let results = {
+            identical: 0, // number of icons that are identical
+            updated: 0, // number of icons that are different
+            removed: 0, // number of icons that were missing in this collection
+            renamed: 0 // number of icons that were renamed
+        };
+
+        // Check options
+        options = options ? options : {};
+        Object.keys(defaultMergeOptions).forEach(key => {
+            if (options[key] === void 0) {
+                options[key] = defaultMergeOptions[key];
+            }
+        });
+
+        let oldKeys = oldCollection.keys(),
+            newKeys = this.keys();
+
+        // Find all aliases and hash all icons
+        let newAliases = {},
+            newHashes = {},
+            oldHashes = {},
+            newChars = {};
+
+        newKeys.forEach(key => {
+            let svg = this.items[key];
+            newHashes[key] = options.hashCallback(key, svg, this);
+            if (options.checkAliases && svg.aliases !== void 0) {
+                svg.aliases.forEach(alias => {
+                    if (typeof alias === 'string') {
+                        newAliases[alias] = key;
+                    } else {
+                        newAliases[alias.name] = key;
+                    }
+                });
+            }
+            if (options.checkChars && svg.char !== void 0) {
+                newChars[svg.char] = key;
+            }
+        });
+        oldKeys.forEach(key => {
+            let svg = oldCollection.items[key];
+            oldHashes[key] = options.hashCallback(key, svg, oldCollection);
+        });
+
+        // Check each old file
+        oldKeys.forEach(oldKey => {
+            let oldSVG = oldCollection.items[oldKey];
+
+            if (newHashes[oldKey] !== void 0) {
+                // Item exists. Check aliases
+                if (newHashes[oldKey] !== oldHashes[oldKey]) {
+                    results.updated ++;
+                } else {
+                    results.identical ++;
+                }
+
+                // Check all aliases
+                if (options.checkAliases && oldSVG.aliases) {
+                    oldSVG.aliases.forEach(alias => {
+                        let name = typeof alias === 'string' ? alias : alias.name;
+                        if (newAliases[name] === void 0 && newHashes[name] === void 0) {
+                            // Missing alias
+                            if (this.items[oldKey].aliases === void 0) {
+                                this.items[oldKey].aliases = [];
+                            }
+                            this.items[oldKey].aliases.push(alias);
+                            newAliases[name] = oldKey;
+                        }
+                    });
+                }
+
+                // Add character if its missing
+                if (options.checkChars && oldSVG.char !== void 0) {
+                    let char = oldSVG.char;
+                    if (newChars[char] === void 0 && this.items[oldKey].char === void 0) {
+                        this.items[oldKey].char = oldSVG.char;
+                        newChars[char] = oldKey;
+                    }
+                }
+
+                // Add category if its missing
+                if (options.checkCategories && oldSVG.category !== void 0) {
+                    this.items[oldKey].category = oldSVG.category;
+                }
+
+                return;
+            }
+
+            if (newAliases[oldKey] !== void 0) {
+                // Item exists as other icon's alias
+                return;
+            }
+
+            // Item is missing. Check for matching item
+            let newKey = null,
+                oldHash = oldHashes[oldKey];
+            Object.keys(newHashes).forEach(key => {
+                if (newKey === null && newHashes[key] === oldHash) {
+                    newKey = key;
+                }
+            });
+
+            if (newKey !== null) {
+                // Item was renamed
+                results.renamed ++;
+                if (this.items[newKey].aliases === void 0) {
+                    this.items[newKey].aliases = [];
+                }
+                this.items[newKey].aliases.push(oldKey);
+                newAliases[oldKey] = newKey;
+
+                if (options.checkAliases && oldSVG.aliases) {
+                    oldSVG.aliases.forEach(alias => {
+                        let name = typeof alias === 'string' ? alias : alias.name;
+                        if (newAliases[name] === void 0 && newHashes[name] === void 0) {
+                            // Missing alias
+                            this.items[newKey].aliases.push(alias);
+                            newAliases[name] = newKey;
+                        }
+                    });
+                }
+
+                if (options.checkChars && oldSVG.char !== void 0) {
+                    let char = oldSVG.char;
+                    if (newChars[char] === void 0 && this.items[newKey].char === void 0) {
+                        this.items[newKey].char = oldSVG.char;
+                        newChars[char] = newKey;
+                    }
+                }
+                return;
+            }
+
+            // Item was deleted
+            if (!oldSVG.hidden) {
+                results.removed ++;
+            }
+            this.add(oldKey, new SVG(oldSVG.toString()));
+
+            let newSVG = this.items[oldKey];
+            if (options.markAsHidden) {
+                newSVG.hidden = true;
+            }
+            newHashes[oldKey] = oldHashes[oldKey];
+
+            if (oldSVG.aliases) {
+                newSVG.aliases = [];
+                oldSVG.aliases.forEach(alias => {
+                    let name = typeof alias === 'string' ? alias : alias.name;
+                    if (newAliases[name] === void 0 && newHashes[name] === void 0) {
+                        // Missing alias
+                        newSVG.aliases.push(typeof alias === 'string' ? alias : Object.assign({}, alias));
+                        newAliases[name] = oldKey;
+                    }
+                });
+            }
+
+            // Add character if its missing
+            if (options.checkChars && oldSVG.char !== void 0) {
+                let char = oldSVG.char;
+                if (newChars[char] === void 0) {
+                    this.items[oldKey].char = oldSVG.char;
+                    newChars[char] = oldKey;
+                }
+            }
+
+            // Add category if its missing
+            if (options.checkCategories && oldSVG.category !== void 0) {
+                this.items[oldKey].category = oldSVG.category;
+            }
+        });
+
+        return results;
     }
 }
 

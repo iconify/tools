@@ -31,7 +31,7 @@ class SVG {
 
         // Add missing viewBox attribute
         if ($root.attr('viewBox') === void 0) {
-            $root.attr('viewBox', '0 0 ' + this.width + ' ' + this.height);
+            $root.attr('viewBox', this.left + ' ' + this.top + ' ' + this.width + ' ' + this.height);
         }
 
         // Add missing width/height

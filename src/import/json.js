@@ -18,7 +18,7 @@ const defaults = {
     detectPrefix: false
 };
 
-const extraAttributes = ['inlineHeight', 'inlineTop', 'verticalAlign', 'rotate', 'vFlip', 'hFlip'];
+const extraAttributes = ['inlineHeight', 'inlineTop', 'verticalAlign', 'rotate', 'vFlip', 'hFlip', 'deprecated', 'hidden', 'renamed'];
 
 /**
  * Import icons from json file or string
@@ -60,6 +60,16 @@ module.exports = (source, options) => {
                     });
                 });
 
+                // Expand categories to object
+                let categories = {};
+                if (json.categories) {
+                    Object.keys(json.categories).forEach(cat => {
+                        json.categories[cat].forEach(icon => {
+                            categories[icon] = cat;
+                        });
+                    });
+                }
+
                 // Add items
                 Object.keys(json.icons).forEach(key => {
                     let data = json.icons[key];
@@ -100,6 +110,11 @@ module.exports = (source, options) => {
                                 svg.char = char;
                             }
                         });
+                    }
+
+                    // Check category
+                    if (categories[key] !== void 0) {
+                        svg.category = categories[key];
                     }
 
                     // Add to collection
