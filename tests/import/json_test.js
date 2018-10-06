@@ -127,5 +127,76 @@
                 done(err ? err : 'exception');
             });
         });
+
+        it('importing with categories', done => {
+            const filename = 'import-categories.json';
+
+            write(filename, {
+                icons: {
+                    icon1: {
+                        body: '<icon1 />'
+                    },
+                    'second-icon': {
+                        body: '<icon 2/>'
+                    },
+                    'third-icon': {
+                        body: '<icon 3/>'
+                    },
+                    'empty-icon': {
+                        body: '<icon-empty />'
+                    }
+                },
+                width: 64,
+                height: 48,
+                categories: {
+                    'First Category': [
+                        'icon1',
+                        'second-icon'
+                    ],
+                    'Another Category': [
+                        'third-icon'
+                    ]
+                },
+                subcategories: {
+                    test: [
+                        'third-icon'
+                    ],
+                    ignored: [
+                        'empty-icon'
+                    ],
+                    whatever: [
+                        'missing-icon',
+                        'icon1',
+                        'another-missing-icon'
+                    ]
+                }
+            });
+
+            Importer(dir + '/' + filename).then(collection => {
+                expect(collection.prefix).to.be.equal('');
+                expect(collection.keys()).to.be.eql(['icon1', 'second-icon', 'third-icon', 'empty-icon']);
+
+                let icon1 = collection.items.icon1;
+                let icon2 = collection.items['second-icon'];
+                let icon3 = collection.items['third-icon'];
+                let icon4 = collection.items['empty-icon'];
+
+                // Check categories
+                expect(icon1.category).to.be.equal('First Category');
+                expect(icon1.subcategory).to.be.equal('whatever');
+                expect(icon2.category).to.be.equal('First Category');
+                expect(icon2.subcategory).to.be.equal(void 0);
+                expect(icon3.category).to.be.equal('Another Category');
+                expect(icon3.subcategory).to.be.equal('test');
+                expect(icon4.category).to.be.equal(void 0);
+                expect(icon4.subcategory).to.be.equal(void 0);
+
+                cleanup(filename);
+                done();
+            }).catch(err => {
+                cleanup(filename);
+                done(err ? err : 'exception');
+            });
+        });
     });
 })();

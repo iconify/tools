@@ -460,6 +460,9 @@ class Collection {
                 // Add category if its missing
                 if (options.checkCategories && oldSVG.category !== void 0) {
                     this.items[oldKey].category = oldSVG.category;
+                    if (oldSVG.subcategory !== void 0) {
+                        this.items[oldKey].subcategory = oldSVG.subcategory;
+                    }
                 }
 
                 return;
@@ -545,6 +548,9 @@ class Collection {
             // Add category if its missing
             if (options.checkCategories && oldSVG.category !== void 0) {
                 this.items[oldKey].category = oldSVG.category;
+                if (oldSVG.subcategory !== void 0) {
+                    this.items[oldKey].subcategory = oldSVG.subcategory;
+                }
             }
         });
 

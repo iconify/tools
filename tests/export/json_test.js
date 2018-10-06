@@ -312,5 +312,87 @@
             });
         });
 
+        it('exporting with categories', done => {
+            let file = 'test-categories.json',
+                items = new Collection(),
+                expectedIcon1 = {
+                    body: icon1Body,
+                    width: 64,
+                    height: 64
+                },
+                expected = {
+                    icons: {
+                        icon1: expectedIcon1,
+                        'second-icon': {
+                            body: icon2Body,
+                            width: 8,
+                            height: 8
+                        },
+                        'third-icon': expectedIcon1,
+                        empty: expectedIcon1,
+                        'fifth-icon': expectedIcon1,
+                    },
+                    categories: {
+                        'First Category': [
+                            'icon1'
+                        ],
+                        'Second Category': [
+                            'second-icon',
+                            'third-icon'
+                        ]
+                    },
+                    subcategories: {
+                        'first subcat': [
+                            'icon1',
+                            'second-icon'
+                        ]
+                    }
+                };
+
+            let svg1 = new SVG(content1);
+            svg1.category = 'First Category';
+            svg1.subcategory = 'first subcat';
+            items.add('icon1', svg1);
+
+            let svg2 = new SVG(content2);
+            svg2.category = 'Second Category';
+            svg2.subcategory = 'first subcat'; // should be stored with 'icon1' even though categories are different
+            items.add('second-icon', svg2);
+
+            let svg3 = new SVG(content1);
+            svg3.category = 'Second Category';
+            items.add('third-icon', svg3);
+
+            let svg4 = new SVG(content1);
+            items.add('empty', svg4);
+
+            let svg5 = new SVG(content1);
+            svg5.subcategory = 'first subcat'; // subcategory is ignored when category is missing
+            items.add('fifth-icon', svg5);
+
+            // First export should include categories
+            Exporter(items, dir + '/' + file, {
+                includeCategories: true
+            }).then(json => {
+                expect(json).to.be.eql(expected);
+
+                // Second export should not include categories
+                Exporter(items, dir + '/' + file).then(json => {
+                    delete expected.categories;
+                    delete expected.subcategories;
+                    expect(json).to.be.eql(expected);
+
+                    cleanup(file);
+                    done();
+                }).catch(err => {
+                    cleanup(file);
+                    done(err ? err : 'exception');
+                });
+            }).catch(err => {
+                cleanup(file);
+                done(err ? err : 'exception');
+            });
+        });
+
     });
 })();

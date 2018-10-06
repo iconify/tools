@@ -60,16 +60,6 @@ module.exports = (source, options) => {
                     });
                 });
 
-                // Expand categories to object
-                let categories = {};
-                if (json.categories) {
-                    Object.keys(json.categories).forEach(cat => {
-                        json.categories[cat].forEach(icon => {
-                            categories[icon] = cat;
-                        });
-                    });
-                }
-
                 // Add items
                 Object.keys(json.icons).forEach(key => {
                     let data = json.icons[key];
@@ -103,23 +93,41 @@ module.exports = (source, options) => {
                         });
                     }
 
-                    // Check for characters map
-                    if (json.chars !== void 0) {
-                        Object.keys(json.chars).forEach(char => {
-                            if (json.chars[char] === key) {
-                                svg.char = char;
-                            }
-                        });
-                    }
-
-                    // Check category
-                    if (categories[key] !== void 0) {
-                        svg.category = categories[key];
-                    }
-
                     // Add to collection
                     collection.add(key, svg);
                 });
+
+                // Add characters
+                if (json.chars !== void 0) {
+                    Object.keys(json.chars).forEach(char => {
+                        let icon = json.chars[char];
+                        if (collection.items[icon] !== void 0) {
+                            collection.items[icon].char = char;
+                        }
+                    });
+                }
+
+                // Add categories
+                if (json.categories) {
+                    Object.keys(json.categories).forEach(cat => {
+                        json.categories[cat].forEach(icon => {
+                            if (collection.items[icon] !== void 0) {
+                                collection.items[icon].category = cat;
+                            }
+                        });
+                    });
+                }
+
+                if (json.subcategories) {
+                    Object.keys(json.subcategories).forEach(cat => {
+                        json.subcategories[cat].forEach(icon => {
+                            if (collection.items[icon] !== void 0 && collection.items[icon].category !== void 0) {
+                                collection.items[icon].subcategory = cat;
+                            }
+                        });
+                    });
+                }
+
             } catch (err) {
                 collection = null;
             }
