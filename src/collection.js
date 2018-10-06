@@ -433,6 +433,8 @@ class Collection {
                     results.identical ++;
                 }
 
+                let newSVG = this.items[oldKey];
+
                 // Check all aliases
                 if (options.checkAliases && oldSVG.aliases) {
                     oldSVG.aliases.forEach(alias => {
@@ -451,17 +453,17 @@ class Collection {
                 // Add character if its missing
                 if (options.checkChars && oldSVG.char !== void 0) {
                     let char = oldSVG.char;
-                    if (newChars[char] === void 0 && this.items[oldKey].char === void 0) {
-                        this.items[oldKey].char = oldSVG.char;
+                    if (newChars[char] === void 0 && newSVG.char === void 0) {
+                        newSVG.char = oldSVG.char;
                         newChars[char] = oldKey;
                     }
                 }
 
                 // Add category if its missing
-                if (options.checkCategories && oldSVG.category !== void 0) {
-                    this.items[oldKey].category = oldSVG.category;
+                if (options.checkCategories && oldSVG.category !== void 0 && newSVG.category === void 0) {
+                    newSVG.category = oldSVG.category;
                     if (oldSVG.subcategory !== void 0) {
-                        this.items[oldKey].subcategory = oldSVG.subcategory;
+                        newSVG.subcategory = oldSVG.subcategory;
                     }
                 }
 
