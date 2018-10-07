@@ -9,14 +9,14 @@
     "test": "mocha tests/**/*_test.js"
   },
   "devDependencies": {
-    "chai": "*",
-    "mocha": "*"
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0"
   },
   "dependencies": {
     "cheerio": "^0.22.0",
     "cyberalien-color": "*",
     "simple-tokenizer": "*",
-    "svgo": "^1.0.1",
+    "svgo": "^1.1.1",
     "tmp": "0.0.31"
   }
 }
