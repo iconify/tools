@@ -23,6 +23,6 @@
     "cyberalien-color": "*",
     "simple-tokenizer": "*",
     "svgo": "^1.1.1",
-    "tmp": "0.0.31"
+    "tmp": "^0.0.33"
   }
 }
