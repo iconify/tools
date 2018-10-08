@@ -18,5 +18,9 @@
     "simple-tokenizer": "*",
     "svgo": "^1.1.1",
     "tmp": "0.0.31"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simplesvg/tools.git"
   }
 }
