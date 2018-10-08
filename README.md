@@ -1,6 +1,8 @@
 # SimpleSVG Tools
 
-This library is a collection of tools for importing, exporting and processing SVG images.
+This library is a collection of tools for importing, exporting and processing SVG images. 
+
+Its main purpose is to convert icon sets and fonts to SimpleSVG json collections, but it can be used for other purposes.
 
 ## Installation
 
@@ -120,7 +122,7 @@ How to use promiseAll():
             console.log('Result for icon ' + name + ':', results[name]);
         });
     }).catch(err => {
-        console.log('Promise failed:', err);
+        console.error('Promise failed:', err);
     });
 
 You can find examples throughout this library and unit tests. Everything in this library is based on promises.
@@ -136,7 +138,7 @@ There are several importers available. Some import one file, some import collect
         // Variable 'svg' is instance of SVG class
         console.log(svg.toString());
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 ### Importing directory
@@ -146,7 +148,7 @@ There are several importers available. Some import one file, some import collect
         // Variable 'collection' is instance of Collection class
         console.log('Found icons: ' + collection.keys().join(', '));
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 There are several options available for importing directory, options should be passed as second parameter to ImportDir
@@ -167,7 +169,7 @@ function:
         // Variable 'collection' is instance of Collection class
         console.log('Found icons: ' + collection.keys().join(', '));
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 ### Importing WebIcon
@@ -179,7 +181,7 @@ WebIcon format is one big SVG image that contains multiple images.
         // Variable 'collection' is instance of Collection class
         console.log('Found icons: ' + collection.keys().join(', '));
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 ### Importing SVG font
@@ -193,7 +195,7 @@ collection and should be done separately.
         // Variable 'collection' is instance of Collection class
         console.log('Found icons: ' + collection.keys().join(', '));
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 There are several options available for importing SVG font, options should be passed as second parameter to ImportFont
@@ -225,7 +227,7 @@ Example:
         // Variable 'collection' is instance of Collection class
         console.log('Found icons: ' + collection.keys().join(', '));
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 If you are going to crop images after import, there is no point in worrying about fixing characters. Crop will fix it (unless font is really badly messed up).
@@ -241,7 +243,7 @@ Exports one SVG instance.
     tools.ExportSVG(svg, 'filename.svg').then(() => {
         console.log('Exported!');
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 ### Exporting collection to directory
@@ -249,7 +251,7 @@ Exports one SVG instance.
     tools.ExportDir(collection, 'directory').then(count => {
         console.log('Exported ' + count + ' files');
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 ### Exporting collection to JSON file
@@ -259,7 +261,7 @@ This is main export function, it exports collection to JSON format used by Simpl
     tools.ExportJSON(collection, 'filename.json').then(json => {
         console.log('Exported collection. JSON data: ' + JSON.stringify(json));
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 ## Manipulating
@@ -275,7 +277,7 @@ potential problems with images that rely on specific order of shapes.
         // svg variable is the same as in argument. Optimizer does not create new instance of SVG class
         console.log('Optimized SVG');
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 Want to optimize entire collection? Use collection's promiseAll function:
@@ -283,7 +285,7 @@ Want to optimize entire collection? Use collection's promiseAll function:
     collection.promiseAll(svg => tools.SVGO(svg)).then(results => {
         console.log('Optimized entire collection');
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 ### Cropping images
@@ -297,15 +299,15 @@ How to crop one image:
     tools.Crop(svg).then(svg => {
         console.log('Cropped SVG: ' + svg.toString());
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 How to crop entire collection:
 
-    tools.Crop(colleciton).then(colleciton => {
+    tools.Crop(collection).then(collection => {
         console.log('Cropped ' + svg.length() + ' images');
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 How does crop work? By drawing SVG on canvas and checking all 4 sides for transparent pixels. First it appends space on
@@ -332,7 +334,7 @@ Usage:
     tools.Tags(svg).then(svg => {
         console.log('Cleaned up tags in SVG: ' + svg.toString());
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 This function is used for optimizing SVG images that contain a lot of junk code.
@@ -352,10 +354,10 @@ Usage:
     tools.GetPalette(svg).then(result => {
         console.log('Colors used in SVG: ' + result.colors.join(', ');
         if (result.notices.length) {
-            result.notices.forEach(notice => console.log(notice));
+            result.notices.forEach(notice => console.warn(notice));
         }
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 Using it with collection:
@@ -365,7 +367,7 @@ Using it with collection:
             console.log('Colors found in image ' + key + ': ' + result[key].colors.join(', ');
         });
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 ### Replacing palette in SVG
@@ -380,7 +382,7 @@ This tool can be used to change colors in SVG or add colors to shapes that are m
         // Function changes existing SVG instance 
         console.log('Changed palette');
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 Code above will change #ff8000 to #0080ff and #123 to #234. 
@@ -390,7 +392,7 @@ But there are more options:
     tools.ChangePalette(svg, 'red').then(svg => {
         console.log('Added palette to elements without palette');
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 Code above will add color "red" to all elements that do not have color. It is identical to this:
@@ -400,7 +402,7 @@ Code above will add color "red" to all elements that do not have color. It is id
     }).then(svg => {
         console.log('Added palette to elements without palette');
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 You can also change all colors by using keyword "default":
@@ -410,7 +412,7 @@ You can also change all colors by using keyword "default":
     }).then(svg => {
         console.log('Changed all colors to green');
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 Or you can combine all those attributes:
@@ -422,7 +424,7 @@ Or you can combine all those attributes:
     }).then(svg => {
         console.log('Changed all colors to green, except for #123 that was changed to #234, added black color to elements without color');
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 Primary use of this tool in SimpleSVG is to replace all colors in monotone with "currentColor" keyword and add it to shapes that are missing color values:
@@ -433,7 +435,7 @@ Primary use of this tool in SimpleSVG is to replace all colors in monotone with 
     })).then(() => {
         console.log('Changed color to primaryColor');
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 ## Indexing shapes and getting shape lengths
@@ -451,7 +453,7 @@ tools.IndexShapes adds custom attribute to all shapes:
     }).then(shapesCount => {
         console.log('Added data-shape-index attribute to ' + shapesCount + ' shapes.');
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 You can also get those shapes by setting option returnNodes to true. Instead of number of shapes Promise will return
@@ -466,7 +468,7 @@ attributes or class name):
             console.log('Shape ' + result.$node.get(0).tagName + ' has length of ' + result.length);
         });
     }).catch(err => {
-        console.log(err);
+        console.error(err);
     });
 
 ## Sample
@@ -482,4 +484,4 @@ If you need any other tool to help with custom SVG icon sets development, sugges
 
 Library is released with MIT license.
 
-© 2016, 2017 Vjacheslav Trushkin
+© 2016 - 2018 Vjacheslav Trushkin
