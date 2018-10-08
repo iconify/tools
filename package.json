@@ -4,6 +4,12 @@
   "author": "Vjacheslav Trushkin",
   "version": "1.1.12",
   "license": "MIT",
+  "bugs": "https://github.com/simplesvg/tools/issues",
+  "homepage": "https://github.com/simplesvg/tools",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/simplesvg/tools.git"
+  },
   "main": "src/modules.js",
   "scripts": {
     "test": "mocha tests/**/*_test.js"
