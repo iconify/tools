@@ -13,7 +13,7 @@ const fs = require('fs');
 const path = require('path');
 const getPrefix = require('./prefix');
 const optimize = require('./optimize');
-const Collection = require('./collection');
+const Collection = require('./json');
 
 /**
  * Default options

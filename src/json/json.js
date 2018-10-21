@@ -23,8 +23,10 @@ const defaultAttributes = {
 
 /**
  * Class to represent one collection of icons
+ *
+ * This class is used instead of Collection class when there is no need to parse each icon
  */
-class Collection {
+class JSONCollection {
     /**
      * Constructor
      *
@@ -253,7 +255,7 @@ class Collection {
      */
     getIcon(name) {
         if (this.icons[name] !== void 0) {
-            return Collection._addMissingAttributes(this.icons[name]);
+            return Json._addMissingAttributes(this.icons[name]);
         }
 
         // Alias
@@ -269,7 +271,7 @@ class Collection {
             if (this.icons[parent] !== void 0) {
                 // Merge with icon
                 this._mergeIcon(this.icons[parent]);
-                return Collection._addMissingAttributes(this._result);
+                return Json._addMissingAttributes(this._result);
             }
 
             if (this.aliases[parent] === void 0) {
@@ -283,4 +285,4 @@ class Collection {
     }
 }
 
-module.exports = Collection;
+module.exports = JSONCollection;

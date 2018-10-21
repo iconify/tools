@@ -31,7 +31,7 @@ const tools = require('@iconify/tools');
 
 ## Core
 
-Core of tools are SVG and Collections classes. All tools create or manipulate instances of SVG or Collection classes.
+Core of tools are SVG and Collections classes. All tools create or manipulate instances of SVG or Json classes.
 
 All tools are based on Promises. If you are not familiar with JavaScript Promises, do read up. There are many tutorials
 available online. Make sure you are reading something from 2016 or newer, not tutorials for old implementations.
@@ -70,16 +70,16 @@ Last method replaces content of SVG instance:
 
 You can see usage examples in unit tests: tests/core/svg_test.js
 
-### Collection class
+### Json class
 
-Collection is a set of SVG instances.
+Json is a set of SVG instances.
 
-You can find code in src/collection.js
+You can find code in src/json.js
 
-To create Collection instance use this:
+To create Json instance use this:
 
 ```
-let collection = new tools.Collection();
+let collection = new tools.Json();
 ```
 
 That will create empty collection.
@@ -87,7 +87,7 @@ That will create empty collection.
 To clone another collection add collection as parameter to constructor:
 
 ```
-let newCollection = new tools.Collection(oldCollection);
+let newCollection = new tools.Json(oldCollection);
 ```
 
 To add/remove items there are several methods:
@@ -161,8 +161,8 @@ tools.ImportSVG('path-to-file.svg').then(svg => {
 
 ```
 tools.ImportDir('directory').then(collection => {
-    // Collection was imported
-    // Variable 'collection' is instance of Collection class
+    // Json was imported
+    // Variable 'collection' is instance of Json class
     console.log('Found icons: ' + collection.keys().join(', '));
 }).catch(err => {
     console.error(err);
@@ -184,8 +184,8 @@ tools.ImportDir('directory', {
     ignoreFiles: ['bad-icon'],
     keywordCallback: (file, filename) => 'prefix-' + file
 }).then(collection => {
-    // Collection was imported
-    // Variable 'collection' is instance of Collection class
+    // Json was imported
+    // Variable 'collection' is instance of Json class
     console.log('Found icons: ' + collection.keys().join(', '));
 }).catch(err => {
     console.error(err);
@@ -198,8 +198,8 @@ WebIcon format is one big SVG image that contains multiple images.
 
 ```
 tools.ImportWebIcon('path-to-file.svg').then(collection => {
-    // Collection was imported
-    // Variable 'collection' is instance of Collection class
+    // Json was imported
+    // Variable 'collection' is instance of Json class
     console.log('Found icons: ' + collection.keys().join(', '));
 }).catch(err => {
     console.error(err);
@@ -214,8 +214,8 @@ collection and should be done separately.
 
 ```
 tools.ImportFont('path-to-file.svg').then(collection => {
-    // Collection was imported
-    // Variable 'collection' is instance of Collection class
+    // Json was imported
+    // Variable 'collection' is instance of Json class
     console.log('Found icons: ' + collection.keys().join(', '));
 }).catch(err => {
     console.error(err);
@@ -248,8 +248,8 @@ tools.ImportFont('path-to-file.svg', {
         f0fc: { left: 64, width: 1600 },
     }
 }).then(collection => {
-    // Collection was imported
-    // Variable 'collection' is instance of Collection class
+    // Json was imported
+    // Variable 'collection' is instance of Json class
     console.log('Found icons: ' + collection.keys().join(', '));
 }).catch(err => {
     console.error(err);
@@ -260,7 +260,7 @@ If you are going to crop images after import, there is no point in worrying abou
 
 ## Exporting
 
-There are several exporters available that work with Collection or SVG instances:
+There are several exporters available that work with Json or SVG instances:
 
 ### Exporting SVG
 
@@ -354,7 +354,7 @@ How does crop work? By drawing SVG on canvas and checking all 4 sides for transp
 all sides of SVG, until all sides have nothing but empty pixels. Then it slowly cuts all sides until it reaches pixels
 that aren't empty. Process doesn't take long because script checks pixels in bulk by zooming in.
 
-When it crops SVG or Collection instance (like in examples above), each SVG instance receives additional properties
+When it crops SVG or Json instance (like in examples above), each SVG instance receives additional properties
 that you might want to use later: _cropData. _cropData is an object with list of cropped edges: left, top, right, bottom.
 
 Node.js is not a browser, it does not support canvas and cannot render SVG images. Because of that calculations are
