@@ -31,7 +31,7 @@ const tools = require('@iconify/tools');
 
 ## Core
 
-Core of tools are SVG and Collections classes. All tools create or manipulate instances of SVG or Json classes.
+Core of tools are SVG and Collections classes. All tools create or manipulate instances of SVG or Collection classes.
 
 All tools are based on Promises. If you are not familiar with JavaScript Promises, do read up. There are many tutorials
 available online. Make sure you are reading something from 2016 or newer, not tutorials for old implementations.
