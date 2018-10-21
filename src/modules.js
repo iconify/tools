@@ -1,5 +1,5 @@
 /**
- * This file is part of the simple-svg-tools package.
+ * This file is part of the @json/tools package.
  *
  * (c) Vjacheslav Trushkin <cyberalien@gmail.com>
  *
@@ -43,12 +43,12 @@ let Modules = {
     // Misc
     Scale: require('./optimize/scale'),
 
-    // SimpleSVG
-    Scriptify: require('./ssvg/scriptify'),
-    SSVGOptimize: require('./ssvg/optimize'),
-    SSVGDeOptimize: require('./ssvg/deoptimize'),
-    SSVGPrefix: require('./ssvg/prefix'),
-    SSVGBundle: require('./ssvg/bundle')
+    // Iconify.design specific modules
+    Scriptify: require('./json/scriptify'),
+    SSVGOptimize: require('./json/optimize'),
+    SSVGDeOptimize: require('./json/deoptimize'),
+    SSVGPrefix: require('./json/prefix'),
+    SSVGBundle: require('./json/bundle')
 };
 
 module.exports = Modules;

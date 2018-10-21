@@ -1,11 +1,10 @@
 /**
- * This file is part of the simple-svg package.
+ * This file is part of the @json/tools package.
  *
  * (c) Vjacheslav Trushkin <cyberalien@gmail.com>
  *
- * For the full copyright and license information, please view the license.txt
+ * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- * @license MIT
  */
 
 "use strict";

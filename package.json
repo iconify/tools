@@ -1,14 +1,14 @@
 {
-  "name": "simple-svg-tools",
-  "description": "Collection of functions for cleaning up and parsing SVG images",
+  "name": "@iconify/tools",
+  "description": "Collection of functions for cleaning up and parsing SVG for Iconify.design project",
   "author": "Vjacheslav Trushkin",
-  "version": "1.1.12",
+  "version": "1.1.13",
   "license": "MIT",
-  "bugs": "https://github.com/simplesvg/tools/issues",
-  "homepage": "https://github.com/simplesvg/tools",
+  "bugs": "https://github.com/iconify-design/tools/issues",
+  "homepage": "https://github.com/iconify-design/tools",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/simplesvg/tools.git"
+    "url": "git+ssh://git@github.com/iconify-design/tools.git"
   },
   "main": "src/modules.js",
   "scripts": {

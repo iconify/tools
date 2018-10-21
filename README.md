@@ -1,21 +1,21 @@
-# SimpleSVG Tools
+# Iconify.design Tools
 
 This library is a collection of tools for importing, exporting and processing SVG images. 
 
-Its main purpose is to convert icon sets and fonts to SimpleSVG json collections, but it can be used for other purposes.
+Its main purpose is to convert icon sets and fonts to Iconify JSON collections, but it can be used for other purposes.
 
 ## Installation
 
 First install it by running this command:
 
 ```
-npm install simple-svg-tools --save
+npm install @iconify/tools --save
 ```
 
 Then you can use it in your Node.js files:
 
 ```
-const tools = require('simple-svg-tools');
+const tools = require('@iconify/tools');
 ```
 
 ## What tools are available?
@@ -286,7 +286,7 @@ tools.ExportDir(collection, 'directory').then(count => {
 
 ### Exporting collection to JSON file
 
-This is main export function, it exports collection to JSON format used by SimpleSVG.
+This is main export function, it exports collection to JSON format used by Iconify.
 
 ```
 tools.ExportJSON(collection, 'filename.json').then(json => {
@@ -483,7 +483,7 @@ tools.ChangePalette(svg, {
 });
 ```
 
-Primary use of this tool in SimpleSVG is to replace all colors in monotone with "currentColor" keyword and add it to shapes that are missing color values:
+Primary use of this tool in Iconify.design is to replace all colors in monotone with "currentColor" keyword and add it to shapes that are missing color values:
 
 ```
 collection.promiseAll(svg => tools.ChangePalette(svg, {

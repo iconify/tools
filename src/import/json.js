@@ -1,5 +1,5 @@
 /**
- * This file is part of the simple-svg-tools package.
+ * This file is part of the @json/tools package.
  *
  * (c) Vjacheslav Trushkin <cyberalien@gmail.com>
  *

@@ -1,7 +1,7 @@
 "use strict";
 
 (() => {
-    const Scriptify = require('../../src/ssvg/scriptify');
+    const Scriptify = require('../../src/json/scriptify');
 
     const fs = require('fs'),
         chai = require('chai'),

@@ -1,8 +1,8 @@
 "use strict";
 
 (() => {
-    const Optimize = require('../../src/ssvg/optimize'),
-        DeOptimize = require('../../src/ssvg/deoptimize');
+    const Optimize = require('../../src/json/optimize'),
+        DeOptimize = require('../../src/json/deoptimize');
 
     const fs = require('fs'),
         chai = require('chai'),

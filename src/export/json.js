@@ -1,5 +1,5 @@
 /**
- * This file is part of the simple-svg-tools package.
+ * This file is part of the @json/tools package.
  *
  * (c) Vjacheslav Trushkin <cyberalien@gmail.com>
  *
@@ -10,7 +10,7 @@
 "use strict";
 
 const fs = require('fs');
-const Optimize = require('../ssvg/optimize');
+const Optimize = require('../json/optimize');
 
 const defaults = {
     // True if characters table added by importing fonts should be included in JSON output
