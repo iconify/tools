@@ -45,10 +45,10 @@ let Modules = {
 
     // Iconify.design specific modules
     Scriptify: require('./json/scriptify'),
-    SSVGOptimize: require('./json/optimize'),
-    SSVGDeOptimize: require('./json/deoptimize'),
-    SSVGPrefix: require('./json/prefix'),
-    SSVGBundle: require('./json/bundle')
+    JSONOptimize: require('./json/optimize'),
+    JSONDeOptimize: require('./json/deoptimize'),
+    JSONPrefix: require('./json/prefix'),
+    JSONBundle: require('./json/bundle')
 };
 
 module.exports = Modules;

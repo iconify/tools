@@ -35,7 +35,7 @@ const defaults = {
     target: null,
 
     // Function to add before JSON data
-    collectionCode: 'SimpleSVG.addCollection',
+    collectionCode: 'Iconify.addCollection',
 
     // Function to log errors
     log: console.log,
@@ -60,7 +60,7 @@ function locateFile(prefix, options) {
 
     if (options.defaultCollections) {
         if (defaultIcons === null) {
-            defaultIcons = require('@json/json');
+            defaultIcons = require('@iconify/json');
         }
         return defaultIcons.locate(prefix);
     }
