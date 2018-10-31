@@ -41,14 +41,7 @@ let Modules = {
     ConvertShapes: require('./shapes/convert'),
 
     // Misc
-    Scale: require('./optimize/scale'),
-
-    // Iconify.design specific modules
-    Scriptify: require('./json/scriptify'),
-    JSONOptimize: require('./json/optimize'),
-    JSONDeOptimize: require('./json/deoptimize'),
-    JSONPrefix: require('./json/prefix'),
-    JSONBundle: require('./json/bundle')
+    Scale: require('./optimize/scale')
 };
 
 module.exports = Modules;

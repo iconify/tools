@@ -10,7 +10,7 @@
 "use strict";
 
 const fs = require('fs');
-const Optimize = require('../json/optimize');
+const optimize = require('@iconify/json-tools').Collection.optimize;
 
 const defaults = {
     // True if characters table added by importing fonts should be included in JSON output
@@ -253,7 +253,7 @@ module.exports = (collection, target, options) => {
 
         // Optimize common attributes by moving duplicate items to root
         if (options.optimize) {
-            Optimize(json);
+            optimize(json);
         }
 
         // Export

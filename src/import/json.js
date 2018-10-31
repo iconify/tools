@@ -12,6 +12,7 @@
 const fs = require('fs');
 const SVG = require('../svg');
 const Collection = require('../collection');
+const deOptimize = require('@iconify/json-tools').Collection.deOptimize;
 
 const defaults = {
     reject: true,
@@ -47,18 +48,7 @@ module.exports = (source, options) => {
 
             try {
                 // Expand all keys
-                Object.keys(json).forEach(attr => {
-                    let value = json[attr];
-                    if (typeof value === 'object' || attr === 'prefix') {
-                        return;
-                    }
-
-                    Object.keys(json.icons).forEach(key => {
-                        if (json.icons[key][attr] === void 0) {
-                            json.icons[key][attr] = value;
-                        }
-                    });
-                });
+                deOptimize(json);
 
                 // Add items
                 Object.keys(json.icons).forEach(key => {
