@@ -110,7 +110,8 @@ There are other helpful functions:
 Then there are main functions that are used to manipulate SVG instances in collection:
 
 * collection.forEach(callback) - iterates through all SVG instances. Callback function arguments: (svg, name), where svg is SVG instance, name is icon name.
-* collection.promiseAll(promise) - runs promise on all items in collection.
+* collection.promiseAll(promise) - runs promise on all items in collection. It is similar to Promise.all()
+* collection.promiseEach(promise, stopOnError) - runs promise on all items in collection, but only one at a time.
 
 How to use forEach():
 
@@ -120,7 +121,7 @@ collection.forEach((svg, name) {
 });
 ```
 
-How to use promiseAll():
+How to use promiseAll() and promiseEach():
 
 ```
 collection.promiseAll((svg, name) => {
@@ -138,6 +139,10 @@ collection.promiseAll((svg, name) => {
     console.error('Promise failed:', err);
 });
 ```
+
+promiseAll() and promiseEach() are almost identical. First argument is callback that returns Promise for one icon.
+
+The only difference is promiseAll() runs all promises at the same time using Promise.all() function, promiseEach() runs promises one after another. It is better to use promiseEach() when dealing with large collections.
 
 You can find examples throughout this library and unit tests. Everything in this library is based on promises.
 
