@@ -66,8 +66,7 @@ module.exports = (collection, target, options) => {
     // Return promise
     return new Promise((fulfill, reject) => {
         let json = {},
-            categories = {},
-            subcategories = {};
+            categories = {};
 
         if (options.separatePrefix) {
             if (collection.prefix === '' && collection.findCommonPrefix(true) === '') {
@@ -124,16 +123,13 @@ module.exports = (collection, target, options) => {
 
             // Category
             if (options.includeCategories && svg.category !== void 0) {
-                if (categories[svg.category] === void 0) {
-                    categories[svg.category] = [];
-                }
-                categories[svg.category].push(iconKey);
-                if (svg.subcategory !== void 0) {
-                    if (subcategories[svg.subcategory] === void 0) {
-                        subcategories[svg.subcategory] = [];
+                let list = typeof svg.category === 'string' ? [svg.category] : svg.category;
+                list.forEach(cat => {
+                    if (categories[cat] === void 0) {
+                        categories[cat] = [];
                     }
-                    subcategories[svg.subcategory].push(iconKey);
-                }
+                    categories[cat].push(iconKey);
+                });
             }
         });
 
@@ -231,23 +227,12 @@ module.exports = (collection, target, options) => {
             let categoryKeys = Object.keys(categories);
 
             if (categoryKeys.length) {
-                let subcategoryKeys = Object.keys(subcategories);
-
                 categoryKeys.sort((a, b) => a.localeCompare(b));
                 json.categories = {};
                 categoryKeys.forEach(key => {
                     categories[key].sort((a, b) => a.localeCompare(b));
                     json.categories[key] = categories[key];
                 });
-
-                if (subcategoryKeys.length) {
-                    json.subcategories = {};
-                    subcategoryKeys.sort((a, b) => a.localeCompare(b));
-                    subcategoryKeys.forEach(key => {
-                        subcategories[key].sort((a, b) => a.localeCompare(b));
-                        json.subcategories[key] = subcategories[key];
-                    });
-                }
             }
         }
 

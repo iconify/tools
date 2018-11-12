@@ -144,6 +144,9 @@
                     },
                     'empty-icon': {
                         body: '<icon-empty />'
+                    },
+                    'fifth-icon': {
+                        body: '<icon 5/>'
                     }
                 },
                 width: 64,
@@ -151,45 +154,34 @@
                 categories: {
                     'First Category': [
                         'icon1',
-                        'second-icon'
+                        'second-icon',
+                        'fifth-icon'
                     ],
                     'Another Category': [
                         'third-icon'
-                    ]
-                },
-                subcategories: {
-                    test: [
-                        'third-icon'
                     ],
-                    ignored: [
-                        'empty-icon'
-                    ],
-                    whatever: [
-                        'missing-icon',
-                        'icon1',
-                        'another-missing-icon'
+                    'Third Category': [
+                        'fifth-icon'
                     ]
                 }
             });
 
             Importer(dir + '/' + filename).then(collection => {
                 expect(collection.prefix).to.be.equal('');
-                expect(collection.keys()).to.be.eql(['icon1', 'second-icon', 'third-icon', 'empty-icon']);
+                expect(collection.keys()).to.be.eql(['icon1', 'second-icon', 'third-icon', 'empty-icon', 'fifth-icon']);
 
                 let icon1 = collection.items.icon1;
                 let icon2 = collection.items['second-icon'];
                 let icon3 = collection.items['third-icon'];
                 let icon4 = collection.items['empty-icon'];
+                let icon5 = collection.items['fifth-icon'];
 
                 // Check categories
-                expect(icon1.category).to.be.equal('First Category');
-                expect(icon1.subcategory).to.be.equal('whatever');
-                expect(icon2.category).to.be.equal('First Category');
-                expect(icon2.subcategory).to.be.equal(void 0);
-                expect(icon3.category).to.be.equal('Another Category');
-                expect(icon3.subcategory).to.be.equal('test');
+                expect(icon1.category).to.be.eql(['First Category']);
+                expect(icon2.category).to.be.eql(['First Category']);
+                expect(icon3.category).to.be.eql(['Another Category']);
                 expect(icon4.category).to.be.equal(void 0);
-                expect(icon4.subcategory).to.be.equal(void 0);
+                expect(icon5.category).to.be.eql(['First Category', 'Third Category']);
 
                 cleanup(filename);
                 done();

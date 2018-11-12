@@ -461,10 +461,7 @@ class Collection {
 
                 // Add category if its missing
                 if (options.checkCategories && oldSVG.category !== void 0 && newSVG.category === void 0) {
-                    newSVG.category = oldSVG.category;
-                    if (oldSVG.subcategory !== void 0) {
-                        newSVG.subcategory = oldSVG.subcategory;
-                    }
+                    newSVG.category = typeof oldSVG.category === 'string' ? [oldSVG.category] : oldSVG.category.slice(0);
                 }
 
                 return;
@@ -549,10 +546,7 @@ class Collection {
 
             // Add category if its missing
             if (options.checkCategories && oldSVG.category !== void 0) {
-                this.items[oldKey].category = oldSVG.category;
-                if (oldSVG.subcategory !== void 0) {
-                    this.items[oldKey].subcategory = oldSVG.subcategory;
-                }
+                this.items[oldKey].category = typeof oldSVG.category === 'string' ? [oldSVG.category] : oldSVG.category.slice(0);
             }
         });
 

@@ -102,17 +102,11 @@ module.exports = (source, options) => {
                     Object.keys(json.categories).forEach(cat => {
                         json.categories[cat].forEach(icon => {
                             if (collection.items[icon] !== void 0) {
-                                collection.items[icon].category = cat;
-                            }
-                        });
-                    });
-                }
-
-                if (json.subcategories) {
-                    Object.keys(json.subcategories).forEach(cat => {
-                        json.subcategories[cat].forEach(icon => {
-                            if (collection.items[icon] !== void 0 && collection.items[icon].category !== void 0) {
-                                collection.items[icon].subcategory = cat;
+                                if (collection.items[icon].category === void 0) {
+                                    collection.items[icon].category = [cat];
+                                } else {
+                                    collection.items[icon].category.push(cat);
+                                }
                             }
                         });
                     });
