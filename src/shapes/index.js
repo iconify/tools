@@ -37,7 +37,7 @@ const defaults = {
  */
 module.exports = (svg, options) => {
     return new Promise((fulfill, reject) => {
-        options = options === void 0 ? {} : options;
+        options = options === void 0 ? Object.create(null) : options;
         changeOptions(options, defaults);
 
         let $root = svg.$svg(':root'),
@@ -57,7 +57,7 @@ module.exports = (svg, options) => {
                 // Merge fill/stroke
                 let childStyle;
                 if (options.checkFillStroke) {
-                    childStyle = {};
+                    childStyle = Object.create(null);
                     ['fill', 'stroke'].forEach(attr => {
                         if (child.attribs && child.attribs[attr] !== void 0) {
                             let value = child.attribs[attr].toLowerCase();

@@ -123,7 +123,7 @@ module.exports = (svg, palette) => {
                             let props = child.attribs;
 
                             // Mix values with parent values
-                            attributes = Object.assign({}, params);
+                            attributes = Object.assign(Object.create(null), params);
 
                             // Check for fill and stroke
                             ['fill', 'stroke'].forEach(attr => {

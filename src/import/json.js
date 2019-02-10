@@ -25,7 +25,7 @@ const extraAttributes = ['inlineHeight', 'inlineTop', 'verticalAlign', 'rotate',
  * Import icons from json file or string
  */
 module.exports = (source, options) => {
-    options = options === void 0 ? {} : options;
+    options = options === void 0 ? Object.create(null) : options;
     Object.keys(defaults).forEach(key => {
         if (options[key] === void 0) {
             options[key] = defaults[key];
@@ -75,7 +75,7 @@ module.exports = (source, options) => {
                                 if (svg.aliases === void 0) {
                                     svg.aliases = [];
                                 }
-                                let alias = Object.assign({}, json.aliases[aliasKey]);
+                                let alias = Object.assign(Object.create(null), json.aliases[aliasKey]);
                                 delete alias.parent;
                                 alias.name = aliasKey;
                                 svg.aliases.push(alias);

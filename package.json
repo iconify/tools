@@ -2,7 +2,7 @@
   "name": "@iconify/tools",
   "description": "Collection of functions for cleaning up and parsing SVG for Iconify.design project",
   "author": "Vjacheslav Trushkin",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "license": "MIT",
   "bugs": "https://github.com/iconify-design/tools/issues",
   "homepage": "https://github.com/iconify-design/tools",
@@ -19,7 +19,7 @@
     "mocha": "^5.2.0"
   },
   "dependencies": {
-    "@iconify/json-tools": "^1.0.0",
+    "@iconify/json-tools": "^1.0.5",
     "cheerio": "^0.22.0",
     "cyberalien-color": "*",
     "simple-tokenizer": "*",

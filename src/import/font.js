@@ -31,7 +31,7 @@ const defaults = {
     fontChanges: false,
 
     // List of changes for each character: [hex] = {height: 1000}
-    characterChanges: {},
+    characterChanges: Object.create(null),
 
     // Crop glyphs
     crop: false,
@@ -103,7 +103,7 @@ function applyOptions(data, options) {
  * @return {Promise}
  */
 module.exports = (source, options) => {
-    options = options === void 0 ? {} : options;
+    options = options === void 0 ? Object.create(null) : options;
     Object.keys(defaults).forEach(key => {
         if (options[key] === void 0) {
             options[key] = defaults[key];
@@ -139,7 +139,7 @@ module.exports = (source, options) => {
             }
 
             // Crop queue
-            let cropQueue = {};
+            let cropQueue = Object.create(null);
 
             // Find fonts
             let glyphs = new Collection(options.prefix);
@@ -310,7 +310,7 @@ module.exports = (source, options) => {
                 let cropOptions = Object.assign({
                     defaultRightLimit: false,
                     defaultLeftLimit: false
-                }, typeof options.crop === 'object' ? options.crop : {});
+                }, typeof options.crop === 'object' ? options.crop : Object.create(null));
 
                 cropOptions.multiple = true;
                 cropOptions.format = 'svg';

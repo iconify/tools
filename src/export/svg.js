@@ -21,7 +21,7 @@ const defaults = {
  * @returns {Promise}
  */
 module.exports = (svg, target, options) => {
-    options = options === void 0 ? {} : options;
+    options = options === void 0 ? Object.create(null) : options;
     Object.keys(defaults).forEach(key => {
         if (options[key] === void 0) {
             options[key] = defaults[key];

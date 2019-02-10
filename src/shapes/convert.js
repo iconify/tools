@@ -19,7 +19,7 @@ const kappa = 0.5522847498307935;
  *
  * @type {object}
  */
-let convert = {};
+let convert = Object.create(null);
 
 /**
  * Convert rectangle to path

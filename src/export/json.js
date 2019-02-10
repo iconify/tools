@@ -53,7 +53,7 @@ const extraAttributes = ['deprecated', 'hidden', 'renamed'];
  * @returns {Promise}
  */
 module.exports = (collection, target, options) => {
-    options = options === void 0 ? {} : options;
+    options = options === void 0 ? Object.create(null) : options;
     Object.keys(defaults).forEach(key => {
         if (options[key] === void 0) {
             options[key] = defaults[key];
@@ -65,8 +65,8 @@ module.exports = (collection, target, options) => {
 
     // Return promise
     return new Promise((fulfill, reject) => {
-        let json = {},
-            categories = {};
+        let json = Object.create(null),
+            categories = Object.create(null);
 
         if (options.separatePrefix) {
             if (collection.prefix === '' && collection.findCommonPrefix(true) === '') {
@@ -76,7 +76,7 @@ module.exports = (collection, target, options) => {
             }
         }
 
-        json.icons = {};
+        json.icons = Object.create(null);
 
         // Export all files
         let keys = collection.keys();
@@ -135,7 +135,7 @@ module.exports = (collection, target, options) => {
 
         // Add aliases
         if (options.includeAliases) {
-            let aliases = {};
+            let aliases = Object.create(null);
 
             collection.forEach((svg, key) => {
                 if (svg.aliases) {
@@ -187,7 +187,7 @@ module.exports = (collection, target, options) => {
             let keys = Object.keys(aliases);
             if (keys.length) {
                 keys.sort((a, b) => a.localeCompare(b));
-                json.aliases = {};
+                json.aliases = Object.create(null);
                 keys.forEach(key => {
                     json.aliases[key] = aliases[key];
                 });
@@ -196,7 +196,7 @@ module.exports = (collection, target, options) => {
 
         // Add characters
         if (options.includeChars) {
-            let chars = {};
+            let chars = Object.create(null);
             collection.forEach((svg, key) => {
                 if (svg.char === void 0) {
                     return;
@@ -215,7 +215,7 @@ module.exports = (collection, target, options) => {
             let keys = Object.keys(chars);
             if (keys.length) {
                 keys.sort((a, b) => a.localeCompare(b));
-                json.chars = {};
+                json.chars = Object.create(null);
                 keys.forEach(key => {
                     json.chars[key] = chars[key];
                 })
@@ -228,7 +228,7 @@ module.exports = (collection, target, options) => {
 
             if (categoryKeys.length) {
                 categoryKeys.sort((a, b) => a.localeCompare(b));
-                json.categories = {};
+                json.categories = Object.create(null);
                 categoryKeys.forEach(key => {
                     categories[key].sort((a, b) => a.localeCompare(b));
                     json.categories[key] = categories[key];

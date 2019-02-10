@@ -48,7 +48,7 @@ class Collection {
      * @param {string|Collection} [param] Items prefix or collection to clone
      */
     constructor(param) {
-        this.items = {};
+        this.items = Object.create(null);
         this.prefix = typeof param === 'string' ? param : '';
 
         if (param instanceof Collection) {
@@ -114,7 +114,7 @@ class Collection {
         }
 
         // Find all possible prefixes
-        let commonPrefix = {},
+        let commonPrefix = Object.create(null),
             complexPrefix = '';
 
         let keys = this.keys();
@@ -184,7 +184,7 @@ class Collection {
         // Update all items
         this.prefix = newPrefix;
 
-        let items = {};
+        let items = Object.create(null);
         let start = newPrefix.length + 1;
         Object.keys(this.items).forEach(key => {
             items[key.slice(start)] = this.items[key];
@@ -278,9 +278,9 @@ class Collection {
                 failed = 0,
                 success = 0,
                 results = {
-                    success: {},
-                    error: {},
-                    skipped: {}
+                    success: Object.create(null),
+                    error: Object.create(null),
+                    skipped: Object.create(null)
                 };
 
             function next() {
@@ -353,7 +353,7 @@ class Collection {
 
             // Run all promises
             Promise.all(promises).then(results => {
-                let filtered = {};
+                let filtered = Object.create(null);
                 resultKeys.forEach((key, index) => {
                     filtered[key] = results[index];
                 });
@@ -384,7 +384,7 @@ class Collection {
         };
 
         // Check options
-        options = options ? options : {};
+        options = options ? options : Object.create(null);
         Object.keys(defaultMergeOptions).forEach(key => {
             if (options[key] === void 0) {
                 options[key] = defaultMergeOptions[key];
@@ -395,10 +395,10 @@ class Collection {
             newKeys = this.keys();
 
         // Find all aliases and hash all icons
-        let newAliases = {},
-            newHashes = {},
-            oldHashes = {},
-            newChars = {};
+        let newAliases = Object.create(null),
+            newHashes = Object.create(null),
+            oldHashes = Object.create(null),
+            newChars = Object.create(null);
 
         newKeys.forEach(key => {
             let svg = this.items[key];
@@ -529,7 +529,7 @@ class Collection {
                     let name = typeof alias === 'string' ? alias : alias.name;
                     if (newAliases[name] === void 0 && newHashes[name] === void 0) {
                         // Missing alias
-                        newSVG.aliases.push(typeof alias === 'string' ? alias : Object.assign({}, alias));
+                        newSVG.aliases.push(typeof alias === 'string' ? alias : Object.assign(Object.create(null), alias));
                         newAliases[name] = oldKey;
                     }
                 });

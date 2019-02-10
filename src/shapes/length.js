@@ -81,9 +81,9 @@ function normalizeNumber(value, total, defaultValue) {
  * @return {object|null} List of attributes as object, null on error
  */
 function normalizeAttributes($node, params, defaults) {
-    defaults = defaults === void 0 ? {} : defaults;
+    defaults = defaults === void 0 ? Object.create(null) : defaults;
 
-    let results = {},
+    let results = Object.create(null),
         keys = Object.keys(params),
         i, value, key;
 
@@ -153,7 +153,7 @@ function normalizeAttributes($node, params, defaults) {
 /**
  * Functions for calculating length of shapes
  */
-const calculate = {};
+let calculate = Object.create(null);
 
 /**
  * Calculate line length
@@ -335,7 +335,7 @@ calculate.polygon = $element => {
  *
  * @type {object}
  */
-let converter = {},
+let converter = Object.create(null),
     converterData = {
         rect: {
             attr: {
@@ -485,10 +485,10 @@ Object.keys(converterData).forEach(key => {
  */
 module.exports = (svg, options) => {
     return new Promise((fulfill, reject) => {
-        options = options === void 0 ? {} : options;
+        options = options === void 0 ? Object.create(null) : options;
         changeOptions(options, defaults);
 
-        let shapes = {},
+        let shapes = Object.create(null),
             queue = [],
             tempKeyAttribute = '_lengthKey';
 
@@ -509,7 +509,7 @@ module.exports = (svg, options) => {
         }
 
         // Copy options to overwrite shapeCallback
-        let indexOptions = Object.assign({}, options);
+        let indexOptions = Object.assign(Object.create(null), options);
         indexOptions.checkFillStroke = true;
 
         // Callback for finding shapes
@@ -630,7 +630,7 @@ module.exports = (svg, options) => {
          * Create results, fulfill promise
          */
         function done() {
-            let results = {};
+            let results = Object.create(null);
 
             Object.keys(shapes).forEach(key => {
                 results[key] = [];

@@ -101,7 +101,7 @@ function keyword(key, file, options) {
  * @param {object} [options] List of options
  */
 module.exports = (source, options) => {
-    options = options === void 0 ? {} : options;
+    options = options === void 0 ? Object.create(null) : options;
     Object.keys(defaults).forEach(key => {
         if (options[key] === void 0) {
             options[key] = defaults[key];

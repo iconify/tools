@@ -87,14 +87,14 @@ function generateSVG(width, height, body) {
  */
 module.exports = (svg, options) => {
     return new Promise((fulfill, reject) => {
-        options = options === void 0 ? {} : options;
+        options = options === void 0 ? Object.create(null) : options;
         Object.keys(defaults).forEach(key => {
             if (options[key] === void 0) {
                 options[key] = defaults[key];
             }
         });
 
-        let cache = {},
+        let cache = Object.create(null),
             results = [];
 
         let items = [],
@@ -142,7 +142,7 @@ module.exports = (svg, options) => {
                     top: item.source.top,
                 };
             } else {
-                item.source = Object.assign({}, item.source);
+                item.source = Object.assign(Object.create(null), item.source);
             }
 
             if (item.source.grid === void 0 && options.defaultCropGrid !== null) {
@@ -253,12 +253,12 @@ module.exports = (svg, options) => {
          */
         function cropImages() {
             // Generate source data
-            let data = {};
+            let data = Object.create(null);
             items.forEach(item => {
                 data[item.key] = item.source;
                 if (item.body !== void 0) {
                     // Copy object and overwrite body
-                    data[item.key] = Object.assign({}, data[item.key], {
+                    data[item.key] = Object.assign(Object.create(null), data[item.key], {
                         body: item.body
                     });
                 }
@@ -443,7 +443,7 @@ module.exports = (svg, options) => {
                         return result;
 
                     case 'object':
-                        return Object.assign(typeof original === 'object' ? original : {}, data);
+                        return Object.assign(typeof original === 'object' ? original : Object.create(null), data);
 
                     default:
                         return generateResultItem(
@@ -463,12 +463,12 @@ module.exports = (svg, options) => {
             } else {
                 // Check for collection object
                 // Make shallow copy to keep old stuff
-                svg = Object.assign({}, svg);
+                svg = Object.assign(Object.create(null), svg);
                 results.forEach(item => {
                     if (typeof svg[item.key] === 'object' && !(svg[item.key] instanceof SVG)) {
-                        svg[item.key] = Object.assign({}, svg[item.key]);
+                        svg[item.key] = Object.assign(Object.create(null), svg[item.key]);
                     }
-                    svg[item.key] = generateResultItem(generateResultObject(item), options.format, svg[item.key] === void 0 ? {} : svg[item.key], item);
+                    svg[item.key] = generateResultItem(generateResultObject(item), options.format, svg[item.key] === void 0 ? Object.create(null) : svg[item.key], item);
                 });
 
                 // Check for collection object
