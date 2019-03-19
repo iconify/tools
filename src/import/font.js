@@ -45,14 +45,13 @@ const defaults = {
  * @returns {string}
  */
 function generateSVG(character, path) {
-    let svg = '<svg';
-    svg += ' width="' + character.width + '"';
-    svg += ' height="' + character.height + '"';
-    svg += ' viewBox="0 0 ' + character.width + ' ' + character.height + '"';
-    svg += ' xmlns="http://www.w3.org/2000/svg">\n';
-    svg += getSVGBody(character, path);
-    svg += '</svg>';
-    return svg;
+    return '<svg ' +
+        'width="' + character.width + '" ' +
+        'height="' + character.height + '" ' +
+        'viewBox="0 0 ' + character.width + ' ' + character.height + '" ' +
+        'xmlns="http://www.w3.org/2000/svg" ' +
+        'xmlns:xlink="http://www.w3.org/1999/xlink"' +
+    '>\n' + getSVGBody(character, path) + '</svg>';
 }
 
 /**

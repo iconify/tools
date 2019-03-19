@@ -121,7 +121,7 @@ module.exports = (source, options) => {
                     return;
                 }
                 // Generate SVG
-                let svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '" viewBox="' + left + ' ' + top + ' ' + width + ' ' + height + '">' + $symbol.html() + '</svg>';
+                let svg = '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' + width + '" height="' + height + '" viewBox="' + left + ' ' + top + ' ' + width + ' ' + height + '">' + $symbol.html() + '</svg>';
 
                 // Get keyword
                 let keyword = options.keywordCallback(id, options);

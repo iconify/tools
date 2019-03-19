@@ -68,14 +68,13 @@ const defaults = {
  * @return {string}
  */
 function generateSVG(width, height, body) {
-    let svg = '<svg';
-    svg += ' width="' + width + '"';
-    svg += ' height="' + height + '"';
-    svg += ' viewBox="0 0 ' + width + ' ' + height + '"';
-    svg += ' xmlns="http://www.w3.org/2000/svg">';
-    svg += body;
-    svg += '</svg>';
-    return svg;
+    return '<svg ' +
+        'width="' + width + '" ' +
+        'height="' + height + '" ' +
+        'viewBox="0 0 ' + width + ' ' + height + '" ' +
+        'xmlns="http://www.w3.org/2000/svg" ' +
+        'xmlns:xlink="http://www.w3.org/1999/xlink"' +
+    '>' + body + '</svg>';
 }
 
 /**

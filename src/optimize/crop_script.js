@@ -182,7 +182,10 @@ function next() {
         return '<svg ' +
             'width="' + size.width + '" height="' + size.height + '" ' +
             'viewBox="' + size.left + ' ' + size.top + ' ' + size.width + ' ' + size.height + '" ' +
-            'xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">' + item.body + '</svg>';
+            'xmlns="http://www.w3.org/2000/svg" ' +
+            'xmlns:xlink="http://www.w3.org/1999/xlink" ' +
+            'preserveAspectRatio="xMidYMid meet"' +
+            '>' + item.body + '</svg>';
     }
 
     /**
