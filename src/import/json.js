@@ -112,6 +112,11 @@ module.exports = (source, options) => {
                     });
                 }
 
+                // Add themes
+                if (typeof json.themes === 'object') {
+                    collection.themes = json.themes;
+                }
+
             } catch (err) {
                 collection = null;
             }

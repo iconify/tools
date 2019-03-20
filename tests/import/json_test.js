@@ -190,5 +190,64 @@
                 done(err ? err : 'exception');
             });
         });
+
+        it('importing with themes', done => {
+            const filename = 'import-themes.json';
+
+            write(filename, {
+                icons: {
+                    'solid-icon1': {
+                        body: '<icon1 />'
+                    },
+                    'outline-icon1': {
+                        body: '<icon1-o />'
+                    },
+                    'solid-icon3': {
+                        body: '<icon 3/>'
+                    },
+                    'empty-icon': {
+                        body: '<icon-empty />'
+                    },
+                    'fifth-icon': {
+                        body: '<icon 5/>'
+                    }
+                },
+                width: 64,
+                height: 48,
+                themes: {
+                    solid: {
+                        title: 'Solid',
+                        prefix: 'solid-'
+                    },
+                    outline: {
+                        title: 'Outline',
+                        prefix: 'outline-'
+                    }
+                }
+            });
+
+            Importer(dir + '/' + filename).then(collection => {
+                expect(collection.prefix).to.be.equal('');
+                expect(collection.keys()).to.be.eql(['solid-icon1', 'outline-icon1', 'solid-icon3', 'empty-icon', 'fifth-icon']);
+
+                // Check themes
+                expect(collection.themes).to.be.eql({
+                    solid: {
+                        title: 'Solid',
+                        prefix: 'solid-'
+                    },
+                    outline: {
+                        title: 'Outline',
+                        prefix: 'outline-'
+                    }
+                });
+
+                cleanup(filename);
+                done();
+            }).catch(err => {
+                cleanup(filename);
+                done(err ? err : 'exception');
+            });
+        });
     });
 })();

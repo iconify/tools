@@ -236,6 +236,11 @@ module.exports = (collection, target, options) => {
             }
         }
 
+        // Add themes
+        if (typeof collection.themes === 'object') {
+            json.themes = JSON.parse(JSON.stringify(collection.themes));
+        }
+
         // Optimize common attributes by moving duplicate items to root
         if (options.optimize) {
             optimize(json);
