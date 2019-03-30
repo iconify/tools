@@ -158,5 +158,27 @@
             });
         });
 
+        it('svg with script', done => {
+            let content = '<svg viewBox="0 0 32 32" width="32" height="32"><script>foo();</script><circle cx="14" cy="14" r="12" /><path d="M23 23 L30 30" /></svg>',
+                svg = new SVG(content);
+
+            Tags(svg).then(() => {
+                done('Expected exception');
+            }).catch(err => {
+                done();
+            });
+        });
+
+        it('svg with event', done => {
+            let content = '<svg viewBox="0 0 32 32" width="32" height="32"><circle cx="14" cy="14" r="12" onclick="foo()" /><path d="M23 23 L30 30" /></svg>',
+                svg = new SVG(content);
+
+            Tags(svg).then(() => {
+                done('Expected exception');
+            }).catch(err => {
+                done();
+            });
+        });
+
     });
 })();

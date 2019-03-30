@@ -281,10 +281,11 @@ module.exports = (svg, options) => {
 
                 // Check other attributes
                 Object.keys(nodeAttributes).forEach(attr => {
-                    let value = nodeAttributes[attr];
+                    let value = nodeAttributes[attr],
+                        attrib = attr.toLowerCase();
 
                     //noinspection FallThroughInSwitchStatementJS
-                    switch (attr) {
+                    switch (attrib) {
                         case 'stop-color':
                             if (!extra.gradient) {
                                 throw new Error('Unexpected attribute "' + attr + '" outside of gradient');
@@ -296,7 +297,12 @@ module.exports = (svg, options) => {
                             break;
 
                         default:
-                            let list = attr.split('-');
+                            if (attrib.slice(0, 2) === 'on') {
+                                // Possible JavaScript?
+                                throw new Error('Unexpected attribute "' + attr + '"');
+                            }
+
+                            let list = attrib.split('-');
                             switch (list[0]) {
                                 // Clean up BPMN junk
                                 case 'font':
