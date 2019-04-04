@@ -28,6 +28,7 @@ let Modules = {
     ExportSVG: require('./export/svg'),
     ExportDir: require('./export/dir'),
     ExportJSON: require('./export/json'),
+    ExportPNG: require('./export/png'),
 
     // Import
     ImportSVG: require('./import/svg'),
