@@ -25,6 +25,11 @@ module.exports = data => new Promise((fulfill, reject) => {
         tempDir = rootDir + '/temp',
         cmd = path.dirname(__filename) + '/phantomjs_script.js';
 
+    // Convert data to array
+    if (!(data instanceof Array)) {
+        data = [data];
+    }
+
     // Generate temporary file
     data = JSON.stringify(data, null, 4);
 

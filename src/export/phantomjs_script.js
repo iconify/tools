@@ -3,45 +3,31 @@
 var system = require('system'),
     fs = require('fs'),
     webpage = require('webpage'),
-    data, done;
+    dataList, done, data, next;
 
 if (system.args.length < 2) {
     console.log('Invalid arguments');
     phantom.exit();
 }
 
-data = JSON.parse(fs.read(system.args[1]));
-if (typeof data !== 'object') {
+dataList = JSON.parse(fs.read(system.args[1]));
+if (typeof dataList !== 'object' || !(dataList instanceof Array)) {
     console.log('Invalid arguments');
     phantom.exit();
 }
 
-// Done
-done = function(png) {
-    var page;
-
-    // Create page
-    page = webpage.create();
-    page.viewportSize = {
-        width: data.width,
-        height: data.height
-    };
-
-    page.open(png, function() {
-        page.render(data.output);
-        console.log(JSON.stringify({
-            output: data.output,
-            width: data.width,
-            height: data.height
-        }));
-        phantom.exit();
-    });
-};
-
-// Create canvas
-(function() {
+/**
+ * Run next task
+ */
+next = function() {
     var canvas = document.createElement('canvas'),
         ctx, pending, images, canComplete;
+
+    data = dataList.shift();
+    if (data === void 0) {
+        phantom.exit();
+    }
+
 
     function loaded(index) {
         var item;
@@ -94,4 +80,33 @@ done = function(png) {
 
     canComplete = true;
     loaded(false);
-})();
+};
+
+/**
+ * Completed task
+ *
+ * @param png
+ */
+done = function(png) {
+    var page;
+
+    // Create page
+    page = webpage.create();
+    page.viewportSize = {
+        width: data.width,
+        height: data.height
+    };
+
+    page.open(png, function() {
+        page.render(data.output);
+        console.log(JSON.stringify({
+            output: data.output,
+            width: data.width,
+            height: data.height
+        }));
+        setTimeout(next, 0);
+    });
+};
+
+// Run next task
+next();

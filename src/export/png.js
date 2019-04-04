@@ -16,7 +16,8 @@ const defaults = {
     color: '#000',
     background: 'transparent',
     height: null,
-    reject: true
+    reject: true,
+    parse: true
 };
 
 /**
@@ -62,6 +63,11 @@ module.exports = (svg, target, options) => {
         };
 
         // Process it
+        if (!options.parse) {
+            // Return raw data for running multiple PhantomJS calls at the same time to speed up building many icons
+            fulfill(data);
+            return;
+        }
         phantom(data).then(res => {
             fulfill(svg);
         }).catch(err => {
