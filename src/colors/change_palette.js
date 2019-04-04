@@ -47,7 +47,7 @@ module.exports = (svg, palette) => {
          */
         function parseStyle(style) {
             if (typeof style !== 'string') {
-                return;
+                return '';
             }
 
             let tokens = (new Tokenizer({
