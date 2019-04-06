@@ -11,21 +11,33 @@
 
 const fs = require('fs');
 const phantom = require('./phantomjs');
+const SVG = require('../svg');
+const Collection = require('../collection');
 
 const defaults = {
     color: '#000',
     background: 'transparent',
+
+    // Icon dimensions. null = not set, which will set to same as SVG
+    width: null,
     height: null,
+
+    // False if errors should be ignored
     reject: true,
+
+    // False if instead of converting icons function should return data for phantom() call
     parse: true
 };
 
 /**
  * Export to .png file
  *
- * @returns {Promise}
+ * @param {SVG|Collection|string} item
+ * @param target
+ * @param options
+ * @return {Promise<any>}
  */
-module.exports = (svg, target, options) => {
+module.exports = (item, target, options) => {
     options = options === void 0 ? Object.create(null) : options;
     Object.keys(defaults).forEach(key => {
         if (options[key] === void 0) {
@@ -33,7 +45,7 @@ module.exports = (svg, target, options) => {
         }
     });
 
-    return new Promise((fulfill, reject) => {
+    const scaleSVG = (svg, target) => {
         let width = svg.width,
             height = svg.height;
 
@@ -48,7 +60,7 @@ module.exports = (svg, target, options) => {
         content = content.replace(/currentColor/g, options.color);
 
         // Generate data
-        let data = {
+        return {
             output: target,
             width: width,
             height: height,
@@ -61,21 +73,107 @@ module.exports = (svg, target, options) => {
                 height: height
             }]
         };
+    };
 
-        // Process it
+    return new Promise((fulfill, reject) => {
+        // Parse icon
+        if (typeof item === 'string') {
+            item = new SVG(item);
+        }
+
+        if (item instanceof SVG) {
+            let data = scaleSVG(item, target);
+            if (!options.parse) {
+                // Return raw data for running multiple PhantomJS calls at the same time to speed up building many icons
+                fulfill(data);
+                return;
+            }
+
+            phantom(data).then(res => {
+                fulfill(item);
+            }).catch(err => {
+                if (options.reject) {
+                    reject(err);
+                } else {
+                    fulfill(item);
+                }
+            });
+            return;
+        }
+
+        // Parse collection
+        if (!(item instanceof Collection)) {
+            reject('Invalid arguments.');
+            return;
+        }
+
+        let data = [],
+            results = options.parse ? {} : data,
+            collection = item;
+
+        collection.forEach((svg, key) => {
+
+            // Get filename
+            let filename = target;
+            if (typeof filename === 'function') {
+                // Callback
+                filename = filename(key, svg, collection, options);
+                if (filename === null) {
+                    return;
+                }
+            } else {
+                // Replace keywords with icon data
+                if (filename.indexOf('{icon}') === -1) {
+                    // No {icon} found - treat target as directory name. Append icon name without prefix
+                    filename += (filename.length && filename.slice(-1) !== '/' ? '/' : '') + key + '.png';
+                } else {
+                    filename = filename
+                        .replace('{icon}', key)
+                        .replace('{prefix}', collection.prefix)
+                        .replace('{color}', options.color)
+                        .replace('{width}', options.width)
+                        .replace('{height}', options.height);
+                }
+            }
+
+            // Get data
+            data.push(scaleSVG(svg, filename));
+
+            // Set result
+            if (options.parse) {
+                results[key] = filename;
+            }
+
+        });
+
+        // Return data
         if (!options.parse) {
-            // Return raw data for running multiple PhantomJS calls at the same time to speed up building many icons
             fulfill(data);
             return;
         }
-        phantom(data).then(res => {
-            fulfill(svg);
-        }).catch(err => {
-            if (reject) {
-                reject(err);
-            } else {
-                fulfill(svg);
+
+        // Parse icons in bulk, 16 icons at a time
+        const next = () => {
+            let items = data.slice(0, 16);
+
+            if (!items.length) {
+                // Done
+                fulfill(results);
+                return;
             }
-        })
+
+            data = data.slice(16);
+            phantom(items).then(res => {
+                next();
+            }).catch(err => {
+                if (options.reject) {
+                    reject(err);
+                    return;
+                }
+                next();
+            });
+        };
+
+        next();
     });
 };

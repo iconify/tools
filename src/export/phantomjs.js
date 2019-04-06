@@ -52,7 +52,6 @@ module.exports = data => new Promise((fulfill, reject) => {
             cmd,
             tempFilename
         ], {
-            cwd: rootDir,
             env: process.env,
             uid: process.getuid()
         }, (error, stdout, stderr) => {
