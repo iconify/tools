@@ -1,4 +1,4 @@
-# Iconify.design Tools
+# Iconify Tools
 
 This library is a collection of tools for importing, exporting and processing SVG images. 
 
@@ -510,7 +510,7 @@ tools.ChangePalette(svg, {
 });
 ```
 
-Primary use of this tool in Iconify.design is to replace all colors in monotone with "currentColor" keyword and add it to shapes that are missing color values:
+Primary use of this tool in Iconify is to replace all colors in monotone with "currentColor" keyword and add it to shapes that are missing color values:
 
 ```
 collection.promiseAll(svg => tools.ChangePalette(svg, {
