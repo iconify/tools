@@ -10,6 +10,8 @@
 "use strict";
 
 const fs = require('fs');
+const path = require('path');
+const helpers = require('../helpers');
 const optimize = require('@iconify/json-tools').Collection.optimize;
 
 const defaults = {
@@ -250,6 +252,7 @@ module.exports = (collection, target, options) => {
         let content = options.minify ? JSON.stringify(json) : JSON.stringify(json, null, '\t');
         if (typeof target === 'string') {
             try {
+                helpers.mkdir(path.dirname(target));
                 fs.writeFileSync(target, content, 'utf8');
             } catch (err) {
                 reject(err);

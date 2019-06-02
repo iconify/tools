@@ -10,6 +10,8 @@
 "use strict";
 
 const fs = require('fs');
+const path = require('path');
+const helpers = require('../helpers');
 const phantom = require('./phantomjs');
 const SVG = require('../svg');
 const Collection = require('../collection');
@@ -135,6 +137,9 @@ module.exports = (item, target, options) => {
                         .replace('{height}', options.height);
                 }
             }
+
+            // Create target directory
+            helpers.mkdir(path.dirname(filename));
 
             // Get data
             data.push(scaleSVG(svg, filename));

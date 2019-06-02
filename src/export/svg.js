@@ -10,6 +10,8 @@
 "use strict";
 
 const fs = require('fs');
+const path = require('path');
+const helpers = require('../helpers');
 
 const defaults = {
     reject: true
@@ -32,19 +34,7 @@ module.exports = (svg, target, options) => {
         fs.writeFile(target, svg.toString(), 'utf8', err => {
             if (err) {
                 // Attempt to create directories
-                let dirs = target.split('/'),
-                    dir;
-
-                dirs.pop(); // remove file name
-                dir = '';
-
-                while (dirs.length) {
-                    dir += (dir.length ? '/' : '') + dirs.shift();
-                    try {
-                        fs.mkdirSync(dir);
-                    } catch (err) {
-                    }
-                }
+                helpers.mkdir(path.dirname(target));
 
                 fs.writeFile(target, svg.toString(), 'utf8', err => {
                     if (err) {
