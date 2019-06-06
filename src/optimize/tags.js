@@ -168,6 +168,7 @@ module.exports = (svg, options) => {
                                     case 'clip':
                                     case 'transform':
                                     case 'stop':
+                                    case 'shape':
                                         break;
 
                                     case 'font':
