@@ -58,7 +58,11 @@ const iconName = name => {
     let parts = name.split(/[-:]/),
         result = parts.shift();
 
-    if (parts.length < 1) {
+    if (name.charCodeAt(0) < 97 || name.charCodeAt(0) > 122) {
+        // Not a-z - add "icon" at start so variable doesn't start with invalid character
+        parts.unshift('icon');
+    } else if (parts.length < 1) {
+        // Add "Icon" to avoid reserved keywords
         parts.push('icon');
     }
 
