@@ -117,7 +117,7 @@ class Collection {
         let commonPrefix = Object.create(null),
             complexPrefix = '';
 
-        let keys = this.keys();
+        let keys = this.keys(false, true);
         for (let i = 0; i < keys.length; i++) {
             let parts = keys[i].split(':');
             if (parts.length > 1) {
@@ -197,20 +197,71 @@ class Collection {
     /**
      * Get number of items
      *
+     * @param {boolean} [filterHidden] True if hidden icons should not be included. default = false
+     * @param {boolean} [includeAliases] True if count should include aliases (counts only aliases with transformations). default = false
      * @return {Number}
      */
-    length() {
-        return Object.keys(this.items).length;
+    length(filterHidden, includeAliases) {
+        let keys = Object.keys(this.items);
+
+        if (filterHidden) {
+            keys = keys.filter(name => this.items[name].hidden !== true);
+        }
+
+        let result = keys.length;
+
+        if (includeAliases) {
+            Object.keys(this.items).forEach(key => {
+                if (filterHidden && this.items[key].hidden) {
+                    return;
+                }
+                if (this.items[key].aliases instanceof Array) {
+                    this.items[key].aliases.forEach(alias => {
+                        if (filterHidden) {
+                            // Check if icon is hidden
+                            if (typeof alias === 'string' || alias.hidden) {
+                                // String or hidden
+                                return;
+                            }
+                            if (!alias.rotate && !alias.hFlip && !alias.vFlip) {
+                                // No transformations
+                                return;
+                            }
+                        }
+
+                        result ++;
+                    });
+                }
+            });
+        }
+
+        return result;
     }
 
     /**
      * Get item keys
      *
-     * @param {boolean} [prefixed] True if results must include prefix
+     * @param {boolean} [prefixed] True if results must include prefix (default: false)
+     * @param {boolean} [withAliases] True if results must include aliases (default: false)
      * @return {Array}
      */
-    keys(prefixed) {
+    keys(prefixed, withAliases) {
         let results = Object.keys(this.items);
+
+        if (withAliases) {
+            Object.keys(this.items).forEach(key => {
+                if (this.items[key].aliases instanceof Array) {
+                    this.items[key].aliases.forEach(alias => {
+                        if (typeof alias === 'string') {
+                            results.push(alias);
+                        } else if (alias && typeof alias.name === 'string') {
+                            results.push(alias.name);
+                        }
+                    });
+                }
+            });
+        }
+
         if (prefixed && this.prefix !== '') {
             results = results.map(item => this.prefix + ':' + item);
         }

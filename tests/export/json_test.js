@@ -389,5 +389,202 @@
             });
         });
 
+        it('exporting with theme', done => {
+            let file = 'test-theme.json',
+                items = new Collection(),
+                expectedIcon1 = {
+                    body: icon1Body,
+                    width: 64,
+                    height: 64
+                },
+                expected = {
+                    icons: {
+                        'icon-fill': expectedIcon1,
+                        'icon-outline': {
+                            body: icon2Body,
+                            width: 8,
+                            height: 8
+                        },
+                        empty: expectedIcon1,
+                    },
+                    themes: {
+                        fill: {
+                            title: 'Fill',
+                            suffix: '-fill'
+                        },
+                        outline: {
+                            title: 'Outline',
+                            suffix: '-outline'
+                        }
+                    }
+                };
+
+            let svg1 = new SVG(content1);
+            items.add('icon-fill', svg1);
+
+            let svg2 = new SVG(content2);
+            items.add('icon-outline', svg2);
+
+            let svg3 = new SVG(content1);
+            items.add('empty', svg3);
+
+            // Export should include themes
+            Exporter(items, dir + '/' + file, {
+                themes: {
+                    fill: {
+                        title: 'Fill',
+                        suffix: '-fill'
+                    },
+                    outline: {
+                        title: 'Outline',
+                        suffix: '-outline'
+                    }
+                }
+            }).then(json => {
+                expect(json).to.be.eql(expected);
+
+                // Export again, use collection for themes
+                items.themes = {
+                    fill: {
+                        title: 'Fill',
+                        suffix: '-fill'
+                    },
+                    outline: {
+                        title: 'Outline',
+                        suffix: '-outline'
+                    }
+                };
+
+                Exporter(items, dir + '/' + file, {}).then(json => {
+
+                    expect(json).to.be.eql(expected);
+                    cleanup(file);
+                    done();
+
+                }).catch(err => {
+                    cleanup(file);
+                    done(err ? err : 'exception');
+                });
+
+            }).catch(err => {
+                cleanup(file);
+                done(err ? err : 'exception');
+            });
+        });
+
+        it('exporting with info block', done => {
+            let file = 'test-info.json',
+                items = new Collection(),
+                expectedIcon1 = {
+                    body: icon1Body,
+                    width: 64,
+                    height: 64
+                },
+                expected = {
+                    icons: {
+                        'icon-fill': expectedIcon1,
+                        'icon-outline': {
+                            body: icon2Body,
+                            width: 8,
+                            height: 8
+                        }
+                    },
+                    aliases: {
+                        'icon2-fill': {
+                            parent: 'icon-fill'
+                        },
+                        'icon2-rotated-outline': {
+                            parent: 'icon-outline',
+                            rotate: 1
+                        },
+                        'hidden-alias': {
+                            parent: 'icon-fill',
+                            hFlip: true,
+                            hidden: true
+                        }
+                    },
+                    info: {
+                        title: 'Test',
+                        total: 3,
+                        author: {
+                            name: 'Foo'
+                        },
+                        license: {
+                            title: 'GPL'
+                        }
+                    }
+                };
+
+            let svg1 = new SVG(content1);
+            svg1.aliases = ['icon2-fill', {
+                name: 'hidden-alias',
+                hFlip: true,
+                hidden: true
+            }];
+            items.add('icon-fill', svg1);
+
+            let svg2 = new SVG(content2);
+            svg2.aliases = [{
+                name: 'icon2-rotated-outline',
+                rotate: 1
+            }];
+            items.add('icon-outline', svg2);
+
+            // Export should include info
+            Exporter(items, dir + '/' + file, {
+                info: {
+                    title: 'Test',
+                    total: 3,
+                    author: {
+                        name: 'Foo'
+                    },
+                    license: {
+                        title: 'GPL'
+                    }
+                }
+            }).then(json => {
+                expect(json).to.be.eql(expected);
+
+                // Export again, use collection for info
+                items.info = {
+                    title: 'Test',
+                    total: 10, // Wrong number!
+                    author: {
+                        name: 'Foo'
+                    },
+                    license: {
+                        title: 'GPL'
+                    }
+                };
+
+                Exporter(items, dir + '/' + file, {}).then(json => {
+                    expect(json).to.be.eql(expected);
+
+                    // Invalid tests, result should not include info
+                    delete expected.info;
+
+                    // Set author name to string (testing legacy code)
+                    items.info.author = 'Foo';
+
+                    Exporter(items, dir + '/' + file, {}).then(json => {
+                        expect(json).to.be.eql(expected);
+                        cleanup(file);
+                        done();
+                    }).catch(err => {
+                        cleanup(file);
+                        done(err ? err : 'exception');
+                    });
+
+                }).catch(err => {
+                    cleanup(file);
+                    done(err ? err : 'exception');
+                });
+
+            }).catch(err => {
+                cleanup(file);
+                done(err ? err : 'exception');
+            });
+        });
+
     });
 })();

@@ -21,6 +21,8 @@ const defaults = {
 
 const extraAttributes = ['inlineHeight', 'inlineTop', 'verticalAlign', 'rotate', 'vFlip', 'hFlip', 'deprecated', 'hidden', 'renamed'];
 
+const extraObjects = ['themes', 'info'];
+
 /**
  * Import icons from json file or string
  */
@@ -112,10 +114,12 @@ module.exports = (source, options) => {
                     });
                 }
 
-                // Add themes
-                if (typeof json.themes === 'object') {
-                    collection.themes = json.themes;
-                }
+                // Add themes and info
+                extraObjects.forEach(key => {
+                    if (typeof json[key] === 'object') {
+                        collection[key] = json[key];
+                    }
+                });
 
             } catch (err) {
                 collection = null;

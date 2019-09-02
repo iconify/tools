@@ -35,7 +35,13 @@ const defaults = {
     optimize: false,
 
     // If true all white space is removed, making file smaller, but harder to read
-    minify: false
+    minify: false,
+
+    // Information block, overrides collection's block
+    info: null,
+
+    // Themes block, overrides collection's block
+    themes: null
 };
 
 const transformKeys = ['rotate', 'vFlip', 'hFlip'];
@@ -78,6 +84,17 @@ module.exports = (collection, target, options) => {
             }
         }
 
+        // Add info block
+        if (collection.info && collection.info.title && typeof collection.info.author === 'object') {
+            json.info = JSON.parse(JSON.stringify(collection.info));
+            json.info.total = collection.length(true, true);
+        }
+        if (options.info && options.info.title && typeof options.info.author === 'object') {
+            json.info = JSON.parse(JSON.stringify(options.info));
+            json.info.total = collection.length(true, true);
+        }
+
+        // Create icons block
         json.icons = Object.create(null);
 
         // Export all files
@@ -160,11 +177,19 @@ module.exports = (collection, target, options) => {
                                     return;
                                 }
                                 name = alias.name;
+
                                 transformKeys.forEach(key => {
                                     if (alias[key] !== void 0) {
                                         item[key] = alias[key];
                                     }
                                 });
+
+                                extraAttributes.forEach(key => {
+                                    if (alias[key] !== void 0) {
+                                        item[key] = alias[key];
+                                    }
+                                });
+
                                 break;
 
                             default:
@@ -239,8 +264,10 @@ module.exports = (collection, target, options) => {
         }
 
         // Add themes
-        if (typeof collection.themes === 'object') {
+        if (collection.themes) {
             json.themes = JSON.parse(JSON.stringify(collection.themes));
+        } else if (options.themes) {
+            json.themes = JSON.parse(JSON.stringify(options.themes));
         }
 
         // Optimize common attributes by moving duplicate items to root

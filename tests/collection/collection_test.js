@@ -28,11 +28,42 @@
 
             // Add few more files
             lib.add('test1', new SVG(content1));
-            lib.add('test2', new SVG(content2));
-            lib.add('test3', new SVG(content1));
+
+            let test2Icon = new SVG(content2);
+            lib.add('test2', test2Icon);
+
+            // Hidden icon
+            let hiddenIcon = new SVG(content1);
+            hiddenIcon.hidden = true;
+            lib.add('test3', hiddenIcon);
 
             // Test length
             expect(lib.length()).to.be.equal(5);
+            expect(lib.length(true)).to.be.equal(4);
+
+            // Add alias to test2
+            test2Icon.aliases = ['simple-icon2-alias', {
+                name: 'icon2-rotated',
+                rotate: 1
+            }];
+
+            // Test length
+            expect(lib.length()).to.be.equal(5); // Only icons
+            expect(lib.length(true)).to.be.equal(4); // Icons, do not count hidden
+            expect(lib.length(false, true)).to.be.equal(7); // All icons and aliases
+            expect(lib.length(true, true)).to.be.equal(5); // Do not count hidden icons and aliases
+
+            // Add alias to hidden icon
+            hiddenIcon.aliases = ['hidden-icon-alias', {
+                name: 'another-hidden-icon-alias',
+                rotate: 1
+            }];
+
+            // Test length
+            expect(lib.length()).to.be.equal(5); // Only icons
+            expect(lib.length(true)).to.be.equal(4); // Icons, do not count hidden
+            expect(lib.length(false, true)).to.be.equal(9); // All icons and aliases
+            expect(lib.length(true, true)).to.be.equal(5); // Do not count hidden icons and aliases
 
             // Remove some files
             lib.remove('file2');
@@ -44,6 +75,9 @@
             // Test list of keys
             expect(lib.keys()).to.be.eql(['file1', 'test1', 'test2', 'test3']);
             expect(lib.keys(true)).to.be.eql(['item-prefix:file1', 'item-prefix:test1', 'item-prefix:test2', 'item-prefix:test3']);
+
+            // List aliases as well
+            expect(lib.keys(false, true)).to.be.eql(['file1', 'test1', 'test2', 'test3', 'simple-icon2-alias', 'icon2-rotated', 'hidden-icon-alias', 'another-hidden-icon-alias']);
 
             // Test forEach
             let parsed = [];

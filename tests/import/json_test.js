@@ -249,5 +249,70 @@
                 done(err ? err : 'exception');
             });
         });
+
+        it('importing with info', done => {
+            const filename = 'import-info.json';
+
+            write(filename, {
+                info: {
+                    title: 'Foo',
+                    total: 5,
+                    author: {
+                        name: 'Iconify',
+                        url: 'https://github.com/iconify'
+                    },
+                    license: {
+                        title: 'MIT',
+                        spdx: 'MTI',
+                        url: 'https://spdx.org/licenses/MIT.html#licenseText'
+                    }
+                },
+                icons: {
+                    'solid-icon1': {
+                        body: '<icon1 />'
+                    },
+                    'outline-icon1': {
+                        body: '<icon1-o />'
+                    },
+                    'solid-icon3': {
+                        body: '<icon 3/>'
+                    },
+                    'empty-icon': {
+                        body: '<icon-empty />'
+                    },
+                    'fifth-icon': {
+                        body: '<icon 5/>'
+                    }
+                },
+                width: 64,
+                height: 48
+            });
+
+            Importer(dir + '/' + filename).then(collection => {
+                expect(collection.prefix).to.be.equal('');
+                expect(collection.keys()).to.be.eql(['solid-icon1', 'outline-icon1', 'solid-icon3', 'empty-icon', 'fifth-icon']);
+
+                // Check themes
+                expect(collection.info).to.be.eql({
+                    title: 'Foo',
+                    total: 5,
+                    author: {
+                        name: 'Iconify',
+                        url: 'https://github.com/iconify'
+                    },
+                    license: {
+                        title: 'MIT',
+                        spdx: 'MTI',
+                        url: 'https://spdx.org/licenses/MIT.html#licenseText'
+                    }
+                });
+
+                cleanup(filename);
+                done();
+            }).catch(err => {
+                cleanup(filename);
+                done(err ? err : 'exception');
+            });
+        });
     });
 })();
