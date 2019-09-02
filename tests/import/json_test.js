@@ -255,7 +255,7 @@
 
             write(filename, {
                 info: {
-                    title: 'Foo',
+                    name: 'Foo',
                     total: 5,
                     author: {
                         name: 'Iconify',
@@ -294,7 +294,7 @@
 
                 // Check themes
                 expect(collection.info).to.be.eql({
-                    title: 'Foo',
+                    name: 'Foo',
                     total: 5,
                     author: {
                         name: 'Iconify',

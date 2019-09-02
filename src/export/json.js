@@ -85,11 +85,11 @@ module.exports = (collection, target, options) => {
         }
 
         // Add info block
-        if (collection.info && collection.info.title && typeof collection.info.author === 'object') {
+        if (collection.info && collection.info.name && typeof collection.info.author === 'object') {
             json.info = JSON.parse(JSON.stringify(collection.info));
             json.info.total = collection.length(true, true);
         }
-        if (options.info && options.info.title && typeof options.info.author === 'object') {
+        if (options.info && options.info.name && typeof options.info.author === 'object') {
             json.info = JSON.parse(JSON.stringify(options.info));
             json.info.total = collection.length(true, true);
         }

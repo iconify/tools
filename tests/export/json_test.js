@@ -504,7 +504,7 @@
                         }
                     },
                     info: {
-                        title: 'Test',
+                        name: 'Test',
                         total: 3,
                         author: {
                             name: 'Foo'
@@ -533,7 +533,7 @@
             // Export should include info
             Exporter(items, dir + '/' + file, {
                 info: {
-                    title: 'Test',
+                    name: 'Test',
                     total: 3,
                     author: {
                         name: 'Foo'
@@ -547,7 +547,7 @@
 
                 // Export again, use collection for info
                 items.info = {
-                    title: 'Test',
+                    name: 'Test',
                     total: 10, // Wrong number!
                     author: {
                         name: 'Foo'
