@@ -51,6 +51,10 @@ module.exports = (svg, options) => {
                     convertShapeToPath: options.convertShapeToPath
                 }, {
                     mergePaths: options.mergePaths
+                }, {
+                    convertPathData: {
+                        noSpaceAfterFlags: false
+                    }
                 }];
 
             if (options['id-prefix'] !== null) {
