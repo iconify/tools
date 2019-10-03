@@ -18,12 +18,6 @@ const debug = false;
     Parts of code are based on svg-pathdata code (license: MIT)
  */
 
-// https://raw.githubusercontent.com/nfroidure/svg-pathdata/master/src/SVGPathDataParser.ts
-// https://github.com/nfroidure/svg-pathdata/blob/master/src/SVGPathDataEncoder.ts
-// https://github.com/nfroidure/svg-pathdata/blob/master/src/SVGPathDataParser.ts
-// https://github.com/nfroidure/svgicons2svgfont/blob/master/src/index.js
-// https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths
-
 /**
  * Command constants
  *
