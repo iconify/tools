@@ -52,7 +52,7 @@
             }).then(items => {
                 expect(items instanceof Collection).to.be.equal(true);
 
-                expect(items.items['e077'].toMinifiedString()).to.be.equal('<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M177 305L43 439v-55q0-21-22-21-21 0-21 21v107q0 9 6 15t15 6h107q21 0 21-21 0-22-21-22H73l134-134q13-15 0-30-15-13-30 0zM491 0H384q-21 0-21 21 0 22 21 22h55L305 177q-13 15 0 30 6 6 15 6t15-6L469 73v55q0 21 22 21 21 0 21-21V21q0-9-6-15t-15-6z"/></svg>');
+                expect(items.items['e077'].toMinifiedString()).to.be.equal('<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M177 305L43 439v-55q0-21-22-21q-21 0-21 21v107q0 9 6 15t15 6h107q21 0 21-21q0-22-21-22H73l134-134q13-15 0-30q-15-13-30 0zM491 0H384q-21 0-21 21q0 22 21 22h55L305 177q-13 15 0 30q6 6 15 6t15-6L469 73v55q0 21 22 21q21 0 21-21V21q0-9-6-15t-15-6z"/></svg>');
                 expect(items.items['e077'].inlineHeight).to.be.equal(512);
                 expect(items.items['e077'].inlineTop).to.be.equal(0);
 

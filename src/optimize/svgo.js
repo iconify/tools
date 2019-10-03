@@ -9,7 +9,10 @@
 
 "use strict";
 
+const cheerio = require('cheerio');
 const svgo = require('svgo');
+const SVG = require('../svg');
+const cleanUpFlags = require('./flags');
 
 /**
  * Default options
@@ -19,7 +22,8 @@ const svgo = require('svgo');
 const defaults = {
     'id-prefix': 'svg-',
     mergePaths: false,
-    convertShapeToPath: true
+    convertShapeToPath: true,
+    noSpaceAfterFlags: false
 };
 
 /**
@@ -49,13 +53,24 @@ module.exports = (svg, options) => {
                     removeRasterImages: true
                 }, {
                     convertShapeToPath: options.convertShapeToPath
-                }, {
-                    mergePaths: options.mergePaths
-                }, {
+                }];
+
+            if (!options.noSpaceAfterFlags) {
+                plugins.push({
+                    mergePaths: options.mergePaths === false ? false : {
+                        noSpaceAfterFlags: false
+                    }
+                });
+                plugins.push({
                     convertPathData: {
                         noSpaceAfterFlags: false
                     }
-                }];
+                })
+            } else {
+                plugins.push({
+                    mergePaths: options.mergePaths
+                });
+            }
 
             if (options['id-prefix'] !== null) {
                 plugins.push({
@@ -73,11 +88,18 @@ module.exports = (svg, options) => {
                     return reject(result.error ? result.error : 'Invalid SVG file');
                 }
 
+                let code;
+                try {
+                    code = options.noSpaceAfterFlags ? result.data : cleanUpFlags(result.data);
+                } catch (err) {
+                    return reject(err);
+                }
+
                 // Update SVG object or return string
                 if (typeof svg === 'string') {
-                    fulfill(result.data);
+                    fulfill(code);
                 } else {
-                    svg.load(result.data);
+                    svg.load(code);
                     fulfill(svg);
                 }
             }).catch(err => {
