@@ -514,10 +514,10 @@ Primary use of this tool in Iconify is to replace all colors in monotone with "c
 
 ```
 collection.promiseAll(svg => tools.ChangePalette(svg, {
-    default: 'primaryColor',
-    add: 'primaryColor'
+    default: 'currentColor',
+    add: 'currentColor'
 })).then(() => {
-    console.log('Changed color to primaryColor');
+    console.log('Changed color to currentColor');
 }).catch(err => {
     console.error(err);
 });
