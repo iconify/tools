@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-"use strict";
+'use strict';
 
 const fs = require('fs');
 const path = require('path');
@@ -20,48 +20,57 @@ const crypto = require('crypto');
  * @param {object} data
  * @return {Promise<any>}
  */
-module.exports = data => new Promise((fulfill, reject) => {
-    let rootDir = path.dirname(path.dirname(path.dirname(__filename))),
-        tempDir = rootDir + '/temp',
-        cmd = path.dirname(__filename) + '/phantomjs_script.js';
+module.exports = data =>
+	new Promise((fulfill, reject) => {
+		let rootDir = path.dirname(path.dirname(path.dirname(__filename))),
+			tempDir = rootDir + '/temp',
+			cmd = path.dirname(__filename) + '/phantomjs_script.js';
 
-    // Convert data to array
-    if (!(data instanceof Array)) {
-        data = [data];
-    }
+		// Convert data to array
+		if (!(data instanceof Array)) {
+			data = [data];
+		}
 
-    // Generate temporary file
-    data = JSON.stringify(data, null, 4);
+		// Generate temporary file
+		data = JSON.stringify(data, null, 4);
 
-    let tempFile = crypto.createHash('md5').update(data).digest('hex') + '-' + Date.now() + '.json',
-        tempFilename = tempDir + '/' + tempFile;
+		let tempFile =
+				crypto
+					.createHash('md5')
+					.update(data)
+					.digest('hex') +
+				'-' +
+				Date.now() +
+				'.json',
+			tempFilename = tempDir + '/' + tempFile;
 
-    try {
-        fs.mkdirSync(tempDir);
-    } catch (err) {
-    }
+		try {
+			fs.mkdirSync(tempDir);
+		} catch (err) {}
 
-    fs.writeFile(tempFilename, data, 'utf8', err => {
-        if (err) {
-            reject(err);
-            return;
-        }
+		fs.writeFile(tempFilename, data, 'utf8', err => {
+			if (err) {
+				reject(err);
+				return;
+			}
 
-        // Execute
-        child_process.execFile('phantomjs', [
-            cmd,
-            tempFilename
-        ], {
-            env: process.env,
-            uid: process.getuid()
-        }, (error, stdout, stderr) => {
-            fs.unlinkSync(tempFilename);
-            // console.log(stdout);
-            if (error) {
-                reject('Error executing: ' + cmd + ': ' + error);
-            } else {
-                fulfill();
-            }
-        });
-    });
-});
+			// Execute
+			child_process.execFile(
+				'phantomjs',
+				[cmd, tempFilename],
+				{
+					env: process.env,
+					uid: process.getuid(),
+				},
+				(error, stdout, stderr) => {
+					fs.unlinkSync(tempFilename);
+					// console.log(stdout);
+					if (error) {
+						reject('Error executing: ' + cmd + ': ' + error);
+					} else {
+						fulfill();
+					}
+				}
+			);
+		});
+	});

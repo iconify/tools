@@ -7,14 +7,14 @@
  * file that was distributed with this source code.
  */
 
-"use strict";
+'use strict';
 
 const fs = require('fs');
 const path = require('path');
 const helpers = require('../helpers');
 
 const defaults = {
-    reject: true
+	reject: true,
 };
 
 /**
@@ -23,33 +23,33 @@ const defaults = {
  * @returns {Promise}
  */
 module.exports = (svg, target, options) => {
-    options = options === void 0 ? Object.create(null) : options;
-    Object.keys(defaults).forEach(key => {
-        if (options[key] === void 0) {
-            options[key] = defaults[key];
-        }
-    });
+	options = options === void 0 ? Object.create(null) : options;
+	Object.keys(defaults).forEach(key => {
+		if (options[key] === void 0) {
+			options[key] = defaults[key];
+		}
+	});
 
-    return new Promise((fulfill, reject) => {
-        fs.writeFile(target, svg.toString(), 'utf8', err => {
-            if (err) {
-                // Attempt to create directories
-                helpers.mkdir(path.dirname(target));
+	return new Promise((fulfill, reject) => {
+		fs.writeFile(target, svg.toString(), 'utf8', err => {
+			if (err) {
+				// Attempt to create directories
+				helpers.mkdir(path.dirname(target));
 
-                fs.writeFile(target, svg.toString(), 'utf8', err => {
-                    if (err) {
-                        if (options.reject) {
-                            reject(err);
-                        } else {
-                            fulfill(null);
-                        }
-                    } else {
-                        fulfill(svg);
-                    }
-                });
-            } else {
-                fulfill(svg);
-            }
-        });
-    });
+				fs.writeFile(target, svg.toString(), 'utf8', err => {
+					if (err) {
+						if (options.reject) {
+							reject(err);
+						} else {
+							fulfill(null);
+						}
+					} else {
+						fulfill(svg);
+					}
+				});
+			} else {
+				fulfill(svg);
+			}
+		});
+	});
 };

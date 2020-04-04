@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-"use strict";
+'use strict';
 
 const cheerio = require('cheerio');
 const Color = require('cyberalien-color');
@@ -22,122 +22,122 @@ const Tokenizer = require('simple-tokenizer');
  * @return {Promise}
  */
 module.exports = svg => {
-    return new Promise((fulfill, reject) => {
-        let $root = svg.$svg(':root'),
-            colors = [],
-            notices = [];
+	return new Promise((fulfill, reject) => {
+		let $root = svg.$svg(':root'),
+			colors = [],
+			notices = [];
 
-        /**
-         * Add color to palette
-         *
-         * @param {string} value
-         */
-        function addColor(value) {
-            let clr = Color.fromString(value);
-            if (clr === null) {
-                // Keywords
-                switch (value.toLowerCase()) {
-                    case 'currentcolor':
-                        value = 'currentColor';
-                        break;
+		/**
+		 * Add color to palette
+		 *
+		 * @param {string} value
+		 */
+		function addColor(value) {
+			let clr = Color.fromString(value);
+			if (clr === null) {
+				// Keywords
+				switch (value.toLowerCase()) {
+					case 'currentcolor':
+						value = 'currentColor';
+						break;
 
-                    default:
-                        return;
-                }
-            } else {
-                value = clr.toString({compress: true});
-            }
+					default:
+						return;
+				}
+			} else {
+				value = clr.toString({ compress: true });
+			}
 
-            // Add to list of colors
-            if (colors.indexOf(value) === -1) {
-                colors.push(value);
-            }
-        }
+			// Add to list of colors
+			if (colors.indexOf(value) === -1) {
+				colors.push(value);
+			}
+		}
 
-        /**
-         * Check style
-         *
-         * @param {string} code
-         */
-        function scanStyle(code) {
-            notices.push('Style attribute found');
+		/**
+		 * Check style
+		 *
+		 * @param {string} code
+		 */
+		function scanStyle(code) {
+			notices.push('Style attribute found');
 
-            let tokens = (new Tokenizer({
-                splitRules: true
-            })).tokenize(code);
+			let tokens = new Tokenizer({
+				splitRules: true,
+			}).tokenize(code);
 
-            tokens.forEach(token => {
-                if (token.token === 'rule') {
-                    let key = token.key.toLowerCase();
-                    switch (key) {
-                        case 'stop-color':
-                        case 'fill':
-                        case 'stroke':
-                            addColor(token.value);
-                            break;
-                    }
-                }
-            });
-        }
+			tokens.forEach(token => {
+				if (token.token === 'rule') {
+					let key = token.key.toLowerCase();
+					switch (key) {
+						case 'stop-color':
+						case 'fill':
+						case 'stroke':
+							addColor(token.value);
+							break;
+					}
+				}
+			});
+		}
 
-        /**
-         * Check shape
-         *
-         * @param {object} $tag
-         * @param {object} tag
-         */
-        function scanElement($tag, tag) {
-            // Check attributes
-            if (tag.attribs) {
-                Object.keys(tag.attribs).forEach(attr => {
-                    let value = tag.attribs[attr];
+		/**
+		 * Check shape
+		 *
+		 * @param {object} $tag
+		 * @param {object} tag
+		 */
+		function scanElement($tag, tag) {
+			// Check attributes
+			if (tag.attribs) {
+				Object.keys(tag.attribs).forEach(attr => {
+					let value = tag.attribs[attr];
 
-                    switch (attr) {
-                        case 'stop-color':
-                        case 'fill':
-                        case 'stroke':
-                            addColor(value);
-                            break;
+					switch (attr) {
+						case 'stop-color':
+						case 'fill':
+						case 'stroke':
+							addColor(value);
+							break;
 
-                        case 'style':
-                            scanStyle(value);
-                            break;
-                    }
-                });
-            }
+						case 'style':
+							scanStyle(value);
+							break;
+					}
+				});
+			}
 
-            scanChildElements($tag);
-        }
+			scanChildElements($tag);
+		}
 
-        /**
-         * Check child elements of tag
-         *
-         * @param {object} $tag
-         */
-        function scanChildElements($tag) {
-            $tag.children().each((index, child) => {
-                let $child = cheerio(child);
+		/**
+		 * Check child elements of tag
+		 *
+		 * @param {object} $tag
+		 */
+		function scanChildElements($tag) {
+			$tag.children().each((index, child) => {
+				let $child = cheerio(child);
 
-                switch (child.tagName) {
-                    case 'mask': // do not scan colors inside mask
-                    case 'clipPath': // do not scan colors inside clip path
-                        return;
+				switch (child.tagName) {
+					case 'mask': // do not scan colors inside mask
+					case 'clipPath': // do not scan colors inside clip path
+						return;
 
-                    case 'style':
-                        scanStyle($child.text());
-                        return;
+					case 'style':
+						scanStyle($child.text());
+						return;
 
-                    default:
-                        scanElement($child, child);
-                }
-            });
-        }
+					default:
+						scanElement($child, child);
+				}
+			});
+		}
 
-        scanChildElements($root);
+		scanChildElements($root);
 
-        fulfill({
-            colors: colors,
-            notices: notices
-        });
-    });
+		fulfill({
+			colors: colors,
+			notices: notices,
+		});
+	});
 };

@@ -7,44 +7,44 @@
  * file that was distributed with this source code.
  */
 
-"use strict";
+'use strict';
 
 let Modules = {
-    // Core
-    SVG: require('./svg'),
-    Collection: require('./collection'),
+	// Core
+	SVG: require('./svg'),
+	Collection: require('./collection'),
 
-    // Optimizations
-    SVGO: require('./optimize/svgo'),
-    Tags: require('./optimize/tags'),
-    Crop: require('./optimize/crop'),
+	// Optimizations
+	SVGO: require('./optimize/svgo'),
+	Tags: require('./optimize/tags'),
+	Crop: require('./optimize/crop'),
 
-    // Colors
-    GetPalette: require('./colors/get_palette'),
-    ChangePalette: require('./colors/change_palette'),
-    Opacify: require('./colors/opacify'),
+	// Colors
+	GetPalette: require('./colors/get_palette'),
+	ChangePalette: require('./colors/change_palette'),
+	Opacify: require('./colors/opacify'),
 
-    // Export
-    ExportSVG: require('./export/svg'),
-    ExportDir: require('./export/dir'),
-    ExportJSON: require('./export/json'),
-    ExportComponent: require('./export/component'),
-    ExportPNG: require('./export/png'),
+	// Export
+	ExportSVG: require('./export/svg'),
+	ExportDir: require('./export/dir'),
+	ExportJSON: require('./export/json'),
+	ExportComponent: require('./export/component'),
+	ExportPNG: require('./export/png'),
 
-    // Import
-    ImportSVG: require('./import/svg'),
-    ImportDir: require('./import/dir'),
-    ImportFont: require('./import/font'),
-    ImportWebIcon: require('./import/web_icons'),
-    ImportJSON: require('./import/json'),
+	// Import
+	ImportSVG: require('./import/svg'),
+	ImportDir: require('./import/dir'),
+	ImportFont: require('./import/font'),
+	ImportWebIcon: require('./import/web_icons'),
+	ImportJSON: require('./import/json'),
 
-    // Shapes
-    IndexShapes: require('./shapes/index'),
-    ShapeLengths: require('./shapes/length'),
-    ConvertShapes: require('./shapes/convert'),
+	// Shapes
+	IndexShapes: require('./shapes/index'),
+	ShapeLengths: require('./shapes/length'),
+	ConvertShapes: require('./shapes/convert'),
 
-    // Misc
-    Scale: require('./optimize/scale')
+	// Misc
+	Scale: require('./optimize/scale'),
 };
 
 module.exports = Modules;

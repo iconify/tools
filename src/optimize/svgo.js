@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-"use strict";
+'use strict';
 
 const cheerio = require('cheerio');
 const svgo = require('svgo');
@@ -20,10 +20,10 @@ const cleanUpFlags = require('./flags');
  * @type {object}
  */
 const defaults = {
-    'id-prefix': 'svg-',
-    mergePaths: false,
-    convertShapeToPath: true,
-    noSpaceAfterFlags: false
+	'id-prefix': 'svg-',
+	'mergePaths': false,
+	'convertShapeToPath': true,
+	'noSpaceAfterFlags': false,
 };
 
 /**
@@ -34,79 +34,92 @@ const defaults = {
  * @return {Promise}
  */
 module.exports = (svg, options) => {
-    // Set options
-    options = options === void 0 ? Object.create(null) : options;
-    Object.keys(defaults).forEach(key => {
-        if (options[key] === void 0) {
-            options[key] = defaults[key];
-        }
-    });
+	// Set options
+	options = options === void 0 ? Object.create(null) : options;
+	Object.keys(defaults).forEach(key => {
+		if (options[key] === void 0) {
+			options[key] = defaults[key];
+		}
+	});
 
-    return new Promise((fulfill, reject) => {
-        try {
-            let content = typeof svg === 'string' ? svg : svg.toString(),
-                plugins = [{
-                    removeTitle: true
-                }, {
-                    removeDesc: true
-                }, {
-                    removeRasterImages: true
-                }, {
-                    convertShapeToPath: options.convertShapeToPath
-                }];
+	return new Promise((fulfill, reject) => {
+		try {
+			let content = typeof svg === 'string' ? svg : svg.toString(),
+				plugins = [
+					{
+						removeTitle: true,
+					},
+					{
+						removeDesc: true,
+					},
+					{
+						removeRasterImages: true,
+					},
+					{
+						convertShapeToPath: options.convertShapeToPath,
+					},
+				];
 
-            if (!options.noSpaceAfterFlags) {
-                plugins.push({
-                    mergePaths: options.mergePaths === false ? false : {
-                        noSpaceAfterFlags: false
-                    }
-                });
-                plugins.push({
-                    convertPathData: {
-                        noSpaceAfterFlags: false
-                    }
-                })
-            } else {
-                plugins.push({
-                    mergePaths: options.mergePaths
-                });
-            }
+			if (!options.noSpaceAfterFlags) {
+				plugins.push({
+					mergePaths:
+						options.mergePaths === false
+							? false
+							: {
+									noSpaceAfterFlags: false,
+							  },
+				});
+				plugins.push({
+					convertPathData: {
+						noSpaceAfterFlags: false,
+					},
+				});
+			} else {
+				plugins.push({
+					mergePaths: options.mergePaths,
+				});
+			}
 
-            if (options['id-prefix'] !== null) {
-                plugins.push({
-                    cleanupIDs: {
-                        remove: true,
-                        prefix: options['id-prefix']
-                    }
-                });
-            }
+			if (options['id-prefix'] !== null) {
+				plugins.push({
+					cleanupIDs: {
+						remove: true,
+						prefix: options['id-prefix'],
+					},
+				});
+			}
 
-            (new svgo({
-                plugins: plugins
-            })).optimize(content).then(result => {
-                if (!result || !result.info || !result.data) {
-                    return reject(result.error ? result.error : 'Invalid SVG file');
-                }
+			new svgo({
+				plugins: plugins,
+			})
+				.optimize(content)
+				.then(result => {
+					if (!result || !result.info || !result.data) {
+						return reject(result.error ? result.error : 'Invalid SVG file');
+					}
 
-                let code;
-                try {
-                    code = options.noSpaceAfterFlags ? result.data : cleanUpFlags(result.data);
-                } catch (err) {
-                    return reject(err);
-                }
+					let code;
+					try {
+						code = options.noSpaceAfterFlags
+							? result.data
+							: cleanUpFlags(result.data);
+					} catch (err) {
+						return reject(err);
+					}
 
-                // Update SVG object or return string
-                if (typeof svg === 'string') {
-                    fulfill(code);
-                } else {
-                    svg.load(code);
-                    fulfill(svg);
-                }
-            }).catch(err => {
-                return reject(err);
-            });
-        } catch (err) {
-            reject(err);
-        }
-    });
+					// Update SVG object or return string
+					if (typeof svg === 'string') {
+						fulfill(code);
+					} else {
+						svg.load(code);
+						fulfill(svg);
+					}
+				})
+				.catch(err => {
+					return reject(err);
+				});
+		} catch (err) {
+			reject(err);
+		}
+	});
 };

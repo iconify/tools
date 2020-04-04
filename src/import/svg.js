@@ -7,54 +7,54 @@
  * file that was distributed with this source code.
  */
 
-"use strict";
+'use strict';
 
 const fs = require('fs');
 const SVG = require('../svg');
 
 const defaults = {
-    reject: true,
-    contentCallback: null,
-    headless: true,
-    minify: true
+	reject: true,
+	contentCallback: null,
+	headless: true,
+	minify: true,
 };
 
 /**
  * Import from .svg file
  */
 module.exports = (source, options) => {
-    options = options === void 0 ? Object.create(null) : options;
-    Object.keys(defaults).forEach(key => {
-        if (options[key] === void 0) {
-            options[key] = defaults[key];
-        }
-    });
+	options = options === void 0 ? Object.create(null) : options;
+	Object.keys(defaults).forEach(key => {
+		if (options[key] === void 0) {
+			options[key] = defaults[key];
+		}
+	});
 
-    return new Promise((fulfill, reject) => {
-        fs.readFile(source, 'utf8', (err, data) => {
-            let svg;
+	return new Promise((fulfill, reject) => {
+		fs.readFile(source, 'utf8', (err, data) => {
+			let svg;
 
-            if (err) {
-                if (options.reject) {
-                    reject(err);
-                } else {
-                    fulfill(null);
-                }
-            } else {
-                if (options.contentCallback) {
-                    data = options.contentCallback(data);
-                }
-                try {
-                    svg = new SVG(data);
-                } catch (err) {
-                    if (options.reject) {
-                        reject('Invalid SVG file');
-                    } else {
-                        fulfill(null);
-                    }
-                }
-                fulfill(svg);
-            }
-        });
-    });
+			if (err) {
+				if (options.reject) {
+					reject(err);
+				} else {
+					fulfill(null);
+				}
+			} else {
+				if (options.contentCallback) {
+					data = options.contentCallback(data);
+				}
+				try {
+					svg = new SVG(data);
+				} catch (err) {
+					if (options.reject) {
+						reject('Invalid SVG file');
+					} else {
+						fulfill(null);
+					}
+				}
+				fulfill(svg);
+			}
+		});
+	});
 };

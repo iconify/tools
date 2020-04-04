@@ -7,38 +7,37 @@
  * file that was distributed with this source code.
  */
 
-"use strict";
+'use strict';
 
 const fs = require('fs');
 
 const functions = {
-    /**
-     * Recursively create directory
-     *
-     * @param path
-     */
-    mkdir: path => {
-        if (typeof path === 'string' && path === '.') {
-            return;
-        }
+	/**
+	 * Recursively create directory
+	 *
+	 * @param path
+	 */
+	mkdir: path => {
+		if (typeof path === 'string' && path === '.') {
+			return;
+		}
 
-        let dirs = typeof path === 'string' ? path.split('/') : path,
-            dir;
+		let dirs = typeof path === 'string' ? path.split('/') : path,
+			dir;
 
-        if (dirs.length) {
-            dir = '';
-            dirs.forEach(part => {
-                dir += part;
-                if (dir.length) {
-                    try {
-                        fs.mkdirSync(dir, 0o755);
-                    } catch (err) {
-                    }
-                }
-                dir += '/';
-            });
-        }
-    }
+		if (dirs.length) {
+			dir = '';
+			dirs.forEach(part => {
+				dir += part;
+				if (dir.length) {
+					try {
+						fs.mkdirSync(dir, 0o755);
+					} catch (err) {}
+				}
+				dir += '/';
+			});
+		}
+	},
 };
 
 module.exports = functions;
