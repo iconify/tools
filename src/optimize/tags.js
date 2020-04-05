@@ -35,7 +35,7 @@ const complexSelectorTest = /[\+~\[\]\*>]|\S+[\.#]\S+/;
 module.exports = (svg, options) => {
 	// Set options
 	options = options === void 0 ? Object.create(null) : options;
-	Object.keys(defaults).forEach(key => {
+	Object.keys(defaults).forEach((key) => {
 		if (options[key] === void 0) {
 			options[key] = defaults[key];
 		}
@@ -94,7 +94,7 @@ module.exports = (svg, options) => {
 				}
 
 				let unused = false;
-				token.selectors.forEach(selector => {
+				token.selectors.forEach((selector) => {
 					if (usedSelectors[selector] === void 0 || keepSelectors[selector]) {
 						unused = true;
 					}
@@ -109,7 +109,7 @@ module.exports = (svg, options) => {
 				return false;
 			}
 
-			tokens = tokens.filter(token => token !== null);
+			tokens = tokens.filter((token) => token !== null);
 			if (!tokens.length) {
 				$tag.remove();
 				return true;
@@ -132,7 +132,7 @@ module.exports = (svg, options) => {
 
 			let selectors = false;
 
-			tokens.forEach(token => {
+			tokens.forEach((token) => {
 				switch (token.token) {
 					case '{':
 						if (token.selectors) {
@@ -160,7 +160,7 @@ module.exports = (svg, options) => {
 							default:
 								// Remove css rules that aren't supposed to be in SVG file (leftovers from bad editors)
 								let key = token.key;
-								options.browserCSSPrefixes.forEach(prefix => {
+								options.browserCSSPrefixes.forEach((prefix) => {
 									if (key.slice(0, prefix.length) === prefix) {
 										key = key.slice(prefix.length);
 									}
@@ -183,6 +183,7 @@ module.exports = (svg, options) => {
 									case 'isolation':
 									case 'white':
 									case 'word':
+									case 'solid':
 										token.token = 'ignore';
 										return;
 
@@ -203,7 +204,7 @@ module.exports = (svg, options) => {
 								}
 						}
 						if (!inline && selectors !== false && !complexSelectors) {
-							selectors.forEach(selector => {
+							selectors.forEach((selector) => {
 								// Check for complex selectors
 								if (complexSelectorTest.test(selector)) {
 									complexSelectors = true;
@@ -238,7 +239,7 @@ module.exports = (svg, options) => {
 
 			function expandClass(name) {
 				let style = styles[name];
-				Object.keys(style).forEach(key => {
+				Object.keys(style).forEach((key) => {
 					if (nodeAttributes[key] === void 0 || style[key].important) {
 						$node.attr(key, style[key].value);
 					}
@@ -257,7 +258,7 @@ module.exports = (svg, options) => {
 					let tokens = new Tokenizer({
 						splitRules: true,
 					}).tree(value);
-					tokens.forEach(token => {
+					tokens.forEach((token) => {
 						if (token.token === 'rule') {
 							let key = token.key.toLowerCase();
 							if (nodeAttributes[key] === void 0) {
@@ -276,7 +277,7 @@ module.exports = (svg, options) => {
 						let classList = nodeAttributes['class'].split(/\s+/g);
 						if (classList.length > 1) {
 							// More than one selector - do nothing, mark selectors as undeletable
-							classList.forEach(className => {
+							classList.forEach((className) => {
 								keepSelectors['.' + className] = true;
 							});
 						} else {
@@ -293,7 +294,7 @@ module.exports = (svg, options) => {
 				}
 
 				// Check other attributes
-				Object.keys(nodeAttributes).forEach(attr => {
+				Object.keys(nodeAttributes).forEach((attr) => {
 					let value = nodeAttributes[attr],
 						attrib = attr.toLowerCase();
 
@@ -450,7 +451,7 @@ module.exports = (svg, options) => {
 		// Check root attributes
 		let groupAttributes = Object.create(null);
 
-		Object.keys(rootAttributes).forEach(attr => {
+		Object.keys(rootAttributes).forEach((attr) => {
 			if (
 				attr.toLowerCase().slice(0, 6) === 'stroke' ||
 				attr.toLowerCase().slice(0, 4) === 'fill'
@@ -472,7 +473,7 @@ module.exports = (svg, options) => {
 
 		if (Object.keys(groupAttributes).length) {
 			let group = '<g';
-			Object.keys(groupAttributes).forEach(attr => {
+			Object.keys(groupAttributes).forEach((attr) => {
 				group += ' ' + attr + '="' + groupAttributes[attr] + '"';
 			});
 			$root.html(group + '>' + $root.html() + '</g>');
@@ -500,13 +501,13 @@ module.exports = (svg, options) => {
 		if (xlink) {
 			attributes['xmlns:xlink'] = 'http://www.w3.org/1999/xlink';
 		}
-		Object.keys(attributes).forEach(attr => {
+		Object.keys(attributes).forEach((attr) => {
 			$root.attr(attr, attributes[attr]);
 		});
 
 		// Remove styles that were changed to inline attributes
 		if (!complexSelectors && Object.keys(usedSelectors).length) {
-			styleTags.forEach($tag => {
+			styleTags.forEach(($tag) => {
 				if (!removeUsedStyles($tag) && options.debug) {
 					options.log('Style attribute was found');
 				}
