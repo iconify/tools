@@ -12,6 +12,40 @@
 const fs = require('fs');
 const helpers = require('../helpers');
 
+const iconType = `interface IconifyIcon {
+    body: string;
+	left?: number;
+	top?: number;
+	width?: number;
+	height?: number;
+	rotate?: number;
+	hFlip?: boolean;
+	vFlip?: boolean;
+}
+declare const data: IconifyIcon;
+export default data;
+`;
+
+const iconLegacyType = `interface LegacyIconifyIcon {
+    body: string;
+	left?: number;
+	top?: number;
+	width?: number;
+	height?: number;
+	rotate?: number;
+	hFlip?: boolean;
+    vFlip?: boolean;
+    // Legacy stuff
+    inlineTop?: number;
+    inlineHeight?: number;
+    verticalAlign?: number;
+}
+declare const data: LegacyIconifyIcon;
+export default data;
+`;
+
+const legacyAttributes = ['inlineTop', 'inlineHeight', 'verticalAlign'];
+
 const defaults = {
 	// True if .d.ts files should be exported
 	definitions: true,
@@ -54,7 +88,7 @@ const inlineAttributes = ['inlineHeight', 'inlineTop', 'verticalAlign'];
  * @param {string} name
  * @return {string}
  */
-const iconName = name => {
+const iconName = (name) => {
 	let parts = name.split(/[-:]/),
 		result = parts.shift();
 
@@ -66,7 +100,7 @@ const iconName = name => {
 		parts.push('icon');
 	}
 
-	parts.forEach(part => {
+	parts.forEach((part) => {
 		result += part.slice(0, 1).toUpperCase() + part.slice(1);
 	});
 
@@ -84,7 +118,7 @@ const iconName = name => {
 module.exports = (collection, dir, options) =>
 	new Promise((fulfill, reject) => {
 		options = options === void 0 ? Object.create(null) : options;
-		Object.keys(defaults).forEach(key => {
+		Object.keys(defaults).forEach((key) => {
 			if (options[key] === void 0) {
 				options[key] = defaults[key];
 			}
@@ -119,7 +153,7 @@ module.exports = (collection, dir, options) =>
 					'license',
 					'licenseURL',
 					'palette',
-				].forEach(key => {
+				].forEach((key) => {
 					if (options.info[key] !== void 0) {
 						infoBlock[key] = options.info[key];
 					}
@@ -198,7 +232,7 @@ module.exports = (collection, dir, options) =>
 					licenseURL: 'License URL: ',
 				};
 				result += '## About ' + options.info.name + '\n\n';
-				Object.keys(keys).forEach(key => {
+				Object.keys(keys).forEach((key) => {
 					if (options.info[key] !== void 0) {
 						result += keys[key] + options.info[key] + '\n';
 					}
@@ -213,11 +247,12 @@ module.exports = (collection, dir, options) =>
 		 * Export typescript file
 		 *
 		 * @param {string} filename
+		 * @param {boolean} isLegacy
 		 */
-		const exportTS = filename => {
+		const exportTS = (filename, isLegacy = false) => {
 			fs.writeFileSync(
 				filename + '.d.ts',
-				'declare const data: object;\nexport default data;\n'
+				isLegacy ? iconLegacyType : iconType
 			);
 		};
 
@@ -231,6 +266,16 @@ module.exports = (collection, dir, options) =>
 			let content = JSON.stringify(data, null, '\t'),
 				code;
 
+			// Check if data has legacy attributes
+			let isLegacy = false;
+			if (options.definitions) {
+				legacyAttributes.forEach((attr) => {
+					if (data[attr] !== void 0) {
+						isLegacy = true;
+					}
+				});
+			}
+
 			// Save uncompiled file
 			if (typeof options.sources === 'string') {
 				code = 'let data = ' + content + ';\nexport default data;\n';
@@ -240,7 +285,7 @@ module.exports = (collection, dir, options) =>
 					'utf8'
 				);
 				if (options.definitions) {
-					exportTS(dir + options.sources + '/' + name);
+					exportTS(dir + options.sources + '/' + name, isLegacy);
 				}
 			}
 
@@ -256,7 +301,7 @@ module.exports = (collection, dir, options) =>
 					'utf8'
 				);
 				if (options.definitions) {
-					exportTS(dir + options.compiled + '/' + name);
+					exportTS(dir + options.compiled + '/' + name, isLegacy);
 				}
 			}
 		};
@@ -290,14 +335,14 @@ module.exports = (collection, dir, options) =>
 			};
 
 			// Add left/top
-			positionAttributes.forEach(attr => {
+			positionAttributes.forEach((attr) => {
 				if (svg[attr] !== 0) {
 					json[attr] = svg[attr];
 				}
 			});
 
 			// Add transformations
-			transformKeys.forEach(attr => {
+			transformKeys.forEach((attr) => {
 				if (svg[attr] !== void 0) {
 					json[attr] = svg[attr];
 				}
@@ -305,7 +350,7 @@ module.exports = (collection, dir, options) =>
 
 			// Include inline attributes
 			if (options.includeInline) {
-				inlineAttributes.forEach(attr => {
+				inlineAttributes.forEach((attr) => {
 					if (svg[attr] !== void 0) {
 						json[attr] = svg[attr];
 					}
@@ -315,7 +360,7 @@ module.exports = (collection, dir, options) =>
 			exportIcon(key, json);
 
 			// Export aliases
-			(svg.aliases ? svg.aliases : []).forEach(alias => {
+			(svg.aliases ? svg.aliases : []).forEach((alias) => {
 				switch (typeof alias) {
 					case 'string':
 						if (collection.items[alias] === void 0) {
@@ -333,7 +378,7 @@ module.exports = (collection, dir, options) =>
 
 						let data = Object.assign({}, json);
 
-						transformKeys.forEach(key => {
+						transformKeys.forEach((key) => {
 							if (alias[key] === void 0) {
 								return;
 							}
