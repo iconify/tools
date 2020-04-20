@@ -136,7 +136,7 @@ module.exports = (collection, dir, options) => {
 		const exportPackage = () => {
 			let result = {
 				name: packageName,
-				description: 'Iconify icon components for React for ' + name,
+				description: 'Iconify icon components for ' + name,
 			};
 
 			if (typeof options.version === 'string') {
@@ -163,8 +163,8 @@ module.exports = (collection, dir, options) => {
 				}
 			}
 
-			result.bugs = 'https://github.com/iconify/iconify-react/issues';
-			result.homepage = 'https://github.com/iconify/iconify-react';
+			result.bugs = 'https://github.com/iconify/iconify/issues';
+			result.homepage = 'https://github.com/iconify/iconify';
 
 			fs.writeFileSync(
 				dir + '/package.json',
