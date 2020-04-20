@@ -88,14 +88,14 @@ const inlineAttributes = ['inlineHeight', 'inlineTop', 'verticalAlign'];
  * @param {string} name
  * @return {string}
  */
-const iconName = (name) => {
+const iconName = (name, addSuffix = true) => {
 	let parts = name.split(/[-:]/),
 		result = parts.shift();
 
 	if (name.charCodeAt(0) < 97 || name.charCodeAt(0) > 122) {
 		// Not a-z - add "icon" at start so variable doesn't start with invalid character
 		parts.unshift('icon');
-	} else if (parts.length < 1) {
+	} else if (parts.length < 1 && addSuffix) {
 		// Add "Icon" to avoid reserved keywords
 		parts.push('icon');
 	}
@@ -115,8 +115,8 @@ const iconName = (name) => {
  * @param {object} [options] Options
  * @returns {Promise}
  */
-module.exports = (collection, dir, options) =>
-	new Promise((fulfill, reject) => {
+module.exports = (collection, dir, options) => {
+	return new Promise((fulfill, reject) => {
 		options = options === void 0 ? Object.create(null) : options;
 		Object.keys(defaults).forEach((key) => {
 			if (options[key] === void 0) {
@@ -177,70 +177,156 @@ module.exports = (collection, dir, options) =>
 		 * Export README.md
 		 */
 		const exportReadme = () => {
-			let result = '# ' + name + ' for Iconify for React\n\n';
-			result +=
-				'This package includes individual files for each icon, ready to be imported into React project with Iconify for React.\n\n';
-			result +=
-				'Each icon is in its own file, so you can bundle several icons from different icon sets without bundling entire icon sets.\n\n';
+			const templatesDir = __dirname + '/templates';
+			const replacements = {
+				iconSetName: name,
+				packageName: packageName,
+				iconSetPrefix: collection.prefix,
+			};
 
-			result += '## Installation\n\n';
-			result += 'If you are using NPM:\n';
-			result +=
-				'```\nnpm install @iconify/react ' + packageName + ' --save\n```\n\n';
-			result += 'If you are using Yarn:\n';
-			result += '```\nyarn add @iconify/react ' + packageName + '\n```\n\n';
+			/**
+			 * Replace all key/value pairs in text
+			 */
+			function replaceContent(content, replacements) {
+				(replacements instanceof Array ? replacements : [replacements]).forEach(
+					(list) => {
+						Object.keys(list).forEach((key) => {
+							const value = list[key];
 
-			result += '## Usage\n\n';
-			let sample0 = iconName(options.samples[0]);
-			let sample1 = iconName(options.samples[1]);
-			let sample2 = iconName(options.samples[2]);
-			result += '```\nimport { Icon, InlineIcon } from "@iconify/react";\n';
-			result +=
-				'import ' +
-				sample0 +
-				' from "' +
-				packageName +
-				'/' +
-				options.samples[0] +
-				'";\n';
-			result +=
-				'import ' +
-				sample1 +
-				' from "' +
-				packageName +
-				'/' +
-				options.samples[1] +
-				'";\n';
-			result += '```\n\n';
-			result +=
-				'```\n<Icon icon={' +
-				sample0 +
-				'} />\n<p>This is some text with icon adjusted for baseline: <InlineIcon icon={' +
-				sample1 +
-				'} /></p>\n```\n\n';
-			result += 'See https://github.com/iconify/iconify-react for details.\n\n';
+							let start = 0;
+							let pos;
 
+							while ((pos = content.indexOf(key, start)) !== -1) {
+								content =
+									content.slice(0, pos) +
+									value +
+									content.slice(pos + key.length);
+								start = pos + value.length;
+							}
+						});
+					}
+				);
+				return content;
+			}
+
+			// Find all language specific templates
+			const languages = [];
+			fs.readdirSync(templatesDir).forEach((file) => {
+				let parts = file.split('.');
+				if (parts.length !== 2 || parts.pop() !== 'md') {
+					return;
+				}
+				parts = parts[0].split('-');
+				if (parts.shift() !== 'sample') {
+					return;
+				}
+				const lang = parts.shift();
+				if (languages.indexOf(lang) === -1) {
+					languages.push(lang);
+				}
+			});
+
+			// Parse all languages
+			languages.forEach((lang) => {
+				const codeSamples = [];
+				options.samples.forEach((sample, index) => {
+					// Get sample name
+					let sampleReplacements = {
+						sampleFilename: sample,
+						sampleIconShortName: iconName(sample, false),
+						sampleIconName: iconName(sample),
+					};
+
+					// Get template
+					let content;
+					try {
+						content = fs.readFileSync(
+							`${templatesDir}/sample-${lang}-${index}.md`,
+							'utf8'
+						);
+					} catch (err) {
+						try {
+							content = fs.readFileSync(
+								`${templatesDir}/sample-${lang}.md`,
+								'utf8'
+							);
+						} catch (err) {
+							return;
+						}
+					}
+
+					// Replace content
+					content = replaceContent(content, [sampleReplacements, replacements]);
+					codeSamples.push(content.trim());
+				});
+				replacements['`samples.' + lang + '`'] = codeSamples.join('\n\n');
+			});
+
+			// Get content
+			let content = fs
+				.readFileSync(templatesDir + '/component.md', 'utf8')
+				.trim();
+
+			// Author information
 			if (
 				options.info &&
 				options.info.author !== void 0 &&
 				options.info.name !== void 0
 			) {
-				let keys = {
+				const phrases = {
 					author: 'Icons author: ',
 					url: 'Website: ',
 					license: 'License: ',
 					licenseURL: 'License URL: ',
 				};
-				result += '## About ' + options.info.name + '\n\n';
-				Object.keys(keys).forEach((key) => {
-					if (options.info[key] !== void 0) {
-						result += keys[key] + options.info[key] + '\n';
+
+				const list = [];
+
+				// Author name and website
+				if (typeof options.info.author === 'object') {
+					const author = options.info.author;
+					if (typeof author.name === 'string') {
+						list.push(phrases.author + author.name);
+						if (typeof author.url === 'string') {
+							list.push(phrases.url + author.url);
+						}
 					}
-				});
-				result += '\n';
+				} else if (typeof options.info.author === 'string') {
+					list.push(phrases.author + options.info.author);
+				}
+
+				// License
+				if (typeof options.info.license === 'object') {
+					const license = options.info.license;
+					if (typeof license.title === 'string') {
+						list.push(phrases.license + license.title);
+						if (typeof license.url === 'string') {
+							list.push(phrases.licenseURL + license.url);
+						}
+					}
+				} else if (typeof options.info.license === 'string') {
+					list.push(phrases.license + options.info.license);
+				}
+
+				if (list.length) {
+					const infoReplacements = {
+						iconSetInfo: list.join('\n\n'),
+					};
+
+					let info = fs.readFileSync(templatesDir + '/info.md', 'utf8');
+					content += '\n\n' + replaceContent(info, infoReplacements).trim();
+				}
 			}
 
-			fs.writeFileSync(dir + '/README.md', result, 'utf8');
+			// Replace content
+			content = replaceContent(content, replacements) + '\n';
+
+			// Check if there are missing samples
+			if (content.indexOf('`samples.') !== -1) {
+				throw new Error('Did not replace all samples in generated README.md');
+			}
+
+			fs.writeFileSync(dir + '/README.md', content, 'utf8');
 		};
 
 		/**
@@ -418,3 +504,4 @@ module.exports = (collection, dir, options) =>
 
 		fulfill(collection);
 	});
+};
