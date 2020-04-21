@@ -24,6 +24,7 @@ const defaults = {
 	'mergePaths': false,
 	'convertShapeToPath': true,
 	'noSpaceAfterFlags': false,
+	'doublePass': false,
 };
 
 /**
@@ -33,15 +34,7 @@ const defaults = {
  * @param {object} [options] Options
  * @return {Promise}
  */
-module.exports = (svg, options) => {
-	// Set options
-	options = options === void 0 ? Object.create(null) : options;
-	Object.keys(defaults).forEach(key => {
-		if (options[key] === void 0) {
-			options[key] = defaults[key];
-		}
-	});
-
+const optimize = (svg, options) => {
 	return new Promise((fulfill, reject) => {
 		try {
 			let content = typeof svg === 'string' ? svg : svg.toString(),
@@ -93,7 +86,7 @@ module.exports = (svg, options) => {
 				plugins: plugins,
 			})
 				.optimize(content)
-				.then(result => {
+				.then((result) => {
 					if (!result || !result.info || !result.data) {
 						return reject(result.error ? result.error : 'Invalid SVG file');
 					}
@@ -115,11 +108,42 @@ module.exports = (svg, options) => {
 						fulfill(svg);
 					}
 				})
-				.catch(err => {
+				.catch((err) => {
 					return reject(err);
 				});
 		} catch (err) {
 			reject(err);
 		}
+	});
+};
+
+module.exports = (svg, options) => {
+	// Set options
+	options = options === void 0 ? Object.create(null) : options;
+	Object.keys(defaults).forEach((key) => {
+		if (options[key] === void 0) {
+			options[key] = defaults[key];
+		}
+	});
+
+	return new Promise((fulfill, reject) => {
+		// Check for doublePass
+		const doublePass = options.doublePass;
+		optimize(svg, options)
+			.then((result) => {
+				if (doublePass) {
+					return optimize(result, options);
+				} else {
+					fulfill(result);
+				}
+			})
+			.then((result) => {
+				if (doublePass) {
+					fulfill(result);
+				}
+			})
+			.catch((err) => {
+				reject(err);
+			});
 	});
 };
