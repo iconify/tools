@@ -1,0 +1,17 @@
+{
+	"name": "import-mdi-test",
+	"version": "1.0.0",
+	"private": true,
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"build": "node convert-mdi"
+	},
+	"keywords": [],
+	"author": "Iconify",
+	"license": "ISC",
+	"dependencies": {
+		"@iconify/tools": "^1.3.13",
+		"@mdi/svg": "^5.3.45"
+	}
+}
