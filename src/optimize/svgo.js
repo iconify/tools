@@ -20,11 +20,17 @@ const cleanUpFlags = require('./flags');
  * @type {object}
  */
 const defaults = {
-	'id-prefix': 'svg-',
-	'mergePaths': false,
-	'convertShapeToPath': true,
-	'noSpaceAfterFlags': false,
+	// Run SVGO twice
 	'doublePass': false,
+
+	// Custom array of SVGO plugins
+	'plugins': null,
+
+	// Options below are ignored if "plugins" is set
+	'id-prefix': 'svg-', // Replace id prefix. Set to null to disable
+	'mergePaths': false, // Merge paths
+	'convertShapeToPath': true, // Converts shapes to paths
+	'noSpaceAfterFlags': false, // Removes space after flags in paths
 };
 
 /**
@@ -37,7 +43,12 @@ const defaults = {
 const optimize = (svg, options) => {
 	return new Promise((fulfill, reject) => {
 		try {
-			let content = typeof svg === 'string' ? svg : svg.toString(),
+			let content = typeof svg === 'string' ? svg : svg.toString();
+
+			let plugins;
+			if (options.plugins instanceof Array) {
+				plugins = options.plugins;
+			} else {
 				plugins = [
 					{
 						removeTitle: true,
@@ -53,33 +64,34 @@ const optimize = (svg, options) => {
 					},
 				];
 
-			if (!options.noSpaceAfterFlags) {
-				plugins.push({
-					mergePaths:
-						options.mergePaths === false
-							? false
-							: {
-									noSpaceAfterFlags: false,
-							  },
-				});
-				plugins.push({
-					convertPathData: {
-						noSpaceAfterFlags: false,
-					},
-				});
-			} else {
-				plugins.push({
-					mergePaths: options.mergePaths,
-				});
-			}
+				if (!options.noSpaceAfterFlags) {
+					plugins.push({
+						mergePaths:
+							options.mergePaths === false
+								? false
+								: {
+										noSpaceAfterFlags: false,
+								  },
+					});
+					plugins.push({
+						convertPathData: {
+							noSpaceAfterFlags: false,
+						},
+					});
+				} else {
+					plugins.push({
+						mergePaths: options.mergePaths,
+					});
+				}
 
-			if (options['id-prefix'] !== null) {
-				plugins.push({
-					cleanupIDs: {
-						remove: true,
-						prefix: options['id-prefix'],
-					},
-				});
+				if (options['id-prefix'] !== null) {
+					plugins.push({
+						cleanupIDs: {
+							remove: true,
+							prefix: options['id-prefix'],
+						},
+					});
+				}
 			}
 
 			new svgo({
