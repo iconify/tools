@@ -10,7 +10,7 @@
 		should = chai.should();
 
 	describe('Testing SVGO optimization', () => {
-		it('optimizing bpmn-default-flow.svg', done => {
+		it('optimizing bpmn-default-flow.svg', (done) => {
 			let svg = new SVG(
 				fs.readFileSync('tests/files/bpmn-default-flow.svg', 'utf8')
 			);
@@ -22,12 +22,12 @@
 					);
 					done();
 				})
-				.catch(err => {
+				.catch((err) => {
 					done(err ? err : 'exception');
 				});
 		});
 
-		it('optimizing iwwa-star-o.svg', done => {
+		it('optimizing iwwa-star-o.svg', (done) => {
 			let svg = new SVG(fs.readFileSync('tests/files/iwwa-star-o.svg', 'utf8'));
 
 			Optimize(svg)
@@ -37,12 +37,12 @@
 					);
 					done();
 				})
-				.catch(err => {
+				.catch((err) => {
 					done(err ? err : 'exception');
 				});
 		});
 
-		it('optimizing u1F3CC-golfer.svg', done => {
+		it('optimizing u1F3CC-golfer.svg', (done) => {
 			let svg = new SVG(
 				fs.readFileSync('tests/files/u1F3CC-golfer.svg', 'utf8')
 			);
@@ -54,12 +54,12 @@
 					);
 					done();
 				})
-				.catch(err => {
+				.catch((err) => {
 					done(err ? err : 'exception');
 				});
 		});
 
-		it('removing unused defs', done => {
+		it('removing unused defs', (done) => {
 			let svg = new SVG(
 				'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><defs><path id="ic-a" d="M0 0h24v24H0z"/></defs><path opacity=".3" d="M4 6h16v10H4z"/><path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>'
 			);
@@ -71,7 +71,59 @@
 					);
 					done();
 				})
-				.catch(err => {
+				.catch((err) => {
+					done(err ? err : 'exception');
+				});
+		});
+
+		it('merging paths', (done) => {
+			let svg = new SVG(
+				'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M17 4H20" /><path d="M40 4V10" /></svg>'
+			);
+
+			Optimize(svg, {
+				mergePaths: true,
+			})
+				.then(() => {
+					expect(svg.toMinifiedString()).to.be.equal(
+						'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M17 4h3M40 4v6"/></svg>'
+					);
+					done();
+				})
+				.catch((err) => {
+					done(err ? err : 'exception');
+				});
+		});
+
+		it('custom plug-ins', (done) => {
+			let svg = new SVG(
+				'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M17 4H20" /><path d="M40 4V10" /></svg>'
+			);
+
+			Optimize(svg, {
+				mergePaths: true, // should be ignored
+				plugins: [
+					{
+						removeTitle: true,
+					},
+					{
+						removeDesc: true,
+					},
+					{
+						removeRasterImages: true,
+					},
+					{
+						convertShapeToPath: true,
+					},
+				],
+			})
+				.then(() => {
+					expect(svg.toMinifiedString()).to.be.equal(
+						'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M17 4h3M40 4v6"/></svg>'
+					);
+					done();
+				})
+				.catch((err) => {
 					done(err ? err : 'exception');
 				});
 		});
