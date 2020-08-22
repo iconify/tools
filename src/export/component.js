@@ -62,6 +62,9 @@ const defaults = {
 	// Export README.md, boolean or file name
 	readme: true,
 
+	// CommonJS syntax
+	commonjs: true,
+
 	// Information for package.json and README.md:
 	// Package name
 	name: '@iconify/icons-{prefix}',
@@ -377,10 +380,12 @@ module.exports = (collection, dir, options) => {
 
 			// Save compiled file
 			if (typeof options.compiled === 'string') {
-				code =
-					'var data = ' +
-					content +
-					';\nexports.__esModule = true;\nexports.default = data;\n';
+				code = 'var data = ' + content + ';\n';
+				if (options.commonjs) {
+					code += 'exports.__esModule = true;\nexports.default = data;\n';
+				} else {
+					code += 'export default data;\n';
+				}
 				fs.writeFileSync(
 					dir + options.compiled + '/' + name + '.js',
 					code,

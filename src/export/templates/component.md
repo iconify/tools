@@ -57,3 +57,23 @@ yarn add --dev @iconify/vue
 `samples.vue`
 
 See https://github.com/iconify/iconify/packages/vue for details.
+
+## Usage with Svelte
+
+First you need to install [Iconify for Svelte](https://github.com/iconify/iconify/packages/svelte).
+
+If you are using NPM:
+
+```bash
+npm install --save-dev @iconify/svelte
+```
+
+If you are using Yarn:
+
+```bash
+yarn add --dev @iconify/svelte
+```
+
+`samples.svelte`
+
+See https://github.com/iconify/iconify/packages/svelte for details.
