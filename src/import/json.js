@@ -31,14 +31,14 @@ const extraAttributes = [
 	'renamed',
 ];
 
-const extraObjects = ['themes', 'info'];
+const extraObjects = ['themes', 'info', 'prefixes', 'suffixes'];
 
 /**
  * Import icons from json file or string
  */
 module.exports = (source, options) => {
 	options = options === void 0 ? Object.create(null) : options;
-	Object.keys(defaults).forEach(key => {
+	Object.keys(defaults).forEach((key) => {
 		if (options[key] === void 0) {
 			options[key] = defaults[key];
 		}
@@ -65,7 +65,7 @@ module.exports = (source, options) => {
 				deOptimize(json);
 
 				// Add items
-				Object.keys(json.icons).forEach(key => {
+				Object.keys(json.icons).forEach((key) => {
 					let data = json.icons[key];
 					if (!data.width || !data.height || !data.body) {
 						return;
@@ -88,7 +88,7 @@ module.exports = (source, options) => {
 					);
 
 					// Copy additional attributes
-					extraAttributes.forEach(attr => {
+					extraAttributes.forEach((attr) => {
 						if (data[attr] !== void 0) {
 							svg[attr] = data[attr];
 						}
@@ -96,7 +96,7 @@ module.exports = (source, options) => {
 
 					// Check for aliases
 					if (json.aliases !== void 0) {
-						Object.keys(json.aliases).forEach(aliasKey => {
+						Object.keys(json.aliases).forEach((aliasKey) => {
 							if (json.aliases[aliasKey].parent === key) {
 								// Found alias
 								if (svg.aliases === void 0) {
@@ -119,7 +119,7 @@ module.exports = (source, options) => {
 
 				// Add characters
 				if (json.chars !== void 0) {
-					Object.keys(json.chars).forEach(char => {
+					Object.keys(json.chars).forEach((char) => {
 						let icon = json.chars[char];
 						if (collection.items[icon] !== void 0) {
 							collection.items[icon].char = char;
@@ -129,8 +129,8 @@ module.exports = (source, options) => {
 
 				// Add categories
 				if (json.categories) {
-					Object.keys(json.categories).forEach(cat => {
-						json.categories[cat].forEach(icon => {
+					Object.keys(json.categories).forEach((cat) => {
+						json.categories[cat].forEach((icon) => {
 							if (collection.items[icon] !== void 0) {
 								if (collection.items[icon].category === void 0) {
 									collection.items[icon].category = [cat];
@@ -143,7 +143,7 @@ module.exports = (source, options) => {
 				}
 
 				// Add themes and info
-				extraObjects.forEach(key => {
+				extraObjects.forEach((key) => {
 					if (typeof json[key] === 'object') {
 						collection[key] = json[key];
 					}
@@ -172,7 +172,7 @@ module.exports = (source, options) => {
 		if (source.slice(0, 1) === '{') {
 			try {
 				let data = JSON.parse(source);
-				process.nextTick(function() {
+				process.nextTick(function () {
 					loaded(data);
 				});
 				return;

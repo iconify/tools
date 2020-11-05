@@ -40,8 +40,12 @@ const defaults = {
 	// Information block, overrides collection's block
 	info: null,
 
-	// Themes block, overrides collection's block
+	// Themes block (legacy), overrides collection's block
 	themes: null,
+
+	// Prefixes and suffixes, replacement for themes block for new format
+	themePrefixes: null,
+	themeSuffixes: null,
 };
 
 const transformKeys = ['rotate', 'vFlip', 'hFlip'];
@@ -62,14 +66,14 @@ const extraAttributes = ['deprecated', 'hidden', 'renamed'];
  */
 module.exports = (collection, target, options) => {
 	options = options === void 0 ? Object.create(null) : options;
-	Object.keys(defaults).forEach(key => {
+	Object.keys(defaults).forEach((key) => {
 		if (options[key] === void 0) {
 			options[key] = defaults[key];
 		}
 	});
 
 	// Function to add prefix to name if needed
-	let prefix = key =>
+	let prefix = (key) =>
 		options.separatePrefix
 			? key
 			: (collection.prefix === '' ? '' : collection.prefix + ':') + key;
@@ -114,7 +118,7 @@ module.exports = (collection, target, options) => {
 		// Export all files
 		let keys = collection.keys();
 		keys.sort((a, b) => a.localeCompare(b));
-		keys.forEach(key => {
+		keys.forEach((key) => {
 			let svg = collection.items[key],
 				iconKey = prefix(key);
 
@@ -125,14 +129,14 @@ module.exports = (collection, target, options) => {
 			};
 
 			// Add left/top
-			positionAttributes.forEach(attr => {
+			positionAttributes.forEach((attr) => {
 				if (svg[attr] !== 0) {
 					json.icons[iconKey][attr] = svg[attr];
 				}
 			});
 
 			// Add transformations
-			transformKeys.forEach(attr => {
+			transformKeys.forEach((attr) => {
 				if (svg[attr] !== void 0) {
 					json.icons[iconKey][attr] = svg[attr];
 				}
@@ -140,7 +144,7 @@ module.exports = (collection, target, options) => {
 
 			// Include inline attributes
 			if (options.includeInline) {
-				inlineAttributes.forEach(attr => {
+				inlineAttributes.forEach((attr) => {
 					if (svg[attr] !== void 0) {
 						json.icons[iconKey][attr] = svg[attr];
 					}
@@ -148,7 +152,7 @@ module.exports = (collection, target, options) => {
 			}
 
 			// Extra attributes
-			extraAttributes.forEach(attr => {
+			extraAttributes.forEach((attr) => {
 				if (svg[attr] !== void 0) {
 					json.icons[iconKey][attr] = svg[attr];
 				}
@@ -158,7 +162,7 @@ module.exports = (collection, target, options) => {
 			if (options.includeCategories && svg.category !== void 0) {
 				let list =
 					typeof svg.category === 'string' ? [svg.category] : svg.category;
-				list.forEach(cat => {
+				list.forEach((cat) => {
 					if (categories[cat] === void 0) {
 						categories[cat] = [];
 					}
@@ -175,7 +179,7 @@ module.exports = (collection, target, options) => {
 				if (svg.aliases) {
 					let parentKey = prefix(key);
 
-					svg.aliases.forEach(alias => {
+					svg.aliases.forEach((alias) => {
 						// Check alias format
 						let item = {
 								parent: parentKey,
@@ -193,13 +197,13 @@ module.exports = (collection, target, options) => {
 								}
 								name = alias.name;
 
-								transformKeys.forEach(key => {
+								transformKeys.forEach((key) => {
 									if (alias[key] !== void 0) {
 										item[key] = alias[key];
 									}
 								});
 
-								extraAttributes.forEach(key => {
+								extraAttributes.forEach((key) => {
 									if (alias[key] !== void 0) {
 										item[key] = alias[key];
 									}
@@ -230,7 +234,7 @@ module.exports = (collection, target, options) => {
 			if (keys.length) {
 				keys.sort((a, b) => a.localeCompare(b));
 				json.aliases = Object.create(null);
-				keys.forEach(key => {
+				keys.forEach((key) => {
 					json.aliases[key] = aliases[key];
 				});
 			}
@@ -244,7 +248,7 @@ module.exports = (collection, target, options) => {
 					return;
 				}
 				if (options.includeAliases && svg.aliases) {
-					svg.aliases.forEach(alias => {
+					svg.aliases.forEach((alias) => {
 						if (
 							typeof alias === 'object' &&
 							alias.char !== void 0 &&
@@ -262,7 +266,7 @@ module.exports = (collection, target, options) => {
 			if (keys.length) {
 				keys.sort((a, b) => a.localeCompare(b));
 				json.chars = Object.create(null);
-				keys.forEach(key => {
+				keys.forEach((key) => {
 					json.chars[key] = chars[key];
 				});
 			}
@@ -275,7 +279,7 @@ module.exports = (collection, target, options) => {
 			if (categoryKeys.length) {
 				categoryKeys.sort((a, b) => a.localeCompare(b));
 				json.categories = Object.create(null);
-				categoryKeys.forEach(key => {
+				categoryKeys.forEach((key) => {
 					categories[key].sort((a, b) => a.localeCompare(b));
 					json.categories[key] = categories[key];
 				});
@@ -288,6 +292,19 @@ module.exports = (collection, target, options) => {
 		} else if (options.themes) {
 			json.themes = JSON.parse(JSON.stringify(options.themes));
 		}
+
+		['prefixes', 'suffixes'].forEach((attr) => {
+			if (collection[attr]) {
+				json[attr] = Object.assign({}, collection[attr]);
+				return;
+			}
+
+			const optionsKey =
+				'theme' + attr.slice(0, 1).toUpperCase() + attr.slice(1);
+			if (options[optionsKey]) {
+				json[attr] = Object.assign({}, options[optionsKey]);
+			}
+		});
 
 		// Optimize common attributes by moving duplicate items to root
 		if (options.optimize) {
