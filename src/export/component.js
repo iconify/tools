@@ -50,12 +50,6 @@ const defaults = {
 	// True if .d.ts files should be exported
 	definitions: true,
 
-	// Directory for uncompiled files. Set to non-string (false, null) to disable
-	sources: '/src',
-
-	// Directory for compiled files. Set to non-string (false, null) to disable
-	compiled: '',
-
 	// Export package.json, boolean or file name
 	package: true,
 
@@ -365,45 +359,21 @@ module.exports = (collection, dir, options) => {
 				});
 			}
 
-			// Save uncompiled file
-			if (typeof options.sources === 'string') {
-				code = 'let data = ' + content + ';\nexport default data;\n';
-				fs.writeFileSync(
-					dir + options.sources + '/' + name + '.js',
-					code,
-					'utf8'
-				);
-				if (options.definitions) {
-					exportTS(dir + options.sources + '/' + name, isLegacy);
-				}
+			// Save files
+			code = 'var data = ' + content + ';\n';
+			if (options.commonjs) {
+				code += 'exports.__esModule = true;\nexports.default = data;\n';
+			} else {
+				code += 'export default data;\n';
 			}
-
-			// Save compiled file
-			if (typeof options.compiled === 'string') {
-				code = 'var data = ' + content + ';\n';
-				if (options.commonjs) {
-					code += 'exports.__esModule = true;\nexports.default = data;\n';
-				} else {
-					code += 'export default data;\n';
-				}
-				fs.writeFileSync(
-					dir + options.compiled + '/' + name + '.js',
-					code,
-					'utf8'
-				);
-				if (options.definitions) {
-					exportTS(dir + options.compiled + '/' + name, isLegacy);
-				}
+			fs.writeFileSync(dir + '/' + name + '.js', code, 'utf8');
+			if (options.definitions) {
+				exportTS(dir + '/' + name, isLegacy);
 			}
 		};
 
-		// Prepare output directories
-		if (typeof options.sources === 'string') {
-			helpers.mkdir(dir + options.sources);
-		}
-		if (typeof options.compiled === 'string') {
-			helpers.mkdir(dir + options.compiled);
-		}
+		// Prepare output directory
+		helpers.mkdir(dir);
 
 		// Get samples
 		let samples = options.samples instanceof Array ? options.samples : [];
