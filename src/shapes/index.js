@@ -9,7 +9,6 @@
 
 'use strict';
 
-const cheerio = require('cheerio');
 const changeOptions = require('./options');
 
 /**
@@ -47,7 +46,7 @@ module.exports = (svg, options) => {
 
 		function checkChildElements($node, style) {
 			$node.children().each((index, child) => {
-				let $child = cheerio(child),
+				let $child = svg.$svg(child),
 					tag = child.tagName;
 
 				if (options.ignoreTags.indexOf(tag) !== -1) {
@@ -58,7 +57,7 @@ module.exports = (svg, options) => {
 				let childStyle;
 				if (options.checkFillStroke) {
 					childStyle = Object.create(null);
-					['fill', 'stroke'].forEach(attr => {
+					['fill', 'stroke'].forEach((attr) => {
 						if (child.attribs && child.attribs[attr] !== void 0) {
 							let value = child.attribs[attr].toLowerCase();
 							childStyle[attr] =

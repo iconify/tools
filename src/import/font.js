@@ -97,7 +97,7 @@ function getSVGBody(character, path) {
  * @param options
  */
 function applyOptions(data, options) {
-	Object.keys(data).forEach(key => {
+	Object.keys(data).forEach((key) => {
 		if (options[key] !== void 0) {
 			switch (typeof options[key]) {
 				case 'function':
@@ -120,7 +120,7 @@ function applyOptions(data, options) {
  */
 module.exports = (source, options) => {
 	options = options === void 0 ? Object.create(null) : options;
-	Object.keys(defaults).forEach(key => {
+	Object.keys(defaults).forEach((key) => {
 		if (options[key] === void 0) {
 			options[key] = defaults[key];
 		}
@@ -137,13 +137,13 @@ module.exports = (source, options) => {
 				}
 			}
 
-			let svg = cheerio.load(data, {
+			let fontSVG = cheerio.load(data, {
 				lowerCaseAttributeNames: false,
 				xmlMode: true,
 			});
 
 			// Check root
-			let $root = svg(':root');
+			let $root = fontSVG(':root');
 			if (
 				$root.length > 1 ||
 				$root.get(0).tagName !== 'svg' ||
@@ -161,10 +161,10 @@ module.exports = (source, options) => {
 
 			try {
 				$root.children('defs').each((index, def) => {
-					let $def = cheerio(def);
+					let $def = fontSVG(def);
 
 					$def.children('font').each((index, row) => {
-						let $font = cheerio(row);
+						let $font = fontSVG(row);
 
 						let $ff = $font.children('font-face');
 						if ($ff.length !== 1) {
@@ -203,7 +203,7 @@ module.exports = (source, options) => {
 						}
 
 						// Get height
-						['ascent', 'descent'].forEach(key => {
+						['ascent', 'descent'].forEach((key) => {
 							if (ffAttributes[key] !== void 0) {
 								font[key] = parseFloat(ffAttributes[key]);
 								if (isNaN(font[key])) {
@@ -236,7 +236,7 @@ module.exports = (source, options) => {
 
 						// Get all glyphs
 						$font.children('glyph').each((index, row) => {
-							let $glyph = cheerio(row),
+							let $glyph = fontSVG(row),
 								glyphAttributes = row.attribs;
 
 							if (
@@ -282,7 +282,7 @@ module.exports = (source, options) => {
 							}
 
 							// Overwrite ascent/descent
-							['ascent', 'descent'].forEach(key => {
+							['ascent', 'descent'].forEach((key) => {
 								if (glyphAttributes[key] !== void 0) {
 									character[key] = parseInt(glyphAttributes[key]);
 								}
@@ -377,8 +377,8 @@ module.exports = (source, options) => {
 				cropOptions.optimize = true;
 
 				crop(cropQueue, cropOptions)
-					.then(results => {
-						Object.keys(results).forEach(hex => {
+					.then((results) => {
+						Object.keys(results).forEach((hex) => {
 							let svg = results[hex];
 
 							// top > 0 - something was cropped above icon
@@ -391,7 +391,7 @@ module.exports = (source, options) => {
 						});
 						fulfill(glyphs);
 					})
-					.catch(err => {
+					.catch((err) => {
 						reject(err);
 					});
 			} else {

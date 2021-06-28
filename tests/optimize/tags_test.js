@@ -203,6 +203,86 @@
 				});
 		});
 
+		it('animations', (done) => {
+			const code = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" xml:space="preserve">
+<g>
+<path d="M7 3H17V7.2L12 12L7 7.2V3Z">
+<animate id="first" attributeName="opacity" from="1" to="0" dur="2s" begin="0;second.end" fill="freeze"/>
+</path>
+<path d="M17 21H7V16.8L12 12L17 16.8V21Z">
+<animate attributeName="opacity" from="0" to="1" dur="2s" begin="0;second.end" fill="freeze"/>
+</path>
+<path d="M6 2V8H6.01L6 8.01L10 12L6 16L6.01 16.01H6V22H18V16.01H17.99L18 16L14 12L18 8.01L17.99 8H18V2H6ZM16 16.5V20H8V16.5L12 12.5L16 16.5ZM12 11.5L8 7.5V4H16V7.5L12 11.5Z">
+</path>
+<animateTransform id="second" attributeName="transform" attributeType="XML" type="rotate" from="0 12 12" to="180 12 12" dur="0.5s" begin="first.end"/>
+</g>
+</svg>`;
+			let svg = new SVG(code);
+
+			Tags(svg)
+				.then(() => {
+					let content = svg.toMinifiedString();
+					expect(content).to.be.equal(
+						'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet" width="24" height="24"><g><path d="M7 3H17V7.2L12 12L7 7.2V3Z"><animate id="first" attributeName="opacity" from="1" to="0" dur="2s" begin="0;second.end" fill="freeze"/></path><path d="M17 21H7V16.8L12 12L17 16.8V21Z"><animate attributeName="opacity" from="0" to="1" dur="2s" begin="0;second.end" fill="freeze"/></path><path d="M6 2V8H6.01L6 8.01L10 12L6 16L6.01 16.01H6V22H18V16.01H17.99L18 16L14 12L18 8.01L17.99 8H18V2H6ZM16 16.5V20H8V16.5L12 12.5L16 16.5ZM12 11.5L8 7.5V4H16V7.5L12 11.5Z"></path><animateTransform id="second" attributeName="transform" attributeType="XML" type="rotate" from="0 12 12" to="180 12 12" dur="0.5s" begin="first.end"/></g></svg>'
+					);
+					done();
+				})
+				.catch((err) => {
+					done(err ? err : 'exception');
+				});
+		});
+
+		it('color animations', (done) => {
+			const code = `<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg">
+			<circle cx="60" cy="60" r="50">
+			  <animateColor attributeName="fill" attributeType="XML"
+				  from="black" to="red" dur="6s" repeatCount="indefinite"/>
+			</circle>
+		  </svg>
+		  `;
+
+			let svg = new SVG(code);
+
+			Tags(svg)
+				.then(() => {
+					let content = svg.toMinifiedString();
+					expect(content).to.be.equal(
+						'<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="0 0 120 120"><circle cx="60" cy="60" r="50"><animateColor attributeName="fill" attributeType="XML" from="black" to="red" dur="6s" repeatCount="indefinite"/></circle></svg>'
+					);
+					done();
+				})
+				.catch((err) => {
+					done(err ? err : 'exception');
+				});
+		});
+
+		it('set animations with style', (done) => {
+			const code = `<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
+			<style>
+			  .round { rx: 5px; fill: green; }
+			</style>
+		  
+			<rect id="me" width="10" height="10">
+			  <set attributeName="class" to="round" begin="me.click" dur="2s" />
+			</rect>
+		  </svg>`;
+
+			let svg = new SVG(code);
+
+			// This test fails with strict tags validation because 'rx' is not valid style
+			Tags(svg, { 'strict-tags-validation': false })
+				.then(() => {
+					let content = svg.toMinifiedString();
+					expect(content).to.be.equal(
+						'<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" width="10" height="10"><style>.round{rx:5px;fill:green;}</style><rect id="me" width="10" height="10"><set attributeName="class" to="round" begin="me.click" dur="2s"/></rect></svg>'
+					);
+					done();
+				})
+				.catch((err) => {
+					done(err ? err : 'exception');
+				});
+		});
+
 		it('root attributes', (done) => {
 			const code =
 				'<svg id="i-search" viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="14" cy="14" r="12" /><path d="M23 23 L30 30"  /></svg>';

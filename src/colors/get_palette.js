@@ -9,7 +9,6 @@
 
 'use strict';
 
-const cheerio = require('cheerio');
 const Color = require('cyberalien-color');
 const Tokenizer = require('simple-tokenizer');
 
@@ -21,7 +20,7 @@ const Tokenizer = require('simple-tokenizer');
  * @param {SVG} svg SVG object
  * @return {Promise}
  */
-module.exports = svg => {
+module.exports = (svg) => {
 	return new Promise((fulfill, reject) => {
 		let $root = svg.$svg(':root'),
 			colors = [],
@@ -66,7 +65,7 @@ module.exports = svg => {
 				splitRules: true,
 			}).tokenize(code);
 
-			tokens.forEach(token => {
+			tokens.forEach((token) => {
 				if (token.token === 'rule') {
 					let key = token.key.toLowerCase();
 					switch (key) {
@@ -89,7 +88,7 @@ module.exports = svg => {
 		function scanElement($tag, tag) {
 			// Check attributes
 			if (tag.attribs) {
-				Object.keys(tag.attribs).forEach(attr => {
+				Object.keys(tag.attribs).forEach((attr) => {
 					let value = tag.attribs[attr];
 
 					switch (attr) {
@@ -116,7 +115,7 @@ module.exports = svg => {
 		 */
 		function scanChildElements($tag) {
 			$tag.children().each((index, child) => {
-				let $child = cheerio(child);
+				let $child = svg.$svg(child);
 
 				switch (child.tagName) {
 					case 'mask': // do not scan colors inside mask

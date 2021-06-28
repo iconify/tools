@@ -9,7 +9,6 @@
 
 'use strict';
 
-const cheerio = require('cheerio');
 const SVG = require('../svg');
 
 const debug = false;
@@ -68,7 +67,7 @@ const argCount = {
  * @param {number} num
  * @return {boolean}
  */
-const isDigit = num => num >= 48 && num <= 57;
+const isDigit = (num) => num >= 48 && num <= 57;
 
 /**
  * Check if character is white space
@@ -76,7 +75,8 @@ const isDigit = num => num >= 48 && num <= 57;
  * @param {number} num
  * @return {boolean}
  */
-const isWhiteSpace = num => num === 32 || num === 9 || num === 13 || num === 10;
+const isWhiteSpace = (num) =>
+	num === 32 || num === 9 || num === 13 || num === 10;
 
 /**
  * Clean up path
@@ -361,7 +361,7 @@ function cleanPath(path) {
 	// Build path
 	let output = '';
 
-	commands.forEach(item => {
+	commands.forEach((item) => {
 		output += item.command;
 
 		item.params.forEach((value, index) => {
@@ -402,17 +402,18 @@ function cleanPath(path) {
  * @param {string|SVG} code
  * @return {string|SVG}
  */
-const cleanUpFlags = code => {
+const cleanUpFlags = (code) => {
 	let svg = typeof code === 'object' ? code : new SVG(code),
 		$root = svg.$svg(':root');
 
 	function checkNodes($parent) {
 		$parent.children().each((index, child) => {
-			let $child = cheerio(child);
+			let $child = svg.$svg(child);
 
 			switch (child.tagName) {
 				case 'path':
-					if (child.attribs && child.attribs.d) {
+					// Do not parse path for paths with child nodes
+					if (child.children?.length === 0 && child.attribs?.d) {
 						child.attribs.d = cleanPath(child.attribs.d);
 					}
 					break;

@@ -9,7 +9,6 @@
 
 'use strict';
 
-const cheerio = require('cheerio');
 const Color = require('cyberalien-color');
 const Tokenizer = require('simple-tokenizer');
 
@@ -48,7 +47,7 @@ module.exports = (svg, setColor) => {
 
 		if (typeof setColor !== 'function') {
 			let defaultColor = typeof setColor === 'string' ? setColor : '#000';
-			setColor = color => defaultCallback(color, defaultColor);
+			setColor = (color) => defaultCallback(color, defaultColor);
 		}
 
 		/**
@@ -78,7 +77,7 @@ module.exports = (svg, setColor) => {
 				newTokens = [],
 				opacity = null;
 
-			oldTokens.forEach(token => {
+			oldTokens.forEach((token) => {
 				if (token.token === 'rule') {
 					let key = token.key.toLowerCase();
 					switch (key) {
@@ -121,7 +120,7 @@ module.exports = (svg, setColor) => {
 					}
 				} else {
 					if (opacity !== null) {
-						Object.keys(opacity).forEach(key => {
+						Object.keys(opacity).forEach((key) => {
 							newTokens.push({
 								token: 'rule',
 								key: key + '-opacity',
@@ -144,7 +143,7 @@ module.exports = (svg, setColor) => {
 		 */
 		function parseChildElements($tag) {
 			$tag.children().each((index, child) => {
-				let $child = cheerio(child);
+				let $child = svg.$svg(child);
 
 				switch (child.tagName) {
 					case 'style':
@@ -156,7 +155,7 @@ module.exports = (svg, setColor) => {
 							let props = child.attribs;
 
 							// Check for fill and stroke
-							['fill', 'stroke'].forEach(attr => {
+							['fill', 'stroke'].forEach((attr) => {
 								if (props[attr] !== void 0) {
 									if (isNone(props[attr])) {
 										return;

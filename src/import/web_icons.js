@@ -10,7 +10,6 @@
 'use strict';
 
 const fs = require('fs');
-const cheerio = require('cheerio');
 const SVGImporter = require('./svg');
 const SVG = require('../svg');
 const Collection = require('../collection');
@@ -50,10 +49,10 @@ function load(source, options) {
 
 			// filename
 			SVGImporter(source, options)
-				.then(svg => {
+				.then((svg) => {
 					fulfill(svg);
 				})
-				.catch(err => {
+				.catch((err) => {
 					reject(err);
 				});
 			return;
@@ -68,7 +67,7 @@ function load(source, options) {
  */
 module.exports = (source, options) => {
 	options = options === void 0 ? Object.create(null) : options;
-	Object.keys(defaults).forEach(key => {
+	Object.keys(defaults).forEach((key) => {
 		if (options[key] === void 0) {
 			options[key] = defaults[key];
 		}
@@ -76,8 +75,9 @@ module.exports = (source, options) => {
 
 	return new Promise((fulfill, reject) => {
 		load(source, options)
-			.then(svg => {
-				let $root = svg.$svg(':root');
+			.then((svg) => {
+				const cheerio = svg.$svg;
+				let $root = cheerio(':root');
 				if ($root.length > 1 || $root.get(0).tagName !== 'svg') {
 					return reject('Missing SVG element');
 				}
@@ -115,7 +115,7 @@ module.exports = (source, options) => {
 					if (symbolAttributes.viewBox !== void 0) {
 						let list = symbolAttributes.viewBox.split(' ');
 						if (list.length === 4) {
-							list = list.map(item => parseFloat(item));
+							list = list.map((item) => parseFloat(item));
 							left = list[0];
 							top = list[1];
 							width = list[2];
@@ -176,7 +176,7 @@ module.exports = (source, options) => {
 
 				// Crop like SVG font
 				let rejected = false;
-				['ascent', 'descent'].forEach(attr => {
+				['ascent', 'descent'].forEach((attr) => {
 					if (!rejected && options.crop[attr] === void 0) {
 						reject('Missing crop option: ' + attr);
 						rejected = true;
@@ -204,7 +204,7 @@ module.exports = (source, options) => {
 						originalHeight: svg.height,
 						verticalAlign: verticalAlign,
 					};
-					['width', 'originalHeight'].forEach(attr => {
+					['width', 'originalHeight'].forEach((attr) => {
 						if (options.crop[attr] !== void 0) {
 							cropQueue[key][attr] = options.crop[attr];
 						}
@@ -223,8 +223,8 @@ module.exports = (source, options) => {
 				cropOptions.format = 'svg';
 
 				Crop(cropQueue, cropOptions)
-					.then(results => {
-						Object.keys(results).forEach(key => {
+					.then((results) => {
+						Object.keys(results).forEach((key) => {
 							let svg = results[key];
 
 							// top > 0 - something was cropped above icon
@@ -237,11 +237,11 @@ module.exports = (source, options) => {
 						});
 						fulfill(collection);
 					})
-					.catch(err => {
+					.catch((err) => {
 						reject(err);
 					});
 			})
-			.catch(err => {
+			.catch((err) => {
 				reject(err);
 			});
 	});

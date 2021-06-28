@@ -9,7 +9,6 @@
 
 'use strict';
 
-const cheerio = require('cheerio');
 const svgo = require('svgo');
 const SVG = require('../svg');
 const cleanUpFlags = require('./flags');

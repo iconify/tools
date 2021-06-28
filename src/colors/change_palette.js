@@ -9,7 +9,6 @@
 
 'use strict';
 
-const cheerio = require('cheerio');
 const Color = require('cyberalien-color');
 const Tokenizer = require('simple-tokenizer');
 
@@ -57,7 +56,7 @@ module.exports = (svg, palette) => {
 				splitRules: true,
 			}).tokenize(style);
 
-			tokens.forEach(token => {
+			tokens.forEach((token) => {
 				if (token.token === 'rule') {
 					let key = token.key.toLowerCase();
 					switch (key) {
@@ -116,7 +115,7 @@ module.exports = (svg, palette) => {
 		 */
 		function parseChildElements($tag, params) {
 			$tag.children().each((index, child) => {
-				let $child = cheerio(child),
+				let $child = svg.$svg(child),
 					shape = false;
 
 				//noinspection FallThroughInSwitchStatementJS
@@ -149,7 +148,7 @@ module.exports = (svg, palette) => {
 							attributes = Object.assign(Object.create(null), params);
 
 							// Check for fill and stroke
-							['fill', 'stroke'].forEach(attr => {
+							['fill', 'stroke'].forEach((attr) => {
 								if (props[attr] !== void 0) {
 									// Node has fill or stroke - check value
 									if (isNone(props[attr])) {

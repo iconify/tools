@@ -9,13 +9,13 @@
 
 'use strict';
 
-const cheerio = require('cheerio');
 const Color = require('cyberalien-color');
 const Tokenizer = require('simple-tokenizer');
 
 const defaults = {
 	'strict-tags-validation': true,
 	'allowFont': false,
+	'allowAnimations': true,
 	'browserCSSPrefixes': ['-webkit-', '-moz-', '-ms-', '-o-', '-inkscape-'],
 	'debug': false,
 	'log': console.log, // function for logging
@@ -308,9 +308,17 @@ module.exports = (svg, options) => {
 							}
 
 						case 'fill':
-						case 'stroke':
-							checkColor(value.toLowerCase());
+						case 'stroke': {
+							const lcValue = value.toLowerCase();
+							if (extra.animation) {
+								if (lcValue !== 'freeze' && lcValue !== 'remove') {
+									throw new Error('Invalid animation color "' + attr + '"');
+								}
+								break;
+							}
+							checkColor(lcValue);
 							break;
+						}
 
 						default:
 							if (attrib.slice(0, 2) === 'on') {
@@ -358,7 +366,7 @@ module.exports = (svg, options) => {
 		 */
 		function checkChildElements($parent, extra) {
 			$parent.children().each((index, child) => {
-				let $child = cheerio(child),
+				let $child = svg.$svg(child),
 					shape = true;
 
 				//noinspection FallThroughInSwitchStatementJS
@@ -397,6 +405,24 @@ module.exports = (svg, options) => {
 						checkShape($child, child, extra);
 						return;
 
+					// SVG animations
+					case 'animate':
+					case 'animateColor':
+					case 'animateTransform':
+					case 'animateMotion':
+					case 'discard':
+					case 'set':
+						if (!options.allowAnimations) {
+							throw new Error('Unexpected tag "' + child.tagName + '"');
+						}
+						checkShape(
+							$child,
+							child,
+							Object.assign(Object.create(null), extra, { animation: true })
+						);
+						return;
+
+					// Text
 					case 'text':
 					case 'tspan':
 						if (!options.allowFont) {
