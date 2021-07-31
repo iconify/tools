@@ -184,6 +184,7 @@ module.exports = (svg, options) => {
 									case 'white':
 									case 'word':
 									case 'solid':
+									case 'inline':
 										token.token = 'ignore';
 										return;
 
@@ -386,6 +387,7 @@ module.exports = (svg, options) => {
 
 					case 'g':
 					case 'switch':
+					case 'marker':
 						checkChildElements($child, extra);
 
 						// Remove empty tags
