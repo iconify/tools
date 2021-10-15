@@ -1,0 +1,141 @@
+{
+	"name": "@iconify/tools",
+	"description": "Collection of functions for cleaning up and parsing SVG for Iconify project",
+	"author": "Vjacheslav Trushkin",
+	"version": "2.0.0-dev",
+	"license": "MIT",
+	"bugs": "https://github.com/iconify/tools/issues",
+	"homepage": "https://github.com/iconify/tools",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/iconify/tools.git"
+	},
+	"main": "dist/index.js",
+	"scripts": {
+		"clean": "rimraf lib tests-compiled tsconfig.tsbuildinfo",
+		"lint": "eslint src/**/*.ts",
+		"prebuild": "npm run lint && npm run clean",
+		"build": "node build",
+		"test:jest": "jest --runInBand",
+		"test:jasmine": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jasmine",
+		"test": "npm run test:jest && npm run test:jasmine"
+	},
+	"dependencies": {
+		"@iconify/utils": "^1.0.18",
+		"@types/cheerio": "^0.22.30",
+		"cheerio": "^1.0.0-rc.10",
+		"pathe": "^0.2.0"
+	},
+	"devDependencies": {
+		"@iconify/library-builder": "^1.0.3",
+		"@types/jest": "^27.0.1",
+		"@typescript-eslint/eslint-plugin": "^4.31.1",
+		"cross-env": "^7.0.3",
+		"eslint": "^7.32.0",
+		"eslint-plugin-jasmine": "^4.1.2",
+		"jasmine": "^3.9.0",
+		"jest": "^27.2.1",
+		"rimraf": "^3.0.2",
+		"ts-jest": "^27.0.5",
+		"typescript": "^4.4.3"
+	},
+	"exports": {
+		"./*": "./*",
+		"./lib/colors/parse": {
+			"require": "./lib/colors/parse.js",
+			"import": "./lib/colors/parse.mjs"
+		},
+		"./lib/css/parse": {
+			"require": "./lib/css/parse.js",
+			"import": "./lib/css/parse.mjs"
+		},
+		"./lib/css/parser/error": {
+			"require": "./lib/css/parser/error.js",
+			"import": "./lib/css/parser/error.mjs"
+		},
+		"./lib/css/parser/export": {
+			"require": "./lib/css/parser/export.js",
+			"import": "./lib/css/parser/export.mjs"
+		},
+		"./lib/css/parser/strings": {
+			"require": "./lib/css/parser/strings.js",
+			"import": "./lib/css/parser/strings.mjs"
+		},
+		"./lib/css/parser/text": {
+			"require": "./lib/css/parser/text.js",
+			"import": "./lib/css/parser/text.mjs"
+		},
+		"./lib/css/parser/tokens": {
+			"require": "./lib/css/parser/tokens.js",
+			"import": "./lib/css/parser/tokens.mjs"
+		},
+		"./lib/css/parser/tree": {
+			"require": "./lib/css/parser/tree.js",
+			"import": "./lib/css/parser/tree.mjs"
+		},
+		"./lib/css/parser/types": {
+			"require": "./lib/css/parser/types.js",
+			"import": "./lib/css/parser/types.mjs"
+		},
+		"./lib/icon-set": {
+			"require": "./lib/icon-set/index.js",
+			"import": "./lib/icon-set/index.mjs"
+		},
+		"./lib/icon-set/index": {
+			"require": "./lib/icon-set/index.js",
+			"import": "./lib/icon-set/index.mjs"
+		},
+		"./lib/icon-set/match": {
+			"require": "./lib/icon-set/match.js",
+			"import": "./lib/icon-set/match.mjs"
+		},
+		"./lib/icon-set/merge": {
+			"require": "./lib/icon-set/merge.js",
+			"import": "./lib/icon-set/merge.mjs"
+		},
+		"./lib/icon-set/props": {
+			"require": "./lib/icon-set/props.js",
+			"import": "./lib/icon-set/props.mjs"
+		},
+		"./lib/icon-set/types": {
+			"require": "./lib/icon-set/types.js",
+			"import": "./lib/icon-set/types.mjs"
+		},
+		"./lib/svg/cleanup": {
+			"require": "./lib/svg/cleanup.js",
+			"import": "./lib/svg/cleanup.mjs"
+		},
+		"./lib/svg/cleanup/bad-tags": {
+			"require": "./lib/svg/cleanup/bad-tags.js",
+			"import": "./lib/svg/cleanup/bad-tags.mjs"
+		},
+		"./lib/svg/cleanup/inline-style": {
+			"require": "./lib/svg/cleanup/inline-style.js",
+			"import": "./lib/svg/cleanup/inline-style.mjs"
+		},
+		"./lib/svg/cleanup/root-svg": {
+			"require": "./lib/svg/cleanup/root-svg.js",
+			"import": "./lib/svg/cleanup/root-svg.mjs"
+		},
+		"./lib/svg/data/attributes": {
+			"require": "./lib/svg/data/attributes.js",
+			"import": "./lib/svg/data/attributes.mjs"
+		},
+		"./lib/svg/data/tags": {
+			"require": "./lib/svg/data/tags.js",
+			"import": "./lib/svg/data/tags.mjs"
+		},
+		"./lib/svg": {
+			"require": "./lib/svg/index.js",
+			"import": "./lib/svg/index.mjs"
+		},
+		"./lib/svg/index": {
+			"require": "./lib/svg/index.js",
+			"import": "./lib/svg/index.mjs"
+		},
+		"./lib/svg/parse": {
+			"require": "./lib/svg/parse.js",
+			"import": "./lib/svg/parse.mjs"
+		}
+	}
+}
