@@ -24,6 +24,14 @@ export function tokensTree(tokens: CSSToken[]): CSSTreeToken[] {
 					};
 					target.push(newItem);
 					parse(newItem.children);
+
+					// Remove token without children
+					if (!newItem.children.length) {
+						const index = target.indexOf(newItem);
+						if (index !== -1) {
+							target.splice(index, 1);
+						}
+					}
 					break;
 				}
 

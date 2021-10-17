@@ -2,13 +2,13 @@ import { SVG } from '@iconify/tools/lib/svg';
 import { parseColors } from '@iconify/tools/lib/colors/parse';
 
 describe('Finding colors', () => {
-	it('Icon without colors', () => {
+	it('Icon without colors', async () => {
 		const svgCode =
 			'<svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 0v1h4v5h-4v1h5v-7h-5zm1 2v1h-4v1h4v1l2-1.5-2-1.5z"/></svg>';
 		const svg = new SVG(svgCode);
 
 		// Find colors
-		const searchResult = parseColors(svg);
+		const searchResult = await parseColors(svg);
 		expect(searchResult.defaultFill).toBe(true);
 		expect(searchResult.colors).toEqual([]);
 
@@ -16,7 +16,7 @@ describe('Finding colors', () => {
 		expect(svg.toString()).toBe(svgCode);
 
 		// Add color
-		const replaceResult = parseColors(svg, {
+		const replaceResult = await parseColors(svg, {
 			defaultFill: 'currentColor',
 		});
 		expect(replaceResult.defaultFill).toBe(false);
@@ -30,13 +30,13 @@ describe('Finding colors', () => {
 		expect(svg.toString()).not.toBe(svgCode);
 	});
 
-	it('Colors on svg element', () => {
+	it('Colors on svg element', async () => {
 		const svgCode =
 			'<svg viewBox="0 0 24 24" width="24" height="24" fill="black"><path d="M3 0v1h4v5h-4v1h5v-7h-5zm1 2v1h-4v1h4v1l2-1.5-2-1.5z"/></svg>';
 		const svg = new SVG(svgCode);
 
 		// Find colors
-		const searchResult = parseColors(svg);
+		const searchResult = await parseColors(svg);
 		expect(searchResult.defaultFill).toBe(false);
 		expect(searchResult.colors).toEqual([
 			{
@@ -52,7 +52,7 @@ describe('Finding colors', () => {
 		expect(svg.toString()).toBe(svgCode);
 
 		// Add color
-		const replaceResult = parseColors(svg, {
+		const replaceResult = await parseColors(svg, {
 			// Replace all colors with 'white'
 			callback: (color) => {
 				expect(color).toEqual({

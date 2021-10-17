@@ -7,11 +7,12 @@ import {
 	tagSpecificNonPresentationalAttributes,
 	tagSpecificPresentationalAttributes,
 } from '../data/attributes';
+import { maskAndSymbolTags } from '../data/tags';
 
 /**
  * Clean up SVG
  */
-export function cleanupSVGRoot(svg: SVG): void {
+export async function cleanupSVGRoot(svg: SVG): Promise<void> {
 	const cheerio = svg.$svg;
 	const $root = svg.$svg(':root');
 	const root = $root.get(0) as cheerio.TagElement;
@@ -98,10 +99,26 @@ export function cleanupSVGRoot(svg: SVG): void {
 
 	if (Object.keys(moveToChildren).length) {
 		// Wrap child elements
-		const wrapper = cheerio('<g />');
+		const $wrapper = cheerio('<g />');
 		for (const key in moveToChildren) {
-			wrapper.attr(key, moveToChildren[key]);
+			$wrapper.attr(key, moveToChildren[key]);
 		}
-		$root.children().wrap(wrapper);
+
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+		$root.children().each((index, child) => {
+			const $child = cheerio(child);
+			if (child.type !== 'tag') {
+				$child.appendTo($wrapper);
+				return;
+			}
+			const tagName = child.tagName;
+			if (tagName === 'style' || maskAndSymbolTags.has(tagName)) {
+				// Do not wrap these elements
+				return;
+			}
+			$child.appendTo($wrapper);
+		});
+
+		$wrapper.appendTo($root);
 	}
 }

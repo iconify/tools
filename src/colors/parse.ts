@@ -45,11 +45,12 @@ function checkParents(
  */
 
 // Callback called for each color: returns new color, undefined if color should not be changed
+type ParseColorsCallbackResult = Color | string | undefined;
 type ParseColorsCallback = (
 	color: Color,
 	attr: ColorAttributes,
 	item: ExtendedParseSVGCallbackItem
-) => Color | string | undefined;
+) => ParseColorsCallbackResult | Promise<ParseColorsCallbackResult>;
 
 // Options
 export interface ParseColorsOptions {
@@ -63,10 +64,10 @@ export interface ParseColorsOptions {
 /**
  * Find colors in icon
  */
-export function parseColors(
+export async function parseColors(
 	svg: SVG,
 	options: ParseColorsOptions = {}
-): FindColorsResult {
+): Promise<FindColorsResult> {
 	const result: FindColorsResult = {
 		colors: [],
 		defaultFill: false,
@@ -87,7 +88,7 @@ export function parseColors(
 	/**
 	 * Discover color
 	 */
-	function addColor(
+	async function addColor(
 		item: ExtendedParseSVGCallbackItem,
 		attr: ColorAttributes,
 		value: string
@@ -98,7 +99,10 @@ export function parseColors(
 		}
 
 		if (options.callback) {
-			const callbackResult = options.callback(color, attr, item);
+			let callbackResult = options.callback(color, attr, item);
+			if (callbackResult instanceof Promise) {
+				callbackResult = await callbackResult;
+			}
 
 			// Change color
 			switch (typeof callbackResult) {
@@ -132,7 +136,7 @@ export function parseColors(
 	}
 
 	// Get all colors
-	parseSVG(svg, (item: ExtendedParseSVGCallbackItem) => {
+	await parseSVG(svg, async (item: ExtendedParseSVGCallbackItem) => {
 		const tagName = item.tagName;
 
 		if (maskAndSymbolTags.has(tagName)) {
@@ -143,19 +147,21 @@ export function parseColors(
 
 		// Test for fill/stroke
 		const attribs = item.element.attribs;
-		testAttributes.forEach((attr) => {
+		for (let i = 0; i < testAttributes.length; i++) {
+			const attr = testAttributes[i];
 			const value = attribs[attr];
 			if (value !== void 0) {
-				addColor(item, attr, value);
+				await addColor(item, attr, value);
 			}
-		});
+		}
 
 		// Check for shape
 		if (shapeTags.has(tagName)) {
-			testAttributes.forEach((attr) => {
+			for (let i = 0; i < testAttributes.length; i++) {
+				const attr = testAttributes[i];
 				if (attr === 'stop-color') {
 					// Cannot inherit 'stop-color'
-					return;
+					continue;
 				}
 
 				// Find color from parent element
@@ -178,12 +184,12 @@ export function parseColors(
 						item.$element.attr(attr, color);
 
 						// Add to list of colors
-						addColor(item, 'fill', color);
+						await addColor(item, 'fill', color);
 					} else {
 						result.defaultFill = true;
 					}
 				}
-			});
+			}
 		}
 
 		// Special handling

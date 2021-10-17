@@ -48,7 +48,7 @@ describe('Checking tags tree', () => {
 		test(name, async () => {
 			const content = await loadFixture('elements/' + name);
 			const svg = new SVG(content);
-			checkBadTags(svg);
+			await checkBadTags(svg);
 		});
 	});
 
@@ -58,7 +58,7 @@ describe('Checking tags tree', () => {
 			const content = await loadFixture('elements/' + name);
 			const svg = new SVG(content);
 			try {
-				checkBadTags(svg);
+				await checkBadTags(svg);
 			} catch (err) {
 				const error = err as Error;
 				expect(error.message).toBe(

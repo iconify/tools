@@ -39,8 +39,6 @@ export const badTags = new Set([
 	'view',
 	// Link
 	'a',
-	// Style: parsed separately
-	'style',
 ]);
 
 /**
@@ -51,9 +49,14 @@ export const badTags = new Set([
 export const unsupportedTags = new Set(['metadata', 'desc', 'title']);
 
 /**
+ * Style
+ */
+export const styleTag = new Set(['style']);
+
+/**
  * Definitions: reusable elements inside
  */
-export const defsTags = new Set(['defs']);
+export const defsTag = new Set(['defs']);
 
 /**
  * Masks: colors are ignored, child elements must have id
@@ -182,7 +185,8 @@ export const tagsBeforeAnimation = new Set([
  * All supported tags
  */
 export const allValidTags = new Set([
-	...defsTags,
+	...styleTag,
+	...defsTag,
 	...maskAndSymbolTags,
 	...shapeTags,
 	...useTag,

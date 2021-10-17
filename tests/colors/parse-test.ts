@@ -4,13 +4,13 @@ import { parseColors } from '../../lib/colors/parse';
 import { loadFixture } from '../load';
 
 describe('Finding colors', () => {
-	test('Icon without colors', () => {
+	test('Icon without colors', async () => {
 		const svgCode =
 			'<svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 0v1h4v5h-4v1h5v-7h-5zm1 2v1h-4v1h4v1l2-1.5-2-1.5z"/></svg>';
 		const svg = new SVG(svgCode);
 
 		// Find colors
-		const searchResult = parseColors(svg);
+		const searchResult = await parseColors(svg);
 		expect(searchResult.defaultFill).toBe(true);
 		expect(searchResult.colors).toEqual([]);
 
@@ -18,7 +18,7 @@ describe('Finding colors', () => {
 		expect(svg.toString()).toBe(svgCode);
 
 		// Add color
-		const replaceResult = parseColors(svg, {
+		const replaceResult = await parseColors(svg, {
 			defaultFill: 'currentColor',
 		});
 		expect(replaceResult.defaultFill).toBe(false);
@@ -32,13 +32,13 @@ describe('Finding colors', () => {
 		expect(svg.toString()).not.toBe(svgCode);
 	});
 
-	test('Colors on svg element', () => {
+	test('Colors on svg element', async () => {
 		const svgCode =
 			'<svg viewBox="0 0 24 24" width="24" height="24" fill="black"><path d="M3 0v1h4v5h-4v1h5v-7h-5zm1 2v1h-4v1h4v1l2-1.5-2-1.5z"/></svg>';
 		const svg = new SVG(svgCode);
 
 		// Find colors
-		const searchResult = parseColors(svg);
+		const searchResult = await parseColors(svg);
 		expect(searchResult.defaultFill).toBe(false);
 		expect(searchResult.colors).toEqual([
 			{
@@ -54,7 +54,7 @@ describe('Finding colors', () => {
 		expect(svg.toString()).toBe(svgCode);
 
 		// Add color
-		const replaceResult = parseColors(svg, {
+		const replaceResult = await parseColors(svg, {
 			// Replace all colors with 'white'
 			callback: (color) => {
 				expect(color).toEqual({
@@ -87,7 +87,7 @@ describe('Finding colors', () => {
 		const svg = new SVG(svgCode);
 
 		// Find colors
-		const searchResult = parseColors(svg);
+		const searchResult = await parseColors(svg);
 		expect(searchResult.defaultFill).toBe(false);
 		expect(searchResult.colors).toEqual(
 			[
@@ -111,7 +111,7 @@ describe('Finding colors', () => {
 		const svg = new SVG(svgCode);
 
 		// Find colors
-		const searchResult = parseColors(svg);
+		const searchResult = await parseColors(svg);
 		expect(searchResult.defaultFill).toBe(false);
 		expect(searchResult.colors).toEqual(
 			['#9ccc65', '#8bc34a', '#2e7d32', '#388e3c', '#43a047'].map(
@@ -120,7 +120,7 @@ describe('Finding colors', () => {
 		);
 	});
 
-	test('keywords', () => {
+	test('keywords', async () => {
 		const svgCode = `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10">
 	<g stroke="black">
 		<path d="" stroke="inherit" fill="none" />
@@ -131,7 +131,7 @@ describe('Finding colors', () => {
 		const svg = new SVG(svgCode);
 
 		// Find colors
-		const searchResult = parseColors(svg);
+		const searchResult = await parseColors(svg);
 		expect(searchResult.defaultFill).toBe(false);
 		expect(searchResult.colors).toEqual(
 			[

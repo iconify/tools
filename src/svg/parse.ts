@@ -22,13 +22,18 @@ export interface ParseSVGCallbackItem {
 /**
  * Callback function
  */
-export type ParseSVGCallback = (item: ParseSVGCallbackItem) => void;
+export type ParseSVGCallback = (
+	item: ParseSVGCallbackItem
+) => void | Promise<void>;
 
 /**
  * Parse SVG
  */
-export function parseSVG(svg: SVG, callback: ParseSVGCallback): void {
-	function checkNode(
+export async function parseSVG(
+	svg: SVG,
+	callback: ParseSVGCallback
+): Promise<void> {
+	async function checkNode(
 		element: cheerio.Element,
 		parents: ParseSVGCallbackItem[]
 	) {
@@ -49,16 +54,19 @@ export function parseSVG(svg: SVG, callback: ParseSVGCallback): void {
 		};
 
 		// Run callback
-		callback(item);
+		const result = callback(item);
+		if (result instanceof Promise) {
+			await result;
+		}
 
 		// Test child nodes
 		const newParents = parents.slice(0);
 		newParents.unshift(item);
 		if (item.testChildren && !item.removeNode) {
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-			$element.children().each((index, child) => {
-				checkNode(child, newParents);
-			});
+			const children = $element.children().toArray();
+			for (let i = 0; i < children.length; i++) {
+				await checkNode(children[i], newParents);
+			}
 		}
 
 		// Remove node
@@ -69,5 +77,5 @@ export function parseSVG(svg: SVG, callback: ParseSVGCallback): void {
 
 	const cheerio = svg.$svg;
 	const $root = svg.$svg(':root');
-	checkNode($root.get(0), []);
+	await checkNode($root.get(0), []);
 }

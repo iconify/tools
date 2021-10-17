@@ -5,7 +5,7 @@ import {
 	animateMotionChildTags,
 	animateTags,
 	badTags,
-	defsTags,
+	defsTag,
 	feComponentTransferChildTag,
 	feLightningChildTags,
 	feLightningTags,
@@ -38,7 +38,7 @@ requiredParentTags.set(feLightningTags, feLightningChildTags);
 requiredParentTags.set(filterTag, filterChildTags);
 
 // Tags that must be inside <defs>: gradients, <pattern>, <marker>
-requiredParentTags.set(defsTags, tagsInsideDefs);
+requiredParentTags.set(defsTag, tagsInsideDefs);
 
 // <stop> must be inside gradient
 requiredParentTags.set(gradientTags, gradientChildTags);
@@ -52,8 +52,8 @@ requiredParentTags.set(new Set(['animateMotion']), animateMotionChildTags);
 /**
  * Test for bag tags
  */
-export function checkBadTags(svg: SVG): void {
-	parseSVG(svg, (item) => {
+export async function checkBadTags(svg: SVG): Promise<void> {
+	await parseSVG(svg, (item) => {
 		const tagName = item.tagName;
 		const $element = item.$element;
 
@@ -75,12 +75,6 @@ export function checkBadTags(svg: SVG): void {
 
 		// Get parent tag
 		const parentTagName = item.parents[0]?.tagName;
-
-		// Check for style
-		if (tagName === 'style' && parentTagName === 'svg') {
-			// Allow <style> after <svg>
-			return;
-		}
 
 		// Bad or unknown
 		if (badTags.has(tagName) || !allValidTags.has(tagName)) {
