@@ -115,13 +115,17 @@ export const visibilityPresentationalAttributes = new Set([
 	'visibility',
 ]);
 
-// Other presentational attributes
-export const otherPresentationalAttributes = new Set([
+// Color values
+export const commonColorPresentationalAttributes = new Set([
 	'color',
-	'color-interpolation',
-	'color-rendering',
 	'fill',
 	'stroke',
+]);
+
+// Other presentational attributes
+export const otherPresentationalAttributes = new Set([
+	'color-interpolation',
+	'color-rendering',
 	'transform',
 	'vector-effect',
 ]);
@@ -132,6 +136,7 @@ export const presentationalAttributes = new Set([
 	...strokePresentationalAttributes,
 	...urlPresentationalAttributes,
 	...visibilityPresentationalAttributes,
+	...commonColorPresentationalAttributes,
 	...otherPresentationalAttributes,
 ]);
 

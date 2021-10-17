@@ -43,6 +43,10 @@
 	},
 	"exports": {
 		"./*": "./*",
+		"./lib/colors/attribs": {
+			"require": "./lib/colors/attribs.js",
+			"import": "./lib/colors/attribs.mjs"
+		},
 		"./lib/colors/parse": {
 			"require": "./lib/colors/parse.js",
 			"import": "./lib/colors/parse.mjs"
@@ -146,6 +150,10 @@
 		"./lib/svg/parse": {
 			"require": "./lib/svg/parse.js",
 			"import": "./lib/svg/parse.mjs"
+		},
+		"./lib/svg/parse-style": {
+			"require": "./lib/svg/parse-style.js",
+			"import": "./lib/svg/parse-style.mjs"
 		}
 	}
 }

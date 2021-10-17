@@ -14,8 +14,11 @@ export interface ParseSVGCallbackItem {
 	element: CheerioElement;
 	$element: WrappedCheerioElement;
 	svg: SVG;
+	// Parent elements, first item is direct parent, last item is 'svg'
 	parents: ParseSVGCallbackItem[];
+	// Set to false to stop parsing
 	testChildren: boolean;
+	// Set to true to remove node
 	removeNode: boolean;
 }
 
@@ -28,6 +31,9 @@ export type ParseSVGCallback = (
 
 /**
  * Parse SVG
+ *
+ * This function finds all elements in SVG and calls callback for each element.
+ * Callback can be asynchronous.
  */
 export async function parseSVG(
 	svg: SVG,
@@ -62,7 +68,7 @@ export async function parseSVG(
 		// Test child nodes
 		const newParents = parents.slice(0);
 		newParents.unshift(item);
-		if (item.testChildren && !item.removeNode) {
+		if (tagName !== 'style' && item.testChildren && !item.removeNode) {
 			const children = $element.children().toArray();
 			for (let i = 0; i < children.length; i++) {
 				await checkNode(children[i], newParents);
