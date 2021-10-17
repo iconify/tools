@@ -16,11 +16,11 @@ interface ParseSVGStyleCallbackItemCommon {
 interface ParseSVGStyleCallbackItemInline
 	extends ParseSVGStyleCallbackItemCommon {
 	type: 'inline';
+	item: ParseSVGCallbackItem;
 }
 interface ParseSVGStyleCallbackItemGlobal
 	extends ParseSVGStyleCallbackItemCommon {
 	type: 'global';
-	item: ParseSVGCallbackItem;
 }
 
 export type ParseSVGStyleCallbackItem =
@@ -89,7 +89,7 @@ export async function parseSVGStyle(
 
 				const value = token.value;
 				let result = callback({
-					type: 'inline',
+					type: 'global',
 					prop: token.prop,
 					value,
 				});
@@ -150,7 +150,7 @@ export async function parseSVGStyle(
 			const prop = props[i];
 			const value = parsedStyle[prop];
 			let result = callback({
-				type: 'global',
+				type: 'inline',
 				prop,
 				value,
 				item,

@@ -346,3 +346,26 @@ export async function parseColors(
 
 	return result;
 }
+
+/**
+ * Check if color type is a keyword
+ */
+export function isKeywordColor(color: Color): boolean {
+	switch (color.type) {
+		case 'rgb':
+		case 'hsl':
+		case 'lab':
+		case 'lch':
+			return false;
+
+		case 'none':
+		case 'transparent':
+		case 'current':
+			return true;
+
+		default: {
+			const t: never = color;
+			return t;
+		}
+	}
+}

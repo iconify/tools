@@ -1,6 +1,6 @@
 import { stringToColor } from '@iconify/utils/lib/colors';
 import { SVG } from '../../lib/svg';
-import { parseColors } from '../../lib/colors/parse';
+import { parseColors, isKeywordColor } from '../../lib/colors/parse';
 import { loadFixture } from '../load';
 
 describe('Finding colors', () => {
@@ -135,6 +135,97 @@ describe('Finding colors', () => {
 			hasDefaultFill: false,
 			hasGlobalStyle: false,
 		});
+
+		expect(svg.toMinifiedString()).toBe(
+			'<svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48" width="48" height="48"><path fill="#9CCC65" d="M32,15V7H16v8L6.2,40c-0.6,1.5,0.5,3,2.1,3h31.5c1.6,0,2.6-1.6,2.1-3L32,15z"/><path fill="#8BC34A" d="M32,9H16c-1.1,0-2-0.9-2-2v0c0-1.1,0.9-2,2-2h16c1.1,0,2,0.9,2,2v0C34,8.1,33.1,9,32,9z"/><path fill="#2E7D32" d="M28,30c0,4.4-4,8-4,8s-4-3.6-4-8s4-8,4-8S28,25.6,28,30z"/><path fill="#388E3C" d="M31.1,32.6c-2,4-7.1,5.4-7.1,5.4s-2-5,0-8.9s7.1-5.4,7.1-5.4S33.1,28.6,31.1,32.6z"/><path fill="#43A047" d="M16.9,32.6c2,4,7.1,5.4,7.1,5.4s2-5,0-8.9s-7.1-5.4-7.1-5.4S14.9,28.6,16.9,32.6z"/></svg>'
+		);
+
+		// Change everything to currentColor... because why not
+		const replaceResult = await parseColors(svg, {
+			defaultColor: 'currentColor',
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
+			callback: (attr, color) => {
+				return isKeywordColor(color) ? color : 'currentColor';
+			},
+		});
+		expect(replaceResult).toEqual({
+			colors: [
+				{
+					type: 'current',
+				},
+			],
+			hasDefaultFill: false,
+			hasGlobalStyle: false,
+		});
+
+		expect(svg.toMinifiedString()).toBe(
+			'<svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" enable-background="new 0 0 48 48" width="48" height="48"><path fill="currentColor" d="M32,15V7H16v8L6.2,40c-0.6,1.5,0.5,3,2.1,3h31.5c1.6,0,2.6-1.6,2.1-3L32,15z"/><path fill="currentColor" d="M32,9H16c-1.1,0-2-0.9-2-2v0c0-1.1,0.9-2,2-2h16c1.1,0,2,0.9,2,2v0C34,8.1,33.1,9,32,9z"/><path fill="currentColor" d="M28,30c0,4.4-4,8-4,8s-4-3.6-4-8s4-8,4-8S28,25.6,28,30z"/><path fill="currentColor" d="M31.1,32.6c-2,4-7.1,5.4-7.1,5.4s-2-5,0-8.9s7.1-5.4,7.1-5.4S33.1,28.6,31.1,32.6z"/><path fill="currentColor" d="M16.9,32.6c2,4,7.1,5.4,7.1,5.4s2-5,0-8.9s-7.1-5.4-7.1-5.4S14.9,28.6,16.9,32.6z"/></svg>'
+		);
+	});
+
+	test('global style', async () => {
+		const svgCode = await loadFixture('elements/style/style.svg');
+		const svg = new SVG(svgCode);
+
+		// Gloabl style in SVG should not have changed
+		expect(svg.toMinifiedString()).toBe(
+			'<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" width="10" height="10"><style>circle {fill: gold;stroke: maroon;stroke-width: 2px;}</style><circle cx="5" cy="5" r="4"/></svg>'
+		);
+
+		// Find colors
+		const searchResult = await parseColors(svg);
+		expect(searchResult).toEqual({
+			colors: ['gold', 'maroon'].map(stringToColor),
+			hasDefaultFill: false,
+			hasGlobalStyle: true,
+		});
+
+		// SVG should not have changed
+		expect(svg.toMinifiedString()).toBe(
+			'<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" width="10" height="10"><style>circle {fill: gold;stroke: maroon;stroke-width: 2px;}</style><circle cx="5" cy="5" r="4"/></svg>'
+		);
+
+		// Replace colors
+		const replaceResult = await parseColors(svg, {
+			defaultColor: 'red',
+			callback: (attr, color) => {
+				switch (attr) {
+					case 'fill':
+						expect(color).toEqual({
+							type: 'rgb',
+							r: 255,
+							g: 215,
+							b: 0,
+							alpha: 1,
+						});
+						return 'purple';
+
+					case 'stroke':
+						expect(color).toEqual({
+							type: 'rgb',
+							r: 128,
+							g: 0,
+							b: 0,
+							alpha: 1,
+						});
+
+						return 'green';
+
+					default:
+						return 'blue';
+				}
+			},
+		});
+		expect(replaceResult).toEqual({
+			colors: ['purple', 'green'].map(stringToColor),
+			hasDefaultFill: false,
+			hasGlobalStyle: true,
+		});
+
+		// Default color should not have been added because of global style
+		expect(svg.toMinifiedString()).toBe(
+			'<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" width="10" height="10"><style>circle {fill: #800080;stroke: #008000;stroke-width: 2px;}</style><circle cx="5" cy="5" r="4"/></svg>'
+		);
 	});
 
 	test('keywords', async () => {
