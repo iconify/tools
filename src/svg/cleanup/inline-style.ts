@@ -13,7 +13,7 @@ import { parseSVG } from '../parse';
 /**
  * Expand inline style
  */
-export async function expandInlineStyle(svg: SVG): Promise<void> {
+export async function cleanupInlineStyle(svg: SVG): Promise<void> {
 	await parseSVG(svg, (item) => {
 		const $element = item.$element;
 		const attribs = item.element.attribs;
