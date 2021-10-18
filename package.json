@@ -107,6 +107,14 @@
 			"require": "./lib/icon-set/types.js",
 			"import": "./lib/icon-set/types.mjs"
 		},
+		"./lib/optimise/flags": {
+			"require": "./lib/optimise/flags.js",
+			"import": "./lib/optimise/flags.mjs"
+		},
+		"./lib/optimise/svgo": {
+			"require": "./lib/optimise/svgo.js",
+			"import": "./lib/optimise/svgo.mjs"
+		},
 		"./lib/svg/cleanup": {
 			"require": "./lib/svg/cleanup.js",
 			"import": "./lib/svg/cleanup.mjs"

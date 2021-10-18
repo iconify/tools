@@ -1,12 +1,7 @@
-import { optimize } from 'svgo';
-import type { OptimizeOptions } from 'svgo';
 import type { SVG } from '..';
-// import { parseSVG } from '../parse';
-// import { getTokens } from '../../css/parser/tokens';
 import { badAttributes, badSoftwareAttributes } from '../data/attributes';
-// import { tokensTree } from '../../css/parser/tree';
-// import { tokensToString } from '../../css/parser/export';
 import { parseSVGStyle } from '../parse-style';
+import { runSVGO } from '../../optimise/svgo';
 
 /**
  * Expand inline style
@@ -37,12 +32,8 @@ export async function convertStyleToAttrs(svg: SVG): Promise<void> {
 	}
 
 	// Run SVGO
-	const options: OptimizeOptions = {
+	await runSVGO(svg, {
 		plugins: ['convertStyleToAttrs', 'inlineStyles'],
 		multipass: true,
-	};
-
-	// Load data
-	const result = optimize(svg.toString(), options);
-	svg.load(result.data);
+	});
 }
