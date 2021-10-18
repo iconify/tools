@@ -24,6 +24,7 @@ export const defaultSVGOPlugins: Plugin[] = [
 	'moveGroupAttrsToElems',
 	'collapseGroups',
 	'sortDefsChildren',
+	'sortAttrs',
 ];
 
 /**
@@ -53,7 +54,7 @@ export const shapeModifiyingSVGOPlugins: Plugin[] = [
  * Options
  */
 interface SVGOCommonOptions {
-	// Run SVGO multiple times
+	// Parse SVG multiple times for better optimisation
 	multipass?: boolean;
 }
 
@@ -70,8 +71,8 @@ interface SVGOptionsWithoutPlugin extends SVGOCommonOptions {
 	// Keep shapes: doesn't run plugins that mess with shapes
 	keepShapes?: boolean;
 
-	// Cleanup IDs, value is prefix to add to IDs, default is 'svg-'. Null to disable it
-	cleanupIDs?: string | null;
+	// Cleanup IDs, value is prefix to add to IDs, default is 'svg-'. False to disable it
+	cleanupIDs?: string | false;
 }
 
 type SVGOOptions = SVGOOptionsWithPlugin | SVGOptionsWithoutPlugin;
@@ -84,7 +85,7 @@ export async function runSVGO(
 	options: SVGOOptions = {}
 ): Promise<void> {
 	// Options
-	const multipass = !!options.multipass;
+	const multipass = options.multipass !== false;
 
 	// Plugins list
 	let plugins: Plugin[];
@@ -93,7 +94,7 @@ export async function runSVGO(
 	} else {
 		plugins = defaultSVGOPlugins.concat(
 			options.keepShapes ? [] : shapeModifiyingSVGOPlugins,
-			options.cleanupIDs !== null
+			options.cleanupIDs !== false
 				? [
 						{
 							name: 'cleanupIDs',
