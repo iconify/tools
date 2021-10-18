@@ -22,26 +22,35 @@ import { tagSpecificPresentationalAttributes } from '../svg/data/attributes';
  */
 interface FindColorsResult {
 	// Custom colors
-	colors: Color[];
+	colors: (Color | string)[];
 
-	// Has default fill
-	hasDefaultFill: boolean;
+	// Has default color
+	hasUnsetColor: boolean;
 
 	// Has global style, making detection of default fill unreliable
 	hasGlobalStyle: boolean;
 }
 
 /**
- * Options
+ * Callback to call for each found color
+ *
+ * Callback should return:
+ * - new color value to change color
+ * - first parameter to keep old value
+ * - undefined to delete old value
  */
-
 type ParseColorsCallbackResult = Color | string | undefined;
-
-// Callback should return: new color value, undefined to keep old value
 type ParseColorsCallback = (
 	attr: ColorAttributes,
-	color: Color
+	// Value is Color if color can be parsed, string if color is unsupported/invalid
+	color: Color | string,
+	// tagName is set only for colors found in element, it is not set for colors in global style
+	tagName?: string
 ) => ParseColorsCallbackResult | Promise<ParseColorsCallbackResult>;
+
+/**
+ * Options
+ */
 
 export interface ParseColorsOptions {
 	// Callback
@@ -61,7 +70,7 @@ const animatePropsToCheck = ['from', 'to', 'values'];
 /**
  * Extend properties for item
  */
-type ItemColors = Partial<Record<ColorAttributes, Color>>;
+type ItemColors = Partial<Record<ColorAttributes, Color | string>>;
 interface ExtendedParseSVGCallbackItem extends ParseSVGCallbackItem {
 	// Colors set in item
 	colors?: ItemColors;
@@ -76,11 +85,11 @@ export async function parseColors(
 ): Promise<FindColorsResult> {
 	const result: FindColorsResult = {
 		colors: [],
-		hasDefaultFill: false,
+		hasUnsetColor: false,
 		hasGlobalStyle: false,
 	};
 
-	// Get default color
+	// Default color
 	const defaultColor =
 		typeof options.defaultColor === 'string'
 			? stringToColor(options.defaultColor)
@@ -89,12 +98,27 @@ export async function parseColors(
 	/**
 	 * Find matching color in results
 	 */
-	function findColor(color: Color, add: false): Color | null;
-	function findColor(color: Color, add: true): Color;
-	function findColor(color: Color, add = false): Color | null {
+	function findColor(
+		color: Color | string,
+		add: false
+	): Color | string | null;
+	function findColor(color: Color | string, add: true): Color | string;
+	function findColor(
+		color: Color | string,
+		add = false
+	): Color | string | null {
+		const isString = typeof color === 'string';
 		for (let i = 0; i < result.colors.length; i++) {
-			if (compareColors(result.colors[i], color)) {
-				return result.colors[i];
+			const item = result.colors[i];
+			if (item === color) {
+				return item;
+			}
+			if (
+				!isString &&
+				typeof item !== 'string' &&
+				compareColors(item, color)
+			) {
+				return item;
 			}
 		}
 		if (add) {
@@ -105,17 +129,35 @@ export async function parseColors(
 	}
 
 	/**
+	 * Add color to item and to results
+	 */
+	function addColorToItem(
+		prop: ColorAttributes,
+		color: Color | string,
+		item?: ExtendedParseSVGCallbackItem
+	): void {
+		const addedColor = findColor(color, true);
+		if (item) {
+			const itemColors = item.colors || {};
+			if (!item.colors) {
+				item.colors = itemColors;
+			}
+			itemColors[prop] = addedColor;
+		}
+	}
+
+	/**
 	 * Get element color
 	 */
 	function getElementColor(
 		prop: ColorAttributes,
 		item: ExtendedParseSVGCallbackItem
-	): Color {
-		function find(prop: ColorAttributes): Color {
+	): Color | string {
+		function find(prop: ColorAttributes): Color | string {
 			let currentItem = item;
 			while (currentItem) {
 				const color = currentItem.colors?.[prop];
-				if (color) {
+				if (color !== void 0) {
 					return color;
 				}
 				currentItem = currentItem.parents[0];
@@ -124,7 +166,11 @@ export async function parseColors(
 		}
 
 		let propColor = find(prop);
-		if (propColor?.type === 'current' && prop !== 'color') {
+		if (
+			typeof propColor === 'object' &&
+			propColor.type === 'current' &&
+			prop !== 'color'
+		) {
 			// currentColor: get color
 			propColor = find('color');
 		}
@@ -134,27 +180,60 @@ export async function parseColors(
 	/**
 	 * Change color
 	 */
-	async function changeColor(
+	async function checkColor(
 		prop: ColorAttributes,
-		value: Color
-	): Promise<Color | undefined> {
+		value: string,
+		item?: ExtendedParseSVGCallbackItem
+	): Promise<string | undefined> {
+		// Ignore empty values
+		switch (value.trim().toLowerCase()) {
+			case '':
+			case 'inherit':
+				return;
+		}
+
+		// Resolve color
+		const color = stringToColor(value);
+		const defaultValue = color || value;
+
+		// Check if callback exists
 		if (!options.callback) {
-			return;
+			addColorToItem(prop, defaultValue, item);
+			return value;
 		}
 
-		let result = options.callback(prop, value);
-		if (result instanceof Promise) {
-			result = await result;
+		// Call callback
+		let callbackResult = options.callback(
+			prop,
+			defaultValue,
+			item?.tagName
+		);
+		callbackResult =
+			callbackResult instanceof Promise
+				? await callbackResult
+				: callbackResult;
+
+		// Remove entry
+		if (callbackResult === void 0) {
+			return callbackResult;
 		}
 
-		if (typeof result === 'string') {
-			const newColor = stringToColor(result);
-			if (!newColor) {
-				throw new Error(`Invalid color value: ${result}`);
-			}
-			return newColor;
+		if (callbackResult === defaultValue) {
+			// Not changed
+			addColorToItem(prop, defaultValue, item);
+			return value;
 		}
-		return result;
+
+		if (typeof callbackResult === 'string') {
+			const newColor = stringToColor(callbackResult);
+			addColorToItem(prop, newColor || callbackResult, item);
+			return callbackResult;
+		}
+
+		// Color
+		const newValue = colorToString(callbackResult);
+		addColorToItem(prop, callbackResult, item);
+		return newValue;
 	}
 
 	// Parse colors in style
@@ -168,28 +247,17 @@ export async function parseColors(
 			}
 
 			// Color
-			const color = stringToColor(value);
-			if (!color) {
-				return value;
+			const attr = prop as ColorAttributes;
+			const newValue = checkColor(attr, value);
+			if (newValue === void 0) {
+				return newValue;
 			}
 
-			// Global style?
+			// Got color
 			if (item.type === 'global') {
 				result.hasGlobalStyle = true;
 			}
-
-			// Get new color
-			const attr = prop as ColorAttributes;
-			const newColor = (await changeColor(attr, color)) || color;
-
-			// Check if color has changed
-			const changed = newColor && newColor !== color;
-
-			// Add color to results
-			findColor(newColor, true);
-
-			// Return string if color was changed
-			return changed ? colorToString(newColor) : value;
+			return newValue;
 		},
 		{
 			skipMasks: true,
@@ -208,43 +276,6 @@ export async function parseColors(
 		const $element = item.$element;
 		const attribs = item.element.attribs;
 
-		let hasColors = false;
-		const itemColors: ItemColors = {};
-
-		/**
-		 * Check color
-		 */
-		const check = async (
-			attr: ColorAttributes,
-			value: string,
-			isAnimated: boolean
-		): Promise<string | undefined> => {
-			// Get color
-			const color = stringToColor(value);
-			if (!color) {
-				// Invalid color: ignore it
-				return;
-			}
-
-			// Get new color
-			const newColor = (await changeColor(attr, color)) || color;
-
-			// Check if color has changed
-			const changed = newColor && newColor !== color;
-
-			// Add color to results
-			const colorItem = findColor(newColor, true);
-			hasColors = true;
-			if (!isAnimated) {
-				itemColors[attr] = colorItem;
-			}
-
-			// Change color
-			if (changed) {
-				return colorToString(newColor);
-			}
-		};
-
 		// Check common properties
 		for (let i = 0; i < propsToCheck.length; i++) {
 			const prop = propsToCheck[i];
@@ -255,13 +286,17 @@ export async function parseColors(
 
 			const value = attribs[prop];
 			if (value !== void 0) {
-				const newValue = await check(
+				const newValue = await checkColor(
 					prop as ColorAttributes,
 					value,
-					false
+					item
 				);
-				if (typeof newValue === 'string') {
-					$element.attr(prop, newValue);
+				if (newValue !== value) {
+					if (newValue === void 0) {
+						$element.removeAttr(prop);
+					} else {
+						$element.attr(prop, newValue);
+					}
 				}
 			}
 		}
@@ -284,14 +319,17 @@ export async function parseColors(
 					for (let j = 0; j < splitValues.length; j++) {
 						const value = splitValues[j];
 						if (value !== void 0) {
-							const newValue = await check(
+							const newValue = await checkColor(
 								elementProp as ColorAttributes,
-								value,
-								true
+								value
+								// Do not pass third parameter
 							);
-							if (typeof newValue === 'string') {
+							if (newValue !== value) {
 								updatedValues = true;
-								splitValues[j] = newValue;
+								splitValues[j] =
+									typeof newValue === 'string'
+										? newValue
+										: '';
 							}
 						}
 					}
@@ -302,11 +340,6 @@ export async function parseColors(
 					}
 				}
 			}
-		}
-
-		// Store colors in element
-		if (hasColors) {
-			item.colors = itemColors;
 		}
 
 		// Check shape for default colors
@@ -326,12 +359,17 @@ export async function parseColors(
 
 			// Check colors
 			if (requiredProps) {
+				const itemColors = item.colors || {};
+				if (!item.colors) {
+					item.colors = itemColors;
+				}
+
 				for (let i = 0; i < requiredProps.length; i++) {
 					const prop = requiredProps[i];
 					const color = getElementColor(prop, item);
 					if (color === defaultBlackColor) {
-						// Black color: change it
-						result.hasDefaultFill = true;
+						// Default black color: change it
+						result.hasUnsetColor = true;
 						if (defaultColor) {
 							// Add color to results and change attribute
 							findColor(defaultColor, true);

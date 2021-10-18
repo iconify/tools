@@ -13,7 +13,7 @@ describe('Finding colors', () => {
 		const searchResult = await parseColors(svg);
 		expect(searchResult).toEqual({
 			colors: [],
-			hasDefaultFill: true,
+			hasUnsetColor: true,
 			hasGlobalStyle: false,
 		});
 
@@ -30,7 +30,7 @@ describe('Finding colors', () => {
 					type: 'current',
 				},
 			],
-			hasDefaultFill: true,
+			hasUnsetColor: true,
 			hasGlobalStyle: false,
 		});
 
@@ -57,7 +57,7 @@ describe('Finding colors', () => {
 					alpha: 1,
 				},
 			],
-			hasDefaultFill: false,
+			hasUnsetColor: false,
 			hasGlobalStyle: false,
 		});
 
@@ -89,7 +89,7 @@ describe('Finding colors', () => {
 					alpha: 1,
 				},
 			],
-			hasDefaultFill: false,
+			hasUnsetColor: false,
 			hasGlobalStyle: false,
 		});
 
@@ -117,7 +117,7 @@ describe('Finding colors', () => {
 				'#e5ab83',
 				'#edc0a2',
 			].map(stringToColor),
-			hasDefaultFill: false,
+			hasUnsetColor: false,
 			hasGlobalStyle: false,
 		});
 	});
@@ -132,7 +132,7 @@ describe('Finding colors', () => {
 			colors: ['#9ccc65', '#8bc34a', '#2e7d32', '#388e3c', '#43a047'].map(
 				stringToColor
 			),
-			hasDefaultFill: false,
+			hasUnsetColor: false,
 			hasGlobalStyle: false,
 		});
 
@@ -145,7 +145,9 @@ describe('Finding colors', () => {
 			defaultColor: 'currentColor',
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 			callback: (attr, color) => {
-				return isKeywordColor(color) ? color : 'currentColor';
+				return typeof color === 'string' || isKeywordColor(color)
+					? color
+					: 'currentColor';
 			},
 		});
 		expect(replaceResult).toEqual({
@@ -154,7 +156,7 @@ describe('Finding colors', () => {
 					type: 'current',
 				},
 			],
-			hasDefaultFill: false,
+			hasUnsetColor: false,
 			hasGlobalStyle: false,
 		});
 
@@ -176,7 +178,7 @@ describe('Finding colors', () => {
 		const searchResult = await parseColors(svg);
 		expect(searchResult).toEqual({
 			colors: ['gold', 'maroon'].map(stringToColor),
-			hasDefaultFill: false,
+			hasUnsetColor: false,
 			hasGlobalStyle: true,
 		});
 
@@ -218,13 +220,13 @@ describe('Finding colors', () => {
 		});
 		expect(replaceResult).toEqual({
 			colors: ['purple', 'green'].map(stringToColor),
-			hasDefaultFill: false,
+			hasUnsetColor: false,
 			hasGlobalStyle: true,
 		});
 
 		// Default color should not have been added because of global style
 		expect(svg.toMinifiedString()).toBe(
-			'<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" width="10" height="10"><style>circle {fill: #800080;stroke: #008000;stroke-width: 2px;}</style><circle cx="5" cy="5" r="4"/></svg>'
+			'<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" width="10" height="10"><style>circle {fill: purple;stroke: green;stroke-width: 2px;}</style><circle cx="5" cy="5" r="4"/></svg>'
 		);
 	});
 
@@ -248,8 +250,8 @@ describe('Finding colors', () => {
 				'transparent',
 				'currentColor',
 				'hsla(120,50%,50%,.5)',
-			].map(stringToColor),
-			hasDefaultFill: false,
+			].map((color) => stringToColor(color) || color),
+			hasUnsetColor: false,
 			hasGlobalStyle: false,
 		});
 	});
@@ -266,11 +268,72 @@ describe('Finding colors', () => {
 		const searchResult = await parseColors(svg);
 		expect(searchResult).toEqual({
 			colors: ['red', 'blue', 'green'].map(stringToColor),
-			hasDefaultFill: true,
+			hasUnsetColor: true,
 			hasGlobalStyle: false,
 		});
 
 		// SVG should not have changed
 		expect(svg.toString()).toBe(svgCode);
+	});
+
+	test('None', async () => {
+		const svgCode =
+			'<svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 0v1h4v5h-4v1h5v-7h-5zm1 2v1h-4v1h4v1l2-1.5-2-1.5z" fill="none"/></svg>';
+		const svg = new SVG(svgCode);
+
+		// Find colors
+		const searchResult = await parseColors(svg);
+		expect(searchResult).toEqual({
+			colors: [
+				{
+					type: 'none',
+				},
+			],
+			hasUnsetColor: false,
+			hasGlobalStyle: false,
+		});
+	});
+
+	test('Unsupported color', async () => {
+		const svgCode =
+			'<svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 0v1h4v5h-4v1h5v-7h-5zm1 2v1h-4v1h4v1l2-1.5-2-1.5z" fill="--var(foo)"/></svg>';
+		const svg = new SVG(svgCode);
+
+		// Find colors
+		const searchResult = await parseColors(svg, {
+			callback: (attr, value) => {
+				expect(attr).toBe('fill');
+				expect(value).toBe('--var(foo)');
+				return '--bar(bar)';
+			},
+		});
+		expect(searchResult).toEqual({
+			colors: ['--bar(bar)'],
+			hasUnsetColor: false,
+			hasGlobalStyle: false,
+		});
+	});
+
+	test('Empty color', async () => {
+		const svgCode =
+			'<svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 0v1h4v5h-4v1h5v-7h-5zm1 2v1h-4v1h4v1l2-1.5-2-1.5z" fill="" stroke="inherit"/></svg>';
+		const svg = new SVG(svgCode);
+
+		// Find colors
+		const searchResult = await parseColors(svg, {
+			callback: (attr) => {
+				throw new Error(`Unexpected callback call for "${attr}"`);
+			},
+		});
+		expect(searchResult).toEqual({
+			colors: [],
+			hasUnsetColor: true,
+			hasGlobalStyle: false,
+		});
+
+		// Empty colors should have been removed
+		expect(svg.toString()).toBe(
+			'<svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 0v1h4v5h-4v1h5v-7h-5zm1 2v1h-4v1h4v1l2-1.5-2-1.5z"/></svg>'
+		);
 	});
 });

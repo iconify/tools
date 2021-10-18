@@ -12,7 +12,7 @@ describe('Finding colors', () => {
 		const searchResult = await parseColors(svg);
 		expect(searchResult).toEqual({
 			colors: [],
-			hasDefaultFill: true,
+			hasUnsetColor: true,
 			hasGlobalStyle: false,
 		});
 
@@ -29,7 +29,7 @@ describe('Finding colors', () => {
 					type: 'current',
 				},
 			],
-			hasDefaultFill: true,
+			hasUnsetColor: true,
 			hasGlobalStyle: false,
 		});
 
@@ -56,7 +56,7 @@ describe('Finding colors', () => {
 					alpha: 1,
 				},
 			],
-			hasDefaultFill: false,
+			hasUnsetColor: false,
 			hasGlobalStyle: false,
 		});
 
@@ -88,7 +88,7 @@ describe('Finding colors', () => {
 					alpha: 1,
 				},
 			],
-			hasDefaultFill: false,
+			hasUnsetColor: false,
 			hasGlobalStyle: false,
 		});
 
@@ -108,7 +108,7 @@ describe('Finding colors', () => {
 		const searchResult = await parseColors(svg);
 		expect(searchResult).toEqual({
 			colors: ['red', 'blue', 'green'].map(stringToColor),
-			hasDefaultFill: true,
+			hasUnsetColor: true,
 			hasGlobalStyle: false,
 		});
 
