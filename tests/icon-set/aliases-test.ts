@@ -334,6 +334,10 @@ describe('Working with aliases', () => {
 				Other: ['bar'],
 			},
 		};
+		expect(iconSet.export(false)).toEqual(iconSetExportedData);
+
+		// Export with validation: 'invalid' alias should not be there
+		delete iconSetExportedData.aliases?.['invalid'];
 		expect(iconSet.export()).toEqual(iconSetExportedData);
 	});
 });

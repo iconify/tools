@@ -337,7 +337,7 @@ export class IconSet {
 	/**
 	 * Export icon set
 	 */
-	export(): IconifyJSON {
+	export(validate = true): IconifyJSON {
 		const icons: IconifyIcons = Object.create(null);
 		const aliases: IconifyAliases = Object.create(null);
 
@@ -358,6 +358,9 @@ export class IconSet {
 
 				case 'alias':
 				case 'variation': {
+					if (validate && !this.resolve(name)) {
+						break;
+					}
 					const props = item.type === 'variation' ? item.props : {};
 					const alias: ExtendedIconifyAlias = {
 						parent: item.parent,
@@ -394,7 +397,9 @@ export class IconSet {
 		}
 
 		// Add characters
-		const chars = this.chars();
+		const chars = this.chars(
+			Object.keys(icons).concat(Object.keys(aliases))
+		);
 		if (Object.keys(chars).length) {
 			result.chars = chars;
 		}
@@ -449,9 +454,13 @@ export class IconSet {
 	/**
 	 * Get characters map
 	 */
-	chars(): Record<string, string> {
+	chars(names?: string[]): Record<string, string> {
 		const chars: Record<string, string> = Object.create(null);
-		for (const name in this.entries) {
+		if (!names) {
+			names = Object.keys(this.entries);
+		}
+		for (let i = 0; i < names.length; i++) {
+			const name = names[i];
 			const item = this.entries[name];
 			switch (item.type) {
 				case 'icon':
