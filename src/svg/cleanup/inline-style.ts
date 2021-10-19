@@ -2,6 +2,7 @@ import type { SVG } from '..';
 import { parseInlineStyle } from '../../css/parse';
 import {
 	badAttributes,
+	badSoftwareAttributePrefixes,
 	badSoftwareAttributes,
 	insideClipPathAttributes,
 	tagSpecificAnimatedAttributes,
@@ -32,12 +33,6 @@ export async function cleanupInlineStyle(svg: SVG): Promise<void> {
 					function warn() {
 						console.warn(
 							`Removing unexpected style on "${tagName}": ${prop}`
-						);
-						console.log(
-							'Value:',
-							value,
-							'Parents:',
-							item.parents.map((item) => item.tagName)
 						);
 					}
 
@@ -73,7 +68,12 @@ export async function cleanupInlineStyle(svg: SVG): Promise<void> {
 					}
 
 					// Bad software stuff
-					if (badSoftwareAttributes.has(prop)) {
+					if (
+						badSoftwareAttributes.has(prop) ||
+						badSoftwareAttributePrefixes.has(
+							prop.split('-').shift() as string
+						)
+					) {
 						return;
 					}
 

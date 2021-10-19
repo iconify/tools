@@ -40,32 +40,30 @@ export const junkSVGAttributes = new Set([
  */
 export const badSoftwareAttributes = new Set([
 	'color-interpolation-filters',
-	'image-rendering',
-	'mix-blend-mode',
 	'isolation',
 	'enable-background',
 	'overflow',
 	'marker',
-	'block-progression',
+	'white-space',
 	// Font stuff
-	'baseline-shift',
-	'writing-mode',
-	'word-spacing',
 	'direction',
-	'letter-spacing',
-	'line-height',
-	'text-align',
-	'text-anchor',
-	'text-decoration',
-	'text-transform',
-	'text-rendering',
-	'text-indent',
-	'font-family',
-	'font-stretch',
-	'font-weight',
-	'font-variant',
-	'font-style',
-	'font-size',
+]);
+
+// Prefixes. First part of attribute before '-', where all possible attributes that start with prefix are invalid
+export const badSoftwareAttributePrefixes = new Set([
+	'image',
+	'mix',
+	'block',
+	// Font stuff
+	'text',
+	'font',
+	'letter',
+	'baseline',
+	'word',
+	'line',
+	'writing',
+	// Prefix for browser specific stuff
+	'',
 ]);
 
 /**

@@ -73,15 +73,20 @@ export async function checkBadTags(svg: SVG): Promise<void> {
 			return;
 		}
 
-		// Get parent tag
-		const parentTagName = item.parents[0]?.tagName;
-
-		// Bad or unknown
+		// Bad or unknown element
 		if (badTags.has(tagName) || !allValidTags.has(tagName)) {
+			const parts = tagName.split(':');
+			if (parts.length > 1) {
+				// Custom tag, most likely Inkscape junk
+				$element.remove();
+				item.testChildren = false;
+				return;
+			}
 			throw new Error(`Unexpected element: <${tagName}>`);
 		}
 
 		// Check for valid parent tag
+		const parentTagName = item.parents[0]?.tagName;
 		for (const [parents, children] of requiredParentTags) {
 			if (children.has(tagName)) {
 				if (!parents.has(parentTagName)) {
