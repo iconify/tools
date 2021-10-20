@@ -1,7 +1,7 @@
 import type { SVG } from '..';
 import {
 	badAttributes,
-	badSoftwareAttributePrefixes,
+	badAttributePrefixes,
 	badSoftwareAttributes,
 } from '../data/attributes';
 import { parseSVGStyle } from '../parse-style';
@@ -20,7 +20,7 @@ export async function convertStyleToAttrs(svg: SVG): Promise<void> {
 			// Attributes / properties now allowed
 			badAttributes.has(prop) ||
 			badSoftwareAttributes.has(prop) ||
-			badSoftwareAttributePrefixes.has(prop.split('-').shift() as string)
+			badAttributePrefixes.has(prop.split('-').shift() as string)
 		) {
 			return void 0;
 		}

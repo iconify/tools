@@ -1,7 +1,7 @@
 import type { SVG } from '..';
 import {
 	badAttributes,
-	badSoftwareAttributePrefixes,
+	badAttributePrefixes,
 	badSoftwareAttributes,
 	commonAttributes,
 	junkSVGAttributes,
@@ -35,9 +35,7 @@ export async function cleanupSVGRoot(svg: SVG): Promise<void> {
 			badAttributes.has(attr) ||
 			junkSVGAttributes.has(attr) ||
 			badSoftwareAttributes.has(attr) ||
-			badSoftwareAttributePrefixes.has(
-				attr.split('-').shift() as string
-			) ||
+			badAttributePrefixes.has(attr.split('-').shift() as string) ||
 			attr.split(':').length > 1
 		) {
 			$root.removeAttr(attr);

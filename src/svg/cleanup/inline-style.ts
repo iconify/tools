@@ -2,7 +2,7 @@ import type { SVG } from '..';
 import { parseInlineStyle } from '../../css/parse';
 import {
 	badAttributes,
-	badSoftwareAttributePrefixes,
+	badAttributePrefixes,
 	badSoftwareAttributes,
 	insideClipPathAttributes,
 	tagSpecificAnimatedAttributes,
@@ -70,7 +70,7 @@ export async function cleanupInlineStyle(svg: SVG): Promise<void> {
 					// Bad software stuff
 					if (
 						badSoftwareAttributes.has(prop) ||
-						badSoftwareAttributePrefixes.has(
+						badAttributePrefixes.has(
 							prop.split('-').shift() as string
 						)
 					) {

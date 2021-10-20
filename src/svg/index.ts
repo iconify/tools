@@ -72,11 +72,10 @@ export class SVG {
 	load(content: string): void {
 		// Remove junk
 		function remove(str1: string, str2: string, append: string) {
-			let start = 0,
-				end;
+			let start = 0;
 
 			while ((start = content.indexOf(str1, start)) !== -1) {
-				end = content.indexOf(str2, start + str1.length);
+				const end = content.indexOf(str2, start + str1.length);
 				if (end === -1) {
 					return;
 				}

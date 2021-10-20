@@ -116,7 +116,13 @@ export async function runSVGO(
 		multipass,
 	};
 
-	// Load data
-	const result = optimize(svg.toString(), pluginOptions);
+	// Load data (changing type because SVGO types do not include error ?????)
+	const result = optimize(svg.toString(), pluginOptions) as unknown as Record<
+		string,
+		string
+	>;
+	if (typeof result.error === 'string') {
+		throw new Error(result.error);
+	}
 	svg.load(result.data);
 }

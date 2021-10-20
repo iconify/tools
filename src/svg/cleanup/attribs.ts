@@ -1,32 +1,30 @@
 import type { SVG } from '..';
-import { badAttributes } from '../data/attributes';
+import {
+	badAttributes,
+	badAttributePrefixes,
+	badSoftwareAttributes,
+} from '../data/attributes';
 import { parseSVG } from '../parse';
 
 /**
  * Remove useless attributes
  */
 export async function removeBadAttributes(svg: SVG): Promise<void> {
-	parseSVG(svg, (item) => {
+	await parseSVG(svg, (item) => {
 		const attribs = item.element.attribs;
+		const $element = item.$element;
 
 		// Common tags
 		Object.keys(attribs).forEach((attr) => {
 			// Bad attributes, events
-			if (attr.slice(0, 2) === 'on' || badAttributes.has(attr)) {
-				item.$element.removeAttr(attr);
+			if (
+				attr.slice(0, 2) === 'on' ||
+				badAttributes.has(attr) ||
+				badSoftwareAttributes.has(attr) ||
+				badAttributePrefixes.has(attr.split('-').shift() as string)
+			) {
+				$element.removeAttr(attr);
 				return;
-			}
-
-			// Partial attribute matches
-			const parts = attr.split('-');
-			const firstPart = parts.shift();
-			switch (firstPart) {
-				case '': // -whatever
-				case 'aria':
-				case 'data':
-					// Remove unnecessary attributes
-					item.$element.removeAttr(attr);
-					return;
 			}
 
 			// Check for namespace
@@ -38,13 +36,14 @@ export async function removeBadAttributes(svg: SVG): Promise<void> {
 					case 'xlink': {
 						// Deprecated: use without namespace
 						if (attribs[newAttr] === void 0) {
-							item.$element.attr(newAttr, attribs[attr]);
+							$element.attr(newAttr, attribs[attr]);
 						}
 						break;
 					}
 				}
+
 				// Remove all namespace attributes
-				item.$element.removeAttr(attr);
+				$element.removeAttr(attr);
 			}
 		});
 	});

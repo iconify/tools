@@ -50,10 +50,12 @@ export const badSoftwareAttributes = new Set([
 ]);
 
 // Prefixes. First part of attribute before '-', where all possible attributes that start with prefix are invalid
-export const badSoftwareAttributePrefixes = new Set([
+export const badAttributePrefixes = new Set([
 	'image',
 	'mix',
 	'block',
+	'data',
+	'aria',
 	// Font stuff
 	'text',
 	'font',
