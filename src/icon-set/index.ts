@@ -18,6 +18,7 @@ import type {
 	CheckThemeResult,
 	CommonIconProps,
 	IconCategory,
+	IconSetAsyncForEachCallback,
 	IconSetIcon,
 	IconSetIconAlias,
 	IconSetIconEntry,
@@ -216,6 +217,32 @@ export class IconSet {
 			const type = this.entries[name].type;
 			return types.indexOf(type) !== -1;
 		});
+	}
+
+	/**
+	 * forEach function to loop through all entries.
+	 * Supports asynchronous callbacks.
+	 *
+	 * Callback should return false to stop loop.
+	 */
+	async forEach(
+		callback: IconSetAsyncForEachCallback,
+		types: IconSetIconType[] = ['icon', 'variation', 'alias']
+	): Promise<void> {
+		const names = this.list(types);
+		for (let i = 0; i < names.length; i++) {
+			const name = names[i];
+			const item = this.entries[name];
+			if (item) {
+				let result = callback(name, item.type);
+				if (result instanceof Promise) {
+					result = await result;
+				}
+				if (result === false) {
+					return;
+				}
+			}
+		}
 	}
 
 	/**

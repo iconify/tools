@@ -1,4 +1,5 @@
 import { SVG } from '../../lib/svg';
+import { blankIconSet } from '../../lib/icon-set';
 import { checkBadTags } from '../../lib/svg/cleanup/bad-tags';
 import { loadFixture } from '../load';
 
@@ -68,5 +69,45 @@ describe('Checking tags tree', () => {
 			}
 			throw new Error(`Expected exception in ${name}`);
 		});
+	});
+
+	// Run same test using icon set's forEach function
+	test('forEach', async () => {
+		// Load all icons
+		const iconSet = blankIconSet('');
+		const toTest: Set<string> = new Set();
+		const names = Object.keys(badExamples);
+		for (let i = 0; i < names.length; i++) {
+			const name = names[i];
+			const content = await loadFixture('elements/' + name);
+			const svg = new SVG(content);
+			toTest.add(name);
+			iconSet.fromSVG(name, svg);
+		}
+
+		// Run test
+		let isAsync = true;
+		await iconSet.forEach(async (name, type) => {
+			expect(type).toBe('icon');
+			expect(isAsync).toBe(true);
+			toTest.delete(name);
+
+			const svg = iconSet.toSVG(name) as SVG;
+			expect(svg).not.toBeNull();
+
+			try {
+				await checkBadTags(svg);
+			} catch (err) {
+				const error = err as Error;
+				expect(error.message).toBe(
+					`Unexpected element: <${badExamples[name]}>`
+				);
+				return;
+			}
+			throw new Error(`Expected exception in ${name}`);
+		});
+
+		isAsync = false;
+		expect(toTest.size).toBe(0);
 	});
 });

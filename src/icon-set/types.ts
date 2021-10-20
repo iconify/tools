@@ -95,3 +95,16 @@ export interface CheckThemeResult {
 	// Icons that do not match any theme
 	invalid: string[];
 }
+
+/**
+ * Callback for asyncForEach function
+ *
+ * Return false to stop loop
+ */
+type IconSetAsyncForEachCallbackResult = void | false;
+export type IconSetAsyncForEachCallback = (
+	name: string,
+	type: IconSetIconEntry['type']
+) =>
+	| Promise<IconSetAsyncForEachCallbackResult>
+	| IconSetAsyncForEachCallbackResult;
