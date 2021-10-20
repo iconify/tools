@@ -386,24 +386,9 @@ export async function parseColors(
 }
 
 /**
- * Check if color type is a keyword
+ * Check if color is empty, such as 'none' or 'transparent'
  */
-export function isKeywordColor(color: Color): boolean {
-	switch (color.type) {
-		case 'rgb':
-		case 'hsl':
-		case 'lab':
-		case 'lch':
-			return false;
-
-		case 'none':
-		case 'transparent':
-		case 'current':
-			return true;
-
-		default: {
-			const t: never = color;
-			return t;
-		}
-	}
+export function isEmptyColor(color: Color): boolean {
+	const type = color.type;
+	return type === 'none' || type === 'transparent';
 }

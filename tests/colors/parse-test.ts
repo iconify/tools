@@ -1,6 +1,6 @@
 import { stringToColor } from '@iconify/utils/lib/colors';
 import { SVG } from '../../lib/svg';
-import { parseColors, isKeywordColor } from '../../lib/colors/parse';
+import { parseColors, isEmptyColor } from '../../lib/colors/parse';
 import { loadFixture } from '../load';
 
 describe('Finding colors', () => {
@@ -145,7 +145,7 @@ describe('Finding colors', () => {
 			defaultColor: 'currentColor',
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 			callback: (attr, color) => {
-				return typeof color === 'string' || isKeywordColor(color)
+				return typeof color === 'string' || isEmptyColor(color)
 					? color
 					: 'currentColor';
 			},
