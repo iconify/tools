@@ -10,7 +10,10 @@ import type {
 } from '@iconify/types';
 import { fullIcon } from '@iconify/utils/lib/icon';
 import { iconToSVG } from '@iconify/utils/lib/svg/build';
-import { defaults } from '@iconify/utils/lib/customisations';
+import {
+	defaults,
+	IconifyIconCustomisations,
+} from '@iconify/utils/lib/customisations';
 import { minifyIconSet } from '@iconify/utils/lib/icon-set/minify';
 import { convertIconSetInfo } from '@iconify/utils/lib/icon-set/convert-info';
 import { extraDefaultProps, filterProps } from './props';
@@ -331,15 +334,20 @@ export class IconSet {
 	/**
 	 * Generate HTML
 	 */
-	toString(name: string): string | null {
+	toString(
+		name: string,
+		custommisations: IconifyIconCustomisations = {
+			width: 'auto',
+			height: 'auto',
+		}
+	): string | null {
 		const item = this.resolve(name, true);
 		if (!item) {
 			return null;
 		}
 		const result = iconToSVG(item, {
 			...defaults,
-			width: 'auto',
-			height: 'auto',
+			...custommisations,
 		});
 
 		const attributes = Object.keys(result.attributes)
