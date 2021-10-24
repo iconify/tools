@@ -109,8 +109,7 @@ export async function cleanupSVGRoot(svg: SVG): Promise<void> {
 			$wrapper.attr(key, moveToChildren[key]);
 		}
 
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-		$root.children().each((index, child) => {
+		$root.children().each((_index, child) => {
 			const $child = cheerio(child);
 			if (child.type !== 'tag') {
 				$child.appendTo($wrapper);

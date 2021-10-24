@@ -2,7 +2,7 @@
 	"name": "@iconify/tools",
 	"description": "Collection of functions for cleaning up and parsing SVG for Iconify project",
 	"author": "Vjacheslav Trushkin",
-	"version": "2.0.0-dev.1",
+	"version": "2.0.0-dev.2",
 	"license": "MIT",
 	"bugs": "https://github.com/iconify/tools/issues",
 	"homepage": "https://github.com/iconify/tools",
@@ -24,6 +24,7 @@
 		"@iconify/utils": "^1.0.18",
 		"@types/cheerio": "^0.22.30",
 		"cheerio": "^1.0.0-rc.10",
+		"cross-fetch": "^3.1.4",
 		"pathe": "^0.2.0",
 		"svgo": "^2.7.0"
 	},
@@ -43,6 +44,22 @@
 	},
 	"exports": {
 		"./*": "./*",
+		"./lib/api/cache": {
+			"require": "./lib/api/cache.js",
+			"import": "./lib/api/cache.mjs"
+		},
+		"./lib/api": {
+			"require": "./lib/api/index.js",
+			"import": "./lib/api/index.mjs"
+		},
+		"./lib/api/index": {
+			"require": "./lib/api/index.js",
+			"import": "./lib/api/index.mjs"
+		},
+		"./lib/api/types": {
+			"require": "./lib/api/types.js",
+			"import": "./lib/api/types.mjs"
+		},
 		"./lib/colors/attribs": {
 			"require": "./lib/colors/attribs.js",
 			"import": "./lib/colors/attribs.mjs"
@@ -111,9 +128,45 @@
 			"require": "./lib/import/directory.js",
 			"import": "./lib/import/directory.mjs"
 		},
+		"./lib/import/figma": {
+			"require": "./lib/import/figma/index.js",
+			"import": "./lib/import/figma/index.mjs"
+		},
+		"./lib/import/figma/index": {
+			"require": "./lib/import/figma/index.js",
+			"import": "./lib/import/figma/index.mjs"
+		},
+		"./lib/import/figma/nodes": {
+			"require": "./lib/import/figma/nodes.js",
+			"import": "./lib/import/figma/nodes.mjs"
+		},
+		"./lib/import/figma/query": {
+			"require": "./lib/import/figma/query.js",
+			"import": "./lib/import/figma/query.mjs"
+		},
+		"./lib/import/figma/types/api": {
+			"require": "./lib/import/figma/types/api.js",
+			"import": "./lib/import/figma/types/api.mjs"
+		},
+		"./lib/import/figma/types/nodes": {
+			"require": "./lib/import/figma/types/nodes.js",
+			"import": "./lib/import/figma/types/nodes.mjs"
+		},
+		"./lib/import/figma/types/options": {
+			"require": "./lib/import/figma/types/options.js",
+			"import": "./lib/import/figma/types/options.mjs"
+		},
+		"./lib/import/figma/types/result": {
+			"require": "./lib/import/figma/types/result.js",
+			"import": "./lib/import/figma/types/result.mjs"
+		},
 		"./lib/misc/keyword": {
 			"require": "./lib/misc/keyword.js",
 			"import": "./lib/misc/keyword.mjs"
+		},
+		"./lib/misc/mkdir": {
+			"require": "./lib/misc/mkdir.js",
+			"import": "./lib/misc/mkdir.mjs"
 		},
 		"./lib/misc/scan": {
 			"require": "./lib/misc/scan.js",

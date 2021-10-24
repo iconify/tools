@@ -66,8 +66,7 @@ describe('Finding colors', () => {
 		// Add color
 		const replaceResult = await parseColors(svg, {
 			// Replace all colors with 'white'
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-			callback: (attr, color) => {
+			callback: (_attr, color) => {
 				expect(color).toEqual({
 					type: 'rgb',
 					r: 0,

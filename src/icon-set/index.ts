@@ -547,8 +547,7 @@ export class IconSet {
 	 * Count icons
 	 */
 	count(): number {
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-		return this._filter((key, item, icon) => {
+		return this._filter((_key, item, icon) => {
 			if (item.type === 'alias' || item.props.hidden || icon?.hidden) {
 				return false;
 			}
@@ -595,8 +594,7 @@ export class IconSet {
 		}
 
 		// Find icons
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-		const icons = this._filter((key, item, icon) => {
+		const icons = this._filter((_key, item, icon) => {
 			if (item.type === 'alias' || item.props.hidden || icon?.hidden) {
 				return false;
 			}
@@ -899,7 +897,6 @@ export class IconSet {
 			results.valid[key] = [];
 		});
 
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
 		results.invalid = this._filter((name, item, icon) => {
 			if (item.type === 'alias' || item.props.hidden || icon?.hidden) {
 				return false;

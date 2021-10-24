@@ -67,8 +67,7 @@ describe('Finding colors', () => {
 		// Add color
 		const replaceResult = await parseColors(svg, {
 			// Replace all colors with 'white'
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-			callback: (attr, color) => {
+			callback: (_attr, color) => {
 				expect(color).toEqual({
 					type: 'rgb',
 					r: 0,
@@ -143,8 +142,7 @@ describe('Finding colors', () => {
 		// Change everything to currentColor... because why not
 		const replaceResult = await parseColors(svg, {
 			defaultColor: 'currentColor',
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental
-			callback: (attr, color) => {
+			callback: (_attr, color) => {
 				return typeof color === 'string' || isEmptyColor(color)
 					? color
 					: 'currentColor';
