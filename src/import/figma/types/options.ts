@@ -1,7 +1,9 @@
+import type { IconSet } from '../../../icon-set';
 import type {
 	FigmaImportNodeFilter,
 	FigmaImportParentNodeFilter,
 } from './nodes';
+import type { FigmaIconNode } from './result';
 
 /**
  * Options for importing SVG
@@ -33,8 +35,8 @@ interface FigmaImportCommonOptions {
 
 // Options for figmaFilesQuery()
 export interface FigmaFilesQueryOptions extends FigmaImportCommonOptions {
-	// Check if modified since last change
-	ifModifiedSince?: string;
+	// Check if modified since last change. True to compare to last cached document (if cached)
+	ifModifiedSince?: string | Date | true;
 
 	// IDs to check
 	ids?: string[];
@@ -64,6 +66,14 @@ export interface FigmaGetIconNodesOptions {
 }
 
 /**
+ * Callback to call before or after importing icon
+ */
+type FigmaImportedIconCallback = (
+	node: FigmaIconNode,
+	iconSet: IconSet
+) => void | Promise<void>;
+
+/**
  * Options for main import function
  */
 export interface FigmaImportOptions
@@ -81,4 +91,8 @@ export interface FigmaImportOptions
 
 	// TTL for cache for SVG, in seconds (icons do not need re-downloading). Default is 30 days
 	cacheSVGTTL?: number;
+
+	// Callback for each imported icon, before and after import
+	beforeImportingIcon?: FigmaImportedIconCallback;
+	afterImporgingIcon?: FigmaImportedIconCallback;
 }

@@ -37,9 +37,10 @@ interface FindColorsResult {
  * Callback should return:
  * - new color value to change color
  * - first parameter to keep old value
- * - undefined to delete old value
+ * - 'unset' to delete old value
+ * - 'remove' to remove shape or rule
  */
-type ParseColorsCallbackResult = Color | string | undefined;
+type ParseColorsCallbackResult = Color | string | 'remove' | 'unset';
 type ParseColorsCallback = (
 	attr: ColorAttributes,
 	// Value is Color if color can be parsed, string if color is unsupported/invalid
@@ -214,8 +215,17 @@ export async function parseColors(
 				: callbackResult;
 
 		// Remove entry
-		if (callbackResult === void 0) {
-			return callbackResult;
+		switch (callbackResult) {
+			case 'remove': {
+				if (item) {
+					item.$element.remove();
+					item.testChildren = false;
+				}
+				return;
+			}
+
+			case 'unset':
+				return;
 		}
 
 		if (callbackResult === defaultValue) {
@@ -248,7 +258,7 @@ export async function parseColors(
 
 			// Color
 			const attr = prop as ColorAttributes;
-			const newValue = checkColor(attr, value);
+			const newValue = await checkColor(attr, value);
 			if (newValue === void 0) {
 				return newValue;
 			}

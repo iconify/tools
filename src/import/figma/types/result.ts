@@ -1,3 +1,5 @@
+import type { IconSet } from '../../../icon-set';
+
 /**
  * Document wasn't modified
  */
@@ -47,4 +49,8 @@ export interface FigmaImportResult extends FigmaNodesCount {
 	name: string;
 	version: string;
 	lastModified: string;
+
+	// Icon set
+	iconSet: IconSet;
+	missing: FigmaIconNode[];
 }

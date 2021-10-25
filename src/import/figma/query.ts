@@ -1,5 +1,6 @@
 import { sendAPIQuery } from '../../api';
-import type { APICacheOptions } from '../../api/types';
+import { apiCacheKey, clearAPICache, getAPICache } from '../../api/cache';
+import type { APICacheOptions, APIQueryParams } from '../../api/types';
 import type {
 	FigmaAPIError,
 	FigmaAPIImagesResponse,
@@ -15,12 +16,28 @@ import type {
 } from './types/result';
 
 /**
+ * Compare last modified dates
+ */
+function compareDates(actual: unknown, expected: string | Date): boolean {
+	if (typeof actual !== 'string') {
+		return false;
+	}
+	if (actual === expected) {
+		return true;
+	}
+	return (
+		new Date(actual).toDateString() === new Date(expected).toDateString()
+	);
+}
+
+/**
  * Get Figma files
  */
 export async function figmaFilesQuery(
 	options: FigmaFilesQueryOptions,
 	cache?: APICacheOptions
 ): Promise<FigmaDocument | FigmaDocumentNotModified> {
+	// Generate parameters
 	const params = new URLSearchParams();
 	if (options.ids) {
 		params.set('ids', options.ids.join(','));
@@ -31,17 +48,75 @@ export async function figmaFilesQuery(
 	if (options.depth) {
 		params.set('depth', options.depth + '');
 	}
-
-	const data = await sendAPIQuery(
-		{
-			uri: 'https://api.figma.com/v1/files/' + options.file,
-			params,
-			headers: {
-				'X-FIGMA-TOKEN': options.token,
-			},
+	const queryParams: APIQueryParams = {
+		uri: 'https://api.figma.com/v1/files/' + options.file,
+		params,
+		headers: {
+			'X-FIGMA-TOKEN': options.token,
 		},
-		cache
-	);
+	};
+
+	// Get latest version without cache if 'ifModifiedSince' is set
+	const isModified = async (): Promise<boolean> => {
+		// Check cache
+		if (!cache || !options.ifModifiedSince) {
+			return false;
+		}
+
+		const cacheKey = apiCacheKey(queryParams);
+		const cachedData = await getAPICache(cache.dir, cacheKey);
+		if (!cachedData) {
+			return false;
+		}
+
+		// Get time stamp for comparison
+		let ifModifiedSince: string | Date;
+		if (options.ifModifiedSince === true) {
+			try {
+				const parsedData = JSON.parse(cachedData) as FigmaDocument;
+				if (typeof parsedData.lastModified !== 'string') {
+					// Bad data
+					await clearAPICache(cache.dir);
+					return false;
+				}
+				ifModifiedSince = parsedData.lastModified;
+			} catch (err) {
+				await clearAPICache(cache.dir);
+				return false;
+			}
+		} else {
+			ifModifiedSince = options.ifModifiedSince;
+		}
+		console.log('ifModifiedSince:', ifModifiedSince);
+
+		// Get shallow copy of tree to get last modification time
+		const versionCheckParams = {
+			...queryParams,
+			params: new URLSearchParams(params),
+		};
+		versionCheckParams.params.set('depth', '1');
+		const data = await sendAPIQuery(versionCheckParams);
+		try {
+			if (typeof data === 'string') {
+				const parsedData = JSON.parse(data) as FigmaDocument;
+				if (compareDates(parsedData.lastModified, ifModifiedSince)) {
+					return false;
+				}
+			}
+		} catch (err) {
+			//
+		}
+
+		// Reset cache
+		await clearAPICache(cache.dir);
+		return true;
+	};
+	if (!(await isModified())) {
+		return 'not_modified';
+	}
+
+	// Send query
+	const data = await sendAPIQuery(queryParams, cache);
 	if (typeof data === 'number') {
 		throw new Error(`Error retrieving document from API: ${data}`);
 	}
@@ -69,12 +144,10 @@ export async function figmaFilesQuery(
 	}
 
 	// Check if document was modified
-	if (
-		options.ifModifiedSince &&
-		document.lastModified === options.ifModifiedSince
-	) {
+	if (compareDates(options.ifModifiedSince, document.lastModified)) {
 		return 'not_modified';
 	}
+	console.log('lastModified:', document.lastModified);
 
 	return document;
 }

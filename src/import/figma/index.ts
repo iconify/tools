@@ -1,4 +1,6 @@
 import type { APICacheOptions } from '../../api/types';
+import { blankIconSet } from '../../icon-set';
+import { SVG } from '../../svg';
 import { getFigmaIconNodes } from './nodes';
 import {
 	figmaDownloadImages,
@@ -8,6 +10,7 @@ import {
 import type { FigmaImportOptions } from './types/options';
 import type {
 	FigmaDocumentNotModified,
+	FigmaIconNode,
 	FigmaImportResult,
 } from './types/result';
 
@@ -39,17 +42,55 @@ export async function importFromFigma(
 		return document;
 	}
 
+	// Set version to make sure further queries get consistent data
+	options.version = document.version;
+
 	// Get nodes
 	const nodes = await getFigmaIconNodes(document, options);
-	console.log('Nodes found:', nodes.nodesCount);
 
 	// Get images
 	await figmaImagesQuery(options, nodes, cacheOptions);
-	console.log('Icons generated:', nodes.generatedIconsCount);
 
 	// Download images
 	await figmaDownloadImages(nodes, cacheSVGOptions);
-	console.log('Icons downloaded:', nodes.downloadedIconsCount);
+
+	// Generate icon set
+	const iconSet = blankIconSet(options.prefix);
+	const icons = nodes.icons;
+	const missing: FigmaIconNode[] = [];
+	const iconIDs = Object.keys(icons);
+	for (let i = 0; i < iconIDs.length; i++) {
+		const id = iconIDs[i];
+		const item = icons[id];
+		if (typeof item.content !== 'string') {
+			missing.push(item);
+			continue;
+		}
+
+		// Callback before import (to change stuff, such as icon content)
+		if (options.beforeImportingIcon) {
+			const callbackResult = options.beforeImportingIcon(item, iconSet);
+			if (callbackResult instanceof Promise) {
+				await callbackResult;
+			}
+		}
+
+		// Import SVG
+		try {
+			iconSet.fromSVG(item.keyword, new SVG(item.content));
+		} catch (err) {
+			missing.push(item);
+			continue;
+		}
+
+		// Callback after import (to add stuff, such as categories)
+		if (options.afterImporgingIcon) {
+			const callbackResult = options.afterImporgingIcon(item, iconSet);
+			if (callbackResult instanceof Promise) {
+				await callbackResult;
+			}
+		}
+	}
 
 	// Generate result
 	const result: FigmaImportResult = {
@@ -62,6 +103,10 @@ export async function importFromFigma(
 		nodesCount: nodes.nodesCount as number,
 		generatedIconsCount: nodes.generatedIconsCount as number,
 		downloadedIconsCount: nodes.downloadedIconsCount as number,
+
+		// Icon set
+		iconSet,
+		missing,
 	};
 	return result;
 }

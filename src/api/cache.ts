@@ -60,7 +60,7 @@ export async function storeAPICache(
 }
 
 /**
- *
+ * Get item from cache
  */
 export async function getAPICache(
 	dir: string,
@@ -86,10 +86,17 @@ export async function getAPICache(
 }
 
 /**
+ * Clear cache
+ */
+export function clearAPICache(dir: string): Promise<void> {
+	return getStoredFiles(dir, true);
+}
+
+/**
  * Find all stored files
  */
-async function getStoredFiles(dir: string): Promise<void> {
-	const storage = storedFiles[dir] || Object.create(null);
+async function getStoredFiles(dir: string, clear = false): Promise<void> {
+	const storage = (!clear && storedFiles[dir]) || Object.create(null);
 	const time = Date.now();
 	storedFiles[dir] = storage;
 
@@ -107,8 +114,8 @@ async function getStoredFiles(dir: string): Promise<void> {
 			const filename = path + subdir + file + ext;
 			const parts = file.split('.');
 			const expires = parseInt(parts.pop() as string);
-			if (expires < time || parts.length !== 1) {
-				// Expired or invalid
+			if (clear || expires < time || parts.length !== 1) {
+				// Expired or invalid or cleaning up cache
 				await fs.unlink(filename);
 				return false;
 			}
