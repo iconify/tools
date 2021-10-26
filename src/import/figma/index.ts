@@ -84,8 +84,8 @@ export async function importFromFigma(
 		}
 
 		// Callback after import (to add stuff, such as categories)
-		if (options.afterImporgingIcon) {
-			const callbackResult = options.afterImporgingIcon(item, iconSet);
+		if (options.afterImportingIcon) {
+			const callbackResult = options.afterImportingIcon(item, iconSet);
 			if (callbackResult instanceof Promise) {
 				await callbackResult;
 			}

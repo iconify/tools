@@ -94,5 +94,5 @@ export interface FigmaImportOptions
 
 	// Callback for each imported icon, before and after import
 	beforeImportingIcon?: FigmaImportedIconCallback;
-	afterImporgingIcon?: FigmaImportedIconCallback;
+	afterImportingIcon?: FigmaImportedIconCallback;
 }
