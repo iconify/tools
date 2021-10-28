@@ -66,7 +66,8 @@ describe('Finding colors', () => {
 		// Add color
 		const replaceResult = await parseColors(svg, {
 			// Replace all colors with 'white'
-			callback: (_attr, color) => {
+			callback: (_attr, colorStr, color) => {
+				expect(colorStr).toBe('white');
 				expect(color).toEqual({
 					type: 'rgb',
 					r: 0,

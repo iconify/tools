@@ -44,7 +44,9 @@ type ParseColorsCallbackResult = Color | string | 'remove' | 'unset';
 type ParseColorsCallback = (
 	attr: ColorAttributes,
 	// Value is Color if color can be parsed, string if color is unsupported/invalid
-	color: Color | string,
+	colorString: string,
+	// Parsed color, if color could be parsed, null if color could not be parsed
+	parsedColor: Color | null,
 	// tagName is set only for colors found in element, it is not set for colors in global style
 	tagName?: string
 ) => ParseColorsCallbackResult | Promise<ParseColorsCallbackResult>;
@@ -194,8 +196,8 @@ export async function parseColors(
 		}
 
 		// Resolve color
-		const color = stringToColor(value);
-		const defaultValue = color || value;
+		const parsedColor = stringToColor(value);
+		const defaultValue = parsedColor || value;
 
 		// Check if callback exists
 		if (!options.callback) {
@@ -206,7 +208,8 @@ export async function parseColors(
 		// Call callback
 		let callbackResult = options.callback(
 			prop,
-			defaultValue,
+			value,
+			parsedColor,
 			item?.tagName
 		);
 		callbackResult =
@@ -228,7 +231,10 @@ export async function parseColors(
 				return;
 		}
 
-		if (callbackResult === defaultValue) {
+		if (
+			callbackResult === value ||
+			(parsedColor && callbackResult === parsedColor)
+		) {
 			// Not changed
 			addColorToItem(prop, defaultValue, item);
 			return value;

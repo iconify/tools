@@ -1,6 +1,7 @@
 import type { APICacheOptions } from '../../api/types';
 import { blankIconSet } from '../../icon-set';
 import { SVG } from '../../svg';
+import { cleanupSVG } from '../../svg/cleanup';
 import { getFigmaIconNodes } from './nodes';
 import {
 	figmaDownloadImages,
@@ -77,7 +78,9 @@ export async function importFromFigma(
 
 		// Import SVG
 		try {
-			iconSet.fromSVG(item.keyword, new SVG(item.content));
+			const svg = new SVG(item.content);
+			await cleanupSVG(svg);
+			iconSet.fromSVG(item.keyword, svg);
 		} catch (err) {
 			missing.push(item);
 			continue;

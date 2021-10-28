@@ -67,7 +67,7 @@ describe('Finding colors', () => {
 		// Add color
 		const replaceResult = await parseColors(svg, {
 			// Replace all colors with 'white'
-			callback: (_attr, color) => {
+			callback: (_attr, _colorStr, color) => {
 				expect(color).toEqual({
 					type: 'rgb',
 					r: 0,
@@ -142,8 +142,10 @@ describe('Finding colors', () => {
 		// Change everything to currentColor... because why not
 		const replaceResult = await parseColors(svg, {
 			defaultColor: 'currentColor',
-			callback: (_attr, color) => {
-				return typeof color === 'string' || isEmptyColor(color)
+			callback: (_attr, colorStr, color) => {
+				return !color
+					? colorStr
+					: isEmptyColor(color)
 					? color
 					: 'currentColor';
 			},
@@ -188,7 +190,7 @@ describe('Finding colors', () => {
 		// Replace colors
 		const replaceResult = await parseColors(svg, {
 			defaultColor: 'red',
-			callback: (attr, color) => {
+			callback: (attr, _colorStr, color) => {
 				switch (attr) {
 					case 'fill':
 						expect(color).toEqual({
@@ -299,9 +301,10 @@ describe('Finding colors', () => {
 
 		// Find colors
 		const searchResult = await parseColors(svg, {
-			callback: (attr, value) => {
+			callback: (attr, colorStr, color) => {
 				expect(attr).toBe('fill');
-				expect(value).toBe('--var(foo)');
+				expect(colorStr).toBe('--var(foo)');
+				expect(color).toBeNull();
 				return '--bar(bar)';
 			},
 		});

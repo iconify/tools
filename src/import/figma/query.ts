@@ -18,16 +18,14 @@ import type {
 /**
  * Compare last modified dates
  */
-function compareDates(actual: unknown, expected: string | Date): boolean {
+function identicalDates(actual: unknown, expected: string | Date): boolean {
 	if (typeof actual !== 'string') {
 		return false;
 	}
 	if (actual === expected) {
 		return true;
 	}
-	return (
-		new Date(actual).toDateString() === new Date(expected).toDateString()
-	);
+	return new Date(actual).toString() === new Date(expected).toString();
 }
 
 /**
@@ -37,6 +35,11 @@ export async function figmaFilesQuery(
 	options: FigmaFilesQueryOptions,
 	cache?: APICacheOptions
 ): Promise<FigmaDocument | FigmaDocumentNotModified> {
+	// Check token
+	if (!options.token) {
+		throw new Error('Missing Figma API token');
+	}
+
 	// Generate parameters
 	const params = new URLSearchParams();
 	if (options.ids) {
@@ -60,13 +63,13 @@ export async function figmaFilesQuery(
 	const isModified = async (): Promise<boolean> => {
 		// Check cache
 		if (!cache || !options.ifModifiedSince) {
-			return false;
+			return true;
 		}
 
 		const cacheKey = apiCacheKey(queryParams);
 		const cachedData = await getAPICache(cache.dir, cacheKey);
 		if (!cachedData) {
-			return false;
+			return true;
 		}
 
 		// Get time stamp for comparison
@@ -77,17 +80,18 @@ export async function figmaFilesQuery(
 				if (typeof parsedData.lastModified !== 'string') {
 					// Bad data
 					await clearAPICache(cache.dir);
-					return false;
+					return true;
 				}
+				// Set ifModifiedSince to last cached time
 				ifModifiedSince = parsedData.lastModified;
 			} catch (err) {
+				// Bad data
 				await clearAPICache(cache.dir);
-				return false;
+				return true;
 			}
 		} else {
 			ifModifiedSince = options.ifModifiedSince;
 		}
-		console.log('ifModifiedSince:', ifModifiedSince);
 
 		// Get shallow copy of tree to get last modification time
 		const versionCheckParams = {
@@ -99,7 +103,7 @@ export async function figmaFilesQuery(
 		try {
 			if (typeof data === 'string') {
 				const parsedData = JSON.parse(data) as FigmaDocument;
-				if (compareDates(parsedData.lastModified, ifModifiedSince)) {
+				if (identicalDates(parsedData.lastModified, ifModifiedSince)) {
 					return false;
 				}
 			}
@@ -144,10 +148,9 @@ export async function figmaFilesQuery(
 	}
 
 	// Check if document was modified
-	if (compareDates(options.ifModifiedSince, document.lastModified)) {
+	if (identicalDates(options.ifModifiedSince, document.lastModified)) {
 		return 'not_modified';
 	}
-	console.log('lastModified:', document.lastModified);
 
 	return document;
 }
@@ -236,11 +239,15 @@ export async function figmaImagesQuery(
 
 	// Check data
 	if (!found) {
-		throw new Error(
-			`Error retrieving image data from API${
-				lastError ? ': ' + lastError : ''
-			}`
-		);
+		if (lastError) {
+			throw new Error(
+				`Error retrieving image data from API${
+					lastError ? ': ' + lastError : ''
+				}`
+			);
+		} else {
+			throw new Error('No valid icon layers were found');
+		}
 	}
 	nodes.generatedIconsCount = found;
 	return nodes;
