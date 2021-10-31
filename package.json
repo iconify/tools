@@ -104,6 +104,10 @@
 			"require": "./lib/export/directory.js",
 			"import": "./lib/export/directory.mjs"
 		},
+		"./lib/export/prepare": {
+			"require": "./lib/export/prepare.js",
+			"import": "./lib/export/prepare.mjs"
+		},
 		"./lib/icon-set": {
 			"require": "./lib/icon-set/index.js",
 			"import": "./lib/icon-set/index.mjs"

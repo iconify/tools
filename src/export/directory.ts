@@ -1,15 +1,13 @@
 import { promises as fs } from 'fs';
-import { normalize } from 'pathe';
 import type { IconifyIconCustomisations } from '@iconify/utils/lib/customisations';
 import type { IconSet } from '../icon-set';
+import type { ExportTargetOptions } from './prepare';
+import { prepareDirectoryForExport } from './prepare';
 
 /**
  * Options
  */
-export interface ExportToDirectoryOptions {
-	// Target directory
-	target: string;
-
+export interface ExportToDirectoryOptions extends ExportTargetOptions {
 	// Set icon height to 'auto', which results in width and height matching viewBox.
 	// If false, height will be set to '1em'.
 	// Default is true
@@ -34,21 +32,10 @@ export async function exportToDirectory(
 	iconSet: IconSet,
 	options: ExportToDirectoryOptions
 ): Promise<Set<string>> {
+	// Normalise and prepare directory
+	const dir = await prepareDirectoryForExport(options);
+
 	const storedFiles: Set<string> = new Set();
-
-	// Normalise and create directory if missing
-	let dir = normalize(options.target);
-	if (dir.slice(-1) === '/') {
-		dir = dir.slice(0, dir.length - 1);
-	}
-	try {
-		await fs.mkdir(dir, {
-			recursive: true,
-		});
-	} catch (err) {
-		//
-	}
-
 	const customisations: IconifyIconCustomisations =
 		options.autoHeight === false
 			? {
