@@ -255,7 +255,6 @@ describe('Working with aliases', () => {
 			chars: {
 				f00: 'bar',
 				f01: 'baz',
-				// Bad entry: alias should not have character
 				f02: 'alias1',
 				f03: 'variation1',
 			},
@@ -327,6 +326,7 @@ describe('Working with aliases', () => {
 			chars: {
 				f00: 'bar',
 				f01: 'foo',
+				f02: 'alias1',
 				f03: 'variation1',
 			},
 			categories: {

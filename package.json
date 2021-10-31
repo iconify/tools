@@ -100,6 +100,10 @@
 			"require": "./lib/css/parser/types.js",
 			"import": "./lib/css/parser/types.mjs"
 		},
+		"./lib/export/directory": {
+			"require": "./lib/export/directory.js",
+			"import": "./lib/export/directory.mjs"
+		},
 		"./lib/icon-set": {
 			"require": "./lib/icon-set/index.js",
 			"import": "./lib/icon-set/index.mjs"
@@ -163,10 +167,6 @@
 		"./lib/misc/keyword": {
 			"require": "./lib/misc/keyword.js",
 			"import": "./lib/misc/keyword.mjs"
-		},
-		"./lib/misc/mkdir": {
-			"require": "./lib/misc/mkdir.js",
-			"import": "./lib/misc/mkdir.mjs"
 		},
 		"./lib/misc/scan": {
 			"require": "./lib/misc/scan.js",

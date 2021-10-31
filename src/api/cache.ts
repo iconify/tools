@@ -2,7 +2,6 @@ import { promises as fs } from 'fs';
 import { createHash } from 'crypto';
 import type { APICacheOptions, APIQueryParams } from './types';
 import { scanDirectory } from '../misc/scan';
-import { mkdir } from '../misc/mkdir';
 
 const cacheVersion = 1;
 
@@ -101,7 +100,13 @@ async function getStoredFiles(dir: string, clear = false): Promise<void> {
 	storedFiles[dir] = storage;
 
 	// Create directory if missing
-	await mkdir(dir);
+	try {
+		await fs.mkdir(dir, {
+			recursive: true,
+		});
+	} catch (err) {
+		//
+	}
 
 	// Find all files
 	await scanDirectory(

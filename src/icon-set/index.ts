@@ -113,13 +113,14 @@ export class IconSet {
 				const item = data.aliases[name];
 				const parent = item.parent;
 				const props = filterProps(item);
+				const chars: Set<string> = new Set();
 				if (Object.keys(props).length) {
 					// Variation
 					const entry: IconSetIconVariation = {
 						type: 'variation',
 						parent,
 						props,
-						chars: new Set(),
+						chars,
 						categories: new Set(),
 					};
 					entries[name] = entry;
@@ -128,6 +129,7 @@ export class IconSet {
 					const entry: IconSetIconAlias = {
 						type: 'alias',
 						parent,
+						chars,
 					};
 					entries[name] = entry;
 				}
@@ -144,11 +146,7 @@ export class IconSet {
 				const name = data.chars[char];
 				const icon = entries[name];
 				if (icon) {
-					switch (icon.type) {
-						case 'icon':
-						case 'variation':
-							icon.chars.add(char);
-					}
+					icon.chars.add(char);
 				}
 			}
 		}
@@ -497,13 +495,9 @@ export class IconSet {
 		for (let i = 0; i < names.length; i++) {
 			const name = names[i];
 			const item = this.entries[name];
-			switch (item.type) {
-				case 'icon':
-				case 'variation':
-					item.chars.forEach((char) => {
-						chars[char] = name;
-					});
-			}
+			item.chars.forEach((char) => {
+				chars[char] = name;
+			});
 		}
 		return chars;
 	}
@@ -771,6 +765,7 @@ export class IconSet {
 		return this.setItem(name, {
 			type: 'alias',
 			parent,
+			chars: new Set(),
 		});
 	}
 
@@ -850,13 +845,9 @@ export class IconSet {
 		if (!item) {
 			return false;
 		}
-		switch (item.type) {
-			case 'icon':
-			case 'variation':
-				if (item.chars.has(char) !== add) {
-					item.chars[add ? 'add' : 'delete'](char);
-					return true;
-				}
+		if (item.chars.has(char) !== add) {
+			item.chars[add ? 'add' : 'delete'](char);
+			return true;
 		}
 		return false;
 	}

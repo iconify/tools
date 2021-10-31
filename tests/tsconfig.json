@@ -3,6 +3,7 @@
 	"compilerOptions": {
 		"types": ["node", "jest"],
 		"rootDir": ".",
-		"sourceMap": true
+		"sourceMap": true,
+		"mapRoot": "tests/"
 	}
 }

@@ -38,7 +38,7 @@ export interface FigmaFilesQueryOptions extends FigmaImportCommonOptions {
 	// Check if modified since last change. True to compare to last cached document (if cached)
 	ifModifiedSince?: string | Date | true;
 
-	// IDs to check
+	// IDs of nodes to check
 	ids?: string[];
 
 	// Nodes depth. Set it to avoid retrieving too much data

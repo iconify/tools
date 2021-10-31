@@ -67,6 +67,7 @@ export async function scanDirectory(
 		for (let i = 0; i < files.length; i++) {
 			const filename = files[i];
 			if (filename.slice(0, 1) === '.') {
+				// Exclude hidden items
 				continue;
 			}
 

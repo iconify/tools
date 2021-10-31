@@ -34,12 +34,16 @@ export type ExtraIconProps = Omit<CommonIconProps, keyof IconifyOptional>;
 /**
  * Partials
  */
-// Properties
-export interface IconWithPropsData {
-	// Extended icon properties, including 'hidden' status
-	props: CommonIconProps;
+// Characters map
+export interface IconWithChars {
 	// Characters list
 	chars: Set<string>;
+}
+
+// Properties
+export interface IconWithPropsData extends IconWithChars {
+	// Extended icon properties, including 'hidden' status
+	props: CommonIconProps;
 	// Categories
 	categories: Set<IconCategory>;
 }
@@ -59,7 +63,7 @@ export interface IconSetIcon extends IconWithPropsData {
 }
 
 // Simple alias
-export interface IconSetIconAlias extends IconParentData {
+export interface IconSetIconAlias extends IconWithChars, IconParentData {
 	type: 'alias';
 }
 
