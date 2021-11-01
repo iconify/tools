@@ -23,7 +23,7 @@ export async function prepareDirectoryForExport(
 	// Normalise directory
 	let dir = normalize(options.target);
 	if (dir.slice(-1) === '/') {
-		dir = dir.slice(0, dir.length - 1);
+		dir = dir.slice(0, -1);
 	}
 
 	if (options.cleanup) {

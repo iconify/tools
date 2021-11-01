@@ -119,14 +119,9 @@ export function textTokensToRule(tokens: TextToken[]): CSSRuleToken | null {
 
 	// Check for !important (with possibility to support other stuff like !default in future)
 	(['important'] as 'important'[]).forEach((word) => {
-		if (
-			result.value.slice(0 - word.length - 1).toLowerCase() ===
-			'!' + word
-		) {
+		if (result.value.slice(-1 - word.length).toLowerCase() === '!' + word) {
 			result[word] = true;
-			result.value = result.value
-				.slice(0, result.value.length - word.length - 1)
-				.trim();
+			result.value = result.value.slice(0, -1 - word.length).trim();
 		}
 	});
 
@@ -168,7 +163,7 @@ export function textTokensToSelector(
 				}
 
 				const list = item
-					.slice(1, item.length - 1)
+					.slice(1, -1)
 					.split(/\)\s?and\s?\(/i)
 					.map((item) => item.trim());
 				let match = true;

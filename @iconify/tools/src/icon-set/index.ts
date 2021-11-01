@@ -185,8 +185,7 @@ export class IconSet {
 					// Prefix ending with with '-'
 					const prefix = item.prefix;
 					if (prefix.slice(-1) === '-') {
-						prefixes[prefix.slice(0, prefix.length - 1)] =
-							item.title;
+						prefixes[prefix.slice(0, -1)] = item.title;
 					}
 				}
 				if (typeof item.suffix === 'string') {

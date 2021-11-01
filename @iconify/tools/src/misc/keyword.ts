@@ -29,7 +29,7 @@ export function cleanupIconKeyword(
 		keyword = keyword.slice(1);
 	}
 	if (keyword.slice(-1) === '-') {
-		keyword = keyword.slice(0, keyword.length - 1);
+		keyword = keyword.slice(0, -1);
 	}
 
 	return keyword;
