@@ -1,0 +1,11 @@
+.idea
+.vscode
+.DS_Store
+.env
+*.map
+node_modules
+npm-debug.log
+yarn.lock
+tsconfig.tsbuildinfo
+lib
+cache

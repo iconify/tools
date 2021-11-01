@@ -1,11 +1,6 @@
-.idea
-.vscode
 .DS_Store
-.env
-*.map
+.vscode
 node_modules
-npm-debug.log
-yarn.lock
-tsconfig.tsbuildinfo
-lib
-cache
+debug_packages
+lerna-debug.log
+@debug
