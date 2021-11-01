@@ -31,7 +31,7 @@ export interface ExportToDirectoryOptions extends ExportTargetOptions {
 export async function exportToDirectory(
 	iconSet: IconSet,
 	options: ExportToDirectoryOptions
-): Promise<Set<string>> {
+): Promise<string[]> {
 	// Normalise and prepare directory
 	const dir = await prepareDirectoryForExport(options);
 
@@ -78,5 +78,5 @@ export async function exportToDirectory(
 		await store(name, `${dir}/${name}.svg`);
 	});
 
-	return storedFiles;
+	return Array.from(storedFiles);
 }
