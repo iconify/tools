@@ -93,6 +93,10 @@
 			"require": "./lib/export/directory.js",
 			"import": "./lib/export/directory.mjs"
 		},
+		"./lib/export/json-package": {
+			"require": "./lib/export/json-package.js",
+			"import": "./lib/export/json-package.mjs"
+		},
 		"./lib/export/prepare": {
 			"require": "./lib/export/prepare.js",
 			"import": "./lib/export/prepare.mjs"
