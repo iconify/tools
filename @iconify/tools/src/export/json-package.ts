@@ -9,6 +9,8 @@ import type {
 	IconifyJSON,
 	IconifyMetaData,
 } from '@iconify/types';
+import { writeJSONFile } from '../misc/write-json';
+import { getTypesVersion } from '../misc/types-version';
 
 /**
  * Options
@@ -19,9 +21,6 @@ export interface ExportJSONPackageOptions extends ExportTargetOptions {
 
 	// Custom files. Key of filename, value is content
 	customFiles?: Record<string, string | Record<string, unknown>>;
-
-	// Log stored files. Default is false
-	log?: boolean;
 }
 
 interface ExportContents {
@@ -50,13 +49,6 @@ const metadataKeys: (keyof IconifyMetaData)[] = [
 ];
 
 /**
- * Write file
- */
-async function writeJSONFile(filename: string, data: unknown): Promise<void> {
-	return fs.writeFile(filename, JSON.stringify(data, null, '\t') + '\n');
-}
-
-/**
  * Export icon set as JSON package
  *
  * Used for exporting `@iconify-json/{prefix}` packages
@@ -64,7 +56,9 @@ async function writeJSONFile(filename: string, data: unknown): Promise<void> {
 export async function exportJSONPackage(
 	iconSet: IconSet,
 	options: ExportJSONPackageOptions
-): Promise<void> {
+): Promise<string[]> {
+	const files: Set<string> = new Set();
+
 	// Normalise and prepare directory
 	const dir = await prepareDirectoryForExport(options);
 
@@ -93,14 +87,17 @@ export async function exportJSONPackage(
 	});
 
 	// Contents
+	const info = exportedJSON.info;
 	const contents: ExportContents = {
 		icons,
-		info: exportedJSON.info,
+		info,
 		metadata: hasMetadata ? metadata : void 0,
 		chars: exportedJSON.chars,
 	};
 
 	// Generate package.json
+	const { name, description, version, dependencies, ...customPackageProps } =
+		options.package;
 	const packageJSONIconSet: Record<string, string> = {};
 	const packageJSONExports: Record<string, string | Record<string, string>> =
 		{
@@ -111,15 +108,20 @@ export async function exportJSONPackage(
 			},
 		};
 	const packageJSON = {
-		...options.package,
-		iconSetVersion: exportedJSON.info?.version,
+		name: name || `@iconify-json/${iconSet.prefix}`,
+		description:
+			description ||
+			`Iconify icon components for ${info ? info.name : iconSet.prefix}`,
+		version,
+		iconSetVersion: info?.version,
 		main: 'index.js',
 		module: 'index.mjs',
 		types: 'index.d.ts',
+		...customPackageProps,
 		exports: packageJSONExports,
 		iconSet: packageJSONIconSet,
-		dependencies: options.package.dependencies || {
-			'@iconify/types': '^1.0.10',
+		dependencies: dependencies || {
+			'@iconify/types': '^' + getTypesVersion(),
 		},
 	};
 
@@ -135,7 +137,8 @@ export async function exportJSONPackage(
 		const attr = key as keyof typeof contents;
 		const data = contents[attr];
 		const type = exportTypes[attr];
-		const relativeFile = `./${attr}.json`;
+		const jsonFilename = attr + '.json';
+		const relativeFile = `./${jsonFilename}`;
 
 		// Add type
 		dtsContent.push(`export declare const ${attr}: ${type};`);
@@ -146,7 +149,7 @@ export async function exportJSONPackage(
 
 		if (data !== void 0) {
 			// Save JSON file
-			await writeJSONFile(`${dir}/${attr}.json`, data);
+			await writeJSONFile(`${dir}/${jsonFilename}`, data);
 
 			// Import data from JSON file
 			cjsImports.push(`const ${attr} = require('${relativeFile}');`);
@@ -157,15 +160,18 @@ export async function exportJSONPackage(
 			packageJSONExports[relativeFile] = relativeFile;
 		} else {
 			// Create empty data
-			await writeJSONFile(`${dir}/${attr}.json`, {});
+			await writeJSONFile(`${dir}/${jsonFilename}`, {});
 			cjsImports.push(`const ${attr} = {};`);
 			mjsConsts.push(`const ${attr} = {};`);
 		}
+
+		files.add(jsonFilename);
 	}
 
 	// Generate CJS index file
 	const cjsContent = cjsImports.concat([''], cjsExports);
 	await fs.writeFile(dir + '/index.js', cjsContent.join('\n') + '\n', 'utf8');
+	files.add('index.js');
 
 	// Generate MJS index file
 	const mjsContent = mjsImports.concat([''], mjsConsts, [
@@ -176,6 +182,7 @@ export async function exportJSONPackage(
 		mjsContent.join('\n') + '\n',
 		'utf8'
 	);
+	files.add('index.mjs');
 
 	// Generate types file
 	const usedTypes = Object.values(exportTypes);
@@ -191,6 +198,7 @@ export async function exportJSONPackage(
 		typesData.join('\n') + '\n',
 		'utf8'
 	);
+	files.add('index.d.ts');
 
 	// Write custom files
 	const customFiles = options.customFiles || {};
@@ -201,8 +209,13 @@ export async function exportJSONPackage(
 		} else if (typeof content === 'object') {
 			await writeJSONFile(dir + '/' + filename, content);
 		}
+		files.add(filename);
 	}
 
 	// Save package.json
 	await writeJSONFile(dir + '/package.json', packageJSON);
+	files.add('package.json');
+
+	// Return list of stored files as array
+	return Array.from(files);
 }

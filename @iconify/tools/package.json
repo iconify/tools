@@ -93,6 +93,10 @@
 			"require": "./lib/export/directory.js",
 			"import": "./lib/export/directory.mjs"
 		},
+		"./lib/export/icon-package": {
+			"require": "./lib/export/icon-package.js",
+			"import": "./lib/export/icon-package.mjs"
+		},
 		"./lib/export/json-package": {
 			"require": "./lib/export/json-package.js",
 			"import": "./lib/export/json-package.mjs"
@@ -168,6 +172,14 @@
 		"./lib/misc/scan": {
 			"require": "./lib/misc/scan.js",
 			"import": "./lib/misc/scan.mjs"
+		},
+		"./lib/misc/types-version": {
+			"require": "./lib/misc/types-version.js",
+			"import": "./lib/misc/types-version.mjs"
+		},
+		"./lib/misc/write-json": {
+			"require": "./lib/misc/write-json.js",
+			"import": "./lib/misc/write-json.mjs"
 		},
 		"./lib/optimise/flags": {
 			"require": "./lib/optimise/flags.js",
