@@ -44,7 +44,7 @@ export type ScanDirectoryCallback =
  */
 export async function scanDirectory(
 	path: string,
-	callback: ScanDirectoryCallbackAsString,
+	callback?: ScanDirectoryCallbackAsString,
 	subdirs?: boolean
 ): Promise<string[]>;
 export async function scanDirectory<T>(
@@ -54,7 +54,7 @@ export async function scanDirectory<T>(
 ): Promise<T[]>;
 export async function scanDirectory(
 	path: string,
-	callback: ScanDirectoryCallback,
+	callback?: ScanDirectoryCallback,
 	subdirs = true
 ): Promise<unknown[]> {
 	const results: unknown[] = [];
@@ -88,18 +88,23 @@ export async function scanDirectory(
 			const file = parts.join('.');
 
 			// Callback
-			let callbackResult = callback(ext, file, subdir, path);
-			if (callbackResult instanceof Promise) {
-				callbackResult = await callbackResult;
-			}
+			let callbackResult;
+			if (callback) {
+				callbackResult = callback(ext, file, subdir, path);
+				if (callbackResult instanceof Promise) {
+					callbackResult = await callbackResult;
+				}
 
-			if (
-				callbackResult === void 0 ||
-				callbackResult === false ||
-				callbackResult === null
-			) {
-				// Skip file
-				continue;
+				if (
+					callbackResult === void 0 ||
+					callbackResult === false ||
+					callbackResult === null
+				) {
+					// Skip file
+					continue;
+				}
+			} else {
+				callbackResult = true;
 			}
 
 			// Add item

@@ -1,8 +1,8 @@
 import { promises as fs } from 'fs';
 import { iconDefaults } from '@iconify/utils/lib/icon';
 import type { IconSet } from '../icon-set';
-import type { ExportTargetOptions } from './prepare';
-import { prepareDirectoryForExport } from './prepare';
+import type { ExportTargetOptions } from './helpers/prepare';
+import { prepareDirectoryForExport } from './helpers/prepare';
 import type {
 	IconifyChars,
 	IconifyInfo,
@@ -10,17 +10,20 @@ import type {
 	IconifyMetaData,
 } from '@iconify/types';
 import { writeJSONFile } from '../misc/write-json';
-import { getTypesVersion } from '../misc/types-version';
+import { getTypesVersion } from './helpers/types-version';
+import {
+	exportCustomFiles,
+	ExportOptionsWithCustomFiles,
+} from './helpers/custom-files';
 
 /**
  * Options
  */
-export interface ExportJSONPackageOptions extends ExportTargetOptions {
+export interface ExportJSONPackageOptions
+	extends ExportTargetOptions,
+		ExportOptionsWithCustomFiles {
 	// package.json contents
-	package: Record<string, unknown>;
-
-	// Custom files. Key of filename, value is content
-	customFiles?: Record<string, string | Record<string, unknown>>;
+	package?: Record<string, unknown>;
 }
 
 interface ExportContents {
@@ -97,7 +100,7 @@ export async function exportJSONPackage(
 
 	// Generate package.json
 	const { name, description, version, dependencies, ...customPackageProps } =
-		options.package;
+		options.package || {};
 	const packageJSONIconSet: Record<string, string> = {};
 	const packageJSONExports: Record<string, string | Record<string, string>> =
 		{
@@ -111,7 +114,9 @@ export async function exportJSONPackage(
 		name: name || `@iconify-json/${iconSet.prefix}`,
 		description:
 			description ||
-			`Iconify icon components for ${info ? info.name : iconSet.prefix}`,
+			`${
+				info ? info.name : iconSet.prefix
+			} icon set in Iconify JSON format`,
 		version,
 		iconSetVersion: info?.version,
 		main: 'index.js',
@@ -201,16 +206,7 @@ export async function exportJSONPackage(
 	files.add('index.d.ts');
 
 	// Write custom files
-	const customFiles = options.customFiles || {};
-	for (const filename in customFiles) {
-		const content = customFiles[filename];
-		if (typeof content === 'string') {
-			await fs.writeFile(dir + '/' + filename, content, 'utf8');
-		} else if (typeof content === 'object') {
-			await writeJSONFile(dir + '/' + filename, content);
-		}
-		files.add(filename);
-	}
+	await exportCustomFiles(dir, options, files);
 
 	// Save package.json
 	await writeJSONFile(dir + '/package.json', packageJSON);

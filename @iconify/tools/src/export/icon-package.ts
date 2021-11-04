@@ -1,22 +1,25 @@
 import { promises as fs } from 'fs';
 import type { IconSet } from '../icon-set';
-import type { ExportTargetOptions } from './prepare';
-import { prepareDirectoryForExport } from './prepare';
+import type { ExportTargetOptions } from './helpers/prepare';
+import { prepareDirectoryForExport } from './helpers/prepare';
 import { writeJSONFile } from '../misc/write-json';
-import { getTypesVersion } from '../misc/types-version';
+import { getTypesVersion } from './helpers/types-version';
+import {
+	exportCustomFiles,
+	ExportOptionsWithCustomFiles,
+} from './helpers/custom-files';
 
 /**
  * Options
  */
-export interface ExportIconPackageOptions extends ExportTargetOptions {
+export interface ExportIconPackageOptions
+	extends ExportTargetOptions,
+		ExportOptionsWithCustomFiles {
 	// package.json contents
-	package: Record<string, unknown>;
+	package?: Record<string, unknown>;
 
 	// Modules: ESM or CJS. Default is true
 	module?: boolean;
-
-	// Custom files. Key of filename, value is content
-	customFiles?: Record<string, string | Record<string, unknown>>;
 
 	// Custom .d.ts file content
 	typesContent?: string;
@@ -74,21 +77,12 @@ export async function exportIconPackage(
 	});
 
 	// Write custom files
-	const customFiles = options.customFiles || {};
-	for (const filename in customFiles) {
-		const content = customFiles[filename];
-		if (typeof content === 'string') {
-			await fs.writeFile(dir + '/' + filename, content, 'utf8');
-		} else if (typeof content === 'object') {
-			await writeJSONFile(dir + '/' + filename, content);
-		}
-		files.add(filename);
-	}
+	await exportCustomFiles(dir, options, files);
 
 	// Generate package.json
 	const info = iconSet.info;
 	const { name, description, version, dependencies, ...customPackageProps } =
-		options.package;
+		options.package || {};
 	const packageJSON = {
 		name:
 			name ||

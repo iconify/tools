@@ -20,7 +20,7 @@
 		"prebuild": "npm run lint && npm run clean",
 		"build": "node build",
 		"test:jest": "jest --runInBand",
-		"test:jasmine": "cross-env NODE_OPTIONS=--experimental-vm-modules npx jasmine",
+		"test:jasmine": "cross-env NODE_OPTIONS='--experimental-vm-modules --experimental-json-modules' npx jasmine",
 		"test": "npm run test:jest && npm run test:jasmine"
 	},
 	"dependencies": {
@@ -93,6 +93,18 @@
 			"require": "./lib/export/directory.js",
 			"import": "./lib/export/directory.mjs"
 		},
+		"./lib/export/helpers/custom-files": {
+			"require": "./lib/export/helpers/custom-files.js",
+			"import": "./lib/export/helpers/custom-files.mjs"
+		},
+		"./lib/export/helpers/prepare": {
+			"require": "./lib/export/helpers/prepare.js",
+			"import": "./lib/export/helpers/prepare.mjs"
+		},
+		"./lib/export/helpers/types-version": {
+			"require": "./lib/export/helpers/types-version.js",
+			"import": "./lib/export/helpers/types-version.mjs"
+		},
 		"./lib/export/icon-package": {
 			"require": "./lib/export/icon-package.js",
 			"import": "./lib/export/icon-package.mjs"
@@ -100,10 +112,6 @@
 		"./lib/export/json-package": {
 			"require": "./lib/export/json-package.js",
 			"import": "./lib/export/json-package.mjs"
-		},
-		"./lib/export/prepare": {
-			"require": "./lib/export/prepare.js",
-			"import": "./lib/export/prepare.mjs"
 		},
 		"./lib/icon-set": {
 			"require": "./lib/icon-set/index.js",
@@ -172,10 +180,6 @@
 		"./lib/misc/scan": {
 			"require": "./lib/misc/scan.js",
 			"import": "./lib/misc/scan.mjs"
-		},
-		"./lib/misc/types-version": {
-			"require": "./lib/misc/types-version.js",
-			"import": "./lib/misc/types-version.mjs"
 		},
 		"./lib/misc/write-json": {
 			"require": "./lib/misc/write-json.js",
