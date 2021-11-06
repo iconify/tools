@@ -1,5 +1,6 @@
 import type { APICacheOptions } from '../../download/api/types';
 import { blankIconSet } from '../../icon-set';
+import type { DocumentNotModified } from '../../download/types/modified';
 import { SVG } from '../../svg';
 import { cleanupSVG } from '../../svg/cleanup';
 import { getFigmaIconNodes } from './nodes';
@@ -9,18 +10,14 @@ import {
 	figmaImagesQuery,
 } from './query';
 import type { FigmaImportOptions } from './types/options';
-import type {
-	FigmaDocumentNotModified,
-	FigmaIconNode,
-	FigmaImportResult,
-} from './types/result';
+import type { FigmaIconNode, FigmaImportResult } from './types/result';
 
 /**
  * Import icon set from Figma
  */
 export async function importFromFigma(
 	options: FigmaImportOptions
-): Promise<FigmaImportResult | FigmaDocumentNotModified> {
+): Promise<FigmaImportResult | DocumentNotModified> {
 	const cacheOptions: APICacheOptions | undefined = options.cacheDir
 		? {
 				// 24 hours

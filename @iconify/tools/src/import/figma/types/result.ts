@@ -1,11 +1,6 @@
 import type { IconSet } from '../../../icon-set';
 
 /**
- * Document wasn't modified
- */
-export type FigmaDocumentNotModified = 'not_modified';
-
-/**
  * Result for found icons
  */
 export interface FigmaIconNode {

@@ -89,6 +89,26 @@
 			"require": "./lib/download/api/types.js",
 			"import": "./lib/download/api/types.mjs"
 		},
+		"./lib/download/git/hash": {
+			"require": "./lib/download/git/hash.js",
+			"import": "./lib/download/git/hash.mjs"
+		},
+		"./lib/download/git": {
+			"require": "./lib/download/git/index.js",
+			"import": "./lib/download/git/index.mjs"
+		},
+		"./lib/download/git/index": {
+			"require": "./lib/download/git/index.js",
+			"import": "./lib/download/git/index.mjs"
+		},
+		"./lib/download/helpers/exec": {
+			"require": "./lib/download/helpers/exec.js",
+			"import": "./lib/download/helpers/exec.mjs"
+		},
+		"./lib/download/types/modified": {
+			"require": "./lib/download/types/modified.js",
+			"import": "./lib/download/types/modified.mjs"
+		},
 		"./lib/export/directory": {
 			"require": "./lib/export/directory.js",
 			"import": "./lib/export/directory.mjs"

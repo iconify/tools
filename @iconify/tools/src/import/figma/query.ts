@@ -5,6 +5,7 @@ import {
 	getAPICache,
 } from '../../download/api/cache';
 import type { APICacheOptions, APIQueryParams } from '../../download/api/types';
+import type { DocumentNotModified } from '../../download/types/modified';
 import type {
 	FigmaAPIError,
 	FigmaAPIImagesResponse,
@@ -14,10 +15,7 @@ import type {
 	FigmaFilesQueryOptions,
 	FigmaImagesQueryOptions,
 } from './types/options';
-import type {
-	FigmaDocumentNotModified,
-	FigmaNodesImportResult,
-} from './types/result';
+import type { FigmaNodesImportResult } from './types/result';
 
 /**
  * Compare last modified dates
@@ -38,7 +36,7 @@ function identicalDates(actual: unknown, expected: string | Date): boolean {
 export async function figmaFilesQuery(
 	options: FigmaFilesQueryOptions,
 	cache?: APICacheOptions
-): Promise<FigmaDocument | FigmaDocumentNotModified> {
+): Promise<FigmaDocument | DocumentNotModified> {
 	// Check token
 	if (!options.token) {
 		throw new Error('Missing Figma API token');
