@@ -2,7 +2,7 @@
 	"name": "@iconify/tools",
 	"description": "Collection of functions for cleaning up and parsing SVG for Iconify project",
 	"author": "Vjacheslav Trushkin",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"license": "MIT",
 	"bugs": "https://github.com/iconify/tools/issues",
 	"homepage": "https://github.com/iconify/tools",
@@ -10,7 +10,8 @@
 		"type": "git",
 		"url": "git://github.com/iconify/tools.git"
 	},
-	"main": "dist/index.js",
+	"main": "./lib/index.js",
+	"module": "./lib/index.mjs",
 	"scripts": {
 		"clean": "rimraf lib tests-compiled tsconfig.tsbuildinfo",
 		"lint": "eslint src/**/*.ts",
@@ -32,6 +33,10 @@
 	},
 	"exports": {
 		"./*": "./*",
+		".": {
+			"require": "./lib/index.js",
+			"import": "./lib/index.mjs"
+		},
 		"./lib/colors/attribs": {
 			"require": "./lib/colors/attribs.js",
 			"import": "./lib/colors/attribs.mjs"

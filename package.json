@@ -11,7 +11,8 @@
 	},
 	"workspaces": [
 		"@iconify/*",
-		"@debug/*"
+		"@debug/*",
+		"@iconify-demo/*"
 	],
 	"scripts": {
 		"build": "npm run build --workspaces --if-present",

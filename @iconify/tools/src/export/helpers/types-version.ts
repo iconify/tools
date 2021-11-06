@@ -1,4 +1,5 @@
-import pkg from '@iconify/types/package.json';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const pkg = require('@iconify/types/package.json');
 
 /**
  * Get current version of Iconify Types package

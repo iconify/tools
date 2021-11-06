@@ -124,5 +124,8 @@ export async function runSVGO(
 	if (typeof result.error === 'string') {
 		throw new Error(result.error);
 	}
-	svg.load(result.data);
+
+	// Sometimes empty definitions are not removed: remove them
+	const content = result.data.replace(/<defs\/>/g, '');
+	svg.load(content);
 }
