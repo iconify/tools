@@ -1,8 +1,8 @@
 import type { ExportTargetOptions } from '../../export/helpers/prepare';
-import { execAsync } from '../helpers/exec';
+import { execAsync } from '../../misc/exec';
 
 /**
- * Clone Git repo
+ * Get latest hash from cloned git repo
  */
 export async function getGitRepoHash(
 	options: ExportTargetOptions

@@ -101,9 +101,21 @@
 			"require": "./lib/download/git/index.js",
 			"import": "./lib/download/git/index.mjs"
 		},
-		"./lib/download/helpers/exec": {
-			"require": "./lib/download/helpers/exec.js",
-			"import": "./lib/download/helpers/exec.mjs"
+		"./lib/download/npm": {
+			"require": "./lib/download/npm/index.js",
+			"import": "./lib/download/npm/index.mjs"
+		},
+		"./lib/download/npm/index": {
+			"require": "./lib/download/npm/index.js",
+			"import": "./lib/download/npm/index.mjs"
+		},
+		"./lib/download/npm/types": {
+			"require": "./lib/download/npm/types.js",
+			"import": "./lib/download/npm/types.mjs"
+		},
+		"./lib/download/npm/version": {
+			"require": "./lib/download/npm/version.js",
+			"import": "./lib/download/npm/version.mjs"
 		},
 		"./lib/download/types/modified": {
 			"require": "./lib/download/types/modified.js",
@@ -192,6 +204,10 @@
 		"./lib/import/figma/types/result": {
 			"require": "./lib/import/figma/types/result.js",
 			"import": "./lib/import/figma/types/result.mjs"
+		},
+		"./lib/misc/exec": {
+			"require": "./lib/misc/exec.js",
+			"import": "./lib/misc/exec.mjs"
 		},
 		"./lib/misc/keyword": {
 			"require": "./lib/misc/keyword.js",

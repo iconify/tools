@@ -3,7 +3,7 @@ import {
 	ExportTargetOptions,
 	prepareDirectoryForExport,
 } from '../../export/helpers/prepare';
-import { execAsync } from '../helpers/exec';
+import { execAsync } from '../../misc/exec';
 import type { DocumentNotModified } from '../types/modified';
 import { getGitRepoHash } from './hash';
 
@@ -18,8 +18,13 @@ export interface CloneGitRepoOptions extends ExportTargetOptions {
 	branch: string;
 
 	// Clone only if it was modified since hash
-	ifModifiedSince?: string;
+	// If true, checked against file stored in target directory
 
+	// Important: this function doesn't verify if target directory has correct branch
+	// cloned, so do not use the same target directory for different repos or branches.
+	ifModifiedSince?: string | true;
+
+	// Log commands
 	log?: boolean;
 }
 
@@ -41,13 +46,25 @@ export async function cloneGitRepo(
 
 	// Check for last commit
 	if (options.ifModifiedSince) {
-		const result = await execAsync(
-			`git ls-remote ${remote} --branch ${branch}`
-		);
-		const parts = result.stdout.split(/\s/);
-		const hash = parts.shift();
-		if (hash === options.ifModifiedSince) {
-			return 'not_modified';
+		try {
+			// Get expected hash
+			const expectedHash =
+				options.ifModifiedSince === true
+					? await getGitRepoHash(options)
+					: options.ifModifiedSince;
+
+			// Get actual hash
+			const result = await execAsync(
+				`git ls-remote ${remote} --branch ${branch}`
+			);
+			const parts = result.stdout.split(/\s/);
+			const latestHash = parts.shift();
+
+			if (latestHash === expectedHash) {
+				return 'not_modified';
+			}
+		} catch (err) {
+			//
 		}
 	}
 
