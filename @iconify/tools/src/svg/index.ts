@@ -7,6 +7,9 @@ export interface ViewBox {
 	height: number;
 }
 
+/**
+ * SVG class, used to manipulate icon content.
+ */
 export class SVG {
 	// Cheerio tree, initialized in load()
 	public $svg!: cheerio.Root;

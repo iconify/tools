@@ -2,10 +2,7 @@
 	"name": "@iconify/tools",
 	"description": "Collection of functions for cleaning up and parsing SVG for Iconify project",
 	"author": "Vjacheslav Trushkin",
-	"version": "2.0.0-dev.4",
-	"publishConfig": {
-		"tag": "dev"
-	},
+	"version": "2.0.0",
 	"license": "MIT",
 	"bugs": "https://github.com/iconify/tools/issues",
 	"homepage": "https://github.com/iconify/tools",
@@ -230,6 +227,14 @@
 		"./lib/import/figma/types/result": {
 			"require": "./lib/import/figma/types/result.js",
 			"import": "./lib/import/figma/types/result.mjs"
+		},
+		"./lib": {
+			"require": "./lib/index.js",
+			"import": "./lib/index.mjs"
+		},
+		"./lib/index": {
+			"require": "./lib/index.js",
+			"import": "./lib/index.mjs"
 		},
 		"./lib/misc/exec": {
 			"require": "./lib/misc/exec.js",
