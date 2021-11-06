@@ -1,4 +1,4 @@
-import type { APICacheOptions } from '../../api/types';
+import type { APICacheOptions } from '../../download/api/types';
 import { blankIconSet } from '../../icon-set';
 import { SVG } from '../../svg';
 import { cleanupSVG } from '../../svg/cleanup';

@@ -33,22 +33,6 @@
 	},
 	"exports": {
 		"./*": "./*",
-		"./lib/api/cache": {
-			"require": "./lib/api/cache.js",
-			"import": "./lib/api/cache.mjs"
-		},
-		"./lib/api": {
-			"require": "./lib/api/index.js",
-			"import": "./lib/api/index.mjs"
-		},
-		"./lib/api/index": {
-			"require": "./lib/api/index.js",
-			"import": "./lib/api/index.mjs"
-		},
-		"./lib/api/types": {
-			"require": "./lib/api/types.js",
-			"import": "./lib/api/types.mjs"
-		},
 		"./lib/colors/attribs": {
 			"require": "./lib/colors/attribs.js",
 			"import": "./lib/colors/attribs.mjs"
@@ -88,6 +72,22 @@
 		"./lib/css/parser/types": {
 			"require": "./lib/css/parser/types.js",
 			"import": "./lib/css/parser/types.mjs"
+		},
+		"./lib/download/api/cache": {
+			"require": "./lib/download/api/cache.js",
+			"import": "./lib/download/api/cache.mjs"
+		},
+		"./lib/download/api": {
+			"require": "./lib/download/api/index.js",
+			"import": "./lib/download/api/index.mjs"
+		},
+		"./lib/download/api/index": {
+			"require": "./lib/download/api/index.js",
+			"import": "./lib/download/api/index.mjs"
+		},
+		"./lib/download/api/types": {
+			"require": "./lib/download/api/types.js",
+			"import": "./lib/download/api/types.mjs"
 		},
 		"./lib/export/directory": {
 			"require": "./lib/export/directory.js",

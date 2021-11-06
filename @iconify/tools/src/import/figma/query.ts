@@ -1,6 +1,10 @@
-import { sendAPIQuery } from '../../api';
-import { apiCacheKey, clearAPICache, getAPICache } from '../../api/cache';
-import type { APICacheOptions, APIQueryParams } from '../../api/types';
+import { sendAPIQuery } from '../../download/api';
+import {
+	apiCacheKey,
+	clearAPICache,
+	getAPICache,
+} from '../../download/api/cache';
+import type { APICacheOptions, APIQueryParams } from '../../download/api/types';
 import type {
 	FigmaAPIError,
 	FigmaAPIImagesResponse,
