@@ -8,20 +8,20 @@ import type { DocumentNotModified } from '../types/modified';
 import { getGitRepoHash } from './hash';
 
 /**
- * Options for cloneGitRepo()
+ * Options for downloadGitRepo()
  */
-export interface CloneGitRepoOptions extends ExportTargetOptions {
+export interface DownloadGitRepoOptions extends ExportTargetOptions {
 	// Repository
 	remote: string;
 
-	// Branch to clone
+	// Branch
 	branch: string;
 
-	// Clone only if it was modified since hash
+	// Download only if it was modified since hash
 	// If true, checked against file stored in target directory
 
-	// Important: this function doesn't verify if target directory has correct branch
-	// cloned, so do not use the same target directory for different repos or branches.
+	// Important: this function doesn't verify if target directory has correct branch,
+	// so do not use the same target directory for different repos or branches.
 	ifModifiedSince?: string | true;
 
 	// Log commands
@@ -31,40 +31,46 @@ export interface CloneGitRepoOptions extends ExportTargetOptions {
 /**
  * Result
  */
-export interface CloneGitRepoResult {
+export interface DownloadGitRepoResult {
 	target: string;
 	hash: string;
 }
 
 /**
- * Clone Git repo
+ * Download Git repo
  */
-export async function cloneGitRepo(
-	options: CloneGitRepoOptions
-): Promise<CloneGitRepoResult | DocumentNotModified> {
+export async function downloadGitRepo(
+	options: DownloadGitRepoOptions
+): Promise<DownloadGitRepoResult | DocumentNotModified> {
 	const { remote, branch } = options;
 
 	// Check for last commit
-	if (options.ifModifiedSince) {
-		try {
-			// Get expected hash
-			const expectedHash =
-				options.ifModifiedSince === true
-					? await getGitRepoHash(options)
-					: options.ifModifiedSince;
+	const hasHashInTarget = options.target.indexOf('{hash}') !== -1;
+	if (options.ifModifiedSince || hasHashInTarget) {
+		// Get actual hash
+		const result = await execAsync(
+			`git ls-remote ${remote} --branch ${branch}`
+		);
+		const parts = result.stdout.split(/\s/);
+		const latestHash = parts.shift() as string;
+		if (hasHashInTarget) {
+			options.target = options.target.replace('{hash}', latestHash);
+		}
 
-			// Get actual hash
-			const result = await execAsync(
-				`git ls-remote ${remote} --branch ${branch}`
-			);
-			const parts = result.stdout.split(/\s/);
-			const latestHash = parts.shift();
+		if (options.ifModifiedSince) {
+			try {
+				// Get expected hash
+				const expectedHash =
+					options.ifModifiedSince === true
+						? await getGitRepoHash(options)
+						: options.ifModifiedSince;
 
-			if (latestHash === expectedHash) {
-				return 'not_modified';
+				if (latestHash === expectedHash) {
+					return 'not_modified';
+				}
+			} catch (err) {
+				//
 			}
-		} catch (err) {
-			//
 		}
 	}
 

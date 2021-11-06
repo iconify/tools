@@ -8,9 +8,9 @@ import type { DocumentNotModified } from '../types/modified';
 import { getNPMVersion, getPackageVersion } from './version';
 
 /**
- * Options for cloneNPMPackage()
+ * Options for downloadNPMPackage()
  */
-export interface CloneNPMPackageOptions extends ExportTargetOptions {
+export interface DownloadNPMPackageOptions extends ExportTargetOptions {
 	// Package
 	package: string;
 
@@ -28,18 +28,18 @@ export interface CloneNPMPackageOptions extends ExportTargetOptions {
 /**
  * Result
  */
-export interface CloneNPMPackageResult {
+export interface DownloadNPMPackageResult {
 	rootDir: string;
 	actualDir: string;
 	version: string;
 }
 
 /**
- * Clone Git repo
+ * Download NPM package
  */
-export async function cloneNPMPackage(
-	options: CloneNPMPackageOptions
-): Promise<CloneNPMPackageResult | DocumentNotModified> {
+export async function downloadNPMPackage(
+	options: DownloadNPMPackageOptions
+): Promise<DownloadNPMPackageResult | DocumentNotModified> {
 	const packageName = options.package;
 	const tag = options.tag || 'latest';
 	const rootDir = (options.target = normalizeDir(options.target));

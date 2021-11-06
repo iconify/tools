@@ -26,8 +26,10 @@
 	"dependencies": {
 		"@iconify/utils": "^1.0.18",
 		"@types/cheerio": "^0.22.30",
+		"@types/node-fetch": "^2.5.12",
 		"cheerio": "^1.0.0-rc.10",
-		"cross-fetch": "^3.1.4",
+		"extract-zip": "^2.0.1",
+		"node-fetch": "^2.6.6",
 		"pathe": "^0.2.0",
 		"svgo": "^2.7.0"
 	},
@@ -77,6 +79,10 @@
 			"require": "./lib/download/api/cache.js",
 			"import": "./lib/download/api/cache.mjs"
 		},
+		"./lib/download/api/download": {
+			"require": "./lib/download/api/download.js",
+			"import": "./lib/download/api/download.mjs"
+		},
 		"./lib/download/api": {
 			"require": "./lib/download/api/index.js",
 			"import": "./lib/download/api/index.mjs"
@@ -100,6 +106,26 @@
 		"./lib/download/git/index": {
 			"require": "./lib/download/git/index.js",
 			"import": "./lib/download/git/index.mjs"
+		},
+		"./lib/download/github/hash": {
+			"require": "./lib/download/github/hash.js",
+			"import": "./lib/download/github/hash.mjs"
+		},
+		"./lib/download/github": {
+			"require": "./lib/download/github/index.js",
+			"import": "./lib/download/github/index.mjs"
+		},
+		"./lib/download/github/index": {
+			"require": "./lib/download/github/index.js",
+			"import": "./lib/download/github/index.mjs"
+		},
+		"./lib/download/github/types": {
+			"require": "./lib/download/github/types.js",
+			"import": "./lib/download/github/types.mjs"
+		},
+		"./lib/download/helpers/unzip": {
+			"require": "./lib/download/helpers/unzip.js",
+			"import": "./lib/download/helpers/unzip.mjs"
 		},
 		"./lib/download/npm": {
 			"require": "./lib/download/npm/index.js",

@@ -1,4 +1,4 @@
-import crossFetch from 'cross-fetch';
+import fetch from 'node-fetch';
 import { apiCacheKey, getAPICache, storeAPICache } from './cache';
 import type { APICacheOptions, APIQueryParams } from './types';
 
@@ -36,7 +36,7 @@ async function sendQuery(query: APIQueryParams): Promise<number | string> {
 	console.log('Fetch:', url);
 	const headers = query.headers;
 	try {
-		const response = await crossFetch(url, {
+		const response = await fetch(url, {
 			headers,
 		});
 		if (response.status >= 400) {
