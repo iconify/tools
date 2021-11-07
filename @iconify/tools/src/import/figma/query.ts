@@ -34,7 +34,9 @@ function identicalDates(actual: unknown, expected: string | Date): boolean {
 /**
  * Get Figma files
  */
-export async function figmaFilesQuery<T extends FigmaIfModifiedSinceOption>(
+export async function figmaFilesQuery<
+	T extends FigmaIfModifiedSinceOption & FigmaFilesQueryOptions
+>(
 	options: T,
 	cache?: APICacheOptions
 ): Promise<FigmaDocument | DocumentNotModified>;

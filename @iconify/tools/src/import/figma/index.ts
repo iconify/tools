@@ -19,9 +19,9 @@ import type { FigmaIconNode, FigmaImportResult } from './types/result';
 /**
  * Import icon set from Figma
  */
-export async function importFromFigma<T extends FigmaIfModifiedSinceOption>(
-	options: T
-): Promise<FigmaImportResult | DocumentNotModified>;
+export async function importFromFigma<
+	T extends FigmaIfModifiedSinceOption & FigmaImportOptions
+>(options: T): Promise<FigmaImportResult | DocumentNotModified>;
 export async function importFromFigma(
 	options: FigmaImportOptions
 ): Promise<FigmaImportResult>;

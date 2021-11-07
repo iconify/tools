@@ -43,9 +43,9 @@ export interface DownloadGitRepoResult {
 /**
  * Download Git repo
  */
-export async function downloadGitRepo<T extends IfModifiedSinceOption>(
-	options: T
-): Promise<DownloadGitRepoResult | DocumentNotModified>;
+export async function downloadGitRepo<
+	T extends IfModifiedSinceOption & DownloadGitRepoOptions
+>(options: T): Promise<DownloadGitRepoResult | DocumentNotModified>;
 export async function downloadGitRepo(
 	options: DownloadGitRepoOptions
 ): Promise<DownloadGitRepoResult>;

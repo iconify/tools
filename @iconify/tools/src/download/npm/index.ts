@@ -41,9 +41,9 @@ export interface DownloadNPMPackageResult {
 /**
  * Download NPM package
  */
-export async function downloadNPMPackage<T extends IfModifiedSinceOption>(
-	options: T
-): Promise<DownloadNPMPackageResult | DocumentNotModified>;
+export async function downloadNPMPackage<
+	T extends IfModifiedSinceOption & DownloadNPMPackageOptions
+>(options: T): Promise<DownloadNPMPackageResult | DocumentNotModified>;
 export async function downloadNPMPackage(
 	options: DownloadNPMPackageOptions
 ): Promise<DownloadNPMPackageResult>;

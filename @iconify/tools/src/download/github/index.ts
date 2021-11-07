@@ -66,9 +66,9 @@ async function findMatchingDirs(
 /**
  * Download GitHub repo using API
  */
-export async function downloadGitHubRepo<T extends IfModifiedSinceOption>(
-	options: T
-): Promise<DownloadGitHubRepoResult | DocumentNotModified>;
+export async function downloadGitHubRepo<
+	T extends IfModifiedSinceOption & DownloadGitHubRepoOptions
+>(options: T): Promise<DownloadGitHubRepoResult | DocumentNotModified>;
 export async function downloadGitHubRepo(
 	options: DownloadGitHubRepoOptions
 ): Promise<DownloadGitHubRepoResult>;
