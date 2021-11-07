@@ -8,6 +8,7 @@ import { getGitHubRepoHash } from './hash';
 import type { GitHubAPIOptions } from './types';
 import { downloadFile } from '../api/download';
 import { unzip } from '../helpers/unzip';
+// import { sendAPIQuery } from '../api';
 
 interface IfModifiedSinceOption {
 	// Download only if it was modified since hash
@@ -102,10 +103,15 @@ export async function downloadGitHubRepo(
 
 	// Download file
 	if (!exists) {
-		const uri = `https://codeload.github.com/${options.user}/${options.repo}/zip/${hash}`;
+		const uri = `https://api.github.com/repos/${options.user}/${options.repo}/zipball/${hash}`;
+		// const uri = `https://codeload.github.com/${options.user}/${options.repo}/zip/${hash}`;
 		await downloadFile(
 			{
 				uri,
+				headers: {
+					Accept: 'application/vnd.github.v3+json',
+					Authorization: 'token ' + options.token,
+				},
 			},
 			zipTarget
 		);
