@@ -93,12 +93,12 @@ export async function downloadGitHubRepo(
 	const rootDir = (options.target = await prepareDirectoryForExport(options));
 
 	// Archive name
-	const zipTarget = rootDir + '/' + hash + '.zip';
+	const archiveTarget = rootDir + '/' + hash + '.zip';
 
 	// Check if archive exists
 	let exists = false;
 	try {
-		const stat = await fs.lstat(zipTarget);
+		const stat = await fs.lstat(archiveTarget);
 		exists = stat.isFile();
 	} catch (err) {
 		//
@@ -116,7 +116,7 @@ export async function downloadGitHubRepo(
 					Authorization: 'token ' + options.token,
 				},
 			},
-			zipTarget
+			archiveTarget
 		);
 	}
 
@@ -151,7 +151,7 @@ export async function downloadGitHubRepo(
 	}
 
 	// Unpack it
-	await unzip(zipTarget, rootDir);
+	await unzip(archiveTarget, rootDir);
 
 	// Get actual dir
 	const matchingDirs = await findMatchingDirs(rootDir, hash);

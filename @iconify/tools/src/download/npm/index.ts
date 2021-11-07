@@ -1,9 +1,12 @@
+import { promises as fs } from 'fs';
 import {
 	ExportTargetOptions,
 	normalizeDir,
 	prepareDirectoryForExport,
 } from '../../export/helpers/prepare';
 import { execAsync } from '../../misc/exec';
+import { downloadFile } from '../api/download';
+import { untar } from '../helpers/untar';
 import type { DocumentNotModified } from '../types/modified';
 import { getNPMVersion, getPackageVersion } from './version';
 
@@ -53,7 +56,7 @@ export async function downloadNPMPackage(
 	const packageName = options.package;
 	const tag = options.tag || 'latest';
 	const rootDir = (options.target = normalizeDir(options.target));
-	const actualDir = rootDir + '/node_modules/' + packageName;
+	const actualDir = rootDir + '/package';
 
 	// Check for version
 	if (options.ifModifiedSince) {
@@ -74,16 +77,44 @@ export async function downloadNPMPackage(
 	// Prepare target directory
 	await prepareDirectoryForExport(options);
 
-	// Check if directory is empty if directory wasn't cleaned up
-	if (options.log) {
-		console.log(`Installing ${packageName}@${tag} to ${rootDir}`);
-	}
-	await execAsync(
-		`npm install --prefix "${rootDir}" ${packageName}@${tag} --no-audit --ignore-scripts --no-save --omit dev --no-bin-links`
-	);
+	// Get archive location
+	const viewResult = await execAsync(`npm view ${packageName}@${tag} --json`);
+	const packageInfo = JSON.parse(viewResult.stdout);
 
-	// Get latest version
-	const version = await getPackageVersion(actualDir);
+	const version = packageInfo.version;
+	const archiveURL = packageInfo.dist.tarball;
+	const archiveTarget = rootDir + '/' + version + '.tgz';
+
+	// Check if archive exists
+	let archiveExists = false;
+	try {
+		const stat = await fs.lstat(archiveTarget);
+		archiveExists = stat.isFile();
+	} catch (err) {
+		//
+	}
+
+	// Download file
+	if (!archiveExists) {
+		await downloadFile(
+			{
+				uri: archiveURL,
+				headers: {
+					Accept: 'application/tar+gzip',
+				},
+			},
+			archiveTarget
+		);
+	}
+
+	// Remove old unpacked file
+	await prepareDirectoryForExport({
+		target: actualDir,
+		cleanup: true,
+	});
+
+	// Unpack file
+	await untar(archiveTarget, rootDir);
 
 	return {
 		rootDir,

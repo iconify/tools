@@ -25,11 +25,13 @@
 		"@iconify/utils": "^1.0.18",
 		"@types/cheerio": "^0.22.30",
 		"@types/node-fetch": "^2.5.12",
+		"@types/tar": "^6.1.0",
 		"cheerio": "^1.0.0-rc.10",
 		"extract-zip": "^2.0.1",
 		"node-fetch": "^2.6.6",
 		"pathe": "^0.2.0",
-		"svgo": "^2.7.0"
+		"svgo": "^2.7.0",
+		"tar": "^6.1.11"
 	},
 	"exports": {
 		"./*": "./*",
@@ -124,6 +126,10 @@
 		"./lib/download/github/types": {
 			"require": "./lib/download/github/types.js",
 			"import": "./lib/download/github/types.mjs"
+		},
+		"./lib/download/helpers/untar": {
+			"require": "./lib/download/helpers/untar.js",
+			"import": "./lib/download/helpers/untar.mjs"
 		},
 		"./lib/download/helpers/unzip": {
 			"require": "./lib/download/helpers/unzip.js",

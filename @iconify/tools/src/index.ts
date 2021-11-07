@@ -38,12 +38,16 @@ export { exportToDirectory } from './export/directory';
 export { exportIconPackage } from './export/icon-package';
 export { exportJSONPackage } from './export/json-package';
 
-// Misc
+// Misc: files, directories and archives
+export { writeJSONFile } from './misc/write-json';
+export { prepareDirectoryForExport } from './export/helpers/prepare';
+export { scanDirectory } from './misc/scan';
+export { compareDirectories } from './misc/compare-dirs';
+export { unzip } from './download/helpers/unzip';
+export { untar } from './download/helpers/untar';
+
+// Misc: other
 export { execAsync } from './misc/exec';
 export { cleanupIconKeyword } from './misc/keyword';
-export { scanDirectory } from './misc/scan';
-export { writeJSONFile } from './misc/write-json';
 export { bumpVersion } from './misc/bump-version';
-export { compareDirectories } from './misc/compare-dirs';
 export { sendAPIQuery } from './download/api/index';
-export { prepareDirectoryForExport } from './export/helpers/prepare';
