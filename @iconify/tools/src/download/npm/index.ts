@@ -4,7 +4,6 @@ import {
 	normalizeDir,
 	prepareDirectoryForExport,
 } from '../../export/helpers/prepare';
-import { execAsync } from '../../misc/exec';
 import { downloadFile } from '../api/download';
 import { untar } from '../helpers/untar';
 import type { DocumentNotModified } from '../types/modified';
@@ -53,20 +52,21 @@ export async function downloadNPMPackage(
 export async function downloadNPMPackage(
 	options: DownloadNPMPackageOptions
 ): Promise<DownloadNPMPackageResult | DocumentNotModified> {
-	const packageName = options.package;
-	const tag = options.tag || 'latest';
 	const rootDir = (options.target = normalizeDir(options.target));
 	const actualDir = rootDir + '/package';
 
-	// Check for version
+	// Get latest location
+	const versionInfo = await getNPMVersion(options);
+	const version = versionInfo.version;
+
+	// Check downloaded copy
 	if (options.ifModifiedSince) {
 		try {
 			const expectedVersion =
 				options.ifModifiedSince === true
 					? await getPackageVersion(actualDir)
 					: options.ifModifiedSince;
-			const latestVersion = (await getNPMVersion(options)).version;
-			if (latestVersion === expectedVersion) {
+			if (version === expectedVersion) {
 				return 'not_modified';
 			}
 		} catch (err) {
@@ -74,16 +74,16 @@ export async function downloadNPMPackage(
 		}
 	}
 
+	const archiveURL = versionInfo.file;
+	if (!archiveURL) {
+		throw new Error(
+			`NPM registry did not provide link to package archive.`
+		);
+	}
+	const archiveTarget = rootDir + '/' + version + '.tgz';
+
 	// Prepare target directory
 	await prepareDirectoryForExport(options);
-
-	// Get archive location
-	const viewResult = await execAsync(`npm view ${packageName}@${tag} --json`);
-	const packageInfo = JSON.parse(viewResult.stdout);
-
-	const version = packageInfo.version;
-	const archiveURL = packageInfo.dist.tarball;
-	const archiveTarget = rootDir + '/' + version + '.tgz';
 
 	// Check if archive exists
 	let archiveExists = false;
@@ -96,6 +96,9 @@ export async function downloadNPMPackage(
 
 	// Download file
 	if (!archiveExists) {
+		if (options.log) {
+			console.log(`Downloading ${archiveURL}`);
+		}
 		await downloadFile(
 			{
 				uri: archiveURL,
@@ -114,6 +117,9 @@ export async function downloadNPMPackage(
 	});
 
 	// Unpack file
+	if (options.log) {
+		console.log(`Unpacking ${archiveTarget}`);
+	}
 	await untar(archiveTarget, rootDir);
 
 	return {
