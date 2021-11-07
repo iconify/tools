@@ -241,6 +241,14 @@
 			"require": "./lib/index.js",
 			"import": "./lib/index.mjs"
 		},
+		"./lib/misc/bump-version": {
+			"require": "./lib/misc/bump-version.js",
+			"import": "./lib/misc/bump-version.mjs"
+		},
+		"./lib/misc/compare-dirs": {
+			"require": "./lib/misc/compare-dirs.js",
+			"import": "./lib/misc/compare-dirs.mjs"
+		},
 		"./lib/misc/exec": {
 			"require": "./lib/misc/exec.js",
 			"import": "./lib/misc/exec.mjs"

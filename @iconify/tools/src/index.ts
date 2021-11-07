@@ -28,7 +28,7 @@ export { downloadNPMPackage } from './download/npm/index';
 export { getNPMVersion, getPackageVersion } from './download/npm/version';
 
 // Manipulation
-export { parseColors } from './colors/parse';
+export { parseColors, isEmptyColor } from './colors/parse';
 export { runSVGO } from './optimise/svgo';
 export { deOptimisePaths } from './optimise/flags';
 export { scaleSVG } from './optimise/scale';
@@ -43,4 +43,7 @@ export { execAsync } from './misc/exec';
 export { cleanupIconKeyword } from './misc/keyword';
 export { scanDirectory } from './misc/scan';
 export { writeJSONFile } from './misc/write-json';
+export { bumpVersion } from './misc/bump-version';
+export { compareDirectories } from './misc/compare-dirs';
 export { sendAPIQuery } from './download/api/index';
+export { prepareDirectoryForExport } from './export/helpers/prepare';

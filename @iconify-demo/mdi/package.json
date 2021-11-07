@@ -1,0 +1,13 @@
+{
+	"name": "@iconify-demo/mdi",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Example of importing Material Design using Iconify Tools",
+	"license": "MIT",
+	"main": "lib/index.js",
+	"scripts": {
+		"build": "tsc -b",
+		"start": "node lib/index.js"
+	},
+	"type": "module"
+}
