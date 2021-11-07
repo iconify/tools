@@ -9,15 +9,18 @@ import type { GitHubAPIOptions } from './types';
 import { downloadFile } from '../api/download';
 import { unzip } from '../helpers/unzip';
 
+interface IfModifiedSinceOption {
+	// Download only if it was modified since hash
+	ifModifiedSince: string;
+}
+
 /**
  * Options for downloadGitRepo()
  */
 export interface DownloadGitHubRepoOptions
 	extends ExportTargetOptions,
-		GitHubAPIOptions {
-	// Download only if it was modified since hash
-	ifModifiedSince?: string;
-
+		GitHubAPIOptions,
+		Partial<IfModifiedSinceOption> {
 	// Removes old files. Default = false
 	cleanupOldFiles?: boolean;
 
@@ -63,6 +66,12 @@ async function findMatchingDirs(
 /**
  * Download GitHub repo using API
  */
+export async function downloadGitHubRepo<T extends IfModifiedSinceOption>(
+	options: T
+): Promise<DownloadGitHubRepoResult | DocumentNotModified>;
+export async function downloadGitHubRepo(
+	options: DownloadGitHubRepoOptions
+): Promise<DownloadGitHubRepoResult>;
 export async function downloadGitHubRepo(
 	options: DownloadGitHubRepoOptions
 ): Promise<DownloadGitHubRepoResult | DocumentNotModified> {

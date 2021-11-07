@@ -9,12 +9,22 @@ import {
 	figmaFilesQuery,
 	figmaImagesQuery,
 } from './query';
-import type { FigmaImportOptions } from './types/options';
+import type {
+	FigmaImportOptions,
+	FigmaIfModifiedSinceOption,
+	FigmaFilesQueryOptions,
+} from './types/options';
 import type { FigmaIconNode, FigmaImportResult } from './types/result';
 
 /**
  * Import icon set from Figma
  */
+export async function importFromFigma<T extends FigmaIfModifiedSinceOption>(
+	options: T
+): Promise<FigmaImportResult | DocumentNotModified>;
+export async function importFromFigma(
+	options: FigmaImportOptions
+): Promise<FigmaImportResult>;
 export async function importFromFigma(
 	options: FigmaImportOptions
 ): Promise<FigmaImportResult | DocumentNotModified> {
@@ -35,7 +45,10 @@ export async function importFromFigma(
 		: void 0;
 
 	// Get document
-	const document = await figmaFilesQuery(options, cacheOptions);
+	const document = await figmaFilesQuery(
+		options as FigmaFilesQueryOptions & FigmaIfModifiedSinceOption,
+		cacheOptions
+	);
 	if (document === 'not_modified') {
 		return document;
 	}

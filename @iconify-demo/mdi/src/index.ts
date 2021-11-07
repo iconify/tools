@@ -74,12 +74,15 @@ const info: IconifyInfo = {
 		log: true,
 	});
 
-	// If nothing was downloaded, stop
-	// 'not_modified' can be returned only if 'ifModifiedSince' option was set
+	// If nothing was downloaded, stop.
+	/*
+	// 'not_modified' can be returned only if 'ifModifiedSince' option was set, so uncomment ifModifiedSince option
+	// and this code, otherwise TypeScript will complain that result cannot be 'not_modified'
 	if (downloadResult === 'not_modified') {
 		console.log('Nothing to update');
 		return;
 	}
+    */
 
 	// Import icon set
 	const iconSet = await importDirectory(downloadResult.target + iconsDir, {

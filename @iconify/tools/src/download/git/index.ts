@@ -7,22 +7,26 @@ import { execAsync } from '../../misc/exec';
 import type { DocumentNotModified } from '../types/modified';
 import { getGitRepoHash } from './hash';
 
-/**
- * Options for downloadGitRepo()
- */
-export interface DownloadGitRepoOptions extends ExportTargetOptions {
-	// Repository
-	remote: string;
-
-	// Branch
-	branch: string;
-
+interface IfModifiedSinceOption {
 	// Download only if it was modified since hash
 	// If true, checked against file stored in target directory
 
 	// Important: this function doesn't verify if target directory has correct branch,
 	// so do not use the same target directory for different repos or branches.
-	ifModifiedSince?: string | true;
+	ifModifiedSince: string | true;
+}
+
+/**
+ * Options for downloadGitRepo()
+ */
+export interface DownloadGitRepoOptions
+	extends ExportTargetOptions,
+		Partial<IfModifiedSinceOption> {
+	// Repository
+	remote: string;
+
+	// Branch
+	branch: string;
 
 	// Log commands
 	log?: boolean;
@@ -39,6 +43,12 @@ export interface DownloadGitRepoResult {
 /**
  * Download Git repo
  */
+export async function downloadGitRepo<T extends IfModifiedSinceOption>(
+	options: T
+): Promise<DownloadGitRepoResult | DocumentNotModified>;
+export async function downloadGitRepo(
+	options: DownloadGitRepoOptions
+): Promise<DownloadGitRepoResult>;
 export async function downloadGitRepo(
 	options: DownloadGitRepoOptions
 ): Promise<DownloadGitRepoResult | DocumentNotModified> {

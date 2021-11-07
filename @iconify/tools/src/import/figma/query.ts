@@ -12,6 +12,7 @@ import type {
 	FigmaDocument,
 } from './types/api';
 import type {
+	FigmaIfModifiedSinceOption,
 	FigmaFilesQueryOptions,
 	FigmaImagesQueryOptions,
 } from './types/options';
@@ -33,6 +34,14 @@ function identicalDates(actual: unknown, expected: string | Date): boolean {
 /**
  * Get Figma files
  */
+export async function figmaFilesQuery<T extends FigmaIfModifiedSinceOption>(
+	options: T,
+	cache?: APICacheOptions
+): Promise<FigmaDocument | DocumentNotModified>;
+export async function figmaFilesQuery(
+	options: FigmaFilesQueryOptions,
+	cache?: APICacheOptions
+): Promise<FigmaDocument>;
 export async function figmaFilesQuery(
 	options: FigmaFilesQueryOptions,
 	cache?: APICacheOptions

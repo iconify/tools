@@ -7,19 +7,23 @@ import { execAsync } from '../../misc/exec';
 import type { DocumentNotModified } from '../types/modified';
 import { getNPMVersion, getPackageVersion } from './version';
 
+interface IfModifiedSinceOption {
+	// Clone only if it was modified since version
+	// If true, checked against latest file stored in target directory
+	ifModifiedSince: string | true;
+}
+
 /**
  * Options for downloadNPMPackage()
  */
-export interface DownloadNPMPackageOptions extends ExportTargetOptions {
+export interface DownloadNPMPackageOptions
+	extends ExportTargetOptions,
+		Partial<IfModifiedSinceOption> {
 	// Package
 	package: string;
 
 	// Tag, default is 'latest'
 	tag?: string;
-
-	// Clone only if it was modified since version
-	// If true, checked against latest file stored in target directory
-	ifModifiedSince?: string | true;
 
 	// Log commands
 	log?: boolean;
@@ -37,6 +41,12 @@ export interface DownloadNPMPackageResult {
 /**
  * Download NPM package
  */
+export async function downloadNPMPackage<T extends IfModifiedSinceOption>(
+	options: T
+): Promise<DownloadNPMPackageResult | DocumentNotModified>;
+export async function downloadNPMPackage(
+	options: DownloadNPMPackageOptions
+): Promise<DownloadNPMPackageResult>;
 export async function downloadNPMPackage(
 	options: DownloadNPMPackageOptions
 ): Promise<DownloadNPMPackageResult | DocumentNotModified> {

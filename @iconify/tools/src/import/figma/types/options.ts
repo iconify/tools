@@ -33,11 +33,16 @@ interface FigmaImportCommonOptions {
 	version?: string;
 }
 
-// Options for figmaFilesQuery()
-export interface FigmaFilesQueryOptions extends FigmaImportCommonOptions {
+// ifModifiedSince option for figmaFilesQuery()
+export interface FigmaIfModifiedSinceOption {
 	// Check if modified since last change. True to compare to last cached document (if cached)
-	ifModifiedSince?: string | Date | true;
+	ifModifiedSince: string | Date | true;
+}
 
+// Options for figmaFilesQuery()
+export interface FigmaFilesQueryOptions
+	extends FigmaImportCommonOptions,
+		Partial<FigmaIfModifiedSinceOption> {
 	// IDs of nodes to check
 	ids?: string[];
 
