@@ -48,12 +48,15 @@ async function findMatchingDirs(
 	rootDir: string,
 	hash: string
 ): Promise<string[]> {
-	const search = '-' + hash;
 	const matches: string[] = [];
 	const files = await fs.readdir(rootDir);
 	for (let i = 0; i < files.length; i++) {
 		const file = files[i];
-		if (file.slice(0 - search.length) !== search) {
+		const lastChunk = file.split('-').pop() as string;
+		if (
+			lastChunk.length < 4 ||
+			lastChunk !== hash.slice(0, lastChunk.length)
+		) {
 			continue;
 		}
 		const stat = await fs.lstat(rootDir + '/' + file);
