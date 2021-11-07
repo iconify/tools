@@ -1,4 +1,5 @@
 import { promises as fs } from 'fs';
+import { normalizeDir } from '../export/helpers/prepare';
 import { scanDirectory } from './scan';
 
 /**
@@ -38,6 +39,9 @@ export async function compareDirectories(
 	dir2: string,
 	options?: CompareDirectoriesOptions
 ): Promise<boolean> {
+	dir1 = normalizeDir(dir1);
+	dir2 = normalizeDir(dir2);
+
 	// Get all files
 	const files1 = await scanDirectory(dir1);
 	const files2 = await scanDirectory(dir2);
