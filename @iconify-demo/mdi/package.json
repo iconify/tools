@@ -9,5 +9,11 @@
 		"build": "tsc -b",
 		"start": "node lib/index.js"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@iconify/tools": "^2.0.0"
+	},
+	"devDependencies": {
+		"typescript": "^4.4.3"
+	}
 }

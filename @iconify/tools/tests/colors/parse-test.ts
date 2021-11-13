@@ -30,7 +30,8 @@ describe('Finding colors', () => {
 					type: 'current',
 				},
 			],
-			hasUnsetColor: true,
+			// Cannot have unset color after it was set
+			hasUnsetColor: false,
 			hasGlobalStyle: false,
 		});
 
@@ -268,6 +269,7 @@ describe('Finding colors', () => {
 		const searchResult = await parseColors(svg);
 		expect(searchResult).toEqual({
 			colors: ['red', 'blue', 'green'].map(stringToColor),
+			// Rectangle doesn't actually have color, even though animation sets it
 			hasUnsetColor: true,
 			hasGlobalStyle: false,
 		});

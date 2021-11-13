@@ -47,6 +47,10 @@
 			"require": "./lib/colors/parse.js",
 			"import": "./lib/colors/parse.mjs"
 		},
+		"./lib/colors/validate": {
+			"require": "./lib/colors/validate.js",
+			"import": "./lib/colors/validate.mjs"
+		},
 		"./lib/css/parse": {
 			"require": "./lib/css/parse.js",
 			"import": "./lib/css/parse.mjs"

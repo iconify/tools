@@ -20,7 +20,7 @@ import { tagSpecificPresentationalAttributes } from '../svg/data/attributes';
 /**
  * Result
  */
-interface FindColorsResult {
+export interface FindColorsResult {
 	// Custom colors
 	colors: (Color | string)[];
 
@@ -385,12 +385,13 @@ export async function parseColors(
 					const color = getElementColor(prop, item);
 					if (color === defaultBlackColor) {
 						// Default black color: change it
-						result.hasUnsetColor = true;
 						if (defaultColor) {
 							// Add color to results and change attribute
 							findColor(defaultColor, true);
 							$element.attr(prop, colorToString(defaultColor));
 							itemColors[prop] = defaultColor;
+						} else {
+							result.hasUnsetColor = true;
 						}
 					}
 				}
