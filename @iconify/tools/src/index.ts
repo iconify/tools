@@ -29,6 +29,7 @@ export { getNPMVersion, getPackageVersion } from './download/npm/version';
 
 // Manipulation
 export { parseColors, isEmptyColor } from './colors/parse';
+export { validateColors } from './colors/validate';
 export { runSVGO } from './optimise/svgo';
 export { deOptimisePaths } from './optimise/flags';
 export { scaleSVG } from './optimise/scale';
