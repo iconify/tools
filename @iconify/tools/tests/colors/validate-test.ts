@@ -68,4 +68,20 @@ describe('Validating colors', () => {
 			return validateColors(svg, true);
 		}).rejects.toThrow();
 	});
+
+	test('Mixed icon', async () => {
+		const svgCode =
+			'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none"><path d="M15.052 14.32h.813L21 19.468L19.467 21l-5.146-5.136v-.813l-.278-.288A6.66 6.66 0 0 1 9.69 16.38a6.69 6.69 0 1 1 6.69-6.69a6.66 6.66 0 0 1-1.617 4.354l.289.278z" fill="currentColor"/><path d="M10.204 7.117H9.175v2.058H7.117v1.03h2.058v2.057h1.03v-2.058h2.057V9.175h-2.058V7.117z" fill="#fff"/></g></svg>';
+		const svg = new SVG(svgCode);
+
+		// Should throw because of white color
+		await expect(() => {
+			return validateColors(svg, true);
+		}).rejects.toThrow();
+
+		// Should throw because of currentColor
+		await expect(() => {
+			return validateColors(svg, false);
+		}).rejects.toThrow();
+	});
 });
