@@ -21,7 +21,10 @@
 		"test:tools": "npm run test --workspace=@iconify/tools"
 	},
 	"devDependencies": {
-		"@iconify/library-builder": "^1.0.3",
+		"@iconify/iconify": "^2.1.0",
+		"@iconify/json": "^2.0.1",
+		"@iconify/library-builder": "^1.0.4",
+		"@iconify/utils": "^1.0.20",
 		"@types/jest": "^27.0.1",
 		"@types/svgo": "^2.6.0",
 		"@typescript-eslint/eslint-plugin": "^4.31.1",

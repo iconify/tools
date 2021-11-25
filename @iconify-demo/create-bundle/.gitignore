@@ -1,0 +1,8 @@
+.DS_Store
+.vscode
+tsconfig.tsbuildinfo
+node_modules
+lib
+cache
+output
+assets
