@@ -25,6 +25,7 @@
 		"@iconify/json": "^2.0.1",
 		"@iconify/library-builder": "^1.0.4",
 		"@iconify/utils": "^1.0.20",
+		"@mdi/svg": "^6.5.95",
 		"@types/jest": "^27.0.1",
 		"@types/svgo": "^2.6.0",
 		"@typescript-eslint/eslint-plugin": "^4.31.1",

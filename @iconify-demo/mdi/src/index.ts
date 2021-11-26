@@ -13,7 +13,6 @@ import {
 	downloadNPMPackage,
 	bumpVersion,
 	compareDirectories,
-	execAsync,
 } from '@iconify/tools';
 import type { DownloadNPMPackageResult } from '@iconify/tools/lib/download/npm';
 import type { IconifyInfo } from '@iconify/types';

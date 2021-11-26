@@ -6,3 +6,6 @@ lib
 cache
 output
 assets
+fa-pro
+json/mdi.json
+json/fa*.json

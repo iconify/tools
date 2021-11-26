@@ -47,16 +47,11 @@ interface BundleScriptCustomJSONConfig {
 }
 
 interface BundleScriptConfig {
-	// Source file for Iconify SVG Framework:
-	// Use require.resolve('@iconify/iconify') for full version
-	// Use require.resolve('@iconify/iconify/dist/iconify.without-api.min') for version without API
-	svgFramework?: string;
-
 	// Custom SVG to import and bundle
 	svg?: BundleScriptCustomSVGConfig[];
 
 	// Icons to bundled from @iconify/json packages
-	iconifyIcons?: string[];
+	icons?: string[];
 
 	// List of JSON files to bundled
 	// Entry can be a string, pointing to filename or a BundleScriptCustomJSONConfig object (see type above)
@@ -66,10 +61,6 @@ interface BundleScriptConfig {
 
 let sources: BundleScriptConfig;
 sources = {
-	svgFramework: require.resolve(
-		'@iconify/iconify/dist/iconify.without-api.min'
-	),
-
 	svg: [
 		{
 			dir: 'svg',
@@ -83,7 +74,7 @@ sources = {
 		},
 	],
 
-	iconifyIcons: [
+	icons: [
 		'mdi:home',
 		'mdi:account',
 		'mdi:login',
@@ -111,14 +102,23 @@ sources = {
 	],
 };
 
+// Iconify component (this changes import statement in generated file)
+// Available options: '@iconify/react' for React, '@iconify/vue' for Vue 3, '@iconify/vue2' for Vue 2, '@iconify/svelte' for Svelte
+const component = '@iconify/react';
+
+// Set to true to use require() instead of import
+const commonJS = false;
+
 // File to save bundle to
-const target = 'assets/iconify-bundle.js';
+const target = 'lib/icons-bundle.js';
 
 /**
  * Do stuff!
  */
 (async function () {
-	let bundle = '';
+	let bundle = commonJS
+		? "const { addCollection } = require('" + component + "');\n\n"
+		: "import { addCollection } from '" + component + "';\n\n";
 
 	// Create directory for output if missing
 	const dir = dirname(target);
@@ -131,32 +131,13 @@ const target = 'assets/iconify-bundle.js';
 	}
 
 	/**
-	 * Bundle SVG framework
+	 * Convert sources.icons to sources.json
 	 */
-	const isIconifyBundled = !!sources.svgFramework;
-	const wrapperFunction = isIconifyBundled ? 'Iconify.addCollection' : 'add';
-	if (sources.svgFramework) {
-		bundle += await fs.readFile(sources.svgFramework, 'utf8');
-		console.log('Bundled SVG framework');
-
-		// Try to copy .d.ts
-		const tsSource = sources.svgFramework.replace('.js', '.d.ts');
-		try {
-			const tsContent = await fs.readFile(tsSource);
-			await fs.writeFile(target.replace('.js', '.d.ts'), tsContent);
-		} catch (err) {
-			//
-		}
-	}
-
-	/**
-	 * Convert sources.iconifyIcons to sources.json
-	 */
-	if (sources.iconifyIcons) {
+	if (sources.icons) {
 		const sourcesJSON = sources.json ? sources.json : (sources.json = []);
 
 		// Sort icons by prefix
-		const organizedList = organizeIconsList(sources.iconifyIcons);
+		const organizedList = organizeIconsList(sources.icons);
 		for (const prefix in organizedList) {
 			const filename = require.resolve(
 				`@iconify/json/json/${prefix}.json`
@@ -195,7 +176,7 @@ const target = 'assets/iconify-bundle.js';
 			// Remove metadata and add to bundle
 			removeMetaData(content);
 			minifyIconSet(content);
-			bundle += wrapperFunction + '(' + JSON.stringify(content) + ');\n';
+			bundle += 'addCollection(' + JSON.stringify(content) + ');\n';
 			console.log(`Bundled icons from ${filename}`);
 		}
 	}
@@ -263,31 +244,8 @@ const target = 'assets/iconify-bundle.js';
 
 			// Export to JSON
 			const content = iconSet.export();
-			bundle += wrapperFunction + '(' + JSON.stringify(content) + ');\n';
+			bundle += 'addCollection(' + JSON.stringify(content) + ');\n';
 		}
-	}
-
-	/**
-	 * Add wrapper function if SVG framework is not in bundle
-	 */
-	if (!isIconifyBundled) {
-		// Wrap in custom code that checks for Iconify.addCollection and IconifyPreload
-		bundle = `(function() { 
-function add(data) {
-	try {
-		if (typeof self.Iconify === 'object' && self.Iconify.addCollection) {
-			self.Iconify.addCollection(data);
-			return;
-		}
-		if (typeof self.IconifyPreload === 'undefined') {
-			self.IconifyPreload = [];
-		}
-		self.IconifyPreload.push(data);
-	} catch (err) {
-	}
-}
-${bundle}
-})();\n`;
 	}
 
 	// Save to file
