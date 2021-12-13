@@ -9,4 +9,5 @@ module.exports = {
 			tsconfig: 'tests/tsconfig.json',
 		},
 	},
+	modulePathIgnorePatterns: ['<rootDir>/tests/fixtures'],
 };
