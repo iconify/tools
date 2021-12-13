@@ -8,6 +8,7 @@ const goodExamples: string[] = [
 	'animateMotion.svg',
 	'animateTransform.svg',
 	'clipPath.svg',
+	'clipPath2.svg',
 	'defs.svg',
 	'desc.svg',
 	'feColorMatrix.svg',
