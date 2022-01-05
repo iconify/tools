@@ -31,7 +31,7 @@
 		"extract-zip": "^2.0.1",
 		"node-fetch": "^2.6.6",
 		"pathe": "^0.2.0",
-		"svgo": "^2.7.0",
+		"svgo": "^2.8.0",
 		"tar": "^6.1.11"
 	},
 	"exports": {
