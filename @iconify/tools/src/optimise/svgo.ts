@@ -95,7 +95,7 @@ export async function runSVGO(
 	if (options.plugins) {
 		plugins = options.plugins;
 	} else {
-		// Check for animations: convertShapeToPath plugin currently might ruin animations
+		// Check for animations: convertShapeToPath and removeHiddenElems plugins currently might ruin animations
 		let keepShapes = options.keepShapes;
 		if (
 			keepShapes === void 0 &&
