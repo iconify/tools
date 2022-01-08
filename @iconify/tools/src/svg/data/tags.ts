@@ -173,15 +173,6 @@ export const tagsInsideDefs = new Set([
 ]);
 
 /**
- * Parent tags for animations
- */
-export const tagsBeforeAnimation = new Set([
-	...shapeTags,
-	...filterChildTags,
-	...feComponentTransferChildTag,
-]);
-
-/**
  * All supported tags
  */
 export const allValidTags = new Set([

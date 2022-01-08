@@ -14,7 +14,6 @@ import {
 	filterTag,
 	gradientChildTags,
 	gradientTags,
-	tagsBeforeAnimation,
 	tagsInsideDefs,
 	unsupportedTags,
 } from '../data/tags';
@@ -42,9 +41,6 @@ requiredParentTags.set(defsTag, tagsInsideDefs);
 
 // <stop> must be inside gradient
 requiredParentTags.set(gradientTags, gradientChildTags);
-
-// Animations must be inside shapes or filters
-requiredParentTags.set(tagsBeforeAnimation, animateTags);
 
 // <mpath> must be inside <animateMotion>
 requiredParentTags.set(new Set(['animateMotion']), animateMotionChildTags);

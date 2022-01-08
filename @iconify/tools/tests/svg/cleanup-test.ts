@@ -55,6 +55,13 @@ describe('Cleaning up SVG', () => {
 		);
 	});
 
+	test('Animation, nothing to clean up', async () => {
+		const svg = new SVG(await loadFixture('animation.svg'));
+		const expectedSVG = svg.toMinifiedString();
+		await cleanupSVG(svg);
+		expect(svg.toMinifiedString()).toBe(expectedSVG);
+	});
+
 	test('Namespaces', async () => {
 		const svg = new SVG(await loadFixture('bpmn-trash.svg'));
 		await cleanupSVG(svg);

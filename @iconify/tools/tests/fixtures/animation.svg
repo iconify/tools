@@ -1,0 +1,79 @@
+<svg width="40" height="40" viewBox="12 0 40 40" xmlns="http://www.w3.org/2000/svg">
+    <mask id="logo-test-mouth-mask">
+        <path d="M31.7331 30C36.8448 30 41.4909 25.2412 40.9582 24.1898C40.423 23.1334 37.8672 26.8308 31.7331 26.8308C25.5991 26.8308 23.5544 23.1334 23.0432 24.1898C22.5321 25.2462 26.6214 30 31.7331 30Z" fill="white" />
+    </mask>
+    <mask id="logo-test-vector-mask">
+        <g stroke-linecap="round" stroke-linejoin="round" stroke-width="2" stroke="white" fill="none">
+            <path d="M24 12v0h0" stroke-dasharray="2 3">
+                <animate attributeName="d" values="M24 12v0h0;M24 12v16h0;M24 12v16h16" dur="0.5s" begin="logoTestVectorReset.end" fill="freeze" />
+                <set attributeName="d" to="M24 12v0h0" begin="logoTestVectorReset.begin" fill="freeze" />
+            </path>
+            <path d="M24 12s8 8 16 16" stroke-dasharray="2 3">
+                <animate attributeName="d" values="M24 12s1 1 1 1;M24 12s8 8 16 16;M24 12s16 0 16 16" dur="3s" begin="logoTestVectorReset.end+0.5s" fill="freeze" />
+                <set attributeName="d" to="M24 12s8 8 16 16" begin="logoTestVectorReset.begin" fill="freeze" />
+                <set attributeName="opacity" to="0" begin="logoTestVectorReset.begin" fill="freeze" />
+                <set attributeName="opacity" to="1" begin="logoTestVectorReset.end+0.5s" fill="freeze" />
+            </path>
+            <path d="M24 12l8 8">
+                <animate attributeName="d" values="M24 12l8 8;M24 12l14 0" dur="1.5s" begin="logoTestVectorReset.end+2s" fill="freeze" />
+                <set attributeName="d" to="M24 12l8 8" begin="logoTestVectorReset.begin" fill="freeze" />
+                <set attributeName="opacity" to="0" begin="logoTestVectorReset.begin" fill="freeze" />
+                <set attributeName="opacity" to="1" begin="logoTestVectorReset.end+2s" fill="freeze" />
+            </path>
+        </g>
+        <circle cx="25" cy="13" r="2" fill="black" stroke="white" stroke-width="2" opacity="0">
+            <animateMotion path="M0 0l15 15" dur="1.5s" begin="logoTestVectorReset.end+0.5s" fill="freeze" />
+            <set attributeName="opacity" to="1" begin="logoTestVectorReset.end+0.5s" fill="freeze" />
+            <set attributeName="opacity" to="0" begin="logoTestVectorReset.end+2s" fill="freeze" />
+        </circle>
+        <circle cx="32" cy="20" r="2" fill="black" stroke="white" stroke-width="2">
+            <animateMotion path="M0 0l6-8" dur="1.5s" begin="logoTestVectorReset.end+2s" fill="freeze" />
+            <set attributeName="opacity" to="0" begin="logoTestVectorReset.begin" fill="freeze" />
+            <set attributeName="opacity" to="1" begin="logoTestVectorReset.end+2s" fill="freeze" />
+        </circle>
+    </mask>
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="32" cy="20" r="15" stroke="#307594" stroke-width="2" stroke-dasharray="100" transform="rotate(-90 32 20)">
+            <animate attributeName="stroke-dashoffset" values="100;0" id="logoCircle" begin="0s" dur="0.7s" />
+        </circle>
+        <g opacity="0">
+            <g stroke="#307594" stroke-width="3" stroke-dasharray="5" stroke-dashoffset="5">
+                <path d="M26.5 15.5v2">
+                    <animate attributeName="stroke-dashoffset" values="5;0" dur="0.3s" begin="logoTestSmileReset.end" fill="freeze" />
+                    <set attributeName="stroke-dashoffset" to="5" begin="logoTestSmileReset.begin" fill="freeze" />
+                </path>
+                <path d="M37.5 15.5v2">
+                    <animate attributeName="stroke-dashoffset" values="5;0" dur="0.3s" begin="logoTestSmileReset.end+0.2s" fill="freeze" />
+                    <set attributeName="stroke-dashoffset" to="5" begin="logoTestSmileReset.begin" fill="freeze" />
+                </path>
+            </g>
+            <circle mask="url(#logo-test-mouth-mask)" cx="32" cy="24" r="0" fill="#307594">
+                <animate attributeName="r" values="0;19" dur="0.3s" begin="logoTestSmileReset.end+0.4s" fill="freeze" />
+                <set attributeName="r" to="0" begin="logoTestSmileReset.begin" fill="freeze" />
+            </circle>
+            <animate id="logoTestSmileHide" attributeName="opacity" values="1;0" dur="0.3s" begin="logoTestSmileReset.begin+3s" fill="freeze" />
+            <animate id="logoTestSmileReset" attributeName="opacity" values="0;1" dur="0.1s" calcMode="discrete" begin="logoCircle.end;logoTestVectorHide.end" fill="freeze" />
+        </g>
+        <g stroke="#307594" stroke-width="2" stroke-dasharray="14" stroke-dashoffset="14" opacity="0">
+            <path d="M26 15h12">
+                <animate attributeName="stroke-dashoffset" values="14;0" dur="0.3s" begin="logoTestMenuReset.end" fill="freeze" />
+                <set attributeName="stroke-dashoffset" to="14" begin="logoTestMenuReset.begin" fill="freeze" />
+            </path>
+            <path d="M26 20h12">
+                <animate attributeName="stroke-dashoffset" values="14;0" dur="0.3s" begin="logoTestMenuReset.end+0.2s" fill="freeze" />
+                <set attributeName="stroke-dashoffset" to="14" begin="logoTestMenuReset.begin" fill="freeze" />
+            </path>
+            <path d="M26 25h12">
+                <animate attributeName="stroke-dashoffset" values="14;0" dur="0.3s" begin="logoTestMenuReset.end+0.4s" fill="freeze" />
+                <set attributeName="stroke-dashoffset" to="14" begin="logoTestMenuReset.begin" fill="freeze" />
+            </path>
+            <animate id="logoTestMenuHide" attributeName="opacity" values="1;0" dur="0.3s" begin="logoTestMenuReset.begin+2s" fill="freeze" />
+            <animate id="logoTestMenuReset" attributeName="opacity" values="0;1" dur="0.1s" calcMode="discrete" begin="logoTestSmileHide.end" fill="freeze" />
+        </g>
+        <g opacity="0">
+            <rect mask="url(#logo-test-vector-mask)" fill="#307594" x="16" y="4" width="32" height="32" />
+            <animate id="logoTestVectorHide" attributeName="opacity" values="1;0" dur="0.3s" begin="logoTestVectorReset.begin+4s" fill="freeze" />
+            <animate id="logoTestVectorReset" attributeName="opacity" values="0;1" dur="0.1s" calcMode="discrete" begin="logoTestMenuHide.end" fill="freeze" />
+        </g>
+    </g>
+</svg>
