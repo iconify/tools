@@ -71,7 +71,8 @@ interface SVGOptionsWithoutPlugin extends SVGOCommonOptions {
 	// Keep shapes: doesn't run plugins that mess with shapes
 	keepShapes?: boolean;
 
-	// Cleanup IDs, value is prefix to add to IDs, default is 'svg-'. False to disable it
+	// Cleanup IDs, value is prefix to add to IDs, default is 'svgID'. False to disable it
+	// Do not use dashes in ID, it breaks some SVG animations
 	cleanupIDs?: string | false;
 }
 
@@ -115,7 +116,7 @@ export async function runSVGO(
 								prefix:
 									typeof options.cleanupIDs === 'string'
 										? options.cleanupIDs
-										: 'svg-',
+										: 'svgID',
 							},
 						},
 				  ]
