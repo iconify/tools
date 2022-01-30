@@ -31,7 +31,7 @@ import type {
 } from './types';
 import { SVG } from '../svg';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental, @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function assertNever(v: never) {
 	//
 }

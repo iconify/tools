@@ -1,7 +1,7 @@
 import { IconSet } from '.';
 import { findMatchingIcon } from './match';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental, @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function assertNever(v: never) {
 	//
 }
