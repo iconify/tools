@@ -87,4 +87,4 @@ Full documentation is too big for simple README file. See [Iconify Tools documen
 
 Library is released with MIT license.
 
-© 2021 Vjacheslav Trushkin
+© 2021, 2022 Vjacheslav Trushkin
