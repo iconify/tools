@@ -59,7 +59,7 @@ async function findMatchingDirs(
 		) {
 			continue;
 		}
-		const stat = await fs.lstat(rootDir + '/' + file);
+		const stat = await fs.stat(rootDir + '/' + file);
 		if (stat.isDirectory()) {
 			matches.push(file);
 		}
@@ -98,7 +98,7 @@ export async function downloadGitHubRepo(
 	// Check if archive exists
 	let exists = false;
 	try {
-		const stat = await fs.lstat(archiveTarget);
+		const stat = await fs.stat(archiveTarget);
 		exists = stat.isFile();
 	} catch (err) {
 		//
@@ -132,6 +132,8 @@ export async function downloadGitHubRepo(
 		const stat = await fs.lstat(filename);
 		const isDir = stat.isDirectory();
 		if (
+			// Remove symbolic links
+			stat.isSymbolicLink() ||
 			// Remove if directory matches hash to avoid errors extracting zip
 			(isDir && filename.slice(0 - hashSearch.length) === hashSearch) ||
 			// Remove if directory and cleanupOldDirectories is not disabled

@@ -71,7 +71,7 @@ export async function scanDirectory(
 				continue;
 			}
 
-			const stat = await fs.lstat(path + subdir + filename);
+			const stat = await fs.stat(path + subdir + filename);
 			if (stat.isDirectory()) {
 				if (subdirs) {
 					await scan(subdir + filename + '/');

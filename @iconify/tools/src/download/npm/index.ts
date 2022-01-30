@@ -88,7 +88,7 @@ export async function downloadNPMPackage(
 	// Check if archive exists
 	let archiveExists = false;
 	try {
-		const stat = await fs.lstat(archiveTarget);
+		const stat = await fs.stat(archiveTarget);
 		archiveExists = stat.isFile();
 	} catch (err) {
 		//
