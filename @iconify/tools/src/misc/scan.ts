@@ -1,4 +1,5 @@
 import { promises as fs } from 'fs';
+import type { Stats } from 'fs';
 
 /**
  * Callback
@@ -21,7 +22,8 @@ type ScanDirectoryCallbackAsString = (
 	ext: string,
 	file: string,
 	subdir: string,
-	path: string
+	path: string,
+	stat: Stats
 ) =>
 	| ScanDirectoryCallbackStringResult
 	| Promise<ScanDirectoryCallbackStringResult>;
@@ -29,7 +31,8 @@ type ScanDirectoryCallbackAsCustom<T> = (
 	ext: string,
 	file: string,
 	subdir: string,
-	path: string
+	path: string,
+	stat: Stats
 ) =>
 	| T
 	| ScanDirectoryCallbackFalseResult
@@ -90,7 +93,7 @@ export async function scanDirectory(
 			// Callback
 			let callbackResult;
 			if (callback) {
-				callbackResult = callback(ext, file, subdir, path);
+				callbackResult = callback(ext, file, subdir, path, stat);
 				if (callbackResult instanceof Promise) {
 					callbackResult = await callbackResult;
 				}
