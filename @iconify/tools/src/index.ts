@@ -22,6 +22,7 @@ export { importDirectory } from './import/directory';
 // Download (for import)
 export { downloadGitRepo } from './download/git/index';
 export { getGitRepoHash } from './download/git/hash';
+export { getGitRepoBranch } from './download/git/branch';
 export { downloadGitHubRepo } from './download/github/index';
 export { getGitHubRepoHash } from './download/github/hash';
 export { downloadNPMPackage } from './download/npm/index';

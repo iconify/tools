@@ -104,6 +104,10 @@
 			"require": "./lib/download/api/types.js",
 			"import": "./lib/download/api/types.mjs"
 		},
+		"./lib/download/git/branch": {
+			"require": "./lib/download/git/branch.js",
+			"import": "./lib/download/git/branch.mjs"
+		},
 		"./lib/download/git/hash": {
 			"require": "./lib/download/git/hash.js",
 			"import": "./lib/download/git/hash.mjs"

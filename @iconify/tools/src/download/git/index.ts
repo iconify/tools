@@ -5,6 +5,7 @@ import {
 } from '../../export/helpers/prepare';
 import { execAsync } from '../../misc/exec';
 import type { DocumentNotModified } from '../types/modified';
+import { getGitRepoBranch } from './branch';
 import { getGitRepoHash } from './hash';
 
 interface IfModifiedSinceOption {
@@ -67,8 +68,11 @@ export async function downloadGitRepo(
 			options.target = options.target.replace('{hash}', latestHash);
 		}
 
-		if (options.ifModifiedSince) {
-			try {
+		try {
+			// Make sure correct branch is checked out. This will throw error if branch is not available
+			await getGitRepoBranch(options, branch);
+
+			if (options.ifModifiedSince) {
 				// Get expected hash
 				const expectedHash =
 					options.ifModifiedSince === true
@@ -78,9 +82,10 @@ export async function downloadGitRepo(
 				if (latestHash === expectedHash) {
 					return 'not_modified';
 				}
-			} catch (err) {
-				//
 			}
+		} catch (err) {
+			// Cleanup on error
+			options.cleanup = true;
 		}
 	}
 
@@ -98,8 +103,9 @@ export async function downloadGitRepo(
 		);
 	}
 
-	// Get latest hash
+	// Get latest hash and make sure correct branch is available
 	const hash = await getGitRepoHash(options);
+	await getGitRepoBranch(options, branch);
 
 	return {
 		target,
