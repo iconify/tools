@@ -2,7 +2,7 @@
 	"name": "@iconify/tools",
 	"description": "Collection of functions for cleaning up and parsing SVG for Iconify project",
 	"author": "Vjacheslav Trushkin",
-	"version": "2.0.5",
+	"version": "2.0.6",
 	"license": "MIT",
 	"bugs": "https://github.com/iconify/tools/issues",
 	"homepage": "https://github.com/iconify/tools",
@@ -24,11 +24,12 @@
 	"dependencies": {
 		"@iconify/utils": "^1.0.21",
 		"@types/cheerio": "^0.22.30",
+		"@types/node-fetch": "^2.5.12",
 		"@types/svgo": "^2.6.0",
 		"@types/tar": "^6.1.0",
 		"cheerio": "^1.0.0-rc.10",
 		"extract-zip": "^2.0.1",
-		"node-fetch": "^3.2.0",
+		"node-fetch": "^2.6.7",
 		"pathe": "^0.2.0",
 		"svgo": "^2.8.0",
 		"tar": "^6.1.11"
