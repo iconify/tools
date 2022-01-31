@@ -70,7 +70,8 @@ export async function downloadNPMPackage(
 				return 'not_modified';
 			}
 		} catch (err) {
-			//
+			// Clean up on error
+			options.cleanup = true;
 		}
 	}
 
