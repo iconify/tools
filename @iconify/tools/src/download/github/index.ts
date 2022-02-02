@@ -12,7 +12,7 @@ import { unzip } from '../helpers/unzip';
 
 interface IfModifiedSinceOption {
 	// Download only if it was modified since hash
-	ifModifiedSince: string;
+	ifModifiedSince: string | DownloadGitHubRepoResult;
 }
 
 /**
@@ -82,8 +82,15 @@ export async function downloadGitHubRepo(
 	// Check for last commit
 	const hash = await getGitHubRepoHash(options);
 
-	if (options.ifModifiedSince && hash === options.ifModifiedSince) {
-		return 'not_modified';
+	const ifModifiedSince = options.ifModifiedSince;
+	if (ifModifiedSince) {
+		const expectedHash: string =
+			typeof ifModifiedSince === 'string'
+				? ifModifiedSince
+				: ifModifiedSince.hash;
+		if (hash === expectedHash) {
+			return 'not_modified';
+		}
 	}
 
 	// Replace hash in target

@@ -12,7 +12,7 @@ import { getNPMVersion, getPackageVersion } from './version';
 interface IfModifiedSinceOption {
 	// Clone only if it was modified since version
 	// If true, checked against latest file stored in target directory
-	ifModifiedSince: string | true;
+	ifModifiedSince: string | true | DownloadNPMPackageResult;
 }
 
 /**
@@ -60,12 +60,15 @@ export async function downloadNPMPackage(
 	const version = versionInfo.version;
 
 	// Check downloaded copy
-	if (options.ifModifiedSince) {
+	const ifModifiedSince = options.ifModifiedSince;
+	if (ifModifiedSince) {
 		try {
-			const expectedVersion =
-				options.ifModifiedSince === true
+			const expectedVersion: string =
+				ifModifiedSince === true
 					? await getPackageVersion(actualDir)
-					: options.ifModifiedSince;
+					: typeof ifModifiedSince === 'string'
+					? ifModifiedSince
+					: ifModifiedSince.version;
 			if (version === expectedVersion) {
 				return 'not_modified';
 			}

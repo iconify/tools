@@ -11,10 +11,7 @@ import { getGitRepoHash } from './hash';
 interface IfModifiedSinceOption {
 	// Download only if it was modified since hash
 	// If true, checked against file stored in target directory
-
-	// Important: this function doesn't verify if target directory has correct branch,
-	// so do not use the same target directory for different repos or branches.
-	ifModifiedSince: string | true;
+	ifModifiedSince: string | true | DownloadGitRepoResult;
 }
 
 /**
@@ -57,7 +54,8 @@ export async function downloadGitRepo(
 
 	// Check for last commit
 	const hasHashInTarget = options.target.indexOf('{hash}') !== -1;
-	if (options.ifModifiedSince || hasHashInTarget) {
+	const ifModifiedSince = options.ifModifiedSince;
+	if (ifModifiedSince || hasHashInTarget) {
 		// Get actual hash
 		const result = await execAsync(
 			`git ls-remote ${remote} --branch ${branch}`
@@ -72,12 +70,14 @@ export async function downloadGitRepo(
 			// Make sure correct branch is checked out. This will throw error if branch is not available
 			await getGitRepoBranch(options, branch);
 
-			if (options.ifModifiedSince) {
+			if (ifModifiedSince) {
 				// Get expected hash
-				const expectedHash =
-					options.ifModifiedSince === true
+				const expectedHash: string =
+					ifModifiedSince === true
 						? await getGitRepoHash(options)
-						: options.ifModifiedSince;
+						: typeof ifModifiedSince === 'string'
+						? ifModifiedSince
+						: ifModifiedSince.hash;
 
 				if (latestHash === expectedHash) {
 					return 'not_modified';
