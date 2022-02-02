@@ -27,6 +27,7 @@ export { downloadGitHubRepo } from './download/github/index';
 export { getGitHubRepoHash } from './download/github/hash';
 export { downloadNPMPackage } from './download/npm/index';
 export { getNPMVersion, getPackageVersion } from './download/npm/version';
+export { downloadPackage } from './download/index';
 
 // Manipulation
 export { parseColors, isEmptyColor } from './colors/parse';

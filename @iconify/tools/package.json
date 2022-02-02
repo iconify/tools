@@ -2,7 +2,7 @@
 	"name": "@iconify/tools",
 	"description": "Collection of functions for cleaning up and parsing SVG for Iconify project",
 	"author": "Vjacheslav Trushkin",
-	"version": "2.0.6",
+	"version": "2.0.7",
 	"license": "MIT",
 	"bugs": "https://github.com/iconify/tools/issues",
 	"homepage": "https://github.com/iconify/tools",
@@ -144,6 +144,14 @@
 			"require": "./lib/download/helpers/unzip.js",
 			"import": "./lib/download/helpers/unzip.mjs"
 		},
+		"./lib/download": {
+			"require": "./lib/download/index.js",
+			"import": "./lib/download/index.mjs"
+		},
+		"./lib/download/index": {
+			"require": "./lib/download/index.js",
+			"import": "./lib/download/index.mjs"
+		},
 		"./lib/download/npm": {
 			"require": "./lib/download/npm/index.js",
 			"import": "./lib/download/npm/index.mjs"
@@ -163,6 +171,10 @@
 		"./lib/download/types/modified": {
 			"require": "./lib/download/types/modified.js",
 			"import": "./lib/download/types/modified.mjs"
+		},
+		"./lib/download/types/sources": {
+			"require": "./lib/download/types/sources.js",
+			"import": "./lib/download/types/sources.mjs"
 		},
 		"./lib/export/directory": {
 			"require": "./lib/export/directory.js",

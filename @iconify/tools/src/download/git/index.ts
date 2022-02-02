@@ -5,12 +5,16 @@ import {
 } from '../../export/helpers/prepare';
 import { execAsync } from '../../misc/exec';
 import type { DocumentNotModified } from '../types/modified';
+import type { DownloadSourceMixin } from '../types/sources';
 import { getGitRepoBranch } from './branch';
 import { getGitRepoHash } from './hash';
 
 interface IfModifiedSinceOption {
 	// Download only if it was modified since hash
 	// If true, checked against file stored in target directory
+
+	// Important: this function doesn't verify if target directory has correct branch,
+	// so do not use the same target directory for different repos or branches.
 	ifModifiedSince: string | true | DownloadGitRepoResult;
 }
 
@@ -33,8 +37,8 @@ export interface DownloadGitRepoOptions
 /**
  * Result
  */
-export interface DownloadGitRepoResult {
-	target: string;
+export interface DownloadGitRepoResult extends DownloadSourceMixin<'git'> {
+	contentsDir: string;
 	hash: string;
 }
 
@@ -72,12 +76,14 @@ export async function downloadGitRepo(
 
 			if (ifModifiedSince) {
 				// Get expected hash
-				const expectedHash: string =
+				const expectedHash: string | null =
 					ifModifiedSince === true
 						? await getGitRepoHash(options)
 						: typeof ifModifiedSince === 'string'
 						? ifModifiedSince
-						: ifModifiedSince.hash;
+						: ifModifiedSince.downloadType === 'git'
+						? ifModifiedSince.hash
+						: null;
 
 				if (latestHash === expectedHash) {
 					return 'not_modified';
@@ -108,7 +114,8 @@ export async function downloadGitRepo(
 	await getGitRepoBranch(options, branch);
 
 	return {
-		target,
+		downloadType: 'git',
+		contentsDir: target,
 		hash,
 	};
 }

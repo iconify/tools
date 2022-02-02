@@ -52,7 +52,7 @@ const basePrefix = 'fa-pro-';
 			branch: faRepoBranch,
 			log: true,
 		});
-		sourceDir = downloadResult.target;
+		sourceDir = downloadResult.contentsDir;
 	}
 
 	// Create directory for output if missing

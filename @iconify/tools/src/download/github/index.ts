@@ -8,7 +8,7 @@ import { getGitHubRepoHash } from './hash';
 import type { GitHubAPIOptions } from './types';
 import { downloadFile } from '../api/download';
 import { unzip } from '../helpers/unzip';
-// import { sendAPIQuery } from '../api';
+import type { DownloadSourceMixin } from '../types/sources';
 
 interface IfModifiedSinceOption {
 	// Download only if it was modified since hash
@@ -35,9 +35,10 @@ export interface DownloadGitHubRepoOptions
 /**
  * Result
  */
-export interface DownloadGitHubRepoResult {
+export interface DownloadGitHubRepoResult
+	extends DownloadSourceMixin<'github'> {
 	rootDir: string;
-	actualDir: string;
+	contentsDir: string;
 	hash: string;
 }
 
@@ -84,10 +85,12 @@ export async function downloadGitHubRepo(
 
 	const ifModifiedSince = options.ifModifiedSince;
 	if (ifModifiedSince) {
-		const expectedHash: string =
+		const expectedHash: string | null =
 			typeof ifModifiedSince === 'string'
 				? ifModifiedSince
-				: ifModifiedSince.hash;
+				: ifModifiedSince.downloadType === 'github'
+				? ifModifiedSince.hash
+				: null;
 		if (hash === expectedHash) {
 			return 'not_modified';
 		}
@@ -167,11 +170,12 @@ export async function downloadGitHubRepo(
 	if (matchingDirs.length !== 1) {
 		throw new Error(`Error unpacking ${hash}.zip`);
 	}
-	const actualDir = rootDir + '/' + matchingDirs[0];
+	const contentsDir = rootDir + '/' + matchingDirs[0];
 
 	return {
+		downloadType: 'github',
 		rootDir,
-		actualDir,
+		contentsDir,
 		hash,
 	};
 }

@@ -84,9 +84,12 @@ const info: IconifyInfo = {
     */
 
 	// Import icon set
-	const iconSet = await importDirectory(downloadResult.target + iconsDir, {
-		prefix,
-	});
+	const iconSet = await importDirectory(
+		downloadResult.contentsDir + iconsDir,
+		{
+			prefix,
+		}
+	);
 	console.log('Found', iconSet.count(), 'icons');
 
 	// Add information
@@ -160,7 +163,7 @@ const info: IconifyInfo = {
 			})) as DownloadNPMPackageResult;
 
 			// Get version number from last package
-			oldPackageDir = importResult.actualDir;
+			oldPackageDir = importResult.contentsDir;
 			const lastVersion = JSON.parse(
 				await fs.readFile(oldPackageDir + '/package.json', 'utf8')
 			).version;
