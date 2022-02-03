@@ -25,6 +25,8 @@ export { getGitRepoHash } from './download/git/hash';
 export { getGitRepoBranch } from './download/git/branch';
 export { downloadGitHubRepo } from './download/github/index';
 export { getGitHubRepoHash } from './download/github/hash';
+export { downloadGitLabRepo } from './download/gitlab/index';
+export { getGitLabRepoHash } from './download/gitlab/hash';
 export { downloadNPMPackage } from './download/npm/index';
 export { getNPMVersion, getPackageVersion } from './download/npm/version';
 export { downloadPackage } from './download/index';

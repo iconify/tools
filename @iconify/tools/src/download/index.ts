@@ -15,6 +15,11 @@ import {
 } from './npm';
 import type { DocumentNotModified } from './types/modified';
 import type { DownloadSourceMixin, DownloadSourceType } from './types/sources';
+import {
+	downloadGitLabRepo,
+	DownloadGitLabRepoOptions,
+	DownloadGitLabRepoResult,
+} from './gitlab';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function assertNever(v: never) {
@@ -22,66 +27,81 @@ function assertNever(v: never) {
 }
 
 /**
- * Add downloadType to options
+ * Options and result combinations
  */
-type ExtendedDownloadGitRepoOptions = DownloadGitRepoOptions &
-	DownloadSourceMixin<'git'>;
-type ExtendedDownloadGitHubRepoOptions = DownloadGitHubRepoOptions &
-	DownloadSourceMixin<'github'>;
-type ExtendedDownloadNPMPackageOptions = DownloadNPMPackageOptions &
-	DownloadSourceMixin<'npm'>;
+interface DownloadGitRepo {
+	options: DownloadGitRepoOptions & DownloadSourceMixin<'git'>;
+	result: DownloadGitRepoResult;
+}
+interface DownloadGitHubRepo {
+	options: DownloadGitHubRepoOptions & DownloadSourceMixin<'github'>;
+	result: DownloadGitHubRepoResult;
+}
+interface DownloadGitLabRepo {
+	options: DownloadGitLabRepoOptions & DownloadSourceMixin<'gitlab'>;
+	result: DownloadGitLabRepoResult;
+}
+interface DownloadNPMPackage {
+	options: DownloadNPMPackageOptions & DownloadSourceMixin<'npm'>;
+	result: DownloadNPMPackageResult;
+}
 
-export type DownloadOptions<T extends DownloadSourceType> = T extends 'git'
-	? ExtendedDownloadGitRepoOptions
+/**
+ * Combinations based on type
+ */
+type DownloadParams<T extends DownloadSourceType> = T extends 'git'
+	? DownloadGitRepo
 	: T extends 'github'
-	? ExtendedDownloadGitHubRepoOptions
+	? DownloadGitHubRepo
+	: T extends 'gitlab'
+	? DownloadGitLabRepo
 	: T extends 'npm'
-	? ExtendedDownloadNPMPackageOptions
+	? DownloadNPMPackage
 	: never;
 
 /**
- * Result type from downloadType
+ * Pick options or result from combinations
  */
-export type DownloadResult<T extends DownloadSourceType> = T extends 'git'
-	? DownloadGitRepoResult
-	: T extends 'github'
-	? DownloadGitHubRepoResult
-	: T extends 'npm'
-	? DownloadNPMPackageResult
-	: never;
+type DownloadOptions<T extends DownloadSourceType> =
+	DownloadParams<T>['options'];
+type DownloadResult<T extends DownloadSourceType> = Promise<
+	DocumentNotModified | DownloadParams<T>['result']
+>;
 
 export function downloadPackage<T extends 'git'>(
 	options: DownloadOptions<T>
-): Promise<DocumentNotModified | DownloadResult<T>>;
+): DownloadResult<T>;
 export function downloadPackage<T extends 'github'>(
 	options: DownloadOptions<T>
-): Promise<DocumentNotModified | DownloadResult<T>>;
+): DownloadResult<T>;
+export function downloadPackage<T extends 'gitlab'>(
+	options: DownloadOptions<T>
+): DownloadResult<T>;
 export function downloadPackage<T extends 'npm'>(
 	options: DownloadOptions<T>
-): Promise<DocumentNotModified | DownloadResult<T>>;
+): DownloadResult<T>;
 export function downloadPackage<T extends DownloadSourceType>(
 	options: DownloadOptions<T>
-): Promise<DocumentNotModified | DownloadResult<T>> {
-	const type = options.downloadType;
-	switch (type) {
-		case 'git': {
-			return downloadGitRepo(options) as Promise<
-				DocumentNotModified | DownloadResult<T>
-			>;
-		}
+): DownloadResult<T> {
+	switch (options.downloadType) {
+		case 'git':
+			return downloadGitRepo(options);
 
 		case 'github':
-			return downloadGitHubRepo(options) as Promise<
-				DocumentNotModified | DownloadResult<T>
-			>;
+			return downloadGitHubRepo(options);
+
+		case 'gitlab':
+			return downloadGitLabRepo(options);
 
 		case 'npm':
-			return downloadNPMPackage(options) as Promise<
-				DocumentNotModified | DownloadResult<T>
-			>;
+			return downloadNPMPackage(options);
 
 		default:
-			assertNever(type);
-			throw new Error(`Invalid download type: ${type}`);
+			assertNever(options);
+			throw new Error(
+				`Invalid download type: ${
+					(options as Record<string, string>).downloadType
+				}`
+			);
 	}
 }

@@ -4,23 +4,23 @@ import {
 	prepareDirectoryForExport,
 } from '../../export/helpers/prepare';
 import type { DocumentNotModified } from '../types/modified';
-import { getGitHubRepoHash } from './hash';
-import type { GitHubAPIOptions } from './types';
+import { getGitLabRepoHash } from './hash';
+import { defaultGitLabBaseURI, GitLabAPIOptions } from './types';
 import { downloadFile } from '../api/download';
 import { unzip } from '../helpers/unzip';
 import type { DownloadSourceMixin } from '../types/sources';
 
 interface IfModifiedSinceOption {
 	// Download only if it was modified since hash
-	ifModifiedSince: string | DownloadGitHubRepoResult;
+	ifModifiedSince: string | DownloadGitLabRepoResult;
 }
 
 /**
- * Options for downloadGitHubRepo()
+ * Options for downloadGitLabRepo()
  */
-export interface DownloadGitHubRepoOptions
+export interface DownloadGitLabRepoOptions
 	extends ExportTargetOptions,
-		GitHubAPIOptions,
+		GitLabAPIOptions,
 		Partial<IfModifiedSinceOption> {
 	// Removes old files. Default = false
 	cleanupOldFiles?: boolean;
@@ -35,8 +35,8 @@ export interface DownloadGitHubRepoOptions
 /**
  * Result
  */
-export interface DownloadGitHubRepoResult
-	extends DownloadSourceMixin<'github'> {
+export interface DownloadGitLabRepoResult
+	extends DownloadSourceMixin<'gitlab'> {
 	rootDir: string;
 	contentsDir: string;
 	hash: string;
@@ -69,26 +69,26 @@ async function findMatchingDirs(
 }
 
 /**
- * Download GitHub repo using API
+ * Download GitLab repo using API
  */
-export async function downloadGitHubRepo<
-	T extends IfModifiedSinceOption & DownloadGitHubRepoOptions
->(options: T): Promise<DownloadGitHubRepoResult | DocumentNotModified>;
-export async function downloadGitHubRepo(
-	options: DownloadGitHubRepoOptions
-): Promise<DownloadGitHubRepoResult>;
-export async function downloadGitHubRepo(
-	options: DownloadGitHubRepoOptions
-): Promise<DownloadGitHubRepoResult | DocumentNotModified> {
+export async function downloadGitLabRepo<
+	T extends IfModifiedSinceOption & DownloadGitLabRepoOptions
+>(options: T): Promise<DownloadGitLabRepoResult | DocumentNotModified>;
+export async function downloadGitLabRepo(
+	options: DownloadGitLabRepoOptions
+): Promise<DownloadGitLabRepoResult>;
+export async function downloadGitLabRepo(
+	options: DownloadGitLabRepoOptions
+): Promise<DownloadGitLabRepoResult | DocumentNotModified> {
 	// Check for last commit
-	const hash = await getGitHubRepoHash(options);
+	const hash = await getGitLabRepoHash(options);
 
 	const ifModifiedSince = options.ifModifiedSince;
 	if (ifModifiedSince) {
 		const expectedHash: string | null =
 			typeof ifModifiedSince === 'string'
 				? ifModifiedSince
-				: ifModifiedSince.downloadType === 'github'
+				: ifModifiedSince.downloadType === 'gitlab'
 				? ifModifiedSince.hash
 				: null;
 		if (hash === expectedHash) {
@@ -116,13 +116,13 @@ export async function downloadGitHubRepo(
 
 	// Download file
 	if (!exists) {
-		const uri = `https://api.github.com/repos/${options.user}/${options.repo}/zipball/${hash}`;
-		// const uri = `https://codeload.github.com/${options.user}/${options.repo}/zip/${hash}`;
+		const uri = `${options.uri || defaultGitLabBaseURI}/${
+			options.project
+		}/repository/archive.zip?sha=${hash}`;
 		await downloadFile(
 			{
 				uri,
 				headers: {
-					Accept: 'application/vnd.github.v3+json',
 					Authorization: 'token ' + options.token,
 				},
 			},
@@ -173,7 +173,7 @@ export async function downloadGitHubRepo(
 	const contentsDir = rootDir + '/' + matchingDirs[0];
 
 	return {
-		downloadType: 'github',
+		downloadType: 'gitlab',
 		rootDir,
 		contentsDir,
 		hash,

@@ -1,7 +1,7 @@
 /**
  * Download types
  */
-export type DownloadSourceType = 'git' | 'github' | 'npm';
+export type DownloadSourceType = 'git' | 'github' | 'gitlab' | 'npm';
 
 /**
  * Type in other objects

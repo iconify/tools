@@ -136,6 +136,22 @@
 			"require": "./lib/download/github/types.js",
 			"import": "./lib/download/github/types.mjs"
 		},
+		"./lib/download/gitlab/hash": {
+			"require": "./lib/download/gitlab/hash.js",
+			"import": "./lib/download/gitlab/hash.mjs"
+		},
+		"./lib/download/gitlab": {
+			"require": "./lib/download/gitlab/index.js",
+			"import": "./lib/download/gitlab/index.mjs"
+		},
+		"./lib/download/gitlab/index": {
+			"require": "./lib/download/gitlab/index.js",
+			"import": "./lib/download/gitlab/index.mjs"
+		},
+		"./lib/download/gitlab/types": {
+			"require": "./lib/download/gitlab/types.js",
+			"import": "./lib/download/gitlab/types.mjs"
+		},
 		"./lib/download/helpers/untar": {
 			"require": "./lib/download/helpers/untar.js",
 			"import": "./lib/download/helpers/untar.mjs"
