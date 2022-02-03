@@ -49,7 +49,7 @@ interface DownloadNPMPackage {
 /**
  * Combinations based on type
  */
-type DownloadParams<T extends DownloadSourceType> = T extends 'git'
+export type DownloadParamsMixin<T extends DownloadSourceType> = T extends 'git'
 	? DownloadGitRepo
 	: T extends 'github'
 	? DownloadGitHubRepo
@@ -60,12 +60,21 @@ type DownloadParams<T extends DownloadSourceType> = T extends 'git'
 	: never;
 
 /**
+ * Combinations
+ */
+export type DownloadParams =
+	| DownloadGitRepo
+	| DownloadGitHubRepo
+	| DownloadGitLabRepo
+	| DownloadNPMPackage;
+
+/**
  * Pick options or result from combinations
  */
 type DownloadOptions<T extends DownloadSourceType> =
-	DownloadParams<T>['options'];
+	DownloadParamsMixin<T>['options'];
 type DownloadResult<T extends DownloadSourceType> = Promise<
-	DocumentNotModified | DownloadParams<T>['result']
+	DocumentNotModified | DownloadParamsMixin<T>['result']
 >;
 
 export function downloadPackage<T extends 'git'>(
