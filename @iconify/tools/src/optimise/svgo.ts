@@ -46,7 +46,7 @@ export const shapeModifiyingSVGOPlugins: Plugin[] = [
 			noSpaceAfterFlags: true,
 		},
 	},
-	'removeOffCanvasPaths',
+	// 'removeOffCanvasPaths', // bugged for some icons
 	'reusePaths',
 ];
 
