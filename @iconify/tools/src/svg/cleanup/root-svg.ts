@@ -98,7 +98,7 @@ export async function cleanupSVGRoot(svg: SVG): Promise<void> {
 			return;
 		}
 
-		console.log(`Removing unexpected attribute on SVG: ${attr}`);
+		console.warn(`Removing unexpected attribute on SVG: ${attr}`);
 		$root.removeAttr(attr);
 	});
 
