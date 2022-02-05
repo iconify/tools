@@ -1,6 +1,7 @@
 import { SVG } from '../../lib/svg';
 import { validateColors } from '../../lib/colors/validate';
 import { stringToColor } from '@iconify/utils/lib/colors';
+import { loadFixture } from '../load';
 
 describe('Validating colors', () => {
 	test('Icon without colors', async () => {
@@ -83,5 +84,49 @@ describe('Validating colors', () => {
 		await expect(() => {
 			return validateColors(svg, false);
 		}).rejects.toThrow();
+	});
+
+	test('URI', async () => {
+		const svgCode = await loadFixture('bz.svg');
+		const svg = new SVG(svgCode);
+
+		const result = await validateColors(svg, false);
+		expect(result).toEqual({
+			colors: [
+				{ type: 'rgb', r: 255, g: 239, b: 93, alpha: 1 },
+				{ type: 'rgb', r: 234, g: 87, b: 0, alpha: 1 },
+				{ type: 'rgb', r: 149, g: 45, b: 26, alpha: 1 },
+				{ type: 'rgb', r: 87, g: 10, b: 0, alpha: 1 },
+				{ type: 'rgb', r: 206, g: 17, b: 38, alpha: 1 },
+				{ type: 'rgb', r: 0, g: 63, b: 135, alpha: 1 },
+				{ type: 'rgb', r: 255, g: 255, b: 255, alpha: 1 },
+				{ type: 'none' },
+				{ type: 'rgb', r: 85, g: 35, b: 0, alpha: 1 },
+				{ type: 'rgb', r: 0, g: 127, b: 0, alpha: 1 },
+				{ type: 'rgb', r: 0, g: 88, b: 0, alpha: 1 },
+				{ type: 'rgb', r: 115, g: 0, b: 0, alpha: 1 },
+				{ type: 'rgb', r: 0, g: 0, b: 0, alpha: 1 },
+				{ type: 'rgb', r: 40, g: 148, b: 0, alpha: 1 },
+				{ type: 'rgb', r: 0, g: 51, b: 0, alpha: 1 },
+				{ type: 'rgb', r: 0, g: 75, b: 0, alpha: 1 },
+				{ type: 'rgb', r: 157, g: 215, b: 255, alpha: 1 },
+				{ type: 'rgb', r: 255, g: 216, b: 60, alpha: 1 },
+				{ type: 'rgb', r: 255, g: 0, b: 24, alpha: 1 },
+				{ type: 'rgb', r: 0, g: 106, b: 200, alpha: 1 },
+				{ type: 'rgb', r: 90, g: 200, b: 0, alpha: 1 },
+				{ type: 'rgb', r: 255, g: 216, b: 0, alpha: 1 },
+				{ type: 'rgb', r: 179, g: 75, b: 0, alpha: 1 },
+				{ type: 'rgb', r: 204, g: 184, b: 200, alpha: 1 },
+				{ type: 'rgb', r: 120, g: 33, b: 33, alpha: 1 },
+				{ type: 'rgb', r: 126, g: 75, b: 126, alpha: 1 },
+				{ type: 'rgb', r: 0, g: 102, b: 0, alpha: 1 },
+				{ type: 'rgb', r: 255, g: 165, b: 75, alpha: 1 },
+				{ type: 'rgb', r: 155, g: 95, b: 0, alpha: 1 },
+				{ type: 'rgb', r: 255, g: 179, b: 102, alpha: 1 },
+				{ type: 'rgb', r: 102, g: 153, b: 255, alpha: 1 },
+			],
+			hasUnsetColor: true,
+			hasGlobalStyle: false,
+		});
 	});
 });

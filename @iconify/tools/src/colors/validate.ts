@@ -47,9 +47,14 @@ export async function validateColors(
 				}
 				return;
 
-			// Do not allow other colors
 			default:
-				throw new Error('Unexpected color: ' + colorToString(color));
+				// Allow url()
+				if (color.type !== 'function' || color.func !== 'url') {
+					// Do not allow other colors
+					throw new Error(
+						'Unexpected color: ' + colorToString(color)
+					);
+				}
 		}
 	});
 	return palette;

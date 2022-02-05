@@ -54,13 +54,16 @@ type ParseColorsCallback = (
 /**
  * Options
  */
-
+export type ParseColorOptionsDefaultColorCallback = (
+	prop: string,
+	item: ExtendedParseSVGCallbackItem
+) => Color;
 export interface ParseColorsOptions {
 	// Callback
 	callback?: ParseColorsCallback;
 
 	// Default color
-	defaultColor?: Color | string;
+	defaultColor?: Color | string | ParseColorOptionsDefaultColorCallback;
 }
 
 /**
@@ -74,7 +77,7 @@ const animatePropsToCheck = ['from', 'to', 'values'];
  * Extend properties for item
  */
 type ItemColors = Partial<Record<ColorAttributes, Color | string>>;
-interface ExtendedParseSVGCallbackItem extends ParseSVGCallbackItem {
+export interface ExtendedParseSVGCallbackItem extends ParseSVGCallbackItem {
 	// Colors set in item
 	colors?: ItemColors;
 }
@@ -198,6 +201,11 @@ export async function parseColors(
 		// Resolve color
 		const parsedColor = stringToColor(value);
 		const defaultValue = parsedColor || value;
+
+		// Ignore url()
+		if (parsedColor?.type === 'function' && parsedColor.func === 'url') {
+			return value;
+		}
 
 		// Check if callback exists
 		if (!options.callback) {
@@ -386,10 +394,18 @@ export async function parseColors(
 					if (color === defaultBlackColor) {
 						// Default black color: change it
 						if (defaultColor) {
+							const defaultColorValue =
+								typeof defaultColor === 'function'
+									? defaultColor(prop, item)
+									: defaultColor;
+
 							// Add color to results and change attribute
-							findColor(defaultColor, true);
-							$element.attr(prop, colorToString(defaultColor));
-							itemColors[prop] = defaultColor;
+							findColor(defaultColorValue, true);
+							$element.attr(
+								prop,
+								colorToString(defaultColorValue)
+							);
+							itemColors[prop] = defaultColorValue;
 						} else {
 							result.hasUnsetColor = true;
 						}

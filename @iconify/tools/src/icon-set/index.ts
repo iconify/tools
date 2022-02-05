@@ -445,6 +445,7 @@ export class IconSet {
 			.forEach((item) => {
 				const names = this.listCategory(item);
 				if (names) {
+					names.sort((a, b) => a.localeCompare(b));
 					categories[item.title] = names;
 				}
 			});
