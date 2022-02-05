@@ -75,6 +75,17 @@ function cleanPath(path: string): string {
 			});
 			currentArgs = [];
 			canParseCommandOrComma = true;
+
+			// Change command for lines after moving
+			switch (currentCommand) {
+				case 'M':
+					currentCommand = 'L';
+					break;
+
+				case 'm':
+					currentCommand = 'l';
+					break;
+			}
 		}
 	};
 
