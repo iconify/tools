@@ -340,4 +340,65 @@ describe('Working with aliases', () => {
 		delete iconSetExportedData.aliases?.['invalid'];
 		expect(iconSet.export()).toEqual(iconSetExportedData);
 	});
+
+	test('Aliases with categories', () => {
+		const iconSetData: IconifyJSON = {
+			prefix: 'foo',
+			icons: {
+				bar: {
+					body: '<g id="bar" />',
+				},
+				baz: {
+					body: '<g id="baz" />',
+				},
+			},
+			aliases: {
+				// Alias: no modifications
+				alias1: {
+					parent: 'bar',
+				},
+				// Variation: has transformation
+				variation1: {
+					parent: 'baz',
+					hFlip: true,
+				},
+			},
+			categories: {
+				Bar: ['bar'],
+				Baz: ['baz'],
+				// Ignored: aliases cannot have categories
+				Other: ['alias1', 'variation1'],
+			},
+		};
+		const iconSet = new IconSet(iconSetData);
+
+		// Export
+		const iconSetExportedData: IconifyJSON = {
+			prefix: 'foo',
+			icons: {
+				bar: {
+					body: '<g id="bar" />',
+				},
+				baz: {
+					body: '<g id="baz" />',
+				},
+			},
+			aliases: {
+				// Alias: no modifications
+				alias1: {
+					parent: 'bar',
+				},
+				// Variation: has transformation
+				variation1: {
+					parent: 'baz',
+					hFlip: true,
+				},
+			},
+			categories: {
+				Bar: ['bar'],
+				Baz: ['baz'],
+			},
+		};
+		expect(iconSet.export(false)).toEqual(iconSetExportedData);
+	});
 });

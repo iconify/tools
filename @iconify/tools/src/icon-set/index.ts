@@ -121,7 +121,6 @@ export class IconSet {
 						parent,
 						props,
 						chars,
-						categories: new Set(),
 					};
 					entries[name] = entry;
 				} else {
@@ -164,7 +163,6 @@ export class IconSet {
 					const icon = entries[iconName];
 					switch (icon?.type) {
 						case 'icon':
-						case 'variation':
 							icon.categories.add(item);
 					}
 				});
@@ -588,8 +586,8 @@ export class IconSet {
 		}
 
 		// Find icons
-		const icons = this._filter((_key, item, icon) => {
-			if (item.type === 'alias' || item.props.hidden || icon?.hidden) {
+		const icons = this._filter((_key, item) => {
+			if (item.type !== 'icon' || item.props.hidden) {
 				return false;
 			}
 			return item.categories.has(categoryItem);
@@ -777,26 +775,11 @@ export class IconSet {
 		parent: string,
 		props: CommonIconProps
 	): boolean {
-		// Copy categories
-		let categories: Set<IconCategory> | undefined;
-		while (!categories) {
-			const parentItem = this.entries[parent];
-			if (!parentItem) {
-				return false;
-			}
-			if (parentItem.type === 'alias') {
-				parent = parentItem.parent;
-			} else {
-				categories = new Set(parentItem.categories);
-			}
-		}
-
 		return this.setItem(name, {
 			type: 'variation',
 			parent,
 			props,
 			chars: new Set(),
-			categories,
 		});
 	}
 
@@ -825,7 +808,8 @@ export class IconSet {
 					body,
 					props,
 					chars: item.chars,
-					categories: item.categories,
+					categories:
+						item.type === 'icon' ? item.categories : new Set(),
 				});
 			}
 		}
@@ -863,7 +847,6 @@ export class IconSet {
 		}
 		switch (item.type) {
 			case 'icon':
-			case 'variation':
 				if (item.categories.has(categoryItem) !== add) {
 					categoryItem.count += add ? 1 : -1;
 					item.categories[add ? 'add' : 'delete'](categoryItem);

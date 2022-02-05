@@ -296,22 +296,32 @@ describe('Finding colors', () => {
 		});
 	});
 
-	test('Unsupported color', async () => {
+	test('Function color', async () => {
 		const svgCode =
-			'<svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 0v1h4v5h-4v1h5v-7h-5zm1 2v1h-4v1h4v1l2-1.5-2-1.5z" fill="--var(foo)"/></svg>';
+			'<svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 0v1h4v5h-4v1h5v-7h-5zm1 2v1h-4v1h4v1l2-1.5-2-1.5z" fill="var(--foo)"/></svg>';
 		const svg = new SVG(svgCode);
 
 		// Find colors
 		const searchResult = await parseColors(svg, {
 			callback: (attr, colorStr, color) => {
 				expect(attr).toBe('fill');
-				expect(colorStr).toBe('--var(foo)');
-				expect(color).toBeNull();
-				return '--bar(bar)';
+				expect(colorStr).toBe('var(--foo)');
+				expect(color).toEqual({
+					type: 'function',
+					func: 'var',
+					value: '--foo',
+				});
+				return 'var(--bar)';
 			},
 		});
 		expect(searchResult).toEqual({
-			colors: ['--bar(bar)'],
+			colors: [
+				{
+					type: 'function',
+					func: 'var',
+					value: '--bar',
+				},
+			],
 			hasUnsetColor: false,
 			hasGlobalStyle: false,
 		});

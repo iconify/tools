@@ -44,7 +44,10 @@ export interface IconWithChars {
 export interface IconWithPropsData extends IconWithChars {
 	// Extended icon properties, including 'hidden' status
 	props: CommonIconProps;
-	// Categories
+}
+
+// Categories
+export interface IconWithCategories {
 	categories: Set<IconCategory>;
 }
 
@@ -57,7 +60,7 @@ export interface IconParentData {
  * Icon types
  */
 // Icon
-export interface IconSetIcon extends IconWithPropsData {
+export interface IconSetIcon extends IconWithPropsData, IconWithCategories {
 	type: 'icon';
 	body: string;
 }

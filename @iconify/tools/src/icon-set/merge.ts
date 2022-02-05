@@ -70,7 +70,6 @@ export function mergeIconSets(oldIcons: IconSet, newIcons: IconSet): IconSet {
 							...props,
 							hidden: true,
 						},
-						categories: new Set(),
 					});
 				} else {
 					mergedIcons.setItem(name, {
