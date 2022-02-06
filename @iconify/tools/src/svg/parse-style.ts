@@ -3,6 +3,7 @@ import { parseInlineStyle } from '../css/parse';
 import { tokensToString } from '../css/parser/export';
 import { getTokens } from '../css/parser/tokens';
 import { tokensTree } from '../css/parser/tree';
+import type { CSSRuleToken, CSSToken } from '../css/parser/types';
 import { maskAndSymbolTags } from './data/tags';
 import { parseSVG, ParseSVGCallbackItem } from './parse';
 
@@ -21,6 +22,9 @@ interface ParseSVGStyleCallbackItemInline
 interface ParseSVGStyleCallbackItemGlobal
 	extends ParseSVGStyleCallbackItemCommon {
 	type: 'global';
+	token: CSSRuleToken;
+	selectors: string[];
+	selectorTokens: CSSToken[];
 }
 
 export type ParseSVGStyleCallbackItem =
@@ -79,19 +83,47 @@ export async function parseSVGStyle(
 
 			// Parse all tokens
 			let changed = false;
-			const newTokens: typeof tokens = [];
+			const selectorStart: number[] = [];
+			const newTokens: (CSSToken | null)[] = [];
 			for (let i = 0; i < tokens.length; i++) {
 				const token = tokens[i];
+				switch (token.type) {
+					case 'selector':
+					case 'at-rule':
+						selectorStart.push(newTokens.length);
+						break;
+
+					case 'close':
+						selectorStart.pop();
+						break;
+				}
+
 				if (token.type !== 'rule') {
 					newTokens.push(token);
 					continue;
 				}
 
 				const value = token.value;
+				const selectorTokens = selectorStart
+					.map((index) => newTokens[index])
+					.filter((item) => item !== null) as CSSToken[];
 				let result = callback({
 					type: 'global',
 					prop: token.prop,
 					value,
+					token,
+					selectorTokens,
+					selectors: selectorTokens.reduce(
+						(prev: string[], current: CSSToken) => {
+							switch (current.type) {
+								case 'selector': {
+									return prev.concat(current.selectors);
+								}
+							}
+							return prev;
+						},
+						[] as string[]
+					),
 				});
 				if (result instanceof Promise) {
 					result = await result;
@@ -114,7 +146,9 @@ export async function parseSVGStyle(
 			}
 
 			// Update style
-			const tree = tokensTree(newTokens);
+			const tree = tokensTree(
+				newTokens.filter((token) => token !== null) as CSSToken[]
+			);
 			if (!tree.length) {
 				// Empty
 				$element.remove();
