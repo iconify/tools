@@ -52,12 +52,17 @@ type ParseColorsCallback = (
 ) => ParseColorsCallbackResult | Promise<ParseColorsCallbackResult>;
 
 /**
- * Options
+ * Callback for default color
  */
 export type ParseColorOptionsDefaultColorCallback = (
 	prop: string,
 	item: ExtendedParseSVGCallbackItem
 ) => Color;
+
+/**
+ * Options
+ */
+
 export interface ParseColorsOptions {
 	// Callback
 	callback?: ParseColorsCallback;
