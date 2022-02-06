@@ -25,6 +25,8 @@ interface ParseSVGStyleCallbackItemGlobal
 	token: CSSRuleToken;
 	selectors: string[];
 	selectorTokens: CSSToken[];
+	prevTokens: (CSSToken | null)[];
+	nextTokens: CSSToken[];
 }
 
 export type ParseSVGStyleCallbackItem =
@@ -104,9 +106,11 @@ export async function parseSVGStyle(
 				}
 
 				const value = token.value;
+
 				const selectorTokens = selectorStart
 					.map((index) => newTokens[index])
 					.filter((item) => item !== null) as CSSToken[];
+
 				let result = callback({
 					type: 'global',
 					prop: token.prop,
@@ -124,6 +128,8 @@ export async function parseSVGStyle(
 						},
 						[] as string[]
 					),
+					prevTokens: newTokens,
+					nextTokens: tokens.slice(i + 1),
 				});
 				if (result instanceof Promise) {
 					result = await result;

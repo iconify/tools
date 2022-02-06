@@ -312,6 +312,10 @@
 			"require": "./lib/optimise/flags.js",
 			"import": "./lib/optimise/flags.mjs"
 		},
+		"./lib/optimise/global-style": {
+			"require": "./lib/optimise/global-style.js",
+			"import": "./lib/optimise/global-style.mjs"
+		},
 		"./lib/optimise/scale": {
 			"require": "./lib/optimise/scale.js",
 			"import": "./lib/optimise/scale.mjs"
