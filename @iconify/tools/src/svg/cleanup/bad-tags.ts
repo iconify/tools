@@ -3,9 +3,7 @@ import { parseSVG } from '../parse';
 import {
 	allValidTags,
 	animateMotionChildTags,
-	animateTags,
 	badTags,
-	defsTag,
 	feComponentTransferChildTag,
 	feLightningChildTags,
 	feLightningTags,
@@ -14,7 +12,6 @@ import {
 	filterTag,
 	gradientChildTags,
 	gradientTags,
-	tagsInsideDefs,
 	unsupportedTags,
 } from '../data/tags';
 
@@ -35,9 +32,6 @@ requiredParentTags.set(feLightningTags, feLightningChildTags);
 
 // Filter tags must be children of <filter>
 requiredParentTags.set(filterTag, filterChildTags);
-
-// Tags that must be inside <defs>: gradients, <pattern>, <marker>
-requiredParentTags.set(defsTag, tagsInsideDefs);
 
 // <stop> must be inside gradient
 requiredParentTags.set(gradientTags, gradientChildTags);

@@ -87,7 +87,7 @@ export const useTag = new Set(['use']);
 export const groupTag = new Set(['g']);
 
 /**
- * Marker, must be inside <defs>
+ * Marker, should be inside <defs>
  */
 export const markerTag = new Set(['marker']);
 
@@ -105,7 +105,7 @@ export const animateTags = new Set([
 export const animateMotionChildTags = new Set(['mpath']);
 
 /**
- * Gradients, must be inside <defs>
+ * Gradients, should be inside <defs>
  */
 export const gradientTags = new Set(['linearGradient', 'radialGradient']);
 
@@ -115,7 +115,7 @@ export const gradientTags = new Set(['linearGradient', 'radialGradient']);
 export const gradientChildTags = new Set(['stop']);
 
 /**
- * Pattern, must be inside <defs>
+ * Pattern, should be inside <defs>
  */
 export const patternTag = new Set(['pattern']);
 
@@ -163,15 +163,6 @@ export const feLightningChildTags = new Set([
 export const feMergeChildTags = new Set(['feMergeNode']);
 
 /***** Combination of tags *****/
-/**
- * Tags that can be used only inside <defs>
- */
-export const tagsInsideDefs = new Set([
-	...gradientTags,
-	...patternTag,
-	...markerTag,
-]);
-
 /**
  * All supported tags
  */
