@@ -111,11 +111,6 @@ export async function parseColors(
 	 */
 	function findColor(
 		color: Color | string,
-		add: false
-	): Color | string | null;
-	function findColor(color: Color | string, add: true): Color | string;
-	function findColor(
-		color: Color | string,
 		add = false
 	): Color | string | null {
 		const isString = typeof color === 'string';
@@ -145,15 +140,16 @@ export async function parseColors(
 	function addColorToItem(
 		prop: ColorAttributes,
 		color: Color | string,
-		item?: ExtendedParseSVGCallbackItem
+		item?: ExtendedParseSVGCallbackItem,
+		add = true
 	): void {
-		const addedColor = findColor(color, true);
+		const addedColor = findColor(color, add !== false);
 		if (item) {
 			const itemColors = item.colors || {};
 			if (!item.colors) {
 				item.colors = itemColors;
 			}
-			itemColors[prop] = addedColor;
+			itemColors[prop] = addedColor === null ? color : addedColor;
 		}
 	}
 
@@ -209,6 +205,8 @@ export async function parseColors(
 
 		// Ignore url()
 		if (parsedColor?.type === 'function' && parsedColor.func === 'url') {
+			// Add to item, so it won't be treated as missing, but do not add to results
+			addColorToItem(prop, defaultValue, item, false);
 			return value;
 		}
 

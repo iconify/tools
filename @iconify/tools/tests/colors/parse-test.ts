@@ -349,4 +349,29 @@ describe('Finding colors', () => {
 			'<svg viewBox="0 0 24 24" width="24" height="24"><path d="M3 0v1h4v5h-4v1h5v-7h-5zm1 2v1h-4v1h4v1l2-1.5-2-1.5z"/></svg>'
 		);
 	});
+
+	test('Gradient', async () => {
+		const svgCode = `<svg width="256px" height="256px" viewBox="0 0 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
+			<defs>
+				<radialGradient cx="1.55750275e-05%" cy="99.999994%" fx="1.55750275e-05%" fy="99.999994%" r="120.115697%" gradientTransform="translate(0.000000,1.000000),scale(0.832531,1.000000),scale(1.000000,0.832531),translate(-0.000000,-1.000000)" id="radialGradient-1">
+					<stop stop-color="#00C812" offset="0%"></stop>
+					<stop stop-color="#006E00" offset="100%"></stop>
+				</radialGradient>
+			</defs>
+			<path d="M179.2,230.4 L256,230.4 L133.12,128 C131.433,165.193 147.807,201.58 179.2,230.4" fill="url(#radialGradient-1)"></path>
+		</svg>`;
+		const svg = new SVG(svgCode);
+
+		// Find colors
+		const searchResult = await parseColors(svg, {
+			defaultColor: () => {
+				throw new Error(`Unexpected callback call for defaultColor`);
+			},
+		});
+		expect(searchResult).toEqual({
+			colors: [stringToColor('#00C812'), stringToColor('#006E00')],
+			hasUnsetColor: false,
+			hasGlobalStyle: false,
+		});
+	});
 });
