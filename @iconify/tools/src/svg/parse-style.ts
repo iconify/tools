@@ -4,7 +4,7 @@ import { tokensToString } from '../css/parser/export';
 import { getTokens } from '../css/parser/tokens';
 import { tokensTree } from '../css/parser/tree';
 import type { CSSRuleToken, CSSToken } from '../css/parser/types';
-import { maskAndSymbolTags } from './data/tags';
+import { maskTags } from './data/tags';
 import { parseSVG, ParseSVGCallbackItem } from './parse';
 
 /**
@@ -167,7 +167,7 @@ export async function parseSVGStyle(
 		}
 
 		// Skip masks
-		if (options.skipMasks && maskAndSymbolTags.has(tagName)) {
+		if (options.skipMasks && maskTags.has(tagName)) {
 			return;
 		}
 

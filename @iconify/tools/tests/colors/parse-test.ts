@@ -374,4 +374,37 @@ describe('Finding colors', () => {
 			hasGlobalStyle: false,
 		});
 	});
+
+	/*
+	test('Mask that uses path', async () => {
+		const svgCode = `<svg width="256px" height="256px" viewBox="0 0 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
+			<defs>
+				<path d="M2.27464661e-14,0 L254.693878,3.04336596e-14 L254.693878,160.344259 C255.3267,161.198982 255.762422,162.157626 256,163.39634 L256,168.36419 C255.762422,169.608049 255.3267,170.691008 254.693878,171.604678 L254.693878,256 L0,256 L0,192 L0,64 L2.27464661e-14,0 Z" id="path-1"></path>
+				<radialGradient cx="16.6089694%" cy="17.3718345%" fx="16.6089694%" fy="17.3718345%" r="118.520308%" id="radialGradient-3">
+					<stop stop-color="#88CDE7" offset="0%"></stop>
+					<stop stop-color="#2274AD" offset="100%"></stop>
+				</radialGradient>
+			</defs>
+			<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+				<mask id="mask-2" fill="white">
+					<use xlink:href="#path-1"></use>
+				</mask>
+				<polygon fill="url(#radialGradient-3)" mask="url(#mask-2)" points="0 256 256 256 256 0 0 0"></polygon>
+			</g>
+		</svg>`;
+		const svg = new SVG(svgCode);
+
+		// Find colors
+		const searchResult = await parseColors(svg, {
+			defaultColor: () => {
+				throw new Error(`Unexpected callback call for defaultColor`);
+			},
+		});
+		expect(searchResult).toEqual({
+			colors: [stringToColor('#88CDE7'), stringToColor('#2274AD')],
+			hasUnsetColor: false,
+			hasGlobalStyle: false,
+		});
+	});
+	*/
 });

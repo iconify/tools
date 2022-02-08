@@ -2,6 +2,7 @@
 export { SVG } from './svg/index';
 export { parseSVG } from './svg/parse';
 export { parseSVGStyle } from './svg/parse-style';
+export { analyseSVGStructure } from './svg/analyse';
 
 // SVG cleanup
 export { cleanupSVG } from './svg/cleanup';

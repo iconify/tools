@@ -324,6 +324,18 @@
 			"require": "./lib/optimise/svgo.js",
 			"import": "./lib/optimise/svgo.mjs"
 		},
+		"./lib/svg/analyse": {
+			"require": "./lib/svg/analyse.js",
+			"import": "./lib/svg/analyse.mjs"
+		},
+		"./lib/svg/analyse/error": {
+			"require": "./lib/svg/analyse/error.js",
+			"import": "./lib/svg/analyse/error.mjs"
+		},
+		"./lib/svg/analyse/types": {
+			"require": "./lib/svg/analyse/types.js",
+			"import": "./lib/svg/analyse/types.mjs"
+		},
 		"./lib/svg/cleanup": {
 			"require": "./lib/svg/cleanup.js",
 			"import": "./lib/svg/cleanup.mjs"

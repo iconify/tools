@@ -59,9 +59,14 @@ export const styleTag = new Set(['style']);
 export const defsTag = new Set(['defs']);
 
 /**
- * Masks: colors are ignored, child elements must have id
+ * Masks: colors are ignored, elements must have id
  */
-export const maskAndSymbolTags = new Set(['clipPath', 'mask', 'symbol']);
+export const maskTags = new Set(['clipPath', 'mask']);
+
+/**
+ * Symbol
+ */
+export const symbolTag = new Set(['symbol']);
 
 /**
  * SVG shapes
@@ -164,12 +169,28 @@ export const feMergeChildTags = new Set(['feMergeNode']);
 
 /***** Combination of tags *****/
 /**
+ * Reusable elements that use colors
+ *
+ * Most are used via color attributes like `fill`
+ * Some are used via custom attributes like `marker-start`
+ * Filter is used via `filter`
+ */
+export const reusableElementsWithPalette = new Set([
+	...gradientTags,
+	...patternTag,
+	...markerTag,
+	...symbolTag,
+	...filterTag,
+]);
+
+/**
  * All supported tags
  */
 export const allValidTags = new Set([
 	...styleTag,
 	...defsTag,
-	...maskAndSymbolTags,
+	...maskTags,
+	...symbolTag,
 	...shapeTags,
 	...useTag,
 	...groupTag,

@@ -9,7 +9,7 @@ import {
 	tagSpecificNonPresentationalAttributes,
 	tagSpecificPresentationalAttributes,
 } from '../data/attributes';
-import { maskAndSymbolTags } from '../data/tags';
+import { maskTags, reusableElementsWithPalette } from '../data/tags';
 
 /**
  * Clean up SVG
@@ -116,7 +116,11 @@ export async function cleanupSVGRoot(svg: SVG): Promise<void> {
 				return;
 			}
 			const tagName = child.tagName;
-			if (tagName === 'style' || maskAndSymbolTags.has(tagName)) {
+			if (
+				tagName === 'style' ||
+				reusableElementsWithPalette.has(tagName) ||
+				maskTags.has(tagName)
+			) {
 				// Do not wrap these elements
 				return;
 			}

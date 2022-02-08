@@ -6,7 +6,7 @@ import {
 import type { Color } from '@iconify/utils/lib/colors/types';
 import type { SVG } from '../svg';
 import { parseSVG, ParseSVGCallbackItem } from '../svg/parse';
-import { animateTags, maskAndSymbolTags, shapeTags } from '../svg/data/tags';
+import { animateTags, maskTags, shapeTags } from '../svg/data/tags';
 import { parseSVGStyle } from '../svg/parse-style';
 import {
 	ColorAttributes,
@@ -294,7 +294,7 @@ export async function parseColors(
 	// Parse colors in SVG
 	await parseSVG(svg, async (item: ExtendedParseSVGCallbackItem) => {
 		const tagName = item.tagName;
-		if (maskAndSymbolTags.has(tagName)) {
+		if (maskTags.has(tagName)) {
 			// Ignore masks
 			item.testChildren = false;
 			return;
