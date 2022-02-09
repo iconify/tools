@@ -60,7 +60,7 @@ export async function analyseSVGStructure(
 	 * Found element with id
 	 */
 	function addID(element: ExtendedTagElement, id: string) {
-		if (ids[id] !== void 0) {
+		if (ids[id]) {
 			throw new Error(`Duplicate id "${id}"`);
 		}
 		element._id = id;
@@ -113,7 +113,7 @@ export async function analyseSVGStructure(
 			throw new Error(message);
 		}
 
-		if (ids[id] !== void 0 && fixErrors) {
+		if (ids[id] && fixErrors) {
 			console.warn(`Duplicate id "${id}"`);
 			item.removeNode = true;
 			item.testChildren = false;
@@ -243,7 +243,12 @@ export async function analyseSVGStructure(
 			if (element._id === void 0) {
 				const id = attribs['id'];
 				if (typeof id === 'string') {
-					gotElementWithID(element, id, false);
+					if (ids[id] && fixErrors) {
+						console.warn(`Duplicate id "${id}"`);
+						cheerio(element).removeAttr('id');
+					} else {
+						gotElementWithID(element, id, false);
+					}
 				}
 			}
 		}
