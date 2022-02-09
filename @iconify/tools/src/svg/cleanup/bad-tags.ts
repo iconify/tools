@@ -1,4 +1,4 @@
-import type { SVG } from '..';
+import type { SVG } from '../../svg';
 import { parseSVG } from '../parse';
 import {
 	allValidTags,

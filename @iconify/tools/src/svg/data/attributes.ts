@@ -247,7 +247,7 @@ export const tagSpecificPresentationalAttributes: Record<
 
 	// Defnitions, containers and masks
 	clipPath: new Set([...presentationalAttributes]),
-	defs: new Set([...presentationalAttributes]),
+	defs: new Set([]),
 	g: new Set([...presentationalAttributes]),
 	mask: new Set(['x', 'y', 'width', 'height', ...presentationalAttributes]),
 	symbol: new Set(['x', 'y', 'width', 'height', ...presentationalAttributes]),

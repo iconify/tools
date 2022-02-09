@@ -1,4 +1,4 @@
-import type { SVG } from '..';
+import type { SVG } from '../../svg';
 import { parseInlineStyle } from '../../css/parse';
 import {
 	badAttributes,

@@ -1,9 +1,11 @@
-import type { SVG } from '..';
+import type { SVG } from '../../svg';
 import {
 	badAttributes,
 	badAttributePrefixes,
 	badSoftwareAttributes,
+	tagSpecificPresentationalAttributes,
 } from '../data/attributes';
+import { defsTag } from '../data/tags';
 import { parseSVG } from '../parse';
 
 /**
@@ -11,6 +13,7 @@ import { parseSVG } from '../parse';
  */
 export async function removeBadAttributes(svg: SVG): Promise<void> {
 	await parseSVG(svg, (item) => {
+		const tagName = item.tagName;
 		const attribs = item.element.attribs;
 		const $element = item.$element;
 
@@ -22,6 +25,15 @@ export async function removeBadAttributes(svg: SVG): Promise<void> {
 				badAttributes.has(attr) ||
 				badSoftwareAttributes.has(attr) ||
 				badAttributePrefixes.has(attr.split('-').shift() as string)
+			) {
+				$element.removeAttr(attr);
+				return;
+			}
+
+			// Attributes on <defs> aren't passed to child nodes, so remove everything)
+			if (
+				defsTag.has(tagName) &&
+				!tagSpecificPresentationalAttributes[tagName].has(attr)
 			) {
 				$element.removeAttr(attr);
 				return;
