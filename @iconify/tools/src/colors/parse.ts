@@ -21,6 +21,7 @@ import type {
 	ElementsTreeItem,
 	ExtendedTagElement,
 	ElementsMap,
+	AnalyseSVGStructureOptions,
 } from '../svg/analyse/types';
 
 /**
@@ -71,7 +72,7 @@ export type ParseColorOptionsDefaultColorCallback = (
  * Options
  */
 
-export interface ParseColorsOptions {
+export interface ParseColorsOptions extends AnalyseSVGStructureOptions {
 	// Callback
 	callback?: ParseColorsCallback;
 
@@ -305,7 +306,7 @@ export async function parseColors(
 	});
 
 	// Analyse SVG
-	const iconData = await analyseSVGStructure(svg);
+	const iconData = await analyseSVGStructure(svg, options);
 	const { elements, tree } = iconData;
 	const cheerio = svg.$svg;
 	const removedElements: Set<number> = new Set();

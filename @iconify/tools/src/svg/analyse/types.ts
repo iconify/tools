@@ -1,4 +1,12 @@
 /**
+ * Options
+ */
+export interface AnalyseSVGStructureOptions {
+	// Attempt to fix errors instead of throwing exception
+	fixErrors?: boolean;
+}
+
+/**
  * Extended properties for element
  */
 

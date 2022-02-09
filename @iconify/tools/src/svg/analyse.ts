@@ -8,6 +8,7 @@ import type {
 	ExtendedTagElement,
 	LinkToElementWithID,
 	ElementsTreeItem,
+	AnalyseSVGStructureOptions,
 } from './analyse/types';
 import {
 	commonColorPresentationalAttributes,
@@ -24,8 +25,12 @@ import { analyseTagError } from './analyse/error';
  * Before running this function run cleanup functions to change inline style to attributes and fix attributes
  */
 export async function analyseSVGStructure(
-	svg: SVG
+	svg: SVG,
+	options: AnalyseSVGStructureOptions = {}
 ): Promise<AnalyseSVGStructureResult> {
+	// Options
+	const fixErrors = options.fixErrors;
+
 	// Root element
 	let root = svg.$svg(':root').get(0) as ExtendedRootTagElement;
 	if (root._parsed) {
@@ -34,6 +39,7 @@ export async function analyseSVGStructure(
 		root = svg.$svg(':root').get(0);
 	}
 	root._parsed = true;
+	const cheerio = svg.$svg;
 
 	// List of all elements
 	const elements: AnalyseSVGStructureResult['elements'] = new Map();
@@ -53,6 +59,7 @@ export async function analyseSVGStructure(
 		}
 		element._id = id;
 		ids[id] = element._index;
+		return true;
 	}
 
 	/**
@@ -72,23 +79,39 @@ export async function analyseSVGStructure(
 			isMask,
 			indexes: new Set([element._index]),
 		});
+		return;
 	}
 
 	/**
 	 * Mark element as reusable, set properties
 	 */
-	function gotReusableElement(item: ParseSVGCallbackItem, isMask: boolean) {
+	function gotReusableElement(
+		item: ParseSVGCallbackItem,
+		isMask: boolean
+	): boolean {
 		const element = item.element as ExtendedTagElement;
 		const attribs = element.attribs;
 		const index = element._index;
 
 		const id = attribs['id'];
 		if (typeof id !== 'string') {
-			throw new Error(
-				`Definition element ${analyseTagError(
-					element
-				)} does not have id`
-			);
+			const message = `Definition element ${analyseTagError(
+				element
+			)} does not have id`;
+			if (fixErrors) {
+				item.removeNode = true;
+				item.testChildren = false;
+				console.warn(message);
+				return false;
+			}
+			throw new Error(message);
+		}
+
+		if (ids[id] !== void 0 && fixErrors) {
+			console.warn(`Duplicate id "${id}"`);
+			item.removeNode = true;
+			item.testChildren = false;
+			return false;
 		}
 
 		element._reusableElement = {
@@ -97,6 +120,7 @@ export async function analyseSVGStructure(
 			index,
 		};
 		gotElementWithID(element, id, isMask);
+		return true;
 	}
 
 	/**
@@ -154,13 +178,19 @@ export async function analyseSVGStructure(
 		// Check for mask or clip path
 		if (maskTags.has(tagName)) {
 			// Element can only be used as mask or clip path
-			gotReusableElement(item, true);
+			if (!gotReusableElement(item, true)) {
+				return;
+			}
 		} else if (reusableElementsWithPalette.has(tagName)) {
 			// Reusable element that uses palette
-			gotReusableElement(item, false);
+			if (!gotReusableElement(item, false)) {
+				return;
+			}
 		} else if (defsTag.has(parentItem.tagName)) {
 			// Symbol without <symbol> tag
-			gotReusableElement(item, false);
+			if (!gotReusableElement(item, false)) {
+				return;
+			}
 		} else if (!defsTag.has(tagName)) {
 			// Not reusable element, not <defs>. Copy parent stuff
 			element._usedAsMask = parentElement._usedAsMask;
