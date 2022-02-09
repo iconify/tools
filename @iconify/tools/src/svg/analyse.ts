@@ -16,7 +16,13 @@ import {
 	tagSpecificNonPresentationalAttributes,
 	urlPresentationalAttributes,
 } from './data/attributes';
-import { defsTag, maskTags, reusableElementsWithPalette } from './data/tags';
+import {
+	defsTag,
+	maskTags,
+	reusableElementsWithPalette,
+	styleTag,
+	useTag,
+} from './data/tags';
 import { analyseTagError } from './analyse/error';
 
 /**
@@ -48,7 +54,7 @@ export async function analyseSVGStructure(
 	const ids: AnalyseSVGStructureResult['ids'] = Object.create(null);
 
 	// Links
-	const links: AnalyseSVGStructureResult['links'] = [];
+	let links: AnalyseSVGStructureResult['links'] = [];
 
 	/**
 	 * Found element with id
@@ -154,6 +160,11 @@ export async function analyseSVGStructure(
 	let index = 0;
 	await parseSVG(svg, (item) => {
 		const { tagName, parents } = item;
+		if (styleTag.has(tagName)) {
+			item.testChildren = false;
+			return;
+		}
+
 		const element = item.element as ExtendedTagElement;
 		const attribs = element.attribs;
 
@@ -282,10 +293,67 @@ export async function analyseSVGStructure(
 	});
 
 	// Make sure all required IDs exist
-	links.forEach(({ id }) => {
-		if (ids[id] === void 0) {
-			throw new Error(`Missing element with id="${id}"`);
+	links = links.filter((item) => {
+		const id = item.id;
+		if (ids[id]) {
+			return true;
 		}
+
+		// Attempt to fix error
+		function fix() {
+			const index = item.usedByIndex;
+			const element = elements.get(index)!;
+			const tagName = element.tagName;
+
+			function remove() {
+				const $element = cheerio(element);
+				const parent = element.parent as ExtendedTagElement;
+				if (parent) {
+					if (parent._childElements) {
+						parent._childElements = parent._childElements.filter(
+							(num) => num !== index
+						);
+					}
+					parent._belongsTo?.forEach((list) => {
+						list.indexes.delete(index);
+					});
+				}
+				$element.remove();
+			}
+
+			// Remove links
+			if (element._linksTo) {
+				element._linksTo = element._linksTo.filter(
+					(item) => item.id !== id
+				);
+			}
+
+			// Remove <use /> without children
+			if (!element.children.length) {
+				if (useTag.has(tagName)) {
+					remove();
+					return;
+				}
+			}
+
+			// Remove attributes that use id
+			const matches = new Set(['#' + id, 'url(#' + id + ')']);
+			const attribs = element.attribs;
+			for (const attr in attribs) {
+				if (matches.has(attribs[attr])) {
+					cheerio(element).removeAttr(attr);
+				}
+			}
+		}
+
+		const message = `Missing element with id="${id}"`;
+		if (fixErrors) {
+			fix();
+			console.warn(message);
+		} else {
+			throw new Error(message);
+		}
+		return false;
 	});
 
 	// Check if tree item already has child item

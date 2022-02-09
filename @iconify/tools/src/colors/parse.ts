@@ -337,7 +337,6 @@ export async function parseColors(
 		element._removed = true;
 		removedElements.add(index);
 		removeChildren(element);
-
 		cheerio(element).remove();
 	}
 
