@@ -1,6 +1,7 @@
 import { stringToColor } from '@iconify/utils/lib/colors';
 import { SVG } from '../../lib/svg';
 import { parseColors, isEmptyColor } from '../../lib/colors/parse';
+import { removeBadAttributes } from '../../lib/svg/cleanup/attribs';
 import { loadFixture } from '../load';
 
 describe('Finding colors', () => {
@@ -375,9 +376,8 @@ describe('Finding colors', () => {
 		});
 	});
 
-	/*
 	test('Mask that uses path', async () => {
-		const svgCode = `<svg width="256px" height="256px" viewBox="0 0 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="xMidYMid">
+		const svgCode = `<svg width="256px" height="256px" viewBox="0 0 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
 			<defs>
 				<path d="M2.27464661e-14,0 L254.693878,3.04336596e-14 L254.693878,160.344259 C255.3267,161.198982 255.762422,162.157626 256,163.39634 L256,168.36419 C255.762422,169.608049 255.3267,170.691008 254.693878,171.604678 L254.693878,256 L0,256 L0,192 L0,64 L2.27464661e-14,0 Z" id="path-1"></path>
 				<radialGradient cx="16.6089694%" cy="17.3718345%" fx="16.6089694%" fy="17.3718345%" r="118.520308%" id="radialGradient-3">
@@ -387,7 +387,7 @@ describe('Finding colors', () => {
 			</defs>
 			<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
 				<mask id="mask-2" fill="white">
-					<use xlink:href="#path-1"></use>
+					<use href="#path-1"></use>
 				</mask>
 				<polygon fill="url(#radialGradient-3)" mask="url(#mask-2)" points="0 256 256 256 256 0 0 0"></polygon>
 			</g>
@@ -401,10 +401,45 @@ describe('Finding colors', () => {
 			},
 		});
 		expect(searchResult).toEqual({
-			colors: [stringToColor('#88CDE7'), stringToColor('#2274AD')],
+			colors: [
+				{
+					type: 'none',
+				},
+				stringToColor('#88CDE7'),
+				stringToColor('#2274AD'),
+			],
 			hasUnsetColor: false,
 			hasGlobalStyle: false,
 		});
 	});
-	*/
+
+	test('Fill and clip-path using same id', async () => {
+		const svgCode = await loadFixture('arangodb.svg');
+		const svg = new SVG(svgCode);
+		await removeBadAttributes(svg);
+
+		// Find colors
+		const searchResult = await parseColors(svg, {
+			defaultColor: () => {
+				throw new Error(`Unexpected callback call for defaultColor`);
+			},
+		});
+		expect(searchResult).toEqual({
+			colors: [
+				stringToColor('#423334'),
+				stringToColor('#3D2F30'),
+				stringToColor('#6C4317'),
+				stringToColor('#A3B34F'),
+				stringToColor('#DDE072'),
+				stringToColor('#EAECA2'),
+				stringToColor('#633C11'),
+				stringToColor('#949952'),
+				stringToColor('#B0AD51'),
+				stringToColor('#7C9350'),
+				stringToColor('#577138'),
+			],
+			hasUnsetColor: false,
+			hasGlobalStyle: false,
+		});
+	});
 });

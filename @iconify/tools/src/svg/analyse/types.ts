@@ -1,18 +1,24 @@
 /**
  * Extended properties for element
  */
-export interface ElementWithID {
-	id: string; // ID of element
-	isMask: boolean; // Is it a mask (or clip path)?
-	indexes: Set<number>; // Indexes of element and all children
-}
 
+/**
+ * Link to element
+ */
 export interface LinkToElementWithID {
-	id: string; // ID of element
-	usedAsMask: boolean; // Used as mask (or clip path) or paint?
-	usedByIndex: number; // Index of element that references it
+	// ID of element
+	id: string;
+
+	// Used as mask (or clip path) or paint?
+	usedAsMask: boolean;
+
+	// Index of element that references it
+	usedByIndex: number;
 }
 
+/**
+ * How element is used by parent elements
+ */
 export interface ExtendedTagElementUses {
 	// Element is used as a mask or child element of mask (or clip path) - uses grayscale palette
 	_usedAsMask: boolean;
@@ -21,15 +27,49 @@ export interface ExtendedTagElementUses {
 	_usedAsPaint: boolean;
 }
 
+/**
+ * Definition: mask, clip path, symbol, etc...
+ */
 interface ReusableElement {
 	id: string;
 	isMask: boolean;
 	index: number;
 }
 
+/**
+ * Element with id
+ *
+ * Similar to ReusableElement, but not necessary a definition - any element with id. Also contains list of child elements
+ */
+export interface ElementWithID {
+	// ID of element
+	id: string;
+
+	// Is it a mask (or clip path)?
+	isMask: boolean;
+
+	// Indexes of element and all children
+	indexes: Set<number>;
+}
+
+/**
+ * Parent and child elements. Unlike standard tree, this tree is for elements that inherit attributes from parent element
+ */
+interface ExtendedTagElementRelations {
+	// Parent element
+	_parentElement?: number;
+
+	// Children
+	_childElements?: number[];
+}
+
+/**
+ * Extended tag
+ */
 export interface ExtendedTagElement
 	extends cheerio.TagElement,
-		ExtendedTagElementUses {
+		ExtendedTagElementUses,
+		ExtendedTagElementRelations {
 	// Node index
 	_index: number;
 
@@ -54,15 +94,33 @@ export interface ExtendedRootTagElement extends ExtendedTagElement {
 }
 
 /**
+ * Tree
+ */
+export interface ElementsTreeItem {
+	index: number;
+	usedAsMask: boolean;
+	parent?: ElementsTreeItem;
+	children: ElementsTreeItem[];
+}
+
+/**
+ * Elements map
+ */
+export type ElementsMap = Map<number, ExtendedTagElement>;
+
+/**
  * Result
  */
 export interface AnalyseSVGStructureResult {
 	// List of all elements
-	elements: Map<number, ExtendedTagElement>;
+	elements: ElementsMap;
 
 	// List of found IDs
 	ids: Record<string, number>;
 
 	// List of links
 	links: LinkToElementWithID[];
+
+	// Tree, starting with SVG element
+	tree: ElementsTreeItem;
 }

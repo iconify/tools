@@ -6,20 +6,16 @@ import type {
 	AnalyseSVGStructureResult,
 	ExtendedRootTagElement,
 	ExtendedTagElement,
-	ExtendedTagElementUses,
 	LinkToElementWithID,
+	ElementsTreeItem,
 } from './analyse/types';
 import {
 	commonColorPresentationalAttributes,
 	markerAttributes,
+	tagSpecificNonPresentationalAttributes,
 	urlPresentationalAttributes,
 } from './data/attributes';
-import {
-	defsTag,
-	maskTags,
-	reusableElementsWithPalette,
-	useTag,
-} from './data/tags';
+import { defsTag, maskTags, reusableElementsWithPalette } from './data/tags';
 import { analyseTagError } from './analyse/error';
 
 /**
@@ -170,6 +166,12 @@ export async function analyseSVGStructure(
 			element._usedAsMask = parentElement._usedAsMask;
 			element._usedAsPaint = parentElement._usedAsPaint;
 
+			element._parentElement = parentElement._index;
+			if (!parentElement._childElements) {
+				parentElement._childElements = [];
+			}
+			parentElement._childElements.push(index);
+
 			// Copy id of reusable element from parent
 			const parentReusableElement = parentElement._reusableElement;
 			if (parentReusableElement) {
@@ -206,24 +208,17 @@ export async function analyseSVGStructure(
 		}
 
 		// Check if element uses any ID
-		if (useTag.has(tagName)) {
-			// <use>
-			let id: string | undefined;
-			const href = attribs['href'];
+		if (tagSpecificNonPresentationalAttributes[tagName]?.has('href')) {
+			const href = attribs['href'] || attribs['xlink:href'];
 			if (typeof href === 'string') {
 				if (href.slice(0, 1) !== '#') {
 					throw new Error(
 						`Invalid link in ${analyseTagError(element)}`
 					);
 				}
-				id = href.slice(1);
-			} else {
-				throw new Error(
-					`Missing "href" attribute in ${analyseTagError(element)}`
-				);
+				const id = href.slice(1);
+				gotElementReference(item, id, false);
 			}
-			gotElementReference(item, id, false);
-			return;
 		}
 
 		// Check colors
@@ -256,99 +251,92 @@ export async function analyseSVGStructure(
 		});
 	});
 
-	if (!Object.keys(ids).length) {
-		// No ids found
-		return {
-			elements,
-			ids,
-			links,
-		};
+	// Make sure all required IDs exist
+	links.forEach(({ id }) => {
+		if (ids[id] === void 0) {
+			throw new Error(`Missing element with id="${id}"`);
+		}
+	});
+
+	// Check if tree item already has child item
+	function hasChildItem(
+		tree: ElementsTreeItem,
+		child: ElementsTreeItem,
+		canThrow: boolean
+	): boolean {
+		const item = tree.children.find(
+			(item) =>
+				item.index === child.index &&
+				item.usedAsMask === child.usedAsMask
+		);
+		if (item && canThrow) {
+			throw new Error('Recursion');
+		}
+		return !!item;
 	}
 
-	// Mark element and its child element as used for paint
-	function markUsage(
-		key: keyof ExtendedTagElementUses,
-		item: ExtendedTagElement
-	): ExtendedTagElement[] {
-		if (item[key]) {
-			return [];
-		}
-		const id = item._id!;
+	// Generate tree
+	const tree: ElementsTreeItem = {
+		index: 1,
+		usedAsMask: false,
+		children: [],
+	};
+	function parseTreeItem(
+		tree: ElementsTreeItem,
+		usedItems: number[],
+		inMask: boolean
+	) {
+		const element = elements.get(tree.index)!;
 
-		// Find all nodes with this id that do not have value set
-		const result: ExtendedTagElement[] = [];
-		const belongsTo = item._belongsTo!.find((item) => item.id === id)!;
-		belongsTo.indexes.forEach((index) => {
-			const element = elements.get(index)!;
-			if (!element[key]) {
-				element[key] = true;
-				result.push(element);
+		// Add usage
+		if (tree.usedAsMask || inMask) {
+			element._usedAsMask = true;
+			inMask = true;
+		} else {
+			element._usedAsPaint = true;
+		}
+
+		usedItems = usedItems.slice(0);
+		usedItems.push(element._index);
+
+		// Add all child elements
+		element._childElements?.forEach((childIndex) => {
+			if (usedItems.indexOf(childIndex) !== -1) {
+				throw new Error('Recursion');
 			}
+			const childItem: ElementsTreeItem = {
+				index: childIndex,
+				usedAsMask: false,
+				children: [],
+				parent: tree,
+			};
+			tree.children.push(childItem);
+			parseTreeItem(childItem, usedItems, inMask);
 		});
 
-		return result;
+		// Add all links
+		element._linksTo?.forEach((link) => {
+			const linkIndex = ids[link.id];
+			const usedAsMask = link.usedAsMask;
+			const childItem: ElementsTreeItem = {
+				index: linkIndex,
+				usedAsMask,
+				children: [],
+				parent: tree,
+			};
+			if (hasChildItem(tree, childItem, false)) {
+				return;
+			}
+			tree.children.push(childItem);
+			parseTreeItem(childItem, usedItems, inMask || usedAsMask);
+		});
 	}
-
-	// Check links in all elements with paint
-	(() => {
-		let elementsWithPaint: ExtendedTagElement[] = [];
-		elements.forEach((element) => {
-			if (element._usedAsPaint) {
-				elementsWithPaint.push(element);
-			}
-		});
-		while (elementsWithPaint.length > 0) {
-			let added: ExtendedTagElement[] = [];
-			elementsWithPaint.forEach((item) => {
-				item._linksTo?.forEach((link) => {
-					const targetID = link.id;
-					const targetElement = elements.get(ids[targetID])!;
-
-					// Check how link is being used
-					const usedAsMask = link.usedAsMask;
-					if (!usedAsMask && item._usedAsPaint) {
-						// Target is used as paint
-						added = added.concat(
-							markUsage('_usedAsPaint', targetElement)
-						);
-					}
-
-					if (usedAsMask || item._usedAsMask) {
-						// Target is used as mask
-						markUsage('_usedAsMask', targetElement);
-					}
-				});
-			});
-			elementsWithPaint = added;
-		}
-	})();
-
-	// Check links in all elements used as mask
-	(() => {
-		let elementsWithMask: ExtendedTagElement[] = [];
-		elements.forEach((element) => {
-			if (element._usedAsMask) {
-				elementsWithMask.push(element);
-			}
-		});
-		while (elementsWithMask.length > 0) {
-			let added: ExtendedTagElement[] = [];
-			elementsWithMask.forEach((item) => {
-				item._linksTo?.forEach((link) => {
-					const targetID = link.id;
-					const targetElement = elements.get(ids[targetID])!;
-					added = added.concat(
-						markUsage('_usedAsMask', targetElement)
-					);
-				});
-			});
-			elementsWithMask = added;
-		}
-	})();
+	parseTreeItem(tree, [0], false);
 
 	return {
 		elements,
 		ids,
 		links,
+		tree,
 	};
 }

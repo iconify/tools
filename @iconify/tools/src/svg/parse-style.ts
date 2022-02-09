@@ -4,7 +4,6 @@ import { tokensToString } from '../css/parser/export';
 import { getTokens } from '../css/parser/tokens';
 import { tokensTree } from '../css/parser/tree';
 import type { CSSRuleToken, CSSToken } from '../css/parser/types';
-import { maskTags } from './data/tags';
 import { parseSVG, ParseSVGCallbackItem } from './parse';
 
 /**
@@ -46,14 +45,6 @@ export type ParseSVGStyleCallback = (
 ) => ParseSVGStyleCallbackResult | Promise<ParseSVGStyleCallbackResult>;
 
 /**
- * Options
- */
-interface ParseSVGStyleOptions {
-	// Skip masks, false by default. Useful when parsing icon palette
-	skipMasks?: boolean;
-}
-
-/**
  * Parse styles in SVG
  *
  * This function finds CSS in SVG, parses it, calls callback for each rule.
@@ -62,8 +53,7 @@ interface ParseSVGStyleOptions {
  */
 export async function parseSVGStyle(
 	svg: SVG,
-	callback: ParseSVGStyleCallback,
-	options: ParseSVGStyleOptions = {}
+	callback: ParseSVGStyleCallback
 ): Promise<void> {
 	return parseSVG(svg, async (item) => {
 		const tagName = item.tagName;
@@ -163,11 +153,6 @@ export async function parseSVGStyle(
 
 			const newContent = tokensToString(tree);
 			item.$element.text(newContent);
-			return;
-		}
-
-		// Skip masks
-		if (options.skipMasks && maskTags.has(tagName)) {
 			return;
 		}
 

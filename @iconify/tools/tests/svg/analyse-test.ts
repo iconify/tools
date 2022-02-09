@@ -4,6 +4,7 @@ import { analyseSVGStructure } from '../../lib/svg/analyse';
 import type {
 	AnalyseSVGStructureResult,
 	LinkToElementWithID,
+	ElementsTreeItem,
 } from '../../lib/svg/analyse/types';
 
 /**
@@ -53,6 +54,8 @@ function mapUses(data: AnalyseSVGStructureResult): MappedUses[] {
  */
 interface MappedElements {
 	tagName: string;
+	parentTagName?: string;
+	childTagNames?: string[];
 	id?: string;
 	reusableID?: string;
 	ids?: string[];
@@ -61,7 +64,8 @@ interface MappedElements {
 }
 function mapElements(data: AnalyseSVGStructureResult): MappedElements[] {
 	const results: MappedElements[] = [];
-	data.elements.forEach((item) => {
+	const elements = data.elements;
+	elements.forEach((item) => {
 		const {
 			tagName,
 			_id,
@@ -69,10 +73,20 @@ function mapElements(data: AnalyseSVGStructureResult): MappedElements[] {
 			_usedAsPaint,
 			_reusableElement,
 			_belongsTo,
+			_parentElement,
+			_childElements,
 		} = item;
 		const result: MappedElements = {
 			tagName,
 		};
+		if (_parentElement !== void 0) {
+			result.parentTagName = elements.get(_parentElement)!.tagName;
+		}
+		if (_childElements) {
+			result.childTagNames = _childElements.map(
+				(index) => elements.get(index)!.tagName
+			);
+		}
 		if (typeof _id === 'string') {
 			result.id = _id;
 		}
@@ -91,6 +105,36 @@ function mapElements(data: AnalyseSVGStructureResult): MappedElements[] {
 		results.push(result);
 	});
 	return results;
+}
+
+/**
+ * Map tree
+ */
+interface MappedElementsTreeItem {
+	tagName: string;
+	usedAsMask: boolean;
+	parentTagName?: string;
+	children: MappedElementsTreeItem[];
+}
+
+function mapTree(data: AnalyseSVGStructureResult): MappedElementsTreeItem {
+	const { tree, elements } = data;
+
+	function map(tree: ElementsTreeItem): MappedElementsTreeItem {
+		const element = elements.get(tree.index)!;
+		const item: MappedElementsTreeItem = {
+			tagName: element.tagName,
+			usedAsMask: tree.usedAsMask,
+			children: tree.children.map(map),
+		};
+		if (tree.parent) {
+			const parentIndex = tree.parent.index;
+			const parentElement = elements.get(parentIndex)!;
+			item.parentTagName = parentElement.tagName;
+		}
+		return item;
+	}
+	return map(tree);
 }
 
 describe('Analysing SVG structure', () => {
@@ -168,6 +212,7 @@ describe('Analysing SVG structure', () => {
 		expect(mappedElements).toEqual([
 			{
 				tagName: 'svg',
+				childTagNames: ['g'],
 				usedAsMask: false,
 				usedAsPaint: true,
 			},
@@ -186,6 +231,7 @@ describe('Analysing SVG structure', () => {
 			},
 			{
 				tagName: 'radialGradient',
+				childTagNames: ['stop', 'stop'],
 				id: 'radialGradient-3',
 				reusableID: 'radialGradient-3',
 				ids: ['radialGradient-3'],
@@ -194,6 +240,7 @@ describe('Analysing SVG structure', () => {
 			},
 			{
 				tagName: 'stop',
+				parentTagName: 'radialGradient',
 				reusableID: 'radialGradient-3',
 				ids: ['radialGradient-3'],
 				usedAsMask: false,
@@ -201,6 +248,7 @@ describe('Analysing SVG structure', () => {
 			},
 			{
 				tagName: 'stop',
+				parentTagName: 'radialGradient',
 				id: 'test2',
 				reusableID: 'radialGradient-3',
 				ids: ['radialGradient-3', 'test2'],
@@ -209,11 +257,14 @@ describe('Analysing SVG structure', () => {
 			},
 			{
 				tagName: 'g',
+				parentTagName: 'svg',
+				childTagNames: ['polygon'],
 				usedAsMask: false,
 				usedAsPaint: true,
 			},
 			{
 				tagName: 'mask',
+				childTagNames: ['use'],
 				id: 'mask-2',
 				reusableID: 'mask-2',
 				ids: ['mask-2'],
@@ -222,6 +273,7 @@ describe('Analysing SVG structure', () => {
 			},
 			{
 				tagName: 'use',
+				parentTagName: 'mask',
 				reusableID: 'mask-2',
 				ids: ['mask-2'],
 				usedAsMask: true,
@@ -229,11 +281,281 @@ describe('Analysing SVG structure', () => {
 			},
 			{
 				tagName: 'polygon',
+				parentTagName: 'g',
 				id: 'test',
 				ids: ['test'],
 				usedAsMask: false,
 				usedAsPaint: true,
 			},
 		]);
+
+		// Test tree
+		const mappedTree = mapTree(result);
+		expect(mappedTree).toEqual({
+			tagName: 'svg',
+			usedAsMask: false,
+			children: [
+				{
+					tagName: 'g',
+					usedAsMask: false,
+					children: [
+						{
+							tagName: 'polygon',
+							usedAsMask: false,
+							children: [
+								{
+									tagName: 'radialGradient',
+									usedAsMask: false,
+									children: [
+										{
+											tagName: 'stop',
+											usedAsMask: false,
+											children: [],
+											parentTagName: 'radialGradient',
+										},
+										{
+											tagName: 'stop',
+											usedAsMask: false,
+											children: [],
+											parentTagName: 'radialGradient',
+										},
+									],
+									parentTagName: 'polygon',
+								},
+								{
+									tagName: 'mask',
+									usedAsMask: true,
+									children: [
+										{
+											tagName: 'use',
+											usedAsMask: false,
+											children: [
+												{
+													tagName: 'path',
+													usedAsMask: false,
+													children: [],
+													parentTagName: 'use',
+												},
+											],
+											parentTagName: 'mask',
+										},
+									],
+									parentTagName: 'polygon',
+								},
+							],
+							parentTagName: 'g',
+						},
+					],
+					parentTagName: 'svg',
+				},
+			],
+		});
+	});
+
+	test('Several references to same element', async () => {
+		const svgCode = `<svg width="256" height="256" viewBox="0 0 256 256">
+			<defs>
+				<symbol id="def1" fill="purple">
+					<rect x="0" y="0" width="64" height="64" id="def2" />
+				</symbol>
+			</defs>
+			<use href="#def1" fill="red" />
+			<use href="#def2" transform="translate(32 32)" />
+			<use href="#def2" fill="teal" transform="translate(64 64)" />
+		</svg>`;
+		const svg = new SVG(svgCode);
+
+		// Analyse stuff
+		const result = await analyseSVGStructure(svg);
+
+		// Make sure IDs belong to correct tags
+		const tagsWithID = mapIDsToTags(result);
+		expect(tagsWithID).toEqual({
+			def1: {
+				tagName: 'symbol',
+				usedAsMask: false,
+				usedAsPaint: true,
+			},
+			def2: {
+				tagName: 'rect',
+				usedAsMask: false,
+				usedAsPaint: true,
+			},
+		});
+
+		const mappedUses = mapUses(result);
+		expect(mappedUses).toEqual([
+			{
+				id: 'def1',
+				usedAsMask: false,
+				usedByTagName: 'use',
+			},
+			{
+				id: 'def2',
+				usedAsMask: false,
+				usedByTagName: 'use',
+			},
+			{
+				id: 'def2',
+				usedAsMask: false,
+				usedByTagName: 'use',
+			},
+		]);
+
+		const mappedElements = mapElements(result);
+		expect(mappedElements).toEqual([
+			{
+				tagName: 'svg',
+				childTagNames: ['use', 'use', 'use'],
+				usedAsMask: false,
+				usedAsPaint: true,
+			},
+			{
+				tagName: 'defs',
+				usedAsMask: false,
+				usedAsPaint: false,
+			},
+			{
+				tagName: 'symbol',
+				childTagNames: ['rect'],
+				id: 'def1',
+				reusableID: 'def1',
+				ids: ['def1'],
+				usedAsMask: false,
+				usedAsPaint: true,
+			},
+			{
+				tagName: 'rect',
+				parentTagName: 'symbol',
+				id: 'def2',
+				reusableID: 'def1',
+				ids: ['def1', 'def2'],
+				usedAsMask: false,
+				usedAsPaint: true,
+			},
+			{
+				tagName: 'use',
+				parentTagName: 'svg',
+				usedAsMask: false,
+				usedAsPaint: true,
+			},
+			{
+				tagName: 'use',
+				parentTagName: 'svg',
+				usedAsMask: false,
+				usedAsPaint: true,
+			},
+			{
+				tagName: 'use',
+				parentTagName: 'svg',
+				usedAsMask: false,
+				usedAsPaint: true,
+			},
+		]);
+
+		// Test tree
+		const mappedTree = mapTree(result);
+		expect(mappedTree).toEqual({
+			tagName: 'svg',
+			usedAsMask: false,
+			children: [
+				{
+					tagName: 'use',
+					usedAsMask: false,
+					children: [
+						{
+							tagName: 'symbol',
+							usedAsMask: false,
+							children: [
+								{
+									tagName: 'rect',
+									usedAsMask: false,
+									children: [],
+									parentTagName: 'symbol',
+								},
+							],
+							parentTagName: 'use',
+						},
+					],
+					parentTagName: 'svg',
+				},
+				{
+					tagName: 'use',
+					usedAsMask: false,
+					children: [
+						{
+							tagName: 'rect',
+							usedAsMask: false,
+							children: [],
+							parentTagName: 'use',
+						},
+					],
+					parentTagName: 'svg',
+				},
+				{
+					tagName: 'use',
+					usedAsMask: false,
+					children: [
+						{
+							tagName: 'rect',
+							usedAsMask: false,
+							children: [],
+							parentTagName: 'use',
+						},
+					],
+					parentTagName: 'svg',
+				},
+			],
+		});
+	});
+
+	test('Missing definition', async () => {
+		const svgCode = `<svg width="256px" height="256px" viewBox="0 0 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
+			<defs>
+				<radialGradient cx="16.6089694%" cy="17.3718345%" fx="16.6089694%" fy="17.3718345%" r="118.520308%" id="radialGradient-3">
+					<stop stop-color="#88CDE7" offset="0%"></stop>
+					<stop id="test2" stop-color="#2274AD" offset="100%"></stop>
+				</radialGradient>
+			</defs>
+			<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+				<mask id="mask-2" fill="white">
+					<use href="#path-1"></use>
+				</mask>
+				<polygon id="test" fill="url(#radialGradient-3)" mask="url(#mask-2)" points="0 256 256 256 256 0 0 0"></polygon>
+			</g>
+		</svg>`;
+		const svg = new SVG(svgCode);
+
+		// Analyse stuff
+		try {
+			await analyseSVGStructure(svg);
+			throw new Error('Expected to throw');
+		} catch (err) {
+			expect(err instanceof Error).toBe(true);
+			expect((err as Error).message).toBe(
+				'Missing element with id="path-1"'
+			);
+		}
+	});
+
+	test('Recursion', async () => {
+		const svgCode = `<svg width="256px" height="256px" viewBox="0 0 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
+			<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+				<mask id="mask-2" fill="white">
+					<use href="#test"></use>
+				</mask>
+				<polygon id="test" mask="url(#mask-2)" points="0 256 256 256 256 0 0 0"></polygon>
+			</g>
+		</svg>`;
+		const svg = new SVG(svgCode);
+
+		// Analyse stuff
+		try {
+			await analyseSVGStructure(svg);
+			throw new Error('Expected to throw');
+		} catch (err) {
+			expect(err instanceof Error).toBe(true);
+			expect((err as Error).message).toBe('Recursion');
+		}
 	});
 });

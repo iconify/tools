@@ -5,8 +5,7 @@ import {
 } from '@iconify/utils/lib/colors';
 import type { Color } from '@iconify/utils/lib/colors/types';
 import type { SVG } from '../svg';
-import { parseSVG, ParseSVGCallbackItem } from '../svg/parse';
-import { animateTags, maskTags, shapeTags } from '../svg/data/tags';
+import { animateTags, shapeTags } from '../svg/data/tags';
 import { parseSVGStyle } from '../svg/parse-style';
 import {
 	ColorAttributes,
@@ -16,6 +15,13 @@ import {
 	specialColorAttributes,
 } from './attribs';
 import { tagSpecificPresentationalAttributes } from '../svg/data/attributes';
+import { analyseSVGStructure } from '../svg/analyse';
+import type {
+	AnalyseSVGStructureResult,
+	ElementsTreeItem,
+	ExtendedTagElement,
+	ElementsMap,
+} from '../svg/analyse/types';
 
 /**
  * Result
@@ -56,7 +62,9 @@ type ParseColorsCallback = (
  */
 export type ParseColorOptionsDefaultColorCallback = (
 	prop: string,
-	item: ExtendedParseSVGCallbackItem
+	item: ExtendedTagElementWithColors,
+	treeItem: ElementsTreeItem,
+	iconData: AnalyseSVGStructureResult
 ) => Color;
 
 /**
@@ -79,16 +87,23 @@ const propsToCheck = Object.keys(defaultColorValues);
 const animatePropsToCheck = ['from', 'to', 'values'];
 
 /**
- * Extend properties for item
+ * Extend properties for element
  */
 type ItemColors = Partial<Record<ColorAttributes, Color | string>>;
-export interface ExtendedParseSVGCallbackItem extends ParseSVGCallbackItem {
+
+export interface ExtendedTagElementWithColors extends ExtendedTagElement {
 	// Colors set in item
-	colors?: ItemColors;
+	_colors?: ItemColors;
+
+	// Removed
+	_removed?: boolean;
 }
 
 /**
  * Find colors in icon
+ *
+ * Clean up icon before running this function to convert style to attributes using
+ * cleanupInlineStyle() or cleanupSVG(), otherwise results might be inaccurate
  */
 export async function parseColors(
 	svg: SVG,
@@ -140,15 +155,12 @@ export async function parseColors(
 	function addColorToItem(
 		prop: ColorAttributes,
 		color: Color | string,
-		item?: ExtendedParseSVGCallbackItem,
+		item?: ExtendedTagElementWithColors,
 		add = true
 	): void {
 		const addedColor = findColor(color, add !== false);
 		if (item) {
-			const itemColors = item.colors || {};
-			if (!item.colors) {
-				item.colors = itemColors;
-			}
+			const itemColors = item._colors || (item._colors = {});
 			itemColors[prop] = addedColor === null ? color : addedColor;
 		}
 	}
@@ -158,16 +170,26 @@ export async function parseColors(
 	 */
 	function getElementColor(
 		prop: ColorAttributes,
-		item: ExtendedParseSVGCallbackItem
+		item: ElementsTreeItem,
+		elements: ElementsMap
 	): Color | string {
 		function find(prop: ColorAttributes): Color | string {
-			let currentItem = item;
+			let currentItem: ElementsTreeItem | undefined = item;
 			while (currentItem) {
-				const color = currentItem.colors?.[prop];
+				const element = elements.get(
+					currentItem.index
+				) as ExtendedTagElementWithColors;
+
+				const color = element._colors?.[prop];
 				if (color !== void 0) {
 					return color;
 				}
-				currentItem = currentItem.parents[0];
+
+				currentItem = currentItem.parent;
+				if (currentItem?.usedAsMask) {
+					// Used as mask: color from parent item is irrelevant
+					return defaultColorValues[prop];
+				}
 			}
 			return defaultColorValues[prop];
 		}
@@ -190,7 +212,7 @@ export async function parseColors(
 	async function checkColor(
 		prop: ColorAttributes,
 		value: string,
-		item?: ExtendedParseSVGCallbackItem
+		item?: ExtendedTagElementWithColors
 	): Promise<string | undefined> {
 		// Ignore empty values
 		switch (value.trim().toLowerCase()) {
@@ -231,11 +253,7 @@ export async function parseColors(
 		// Remove entry
 		switch (callbackResult) {
 			case 'remove': {
-				if (item) {
-					item.$element.remove();
-					item.testChildren = false;
-				}
-				return;
+				return item ? callbackResult : void 0;
 			}
 
 			case 'unset':
@@ -264,48 +282,95 @@ export async function parseColors(
 	}
 
 	// Parse colors in style
-	await parseSVGStyle(
-		svg,
-		async (item) => {
-			const prop = item.prop;
-			const value = item.value;
-			if (propsToCheck.indexOf(prop) === -1) {
-				return value;
-			}
-
-			// Color
-			const attr = prop as ColorAttributes;
-			const newValue = await checkColor(attr, value);
-			if (newValue === void 0) {
-				return newValue;
-			}
-
-			// Got color
-			if (item.type === 'global') {
-				result.hasGlobalStyle = true;
-			}
-			return newValue;
-		},
-		{
-			skipMasks: true,
+	await parseSVGStyle(svg, async (item) => {
+		const prop = item.prop;
+		const value = item.value;
+		if (propsToCheck.indexOf(prop) === -1) {
+			return value;
 		}
-	);
 
-	// Parse colors in SVG
-	await parseSVG(svg, async (item: ExtendedParseSVGCallbackItem) => {
-		const tagName = item.tagName;
-		if (maskTags.has(tagName)) {
-			// Ignore masks
-			item.testChildren = false;
+		// Color
+		const attr = prop as ColorAttributes;
+		const newValue = await checkColor(attr, value);
+		if (newValue === void 0) {
+			return newValue;
+		}
+
+		// Got color
+		if (item.type === 'global') {
+			result.hasGlobalStyle = true;
+		}
+
+		return newValue;
+	});
+
+	// Analyse SVG
+	const iconData = await analyseSVGStructure(svg);
+	const { elements, tree } = iconData;
+	const cheerio = svg.$svg;
+	const removedElements: Set<number> = new Set();
+	const parsedElements: Set<number> = new Set();
+
+	// Remove element
+	function removeElement(
+		index: number,
+		element: ExtendedTagElementWithColors
+	) {
+		// Mark all children as removed (direct children as in DOM)
+		function removeChildren(element: ExtendedTagElementWithColors) {
+			element.children.forEach((item) => {
+				if (item.type !== 'tag') {
+					return;
+				}
+				const element = item as ExtendedTagElementWithColors;
+				const index = element._index;
+				if (index && !removedElements.has(index)) {
+					element._removed = true;
+					removedElements.add(index);
+					removeChildren(element);
+				}
+			});
+		}
+
+		// Remove element
+		element._removed = true;
+		removedElements.add(index);
+		removeChildren(element);
+
+		cheerio(element).remove();
+	}
+
+	// Parse tree item
+	async function parseTreeItem(item: ElementsTreeItem) {
+		const index = item.index;
+		if (removedElements.has(index) || parsedElements.has(index)) {
+			return;
+		}
+		parsedElements.add(index);
+
+		const element = elements.get(index) as ExtendedTagElementWithColors;
+		if (element._removed) {
 			return;
 		}
 
-		const $element = item.$element;
-		const attribs = item.element.attribs;
+		const { tagName, attribs } = element;
+
+		// Copy colors from parent item
+		if (item.parent) {
+			const parentIndex = item.parent.index;
+			const parentElement = elements.get(
+				parentIndex
+			) as ExtendedTagElementWithColors;
+			if (parentElement._colors) {
+				element._colors = {
+					...parentElement._colors,
+				};
+			}
+		}
 
 		// Check common properties
 		for (let i = 0; i < propsToCheck.length; i++) {
-			const prop = propsToCheck[i];
+			const prop = propsToCheck[i] as ColorAttributes;
 			if (prop === 'fill' && animateTags.has(tagName)) {
 				// 'fill' has different meaning in animations
 				continue;
@@ -313,16 +378,22 @@ export async function parseColors(
 
 			const value = attribs[prop];
 			if (value !== void 0) {
-				const newValue = await checkColor(
-					prop as ColorAttributes,
-					value,
-					item
-				);
+				const newValue = await checkColor(prop, value, element);
 				if (newValue !== value) {
 					if (newValue === void 0) {
-						$element.removeAttr(prop);
+						// Unset
+						cheerio(element).removeAttr(prop);
+						if (element._colors) {
+							delete element._colors[prop];
+						}
+					} else if (newValue === 'remove') {
+						// Remove element
+						removeElement(index, element);
+						return;
 					} else {
-						$element.attr(prop, newValue);
+						// Change attribute
+						// Value in element._colors is changed in checkColor()
+						cheerio(element).attr(prop, newValue);
 					}
 				}
 			}
@@ -363,7 +434,10 @@ export async function parseColors(
 
 					// Merge values back
 					if (updatedValues) {
-						$element.attr(elementProp, splitValues.join(';'));
+						cheerio(element).attr(
+							elementProp,
+							splitValues.join(';')
+						);
 					}
 				}
 			}
@@ -386,25 +460,27 @@ export async function parseColors(
 
 			// Check colors
 			if (requiredProps) {
-				const itemColors = item.colors || {};
-				if (!item.colors) {
-					item.colors = itemColors;
-				}
+				const itemColors = element._colors || (element._colors = {});
 
 				for (let i = 0; i < requiredProps.length; i++) {
 					const prop = requiredProps[i];
-					const color = getElementColor(prop, item);
+					const color = getElementColor(prop, item, elements);
 					if (color === defaultBlackColor) {
 						// Default black color: change it
 						if (defaultColor) {
 							const defaultColorValue =
 								typeof defaultColor === 'function'
-									? defaultColor(prop, item)
+									? defaultColor(
+											prop,
+											element,
+											item,
+											iconData
+									  )
 									: defaultColor;
 
 							// Add color to results and change attribute
 							findColor(defaultColorValue, true);
-							$element.attr(
+							cheerio(element).attr(
 								prop,
 								colorToString(defaultColorValue)
 							);
@@ -416,7 +492,18 @@ export async function parseColors(
 				}
 			}
 		}
-	});
+
+		// Parse child elements
+		for (let i = 0; i < item.children.length; i++) {
+			const childItem = item.children[i];
+			if (!childItem.usedAsMask) {
+				await parseTreeItem(childItem);
+			}
+		}
+	}
+
+	// Parse tree, starting with <svg>
+	await parseTreeItem(tree);
 
 	return result;
 }
