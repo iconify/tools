@@ -54,8 +54,9 @@ type ParseColorsCallback = (
 	colorString: string,
 	// Parsed color, if color could be parsed, null if color could not be parsed
 	parsedColor: Color | null,
-	// tagName is set only for colors found in element, it is not set for colors in global style
-	tagName?: string
+	// tagName and item are set only for colors found in element, it is not set for colors in global style
+	tagName?: string,
+	item?: ExtendedTagElementWithColors
 ) => ParseColorsCallbackResult | Promise<ParseColorsCallbackResult>;
 
 /**
@@ -244,7 +245,8 @@ export async function parseColors(
 			prop,
 			value,
 			parsedColor,
-			item?.tagName
+			item?.tagName,
+			item
 		);
 		callbackResult =
 			callbackResult instanceof Promise
