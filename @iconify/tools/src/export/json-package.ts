@@ -90,7 +90,12 @@ export async function exportJSONPackage(
 	});
 
 	// Contents
-	const info = exportedJSON.info;
+	const info = exportedJSON.info
+		? {
+				prefix: iconSet.prefix,
+				...exportedJSON.info,
+		  }
+		: void 0;
 	const contents: ExportContents = {
 		icons,
 		info,
