@@ -283,4 +283,19 @@ describe('Loading icon set', () => {
 		};
 		expect(iconSet.info).toEqual(expectedInfo);
 	});
+
+	test('Fluent UI', async () => {
+		const iconSetData = JSON.parse(await loadFixture('fluent.old.json'));
+		const iconSet = new IconSet(iconSetData);
+
+		expect(iconSet.resolve('accessibility-16-regular')).toEqual({
+			body: iconSetData.icons['accessibility-16-regular'].body,
+		});
+
+		expect(iconSet.resolve('accessibility-20-regular')).toEqual({
+			body: iconSetData.icons['accessibility-20-regular'].body,
+			width: 20,
+			height: 20,
+		});
+	});
 });

@@ -90,7 +90,7 @@ export class IconSet {
 		this.prefix = data.prefix;
 
 		// Defaults
-		const defaultProps = filterProps(data);
+		const defaultProps = filterProps(data, true);
 
 		// Add icons
 		this.entries = Object.create(null);
@@ -100,7 +100,13 @@ export class IconSet {
 			const entry: IconSetIcon = {
 				type: 'icon',
 				body: item.body,
-				props: { ...defaultProps, ...filterProps(item) },
+				props: filterProps(
+					{
+						...defaultProps,
+						...item,
+					},
+					true
+				),
 				chars: new Set(),
 				categories: new Set(),
 			};
@@ -112,7 +118,7 @@ export class IconSet {
 			for (const name in data.aliases) {
 				const item = data.aliases[name];
 				const parent = item.parent;
-				const props = filterProps(item);
+				const props = filterProps(item, false);
 				const chars: Set<string> = new Set();
 				if (Object.keys(props).length) {
 					// Variation
@@ -750,7 +756,7 @@ export class IconSet {
 		return this.setItem(name, {
 			type: 'icon',
 			body: icon.body,
-			props: filterProps(icon),
+			props: filterProps(icon, true),
 			chars: new Set(),
 			categories: new Set(),
 		});

@@ -21,13 +21,17 @@ const props = Object.keys(defaultCommonProps) as (keyof CommonIconProps)[];
 /**
  * Filter icon props: copies properties, removing undefined and default entries
  */
-export function filterProps(data: CommonIconProps): CommonIconProps {
+export function filterProps(
+	data: CommonIconProps,
+	compareDefaultValues: boolean
+): CommonIconProps {
 	const result = {} as CommonIconProps;
 	props.forEach((attr) => {
 		const value = data[attr];
 		if (
 			value !== void 0 &&
-			value !== (defaultCommonProps as Record<string, unknown>)[attr]
+			(!compareDefaultValues ||
+				value !== (defaultCommonProps as Record<string, unknown>)[attr])
 		) {
 			(result as Record<string, unknown>)[attr] = value;
 		}

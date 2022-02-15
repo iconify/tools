@@ -1,6 +1,7 @@
 import type { IconifyJSON } from '@iconify/types';
 import { IconSet } from '../../lib/icon-set';
 import { mergeIconSets } from '../../lib/icon-set/merge';
+import { loadFixture } from '../load';
 
 describe('Merging icon sets', () => {
 	test('Simple merge', () => {
@@ -179,5 +180,33 @@ describe('Merging icon sets', () => {
 		};
 		expect(merged.export()).toEqual(expected);
 		expect(merged.count()).toBe(1);
+	});
+
+	test('Fluent UI', async () => {
+		const oldContent = JSON.parse(await loadFixture('fluent.old.json'));
+		const newContent = JSON.parse(await loadFixture('fluent.new.json'));
+
+		const oldIconSet = new IconSet(oldContent);
+		const newIconSet = new IconSet(newContent);
+		// const mergedIconSet = mergeIconSets(oldIconSet, newIconSet);
+
+		const testName = 'accessibility-16-regular';
+
+		// Make sure body exists in both sets and is not identical
+		const oldBody = oldContent.icons[testName].body;
+		expect(typeof oldBody).toBe('string');
+
+		const newBody = newContent.icons[testName].body;
+		expect(typeof newBody).toBe('string');
+
+		expect(oldBody).not.toBe(newBody);
+
+		// Resolve icon. Should not have extra properties
+		expect(oldIconSet.resolve(testName)).toEqual({
+			body: oldBody,
+		});
+		expect(newIconSet.resolve(testName)).toEqual({
+			body: newBody,
+		});
 	});
 });
