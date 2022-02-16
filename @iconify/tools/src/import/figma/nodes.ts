@@ -8,7 +8,7 @@ import type {
 import type { FigmaGetIconNodesOptions } from './types/options';
 import type { FigmaNodesImportResult } from './types/result';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars-experimental, @typescript-eslint/no-unused-vars
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function assertNever(v: never) {
 	//
 }
@@ -36,9 +36,8 @@ export async function getFigmaIconNodes(
 				if (iconNode.absoluteBoundingBox) {
 					const box = iconNode.absoluteBoundingBox;
 					const item: FigmaImportNodeData = {
-						id: node.id,
+						...node,
 						type: iconNodeType,
-						name: node.name,
 						width: box.width,
 						height: box.height,
 						parents,
@@ -90,9 +89,8 @@ export async function getFigmaIconNodes(
 			case 'FRAME':
 			case 'GROUP': {
 				const parentItem: FigmaParentNodeData = {
-					id: node.id,
+					...node,
 					type: parentNodeType,
-					name: node.name,
 				};
 				const newParents = parents.concat([parentItem]);
 
