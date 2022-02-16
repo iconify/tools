@@ -24,6 +24,7 @@ export { importDirectory } from './import/directory';
 export { downloadGitRepo } from './download/git/index';
 export { getGitRepoHash } from './download/git/hash';
 export { getGitRepoBranch } from './download/git/branch';
+export { resetGitRepoContents } from './download/git/reset';
 export { downloadGitHubRepo } from './download/github/index';
 export { getGitHubRepoHash } from './download/github/hash';
 export { downloadGitLabRepo } from './download/gitlab/index';

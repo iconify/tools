@@ -120,6 +120,10 @@
 			"require": "./lib/download/git/index.js",
 			"import": "./lib/download/git/index.mjs"
 		},
+		"./lib/download/git/reset": {
+			"require": "./lib/download/git/reset.js",
+			"import": "./lib/download/git/reset.mjs"
+		},
 		"./lib/download/github/hash": {
 			"require": "./lib/download/github/hash.js",
 			"import": "./lib/download/github/hash.mjs"

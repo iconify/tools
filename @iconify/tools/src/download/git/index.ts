@@ -8,6 +8,7 @@ import type { DocumentNotModified } from '../types/modified';
 import type { DownloadSourceMixin } from '../types/sources';
 import { getGitRepoBranch } from './branch';
 import { getGitRepoHash } from './hash';
+import { resetGitRepoContents } from './reset';
 
 interface IfModifiedSinceOption {
 	// Download only if it was modified since hash
@@ -86,6 +87,8 @@ export async function downloadGitRepo(
 						: null;
 
 				if (latestHash === expectedHash) {
+					// Reset contents before returning
+					await resetGitRepoContents(options.target);
 					return 'not_modified';
 				}
 			}
@@ -107,6 +110,13 @@ export async function downloadGitRepo(
 		await execAsync(
 			`git clone --branch ${branch} --no-tags --depth 1 ${remote} "${target}"`
 		);
+	} else {
+		// Attempt to reset contents
+		try {
+			await resetGitRepoContents(options.target);
+		} catch (err) {
+			//
+		}
 	}
 
 	// Get latest hash and make sure correct branch is available
