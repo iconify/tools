@@ -52,40 +52,58 @@ export async function cleanupGlobalStyle(svg: SVG): Promise<void> {
 			}
 
 			// Handle only simple selectors
+			/*
 			if (
 				styleItem.selectors.length !== 1 ||
 				styleItem.selectorTokens.length !== 1
 			) {
 				return returnValue;
 			}
+			*/
 
 			// Do not handle media queries
-			const selectorToken = styleItem.selectorTokens[0];
-			if (selectorToken.type !== 'selector') {
-				return returnValue;
+			const selectorTokens = styleItem.selectorTokens;
+			for (let i = 0; i < selectorTokens.length; i++) {
+				const selectorToken = selectorTokens[i];
+				if (selectorToken.type !== 'selector') {
+					return returnValue;
+				}
 			}
 
-			// Simple selector and simple rule
-			const selector = styleItem.selectors[0];
-			const firstChar = selector.charAt(0);
-
+			// Parse each selectors
+			const selectors = styleItem.selectors;
 			type MatchType = 'id' | 'class' | 'tag';
-			let matchType: MatchType;
-			if (firstChar === '.') {
-				matchType = 'class';
-			} else if (firstChar === '#') {
-				matchType = 'id';
-			} else if (allValidTags.has(selector)) {
-				matchType = 'tag';
-			} else {
-				return returnValue;
+			interface Match {
+				type: MatchType;
+				value: string;
 			}
+			const matches: Match[] = [];
+			for (let i = 0; i < selectors.length; i++) {
+				const selector = styleItem.selectors[i];
+				const firstChar = selector.charAt(0);
 
-			const valueMatch =
-				matchType === 'tag' ? selector : selector.slice(1);
-			if (matchType === 'class' && animatedClasses.has(valueMatch)) {
-				// Class name is used in animations
-				return returnValue;
+				let matchType: MatchType;
+				if (firstChar === '.') {
+					matchType = 'class';
+				} else if (firstChar === '#') {
+					matchType = 'id';
+				} else if (allValidTags.has(selector)) {
+					matchType = 'tag';
+				} else {
+					return returnValue;
+				}
+
+				const valueMatch =
+					matchType === 'tag' ? selector : selector.slice(1);
+				if (matchType === 'class' && animatedClasses.has(valueMatch)) {
+					// Class name is used in animations
+					return returnValue;
+				}
+
+				matches.push({
+					type: matchType,
+					value: valueMatch,
+				});
 			}
 
 			// Check if element is a match
@@ -93,25 +111,34 @@ export async function cleanupGlobalStyle(svg: SVG): Promise<void> {
 				tagName: string,
 				$element: ParseSVGCallbackItem['$element']
 			): boolean => {
-				switch (matchType) {
-					case 'id':
-						return $element.attr('id') === valueMatch;
+				for (let i = 0; i < matches.length; i++) {
+					const { type, value } = matches[i];
+					switch (type) {
+						case 'id':
+							if ($element.attr('id') === value) {
+								return true;
+							}
+							break;
 
-					case 'tag':
-						return tagName === valueMatch;
+						case 'tag':
+							if (tagName === value) {
+								return true;
+							}
+							break;
 
-					case 'class': {
-						const className = $element.attr('class');
-						if (
-							!className ||
-							getClassList(className).indexOf(valueMatch) === -1
-						) {
-							return false;
+						case 'class': {
+							const className = $element.attr('class');
+							if (
+								className &&
+								getClassList(className).indexOf(value) !== -1
+							) {
+								return true;
+							}
 						}
 					}
 				}
 
-				return true;
+				return false;
 			};
 
 			// Parse all elements
@@ -147,8 +174,11 @@ export async function cleanupGlobalStyle(svg: SVG): Promise<void> {
 			});
 
 			// Remove class attribute
+			const classMatches: string[] = matches
+				.filter((item) => item.type === 'class')
+				.map((item) => item.value);
 			if (
-				matchType === 'class' &&
+				classMatches.length &&
 				styleItem.nextTokens[0]?.type === 'close'
 			) {
 				// Can remove class
@@ -165,7 +195,7 @@ export async function cleanupGlobalStyle(svg: SVG): Promise<void> {
 					}
 
 					const filtered = classList.filter(
-						(item) => item !== valueMatch
+						(item) => classMatches.indexOf(item) === -1
 					);
 					if (!filtered.length) {
 						$element.removeAttr('class');
