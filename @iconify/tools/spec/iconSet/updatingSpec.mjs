@@ -2,6 +2,17 @@ import { blankIconSet } from '@iconify/tools/lib/icon-set';
 import { SVG } from '@iconify/tools/lib/svg';
 
 describe('Updating icons', () => {
+	function minify(str) {
+		return (
+			str
+				// Replace new line only after one of allowed characters that are not part of common attributes
+				.replace(/(["';{}}><])\s*\n\s*/g, '$1')
+				// Keep one space in case it is inside attribute
+				.replace(/\s*\n\s*/g, ' ')
+				.trim()
+		);
+	}
+
 	it('Adding icons', () => {
 		const exported = {
 			prefix: 'test',
@@ -173,11 +184,11 @@ describe('Updating icons', () => {
 			width: 100,
 			height: 100,
 		});
-		expect(svg.getBody()).toBe(svgBody2.replace(/\s*\n\s*/g, ''));
+		expect(svg.getBody()).toBe(minify(svgBody2));
 
 		expect(iconSet.fromSVG('foo', svg)).toBe(true);
 		exported.icons.foo = {
-			body: svgBody2.replace(/\s*\n\s*/g, ''),
+			body: minify(svgBody2),
 			width: 100,
 			height: 100,
 		};

@@ -2,6 +2,17 @@ import type { IconifyJSON } from '@iconify/types';
 import { blankIconSet } from '../../lib/icon-set';
 import { SVG } from '../../lib/svg';
 
+function minify(str: string): string {
+	return (
+		str
+			// Replace new line only after one of allowed characters that are not part of common attributes
+			.replace(/(["';}><])\s*\n\s*/g, '$1')
+			// Keep one space in case it is inside attribute
+			.replace(/\s*\n\s*/g, ' ')
+			.trim()
+	);
+}
+
 describe('Updating icons', () => {
 	test('Adding icons', () => {
 		const exported: IconifyJSON = {
@@ -184,12 +195,12 @@ describe('Updating icons', () => {
 			width: 100,
 			height: 100,
 		});
-		expect(svg.getBody()).toBe(svgBody2.replace(/\s*\n\s*/g, ''));
+		expect(svg.getBody()).toBe(minify(svgBody2));
 
 		// Overwrite 'foo', category and character should be copied from old entry
 		expect(iconSet.fromSVG('foo', svg)).toBe(true);
 		exported.icons.foo = {
-			body: svgBody2.replace(/\s*\n\s*/g, ''),
+			body: minify(svgBody2),
 			width: 100,
 			height: 100,
 		};

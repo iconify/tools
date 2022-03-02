@@ -8,6 +8,20 @@ export interface ViewBox {
 }
 
 /**
+ * Remove whitespace
+ */
+function minify(str: string): string {
+	return (
+		str
+			// Replace new line only after one of allowed characters that are not part of common attributes
+			.replace(/(["';{}}><])\s*\n\s*/g, '$1')
+			// Keep one space in case it is inside attribute
+			.replace(/\s*\n\s*/g, ' ')
+			.trim()
+	);
+}
+
+/**
  * SVG class, used to manipulate icon content.
  */
 export class SVG {
@@ -54,7 +68,7 @@ export class SVG {
 	 * Get SVG as string without whitespaces
 	 */
 	toMinifiedString(): string {
-		return this.toString().replace(/\s*\n\s*/g, '');
+		return minify(this.toString());
 	}
 
 	/**
@@ -62,9 +76,7 @@ export class SVG {
 	 */
 	getBody(): string {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		return this.$svg('svg')
-			.html()!
-			.replace(/\s*\n\s*/g, '');
+		return minify(this.$svg('svg').html()!);
 	}
 
 	/**
