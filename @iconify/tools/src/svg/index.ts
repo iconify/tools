@@ -1,3 +1,4 @@
+import { trimSVG } from '@iconify/utils';
 import cheerio from 'cheerio';
 
 export interface ViewBox {
@@ -5,20 +6,6 @@ export interface ViewBox {
 	top: number;
 	width: number;
 	height: number;
-}
-
-/**
- * Remove whitespace
- */
-function minify(str: string): string {
-	return (
-		str
-			// Replace new line only after one of allowed characters that are not part of common attributes
-			.replace(/(["';{}}><])\s*\n\s*/g, '$1')
-			// Keep one space in case it is inside attribute
-			.replace(/\s*\n\s*/g, ' ')
-			.trim()
-	);
 }
 
 /**
@@ -68,7 +55,7 @@ export class SVG {
 	 * Get SVG as string without whitespaces
 	 */
 	toMinifiedString(): string {
-		return minify(this.toString());
+		return trimSVG(this.toString());
 	}
 
 	/**
@@ -76,7 +63,7 @@ export class SVG {
 	 */
 	getBody(): string {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		return minify(this.$svg('svg').html()!);
+		return trimSVG(this.$svg('svg').html()!);
 	}
 
 	/**

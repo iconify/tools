@@ -22,7 +22,7 @@
 		"test": "npm run test:jest && npm run test:jasmine"
 	},
 	"dependencies": {
-		"@iconify/utils": "^1.0.23",
+		"@iconify/utils": "^1.0.28",
 		"@types/cheerio": "^0.22.30",
 		"@types/node-fetch": "^2.5.12",
 		"@types/svgo": "^2.6.0",
