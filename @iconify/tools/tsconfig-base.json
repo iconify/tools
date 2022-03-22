@@ -1,14 +1,9 @@
 {
 	"compilerOptions": {
-		"rootDir": "./src",
-		"outDir": "./lib",
 		"target": "ES2019",
-		"module": "CommonJS",
-		"declaration": true,
-		"declarationMap": false,
-		"sourceMap": false,
-		"composite": true,
+		"module": "ESNext",
 		"strict": true,
+		"skipLibCheck": true,
 		"moduleResolution": "node",
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,

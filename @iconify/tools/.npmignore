@@ -10,6 +10,7 @@ yarn.lock
 tsconfig.tsbuildinfo
 tsconfig*.json
 build.js
+build.config.ts
 jest.config.js
 src
 spec
