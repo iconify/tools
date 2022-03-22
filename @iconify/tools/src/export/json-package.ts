@@ -131,7 +131,7 @@ export async function exportJSONPackage(
 		exports: packageJSONExports,
 		iconSet: packageJSONIconSet,
 		dependencies: dependencies || {
-			'@iconify/types': '^' + getTypesVersion(),
+			'@iconify/types': '^' + (await getTypesVersion()),
 		},
 	};
 

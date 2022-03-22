@@ -1,9 +1,8 @@
 import { promises as fs } from 'fs';
-import { join, dirname } from 'pathe';
 import { downloadGitRepo, DownloadGitRepoResult } from '../../lib/download/git';
 import { prepareDirectoryForExport } from '../../lib/export/helpers/prepare';
 
-const target = join(dirname(dirname(__dirname)), './cache/git');
+const target = 'cache/git';
 
 const testRepo = 'https://github.com/cyberalien/package-test.git';
 

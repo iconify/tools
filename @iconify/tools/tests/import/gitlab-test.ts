@@ -1,12 +1,11 @@
 import { promises as fs } from 'fs';
-import { join, dirname } from 'pathe';
 import {
 	downloadGitLabRepo,
 	DownloadGitLabRepoResult,
 } from '../../lib/download/gitlab';
 import { prepareDirectoryForExport } from '../../lib/export/helpers/prepare';
 
-const target = join(dirname(dirname(__dirname)), './cache/gitlab');
+const target = 'cache/gitlab';
 
 const testProject = '33383621';
 

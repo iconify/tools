@@ -1,12 +1,11 @@
 import { promises as fs } from 'fs';
-import { join, dirname } from 'pathe';
 import {
 	downloadGitHubRepo,
 	DownloadGitHubRepoResult,
 } from '../../lib/download/github';
 import { prepareDirectoryForExport } from '../../lib/export/helpers/prepare';
 
-const target = join(dirname(dirname(__dirname)), './cache/github');
+const target = 'cache/github';
 
 const testRepo = {
 	user: 'cyberalien',

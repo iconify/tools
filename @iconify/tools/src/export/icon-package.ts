@@ -97,7 +97,7 @@ export async function exportIconPackage(
 		iconSetInfo: info,
 		...customPackageProps,
 		dependencies: dependencies || {
-			'@iconify/types': '^' + getTypesVersion(),
+			'@iconify/types': '^' + (await getTypesVersion()),
 		},
 	};
 

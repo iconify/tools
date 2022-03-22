@@ -1,5 +1,6 @@
 {
 	"name": "@iconify/tools",
+	"type": "module",
 	"description": "Collection of functions for cleaning up and parsing SVG for Iconify project",
 	"author": "Vjacheslav Trushkin",
 	"version": "2.0.14",
@@ -17,9 +18,10 @@
 		"lint": "eslint src/**/*.ts",
 		"prebuild": "npm run lint && npm run clean",
 		"build": "unbuild",
-		"test:jest": "jest --runInBand",
+		"test:jest-cjs": "jest --clearCache --config=jest.config.cjs  && jest --runInBand --config=jest.config.cjs",
+		"test:jest-esm": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --clearCache --config=jest.config.mjs && cross-env NODE_OPTIONS=--experimental-vm-modules npx jest --runInBand --config=jest.config.mjs",
 		"test:jasmine": "cross-env NODE_OPTIONS='--experimental-vm-modules --experimental-json-modules' npx jasmine",
-		"test": "npm run test:jest && npm run test:jasmine"
+		"test": "npm run test:jest-cjs && npm run test:jest-esm && npm run test:jasmine"
 	},
 	"dependencies": {
 		"@iconify/types": "^1.1.0",
@@ -30,6 +32,7 @@
 		"@types/tar": "^6.1.0",
 		"cheerio": "^1.0.0-rc.10",
 		"extract-zip": "^2.0.1",
+		"local-pkg": "^0.4.1",
 		"node-fetch": "^2.6.7",
 		"pathe": "^0.2.0",
 		"svgo": "^2.8.0",

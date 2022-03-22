@@ -1,12 +1,11 @@
 import { promises as fs } from 'fs';
-import { join, dirname } from 'pathe';
 import {
 	downloadNPMPackage,
 	DownloadNPMPackageResult,
 } from '../../lib/download/npm';
 import { prepareDirectoryForExport } from '../../lib/export/helpers/prepare';
 
-const target = join(dirname(dirname(__dirname)), './cache/npm');
+const target = 'cache/npm';
 
 const testPackage = '@cyberalien/package-test';
 

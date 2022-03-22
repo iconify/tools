@@ -2,7 +2,7 @@
 .vscode
 .DS_Store
 .env
-.eslintrc.js
+.eslintrc.cjs
 *.map
 node_modules
 npm-debug.log
@@ -11,7 +11,8 @@ tsconfig.tsbuildinfo
 tsconfig*.json
 build.js
 build.config.ts
-jest.config.js
+jest.config.*
+jest.shared.config.cjs
 src
 spec
 tests
