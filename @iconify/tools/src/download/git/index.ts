@@ -1,4 +1,3 @@
-import { promises as fs } from 'fs';
 import {
 	ExportTargetOptions,
 	prepareDirectoryForExport,
@@ -92,32 +91,25 @@ export async function downloadGitRepo(
 					return 'not_modified';
 				}
 			}
-		} catch (err) {
-			// Cleanup on error
-			options.cleanup = true;
+		} catch {
+			//
 		}
 	}
 
 	// Prepare target directory
-	const target = (options.target = await prepareDirectoryForExport(options));
+	const target = (options.target = await prepareDirectoryForExport({
+		...options,
+		// Always cleanup
+		cleanup: true,
+	}));
 
-	// Check if directory is empty if directory wasn't cleaned up
-	const files = options.cleanup ? [] : await fs.readdir(target);
-	if (!files.length) {
-		if (options.log) {
-			console.log(`Cloning ${remote}#${branch} to ${target}`);
-		}
-		await execAsync(
-			`git clone --branch ${branch} --no-tags --depth 1 ${remote} "${target}"`
-		);
-	} else {
-		// Attempt to reset contents
-		try {
-			await resetGitRepoContents(options.target);
-		} catch (err) {
-			//
-		}
+	// Clone repository
+	if (options.log) {
+		console.log(`Cloning ${remote}#${branch} to ${target}`);
 	}
+	await execAsync(
+		`git clone --branch ${branch} --no-tags --depth 1 ${remote} "${target}"`
+	);
 
 	// Get latest hash and make sure correct branch is available
 	const hash = await getGitRepoHash(options);
