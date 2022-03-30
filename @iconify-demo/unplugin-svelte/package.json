@@ -1,0 +1,19 @@
+{
+	"name": "@iconify-demo/unplugin-svelte",
+	"private": "true",
+	"type": "module",
+	"scripts": {
+		"build": "svelte-kit build",
+		"check": "svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
+		"dev": "svelte-kit dev",
+		"preview": "svelte-kit preview"
+	},
+	"devDependencies": {
+		"@sveltejs/kit": "next",
+		"svelte": "^3.46.4",
+		"svelte-check": "^2.4.6",
+		"svelte-preprocess": "^4.10.4",
+		"tslib": "^2.3.1"
+	}
+}

@@ -45,6 +45,9 @@ const badExamples: Record<string, string> = {
 	'bad/svg.svg': 'svg',
 };
 
+// Icons that contain attributes on <svg> element and should throw exception when attempting to add to icon set
+const throwToSVG: Set<string> = new Set(['bad/svg.svg']);
+
 describe('Checking tags tree', () => {
 	goodExamples.forEach((name) => {
 		test(name, async () => {
@@ -82,8 +85,20 @@ describe('Checking tags tree', () => {
 			const name = names[i];
 			const content = await loadFixture('elements/' + name);
 			const svg = new SVG(content);
-			toTest.add(name);
-			iconSet.fromSVG(name, svg);
+
+			try {
+				iconSet.fromSVG(name, svg);
+				toTest.add(name);
+
+				if (throwToSVG.has(name)) {
+					throw new Error(`Expected exception when loading ${name}`);
+				}
+			} catch (err) {
+				if (!throwToSVG.has(name)) {
+					console.error(err);
+					throw new Error(`Unexpected exception in ${name}`);
+				}
+			}
 		}
 
 		// Run test

@@ -1,5 +1,9 @@
-import { trimSVG } from '@iconify/utils';
 import cheerio from 'cheerio';
+import type { IconifyIcon } from '@iconify/types';
+import { trimSVG, iconToSVG, defaultCustomisations } from '@iconify/utils';
+import { fullIcon } from '@iconify/utils/lib/icon';
+import type { CommonIconProps } from '../icon-set/types';
+import type { IconifyIconCustomisations } from '@iconify/utils/lib/customisations';
 
 export interface ViewBox {
 	left: number;
@@ -7,6 +11,9 @@ export interface ViewBox {
 	width: number;
 	height: number;
 }
+
+// Re-export types
+export type { IconifyIconCustomisations, IconifyIcon };
 
 /**
  * SVG class, used to manipulate icon content.
@@ -28,7 +35,32 @@ export class SVG {
 	/**
 	 * Get SVG as string
 	 */
-	toString(): string {
+	toString(customisations?: IconifyIconCustomisations): string {
+		// Build icon if customisations are set
+		if (customisations) {
+			const data = iconToSVG(fullIcon(this.getIcon()), {
+				...defaultCustomisations,
+				...customisations,
+			});
+
+			// Generate SVG
+			let svgAttributes = ' xmlns="http://www.w3.org/2000/svg"';
+			if (data.body.indexOf('xlink:') !== -1) {
+				svgAttributes += ' xmlns:xlink="http://www.w3.org/1999/xlink"';
+			}
+			for (const key in data.attributes) {
+				const value =
+					data.attributes[key as keyof typeof data.attributes];
+				svgAttributes += ' ' + key + '="' + value + '"';
+			}
+			if (data.inline) {
+				svgAttributes += ' style="vertical-align: -0.125em;"';
+			}
+
+			return '<svg' + svgAttributes + '>' + data.body + '</svg>';
+		}
+
+		// Get icon as is if customisations are not set
 		const $root = this.$svg(':root');
 		const box = this.viewBox;
 
@@ -54,16 +86,41 @@ export class SVG {
 	/**
 	 * Get SVG as string without whitespaces
 	 */
-	toMinifiedString(): string {
-		return trimSVG(this.toString());
+	toMinifiedString(customisations?: IconifyIconCustomisations): string {
+		return trimSVG(this.toString(customisations));
 	}
 
 	/**
 	 * Get body
 	 */
 	getBody(): string {
-		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-		return trimSVG(this.$svg('svg').html()!);
+		// Make sure icon has no attributes on <svg> that affect content
+		const $root = this.$svg(':root');
+		const attribs = $root.get(0).attribs;
+		for (const key in attribs) {
+			switch (key.split('-').shift()) {
+				case 'fill':
+				case 'stroke':
+				case 'opacity':
+					throw new Error(
+						`Cannot use getBody() on icon that was not cleaned up with cleanupSVGRoot(). Icon has attribute ${key}="${attribs[key]}"`
+					);
+			}
+		}
+
+		return trimSVG(this.$svg('svg').html() as string);
+	}
+
+	/**
+	 * Get icon as IconifyIcon
+	 */
+	getIcon(): IconifyIcon {
+		const props: CommonIconProps = this.viewBox;
+		const body = this.getBody();
+		return {
+			...props,
+			body,
+		};
 	}
 
 	/**
