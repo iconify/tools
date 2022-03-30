@@ -13,6 +13,7 @@
 	},
 	"main": "./lib/index.cjs",
 	"module": "./lib/index.mjs",
+	"types": "./lib/index.d.ts",
 	"scripts": {
 		"clean": "rimraf lib tests-compiled tsconfig.tsbuildinfo",
 		"lint": "eslint src/**/*.ts",
