@@ -1,5 +1,3 @@
-<script setup lang="ts"></script>
-
 <template>
 	<div>
 		<div class="text-5xl fw100">unocss test</div>
@@ -20,6 +18,16 @@
 				href="https://github.com/unocss/unocss"
 				target="_blank"
 			></a>
+		</p>
+
+		<p class="flex">
+			<span class="mr-1">Icons imported from SVG files:</span>
+			<span
+				class="i-svg-loading text-blue-600 hover:text-red-600 icon24 inline-icon"
+			></span>
+			<span
+				class="i-svg-loading2 text-blue-600 hover:text-red-600 icon24 inline-icon"
+			></span>
 		</p>
 	</div>
 </template>

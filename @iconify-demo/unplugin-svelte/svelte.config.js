@@ -1,4 +1,5 @@
 import { promises as fs } from 'fs';
+import { compareColors, stringToColor } from '@iconify/utils/lib/colors';
 import {
 	SVG,
 	cleanupSVG,
@@ -32,21 +33,25 @@ const config = {
 							await cleanupSVG(svg);
 
 							// Change color to `currentColor`
+							const blackColor = stringToColor('black');
+
 							await parseColors(svg, {
 								defaultColor: 'currentColor',
 								callback: (attr, colorStr, color) => {
 									// console.log('Color:', colorStr, color);
+
+									// Change black to 'currentColor'
+									if (
+										color &&
+										compareColors(color, blackColor)
+									) {
+										return 'currentColor';
+									}
+
 									switch (color?.type) {
 										case 'none':
-											// Allow 'none', which is used for fill
+										case 'current':
 											return color;
-
-										case 'rgb':
-											// Change black to 'currentColor'
-											if (colorStr === '#000') {
-												return 'currentColor';
-											}
-											break;
 									}
 
 									throw new Error(
