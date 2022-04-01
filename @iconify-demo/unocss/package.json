@@ -1,0 +1,17 @@
+{
+	"name": "@iconify-demo/unocss",
+	"private": "true",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "vue-tsc --noEmit && vite build",
+		"preview": "vite preview"
+	},
+	"dependencies": {
+		"vue": "^3.2.31"
+	},
+	"devDependencies": {
+		"@vitejs/plugin-vue": "^2.3.1",
+		"vue-tsc": "^0.33.9"
+	}
+}
