@@ -23,7 +23,7 @@ export function createConfig({ strict = true, dev = true } = {}) {
 				autoInstall: true,
 				collections: {
 					// Loading IconifyJSON data
-					test: async () => {
+					'test': async () => {
 						const content = await fs.readFile(
 							'assets/test.json',
 							'utf8'
@@ -32,7 +32,7 @@ export function createConfig({ strict = true, dev = true } = {}) {
 					},
 
 					// Loading icon set
-					svg: async () => {
+					'custom-svg': async () => {
 						// Load icons
 						const iconSet = await importDirectory('assets/svg', {
 							prefix: 'svg',
