@@ -6,6 +6,7 @@ import {
 	parseColors,
 	runSVGO,
 	deOptimisePaths,
+	importDirectory,
 } from '@iconify/tools';
 import preprocess from 'svelte-preprocess';
 import Icons from 'unplugin-icons/vite';
@@ -23,6 +24,62 @@ const config = {
 				Icons({
 					compiler: 'svelte',
 					customCollections: {
+						// Load an entire icon set
+						'svg-animated': async () => {
+							// Load icons
+							const iconSet = await importDirectory(
+								assetsRootDir + '/svg-animated',
+								{
+									prefix: 'svg-animated',
+								}
+							);
+
+							// Clean up each icon
+							await iconSet.forEach(async (name) => {
+								const svg = iconSet.toSVG(name);
+
+								// Change color to `currentColor`
+								const blackColor = stringToColor('black');
+
+								await parseColors(svg, {
+									defaultColor: 'currentColor',
+									callback: (attr, colorStr, color) => {
+										// console.log('Color:', colorStr, color);
+
+										// Change black to 'currentColor'
+										if (
+											color &&
+											compareColors(color, blackColor)
+										) {
+											return 'currentColor';
+										}
+
+										switch (color?.type) {
+											case 'none':
+											case 'current':
+												return color;
+										}
+
+										throw new Error(
+											`Unexpected color "${colorStr}" in attribute ${attr}`
+										);
+									},
+								});
+
+								// Optimise, but do not change shapes because they are animated
+								await runSVGO(svg, {
+									keepShapes: true,
+								});
+
+								// Update icon in icon set
+								iconSet.fromSVG(name, svg);
+							});
+
+							// Export as IconifyJSON
+							return iconSet.export();
+						},
+
+						// Load icon one by one on demand
 						'svg-ion': async (name) => {
 							// Load icon
 							const filename = `${assetsRootDir}/svg-ion/${name}.svg`;
