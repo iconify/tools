@@ -463,8 +463,7 @@ export class IconSet {
 			const items = this[prop];
 			const keys = Object.keys(items);
 			if (keys.length) {
-				// Sort theme and get matching icon names
-				sortThemeKeys(keys);
+				// Get matching icon names
 				const sortedTheme = Object.create(null);
 				const tested = this.checkTheme(prop === 'prefixes');
 

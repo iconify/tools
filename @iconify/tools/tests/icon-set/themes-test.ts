@@ -54,6 +54,13 @@ describe('Checking themes', () => {
 			'bold': 'Bold',
 			'': 'Regular',
 		});
+
+		// Make sure exported suffixes order is correct
+		expect(Object.keys(exported.suffixes || {})).toEqual([
+			'line',
+			'bold',
+			'',
+		]);
 	});
 
 	test('Prefixes, items without theme', () => {
@@ -113,6 +120,9 @@ describe('Checking themes', () => {
 			bold: 'Bold',
 			// 'solid' should be missing because it does not have matching icons
 		});
+
+		// Make sure exported prefixes order is correct
+		expect(Object.keys(exported.prefixes || {})).toEqual(['line', 'bold']);
 	});
 
 	test('Partial prefixes, legacy themes', () => {
