@@ -32,6 +32,7 @@ export { getGitLabRepoHash } from './download/gitlab/hash';
 export { downloadNPMPackage } from './download/npm/index';
 export { getNPMVersion, getPackageVersion } from './download/npm/version';
 export { downloadPackage } from './download/index';
+export { downloadFile } from './download/api/download';
 
 // Manipulation
 export { parseColors, isEmptyColor } from './colors/parse';
