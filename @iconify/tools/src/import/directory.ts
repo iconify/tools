@@ -8,7 +8,7 @@ import { cleanupSVG } from '../svg/cleanup';
 /**
  * Entry for file
  */
-export interface ImportDirectpryFileEntry {
+export interface ImportDirectoryFileEntry {
 	// Path to scanned directory, ends with '/'
 	path: string;
 	// Sub-directory, ends with '/' (can be empty)
@@ -30,7 +30,7 @@ export interface ImportDirectpryFileEntry {
  */
 type ImportDirectoryKeywordCallbackResult = string | undefined;
 export type ImportDirectoryKeywordCallback = (
-	file: ImportDirectpryFileEntry,
+	file: ImportDirectoryFileEntry,
 	defaultKeyword: string,
 	iconSet: IconSet
 ) =>
@@ -64,7 +64,7 @@ export async function importDirectory(
 	// Find all files
 	const files = await scanDirectory(path, (ext, file, subdir, path) => {
 		if (ext.toLowerCase() === '.svg') {
-			const result: ImportDirectpryFileEntry = {
+			const result: ImportDirectoryFileEntry = {
 				file,
 				ext,
 				subdir,

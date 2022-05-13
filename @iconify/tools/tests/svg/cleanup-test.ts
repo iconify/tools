@@ -87,4 +87,13 @@ describe('Cleaning up SVG', () => {
 			'<svg width="256" height="256" viewBox="0 0 256 256"><defs><symbol id="def1" fill="purple"><rect x="0" y="0" width="64" height="64" id="def2"/></symbol></defs><use href="#def1" fill="red"/><use href="#def2" transform="translate(32 32)"/><use href="#def2" fill="teal" transform="translate(64 64)"/></svg>'
 		);
 	});
+
+	test('discord.svg', async () => {
+		const content = await loadFixture('discord.svg');
+		const svg = new SVG(content);
+		await cleanupSVG(svg);
+		expect(svg.toMinifiedString()).toBe(
+			content.replace(/\s*\n\s*/g, '').replace(/" \/>/g, '"/>')
+		);
+	});
 });

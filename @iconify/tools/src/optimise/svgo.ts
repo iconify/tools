@@ -2,53 +2,88 @@ import { optimize } from 'svgo';
 import type { OptimizeOptions, Plugin } from 'svgo';
 import type { SVG } from '../svg';
 
-export const defaultSVGOPlugins: Plugin[] = [
-	'cleanupAttrs',
-	'mergeStyles',
-	'inlineStyles',
-	'removeComments',
-	'removeUselessDefs',
-	'removeEditorsNSData',
-	'removeEmptyAttrs',
-	'removeEmptyContainers',
-	'convertStyleToAttrs',
-	'convertColors',
-	'convertTransform',
-	'removeUnknownsAndDefaults',
-	'removeNonInheritableGroupAttrs',
-	'removeUselessStrokeAndFill',
-	'removeUnusedNS',
-	'cleanupNumericValues',
-	'cleanupListOfValues',
-	'moveElemsAttrsToGroup',
-	'moveGroupAttrsToElems',
-	'collapseGroups',
-	'sortDefsChildren',
-	'sortAttrs',
-];
+interface CleanupIDsOption {
+	// Cleanup IDs, value is prefix to add to IDs, default is 'svgID'. False to disable it
+	// Do not use dashes in ID, it breaks some SVG animations
+	cleanupIDs?: string | false;
+}
+
+interface GetSVGOPluingOptions extends CleanupIDsOption {
+	animated?: boolean;
+	keepShapes?: boolean;
+}
 
 /**
- * Plugins that modify shapes. Added to plugins list, unless 'keepShapes' option is enabled
+ * Get list of plugins
  */
-export const shapeModifiyingSVGOPlugins: Plugin[] = [
-	'removeHiddenElems',
-	'convertShapeToPath',
-	'convertEllipseToCircle',
-	{
-		name: 'convertPathData',
-		params: {
-			noSpaceAfterFlags: true,
-		},
-	},
-	{
-		name: 'mergePaths',
-		params: {
-			noSpaceAfterFlags: true,
-		},
-	},
-	// 'removeOffCanvasPaths', // bugged for some icons
-	'reusePaths',
-];
+export function getSVGOPlugins(options: GetSVGOPluingOptions): Plugin[] {
+	return [
+		'cleanupAttrs',
+		'mergeStyles',
+		'inlineStyles',
+		'removeComments',
+		'removeUselessDefs',
+		'removeEditorsNSData',
+		'removeEmptyAttrs',
+		'removeEmptyContainers',
+		'convertStyleToAttrs',
+		'convertColors',
+		'convertTransform',
+		'removeUnknownsAndDefaults',
+		'removeNonInheritableGroupAttrs',
+		'removeUnusedNS',
+		'cleanupNumericValues',
+		'cleanupListOfValues',
+		'moveElemsAttrsToGroup',
+		'moveGroupAttrsToElems',
+		'collapseGroups',
+		'sortDefsChildren',
+		'sortAttrs',
+
+		// Plugins that are bugged when using animations
+		...((options.animated
+			? []
+			: ['removeUselessStrokeAndFill']) as Plugin[]),
+
+		// Plugins that modify shapes or are bugged when using animations
+		...((options.animated || options.keepShapes
+			? []
+			: [
+					'removeHiddenElems',
+					'convertShapeToPath',
+					'convertEllipseToCircle',
+					{
+						name: 'convertPathData',
+						params: {
+							noSpaceAfterFlags: true,
+						},
+					},
+					{
+						name: 'mergePaths',
+						params: {
+							noSpaceAfterFlags: true,
+						},
+					},
+					// 'removeOffCanvasPaths', // bugged for some icons
+					'reusePaths',
+			  ]) as Plugin[]),
+
+		// Clean up IDs
+		...((options.cleanupIDs !== false
+			? [
+					{
+						name: 'cleanupIDs',
+						params: {
+							prefix:
+								typeof options.cleanupIDs === 'string'
+									? options.cleanupIDs
+									: 'svgID',
+						},
+					},
+			  ]
+			: []) as Plugin[]),
+	];
+}
 
 /**
  * Options
@@ -65,15 +100,11 @@ interface SVGOOptionsWithPlugin extends SVGOCommonOptions {
 }
 
 // Options list without plugins list
-interface SVGOptionsWithoutPlugin extends SVGOCommonOptions {
+interface SVGOptionsWithoutPlugin extends SVGOCommonOptions, CleanupIDsOption {
 	plugins?: undefined;
 
 	// Keep shapes: doesn't run plugins that mess with shapes
 	keepShapes?: boolean;
-
-	// Cleanup IDs, value is prefix to add to IDs, default is 'svgID'. False to disable it
-	// Do not use dashes in ID, it breaks some SVG animations
-	cleanupIDs?: string | false;
 }
 
 type SVGOOptions = SVGOOptionsWithPlugin | SVGOptionsWithoutPlugin;
@@ -97,31 +128,13 @@ export async function runSVGO(
 		plugins = options.plugins;
 	} else {
 		// Check for animations: convertShapeToPath and removeHiddenElems plugins currently might ruin animations
-		let keepShapes = options.keepShapes;
-		if (
-			keepShapes === void 0 &&
-			(code.indexOf('<animate') !== -1 || code.indexOf('<set') !== -1)
-		) {
-			// Do not check animations: just assume they might break
-			keepShapes = true;
-		}
+		const animated =
+			code.indexOf('<animate') !== -1 || code.indexOf('<set') !== -1;
 
-		plugins = defaultSVGOPlugins.concat(
-			keepShapes ? [] : shapeModifiyingSVGOPlugins,
-			options.cleanupIDs !== false
-				? [
-						{
-							name: 'cleanupIDs',
-							params: {
-								prefix:
-									typeof options.cleanupIDs === 'string'
-										? options.cleanupIDs
-										: 'svgID',
-							},
-						},
-				  ]
-				: []
-		);
+		plugins = getSVGOPlugins({
+			...options,
+			animated,
+		});
 	}
 
 	// Run SVGO
