@@ -116,6 +116,10 @@ export class IconSet {
 		// Add aliases
 		if (data.aliases) {
 			for (const name in data.aliases) {
+				if (entries[name]) {
+					// identical alias and icon
+					continue;
+				}
 				const item = data.aliases[name];
 				const parent = item.parent;
 				const props = filterProps(item, false);
