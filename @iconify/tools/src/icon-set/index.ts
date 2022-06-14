@@ -559,7 +559,7 @@ export class IconSet {
 	/**
 	 * Find category by title
 	 */
-	_findCategory(title: string, add: boolean): IconCategory | null {
+	findCategory(title: string, add: boolean): IconCategory | null {
 		const categoryItem = Array.from(this.categories).find(
 			(item) => item.title === title
 		);
@@ -588,7 +588,7 @@ export class IconSet {
 		// Find item
 		const categoryItem =
 			typeof category === 'string'
-				? this._findCategory(category, false)
+				? this.findCategory(category, false)
 				: category;
 		if (!categoryItem) {
 			return null;
@@ -850,7 +850,7 @@ export class IconSet {
 	 */
 	toggleCategory(iconName: string, category: string, add: boolean): boolean {
 		const item = this.entries[iconName];
-		const categoryItem = this._findCategory(category, add);
+		const categoryItem = this.findCategory(category, add);
 		if (!item || !categoryItem) {
 			return false;
 		}
