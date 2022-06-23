@@ -15,9 +15,11 @@ async function exists(filename: string): Promise<boolean> {
 
 describe('Exporting to JSON package', () => {
 	test('Few icons', async () => {
+		const lastModified = 12345;
 		const targetDir = 'cache/export-json-package-test';
 		const iconSet = new IconSet({
 			prefix: 'foo',
+			lastModified,
 			icons: {
 				maximize: {
 					body: '<g fill="currentColor"><path d="M3 3v10h10V3H3zm9 9H4V4h8v8z"/></g>',
