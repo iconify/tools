@@ -160,12 +160,12 @@ describe('Working with aliases', () => {
 		expect(iconSet.resolve('alias6')).toEqual(expectedIcon);
 		expect(getIconData(iconSetData, 'alias6', false)).toEqual(expectedIcon);
 
-		// Recursion is too high
-		expect(iconSet.resolve('alias7')).toBeNull();
-		expect(getIconData(iconSetData, 'alias7', false)).toBeNull();
+		// Should no longer fail: recursion can be unlimited because of new tree handling algorythm
+		expect(iconSet.resolve('alias7')).toEqual(expectedIcon);
+		expect(getIconData(iconSetData, 'alias7', false)).toEqual(expectedIcon);
 
-		expect(iconSet.resolve('alias8')).toBeNull();
-		expect(getIconData(iconSetData, 'alias8', false)).toBeNull();
+		expect(iconSet.resolve('alias8')).toEqual(expectedIcon);
+		expect(getIconData(iconSetData, 'alias8', false)).toEqual(expectedIcon);
 	});
 
 	test('Hidden icons', () => {

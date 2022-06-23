@@ -8,18 +8,22 @@ import type {
 	IconifyAliases,
 	IconifyCategories,
 } from '@iconify/types';
-import { fullIcon } from '@iconify/utils/lib/icon';
+import {
+	defaultIconDimensions,
+	defaultIconProps,
+} from '@iconify/utils/lib/icon/defaults';
 import { iconToSVG } from '@iconify/utils/lib/svg/build';
 import {
-	defaults,
+	defaultIconCustomisations,
 	IconifyIconCustomisations,
-} from '@iconify/utils/lib/customisations';
+} from '@iconify/utils/lib/customisations/defaults';
 import { minifyIconSet } from '@iconify/utils/lib/icon-set/minify';
 import { convertIconSetInfo } from '@iconify/utils/lib/icon-set/convert-info';
-import { extraDefaultProps, filterProps } from './props';
+import { filterProps, defaultCommonProps } from './props';
 import type {
 	CheckThemeResult,
 	CommonIconProps,
+	ExtraIconProps,
 	IconCategory,
 	IconSetAsyncForEachCallback,
 	IconSetIcon,
@@ -90,7 +94,7 @@ export class IconSet {
 		this.prefix = data.prefix;
 
 		// Defaults
-		const defaultProps = filterProps(data, true);
+		const defaultProps = filterProps(data, defaultIconDimensions, true);
 
 		// Add icons
 		this.entries = Object.create(null);
@@ -105,6 +109,7 @@ export class IconSet {
 						...defaultProps,
 						...item,
 					},
+					defaultCommonProps,
 					true
 				),
 				chars: new Set(),
@@ -122,7 +127,7 @@ export class IconSet {
 				}
 				const item = data.aliases[name];
 				const parent = item.parent;
-				const props = filterProps(item, false);
+				const props = filterProps(item, defaultCommonProps, false);
 				const chars: Set<string> = new Set();
 				if (Object.keys(props).length) {
 					// Variation
@@ -333,7 +338,7 @@ export class IconSet {
 		const result = getIcon(name, 0);
 
 		// Return icon
-		return result && full ? fullIcon(result) : result;
+		return result && full ? { ...defaultIconProps, ...result } : result;
 	}
 
 	/**
@@ -341,7 +346,7 @@ export class IconSet {
 	 */
 	toString(
 		name: string,
-		custommisations: IconifyIconCustomisations = {
+		customisations: IconifyIconCustomisations = {
 			width: 'auto',
 			height: 'auto',
 		}
@@ -351,8 +356,8 @@ export class IconSet {
 			return null;
 		}
 		const result = iconToSVG(item, {
-			...defaults,
-			...custommisations,
+			...defaultIconCustomisations,
+			...customisations,
 		});
 
 		const attributes = Object.keys(result.attributes)
@@ -759,7 +764,7 @@ export class IconSet {
 		return this.setItem(name, {
 			type: 'icon',
 			body: icon.body,
-			props: filterProps(icon, true),
+			props: filterProps(icon, defaultCommonProps, true),
 			chars: new Set(),
 			categories: new Set(),
 		});
@@ -796,21 +801,13 @@ export class IconSet {
 	 * Icon from SVG. Updates old icon if it exists
 	 */
 	fromSVG(name: string, svg: SVG): boolean {
-		const props: CommonIconProps = svg.viewBox;
+		const props: CommonIconProps = { ...svg.viewBox };
 		const body = svg.getBody();
 		const item = this.entries[name];
 
 		switch (item?.type) {
 			case 'icon':
 			case 'variation': {
-				// Copy extra properties
-				for (const key in extraDefaultProps) {
-					const prop = key as keyof typeof extraDefaultProps;
-					if (item.props[prop]) {
-						props[prop] = item.props[prop];
-					}
-				}
-
 				// Set icon
 				return this.setItem(name, {
 					type: 'icon',

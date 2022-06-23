@@ -1,7 +1,7 @@
 import cheerio from 'cheerio';
 import type { IconifyIcon } from '@iconify/types';
-import { trimSVG, iconToSVG, defaultCustomisations } from '@iconify/utils';
-import { fullIcon } from '@iconify/utils/lib/icon';
+import { trimSVG, iconToSVG, defaultIconCustomisations } from '@iconify/utils';
+import { defaultIconProps } from '@iconify/utils/lib/icon/defaults';
 import type { CommonIconProps } from '../icon-set/types';
 import type { IconifyIconCustomisations } from '@iconify/utils/lib/customisations';
 
@@ -38,10 +38,16 @@ export class SVG {
 	toString(customisations?: IconifyIconCustomisations): string {
 		// Build icon if customisations are set
 		if (customisations) {
-			const data = iconToSVG(fullIcon(this.getIcon()), {
-				...defaultCustomisations,
-				...customisations,
-			});
+			const data = iconToSVG(
+				{
+					...defaultIconProps,
+					...this.getIcon(),
+				},
+				{
+					...defaultIconCustomisations,
+					...customisations,
+				}
+			);
 
 			// Generate SVG
 			let svgAttributes = ' xmlns="http://www.w3.org/2000/svg"';
@@ -53,7 +59,7 @@ export class SVG {
 					data.attributes[key as keyof typeof data.attributes];
 				svgAttributes += ' ' + key + '="' + value + '"';
 			}
-			if (data.inline) {
+			if (customisations.inline) {
 				svgAttributes += ' style="vertical-align: -0.125em;"';
 			}
 

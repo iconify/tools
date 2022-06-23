@@ -25,8 +25,7 @@
 		"test": "npm run test:jest-cjs && npm run test:jest-esm && npm run test:jasmine"
 	},
 	"dependencies": {
-		"@iconify/types": "^1.1.0",
-		"@iconify/utils": "^1.0.28",
+		"@iconify/utils": "^2.0.0-beta.2",
 		"@types/cheerio": "^0.22.30",
 		"@types/node-fetch": "^2.5.12",
 		"@types/svgo": "^2.6.0",

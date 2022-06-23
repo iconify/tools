@@ -1,4 +1,4 @@
-import { fullIcon } from '@iconify/utils/lib/icon';
+import { defaultIconProps } from '@iconify/utils/lib/icon/defaults';
 import { IconSet } from '@iconify/tools/lib/icon-set';
 import { findMatchingIcon } from '@iconify/tools/lib/icon-set/match';
 
@@ -20,55 +20,45 @@ describe('Finding matching icons', () => {
 
 		// No such icon
 		expect(
-			findMatchingIcon(
-				iconSet,
-				fullIcon({
-					body: '<g />',
-				})
-			)
+			findMatchingIcon(iconSet, {
+				...defaultIconProps,
+				body: '<g />',
+			})
 		).toBeNull();
 
 		// Matchin icons
 		expect(
-			findMatchingIcon(
-				iconSet,
-				fullIcon({
-					body: '<g id="bar" />',
-					width: 16,
-					height: 16,
-				})
-			)
+			findMatchingIcon(iconSet, {
+				...defaultIconProps,
+				body: '<g id="bar" />',
+				width: 16,
+				height: 16,
+			})
 		).toBe('bar');
 		expect(
-			findMatchingIcon(
-				iconSet,
-				fullIcon({
-					body: '<g id="baz" />',
-					width: 20,
-					height: 20,
-				})
-			)
+			findMatchingIcon(iconSet, {
+				...defaultIconProps,
+				body: '<g id="baz" />',
+				width: 20,
+				height: 20,
+			})
 		).toBe('baz');
 
 		// Bad dimensions
 		expect(
-			findMatchingIcon(
-				iconSet,
-				fullIcon({
-					body: '<g id="baz" />',
-				})
-			)
+			findMatchingIcon(iconSet, {
+				...defaultIconProps,
+				body: '<g id="baz" />',
+			})
 		).toBeNull();
 
 		// Unexpected transformations
 		expect(
-			findMatchingIcon(
-				iconSet,
-				fullIcon({
-					body: '<g id="bar" />',
-					rotate: 2,
-				})
-			)
+			findMatchingIcon(iconSet, {
+				...defaultIconProps,
+				body: '<g id="bar" />',
+				rotate: 2,
+			})
 		).toBeNull();
 	});
 
@@ -126,93 +116,77 @@ describe('Finding matching icons', () => {
 
 		// 'bar' and its aliases
 		expect(
-			findMatchingIcon(
-				iconSet,
-				fullIcon({
-					body: '<g />',
-				})
-			)
+			findMatchingIcon(iconSet, {
+				...defaultIconProps,
+				body: '<g />',
+			})
 		).toBe('bar');
 		expect(
-			findMatchingIcon(
-				iconSet,
-				fullIcon({
-					body: '<g />',
-					rotate: 1,
-				})
-			)
+			findMatchingIcon(iconSet, {
+				...defaultIconProps,
+				body: '<g />',
+				rotate: 1,
+			})
 		).toBe('alias1');
 		expect(
-			findMatchingIcon(
-				iconSet,
-				fullIcon({
-					body: '<g />',
-					rotate: 2,
-				})
-			)
+			findMatchingIcon(iconSet, {
+				...defaultIconProps,
+				body: '<g />',
+				rotate: 2,
+			})
 		).toBe('alias2');
 		expect(
-			findMatchingIcon(
-				iconSet,
-				fullIcon({
-					body: '<g />',
-					rotate: 3,
-				})
-			)
+			findMatchingIcon(iconSet, {
+				...defaultIconProps,
+				body: '<g />',
+				rotate: 3,
+			})
 		).toBeNull();
 
 		// 'baz' and its aliases
 		expect(
-			findMatchingIcon(
-				iconSet,
-				fullIcon({
-					body: '<g />',
-					width: 20,
-					height: 20,
-				})
-			)
+			findMatchingIcon(iconSet, {
+				...defaultIconProps,
+				body: '<g />',
+				width: 20,
+				height: 20,
+			})
 		).toBe('baz');
 
 		// Matches both 'alias3' and 'alias4', but first one is hidden
 		expect(
-			findMatchingIcon(
-				iconSet,
-				fullIcon({
-					body: '<g />',
-					width: 20,
-					height: 20,
-					hFlip: true,
-				})
-			)
+			findMatchingIcon(iconSet, {
+				...defaultIconProps,
+				body: '<g />',
+				width: 20,
+				height: 20,
+				hFlip: true,
+			})
 		).toBe('alias4');
 
 		// Matches 'alias5', 'alias6' and 'alias7', but first and last icons are hidden
 		expect(
-			findMatchingIcon(
-				iconSet,
-				fullIcon({
-					body: '<g />',
-					width: 20,
-					height: 20,
-					hFlip: true,
-					vFlip: true,
-				})
-			)
+			findMatchingIcon(iconSet, {
+				...defaultIconProps,
+				body: '<g />',
+				width: 20,
+				height: 20,
+				hFlip: true,
+				vFlip: true,
+			})
 		).toBe('alias6');
 
 		// Matches 'alias8'
 		expect(
-			findMatchingIcon(
-				iconSet,
-				fullIcon({
-					body: '<g />',
-					width: 20,
-					height: 20,
-					hFlip: true,
-					vFlip: true,
-					rotate: 1,
-				})
-			)
+			findMatchingIcon(iconSet, {
+				...defaultIconProps,
+				body: '<g />',
+				width: 20,
+				height: 20,
+				hFlip: true,
+				vFlip: true,
+				rotate: 1,
+			})
 		).toBe('alias8');
 	});
 });

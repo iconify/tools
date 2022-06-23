@@ -1,40 +1,26 @@
-import { iconDefaults } from '@iconify/utils/lib/icon';
-import type { CommonIconProps, ExtraIconProps } from './types';
+import {
+	commonObjectProps,
+	unmergeObjects,
+} from '@iconify/utils/lib/misc/objects';
+import type { CommonIconProps } from './types';
+import { defaultIconProps } from '@iconify/utils';
 
 /**
- * Default properties
+ * Common properties for icon and alias
  */
-export const extraDefaultProps: Required<ExtraIconProps> = {
+export const defaultCommonProps: Required<CommonIconProps> = Object.freeze({
+	...defaultIconProps,
 	hidden: false,
-};
-
-export const defaultCommonProps: Required<CommonIconProps> = {
-	...iconDefaults,
-	...extraDefaultProps,
-};
-
-/**
- * Properties to filter
- */
-const props = Object.keys(defaultCommonProps) as (keyof CommonIconProps)[];
+});
 
 /**
  * Filter icon props: copies properties, removing undefined and default entries
  */
 export function filterProps(
 	data: CommonIconProps,
+	reference: CommonIconProps,
 	compareDefaultValues: boolean
 ): CommonIconProps {
-	const result = {} as CommonIconProps;
-	props.forEach((attr) => {
-		const value = data[attr];
-		if (
-			value !== void 0 &&
-			(!compareDefaultValues ||
-				value !== (defaultCommonProps as Record<string, unknown>)[attr])
-		) {
-			(result as Record<string, unknown>)[attr] = value;
-		}
-	});
-	return result;
+	const result = commonObjectProps(data, reference);
+	return compareDefaultValues ? unmergeObjects(result, reference) : result;
 }

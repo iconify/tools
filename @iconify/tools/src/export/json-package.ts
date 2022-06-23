@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs';
-import { iconDefaults } from '@iconify/utils/lib/icon';
+import { defaultIconProps } from '@iconify/utils/lib/icon/defaults';
 import type { IconSet } from '../icon-set';
 import type { ExportTargetOptions } from './helpers/prepare';
 import { prepareDirectoryForExport } from './helpers/prepare';
@@ -42,7 +42,7 @@ const exportTypes: Record<ExportContentsKeys, string> = {
 };
 
 const iconsKeys = ['aliases'].concat(
-	Object.keys(iconDefaults)
+	Object.keys(defaultIconProps)
 ) as (keyof IconifyJSON)[];
 const metadataKeys: (keyof IconifyMetaData)[] = [
 	'categories',

@@ -1,5 +1,5 @@
-import { iconDefaults } from '@iconify/utils/lib/icon';
-import type { FullIconifyIcon } from '@iconify/utils/lib/icon';
+import { defaultIconProps } from '@iconify/utils/lib/icon/defaults';
+import type { FullIconifyIcon } from '@iconify/utils/lib/icon/defaults';
 import type { IconSet } from '.';
 
 // Maximum depth for looking for parent icons
@@ -16,8 +16,8 @@ export function findMatchingIcon(
 	let hiddenMatch: string | null = null;
 
 	function isMatching(data: FullIconifyIcon): boolean {
-		for (const key in iconDefaults) {
-			const attr = key as keyof typeof iconDefaults;
+		for (const key in defaultIconProps) {
+			const attr = key as keyof typeof defaultIconProps;
 			if (data[attr] !== icon[attr]) {
 				return false;
 			}
