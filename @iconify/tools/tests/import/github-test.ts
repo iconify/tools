@@ -37,21 +37,25 @@ const testBranches: TestBranches[] = [
 ];
 
 describe('Downloading Git repository using GitHub API', () => {
+	let lastResult: DownloadGitHubRepoResult | 'not_modified';
+
 	beforeAll(async () => {
 		// Remove old cache
 		await prepareDirectoryForExport({
 			target,
 			cleanup: true,
 		});
-	});
 
-	let lastResult: DownloadGitHubRepoResult | 'not_modified';
-
-	test('Downloading main branch', async () => {
+		// Check if tests should be run
 		if (!token) {
 			console.warn(
 				`Cannot test downloadGitHubRepo() because API token is not provided. Set "${tokenKey}" environmental variable to test GitHub API.`
 			);
+		}
+	});
+
+	(token ? test : test.skip)('Downloading main branch', async () => {
+		if (!token) {
 			return;
 		}
 
@@ -82,7 +86,7 @@ describe('Downloading Git repository using GitHub API', () => {
 		expect(packageContents.version).toBe(branch.version);
 	});
 
-	test('Downloading archive branch', async () => {
+	(token ? test : test.skip)('Downloading archive branch', async () => {
 		if (!token) {
 			return;
 		}
@@ -116,7 +120,7 @@ describe('Downloading Git repository using GitHub API', () => {
 		expect(packageContents.version).toBe(branch.version);
 	});
 
-	test('Checking not_modified', async () => {
+	(token ? test : test.skip)('Checking not_modified', async () => {
 		if (!token) {
 			return;
 		}
@@ -135,7 +139,7 @@ describe('Downloading Git repository using GitHub API', () => {
 		expect(result).toBe('not_modified');
 	});
 
-	test('Checking out main branch again', async () => {
+	(token ? test : test.skip)('Checking out main branch again', async () => {
 		if (!token) {
 			return;
 		}

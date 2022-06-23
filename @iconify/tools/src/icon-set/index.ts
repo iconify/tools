@@ -2,7 +2,6 @@ import type {
 	IconifyJSON,
 	ExtendedIconifyIcon,
 	ExtendedIconifyAlias,
-	IconifyOptional,
 	IconifyInfo,
 	IconifyIcons,
 	IconifyAliases,
@@ -23,7 +22,6 @@ import { filterProps, defaultCommonProps } from './props';
 import type {
 	CheckThemeResult,
 	CommonIconProps,
-	ExtraIconProps,
 	IconCategory,
 	IconSetAsyncForEachCallback,
 	IconSetIcon,
@@ -34,15 +32,16 @@ import type {
 	ResolvedIconifyIcon,
 } from './types';
 import { SVG } from '../svg';
+import type {
+	ParentIconsList,
+	ParentIconsTree,
+} from '@iconify/utils/lib/icon-set/tree';
+import { mergeIconData } from '@iconify/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function assertNever(v: never) {
 	//
 }
-
-// Maximum depth for looking for parent icons
-// Must match depth limit in Iconify Utils (tested in unit tests by parsing same icon set with deep aliases)
-const maxIteration = 6;
 
 // Theme keys
 const themeKeys: ('prefixes' | 'suffixes')[] = ['prefixes', 'suffixes'];
@@ -259,6 +258,56 @@ export class IconSet {
 	}
 
 	/**
+	 * Get parent icons tree
+	 *
+	 * Returns parent icons list for each icon, null if failed to resolve.
+	 * In parent icons list, first element is a direct parent, last is icon. Does not include item.
+	 *
+	 * Examples:
+	 *   'alias3': ['alias2', 'alias1', 'icon']
+	 * 	 'icon': []
+	 * 	 'bad-icon': null
+	 */
+	getTree(names?: string[]): ParentIconsTree {
+		const entries = this.entries;
+		const resolved = Object.create(null) as ParentIconsTree;
+
+		function resolve(name: string): ParentIconsList | null {
+			const item = entries[name];
+			if (!item) {
+				// No such item
+				return (resolved[name] = null);
+			}
+
+			if (item.type === 'icon') {
+				// Icon
+				return (resolved[name] = []);
+			}
+
+			if (resolved[name] === void 0) {
+				// Mark as failed if parent alias points to this icon to avoid infinite loop
+				resolved[name] = null;
+
+				// Get parent icon name
+				const parent = item.parent;
+
+				// Get value for parent
+				const value = parent && resolve(parent);
+				if (value) {
+					resolved[name] = [parent].concat(value);
+				}
+			}
+
+			return resolved[name];
+		}
+
+		// Resolve only required icons
+		(names || Object.keys(entries)).forEach(resolve);
+
+		return resolved;
+	}
+
+	/**
 	 * Resolve icon
 	 */
 	resolve(name: string, full: false): ResolvedIconifyIcon | null;
@@ -268,74 +317,32 @@ export class IconSet {
 		name: string,
 		full = false
 	): Required<ResolvedIconifyIcon> | ResolvedIconifyIcon | null {
+		// Get parent icons tree
 		const entries = this.entries;
+		const item = entries[name];
+		const tree =
+			item && (item.type === 'icon' ? [] : this.getTree([name])[name]);
+		if (!tree) {
+			return null;
+		}
 
-		function getIcon(
-			name: string,
-			iteration: number
-		): ResolvedIconifyIcon | null {
-			if (entries[name] === void 0 || iteration > maxIteration) {
-				// Missing or loop is too deep
-				return null;
+		// Parse tree, including icon
+		let result = {} as ResolvedIconifyIcon;
+
+		function parse(name: string) {
+			const item = entries[name];
+			if (item.type === 'alias') {
+				return;
 			}
 
-			const item = entries[name];
-			switch (item.type) {
-				case 'icon': {
-					const result: ResolvedIconifyIcon = {
-						body: item.body,
-						...item.props,
-					};
-					return result;
-				}
-
-				case 'alias':
-					return getIcon(item.parent, iteration + 1);
-
-				case 'variation': {
-					const parent = getIcon(item.parent, iteration + 1);
-					if (!parent) {
-						return null;
-					}
-
-					for (const key in item.props) {
-						const attr = key as keyof IconifyOptional;
-						const value = item.props[attr];
-						if (value) {
-							if (parent[attr] === void 0) {
-								parent[attr as 'rotate'] = value as number;
-							} else {
-								// Merge props
-								switch (attr) {
-									case 'rotate':
-										parent[attr] =
-											((parent[attr] as number) +
-												(value as number)) %
-											4;
-										break;
-
-									case 'hFlip':
-									case 'vFlip':
-										parent[attr] = !parent[attr];
-										break;
-
-									default:
-										parent[attr] = value as number;
-										break;
-								}
-							}
-						}
-					}
-					return parent;
-				}
-
-				default:
-					assertNever(item);
-					return null;
+			result = mergeIconData(item.props, result) as ResolvedIconifyIcon;
+			if (item.type === 'icon') {
+				result.body = item.body;
 			}
 		}
 
-		const result = getIcon(name, 0);
+		parse(name);
+		tree.forEach(parse);
 
 		// Return icon
 		return result && full ? { ...defaultIconProps, ...result } : result;
@@ -385,6 +392,7 @@ export class IconSet {
 	export(validate = true): IconifyJSON {
 		const icons: IconifyIcons = Object.create(null);
 		const aliases: IconifyAliases = Object.create(null);
+		const tree = validate ? this.getTree() : {};
 
 		// Add icons
 		const names = Object.keys(this.entries);
@@ -403,7 +411,7 @@ export class IconSet {
 
 				case 'alias':
 				case 'variation': {
-					if (validate && !this.resolve(name)) {
+					if (validate && !tree[name]) {
 						break;
 					}
 					const props = item.type === 'variation' ? item.props : {};
@@ -628,75 +636,59 @@ export class IconSet {
 	/**
 	 * Remove icons. Returns number of removed icons
 	 *
-	 * If removeDependencies is a string, it represents new parent for all aliases of removed icon.
+	 * If removeDependencies is a string, it represents new parent for all aliases of removed icon. New parent cannot be alias or variation.
 	 */
 	remove(name: string, removeDependencies: boolean | string = true): number {
 		const entries = this.entries;
-		const names: Set<string> = new Set();
 
 		// Check if new parent exists
 		if (typeof removeDependencies === 'string') {
-			if (name === removeDependencies || !entries[removeDependencies]) {
+			const item = entries[removeDependencies];
+			if (name === removeDependencies || item?.type !== 'icon') {
 				return 0;
 			}
-			names.add(removeDependencies);
 		}
 
-		function del(name: string, iteration: number): boolean {
-			if (
-				entries[name] === void 0 ||
-				iteration > maxIteration ||
-				names.has(name)
-			) {
-				// Missing or loop is too deep
-				return false;
-			}
-			names.add(name);
+		const item = entries[name];
+		if (!item) {
+			return 0;
+		}
 
-			if (
-				removeDependencies === true ||
-				(!iteration && typeof removeDependencies === 'string')
-			) {
-				// Find icons that have this icon as parent
-				for (const key in entries) {
-					const item = entries[key];
-					switch (item.type) {
-						case 'icon':
-							break;
-
-						case 'alias':
-						case 'variation':
-							if (item.parent === name) {
-								if (removeDependencies === true) {
-									if (!del(key, iteration + 1)) {
-										return false;
-									}
-									break;
-								}
-
-								// Change parent
-								item.parent = removeDependencies;
-							}
-							break;
-
-						default:
-							assertNever(item);
-					}
+		// Update dependencies
+		if (typeof removeDependencies === 'string') {
+			for (const key in entries) {
+				const item = entries[key];
+				if (item.type !== 'icon' && item.parent === name) {
+					item.parent = removeDependencies;
 				}
 			}
-			return true;
+			return 0;
 		}
 
-		if (del(name, 0)) {
-			if (typeof removeDependencies === 'string') {
-				names.delete(removeDependencies);
-			}
-			names.forEach((name) => {
-				delete entries[name];
+		// Remove item
+		delete entries[name];
+		let count = 1;
+
+		// Remove icons where parent matches removed icon
+		function remove(parent: string) {
+			const list: string[] = Object.keys(entries).filter((name) => {
+				const item = entries[name];
+				return item.type !== 'icon' && item.parent === parent;
 			});
-			return names.size;
+			list.forEach((name) => {
+				if (entries[name]) {
+					delete entries[name];
+					count++;
+					remove(name);
+				}
+			});
 		}
-		return 0;
+
+		if (removeDependencies === true) {
+			remove(name);
+		}
+
+		return count;
 	}
 
 	/**

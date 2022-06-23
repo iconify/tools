@@ -40,15 +40,19 @@ describe('Downloading Git repository using GitLav API', () => {
 			target,
 			cleanup: true,
 		});
-	});
 
-	let lastResult: DownloadGitLabRepoResult | 'not_modified';
-
-	test('Downloading main branch', async () => {
 		if (!token) {
 			console.warn(
 				`Cannot test downloadGitLabRepo() because API token is not provided. Set "${tokenKey}" environmental variable to test GitLab API.`
 			);
+			return;
+		}
+	});
+
+	let lastResult: DownloadGitLabRepoResult | 'not_modified';
+
+	(token ? test : test.skip)('Downloading main branch', async () => {
+		if (!token) {
 			return;
 		}
 
@@ -78,7 +82,7 @@ describe('Downloading Git repository using GitLav API', () => {
 		expect(packageContents.version).toBe(branch.version);
 	});
 
-	test('Downloading archive branch', async () => {
+	(token ? test : test.skip)('Downloading archive branch', async () => {
 		if (!token) {
 			return;
 		}
@@ -111,7 +115,7 @@ describe('Downloading Git repository using GitLav API', () => {
 		expect(packageContents.version).toBe(branch.version);
 	});
 
-	test('Checking not_modified', async () => {
+	(token ? test : test.skip)('Checking not_modified', async () => {
 		if (!token) {
 			return;
 		}
@@ -129,7 +133,7 @@ describe('Downloading Git repository using GitLav API', () => {
 		expect(result).toBe('not_modified');
 	});
 
-	test('Checking out main branch again', async () => {
+	(token ? test : test.skip)('Checking out main branch again', async () => {
 		if (!token) {
 			return;
 		}

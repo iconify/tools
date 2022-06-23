@@ -72,7 +72,7 @@ describe('Working with aliases', () => {
 		expect(iconSet.resolve('alias4')).toEqual(expectedBar);
 		expect(iconSet.resolve('alias5')).toEqual(expectedBar);
 		expect(iconSet.resolve('alias6')).toEqual(expectedBar);
-		expect(iconSet.resolve('alias7')).toBeNull(); // Recursion is too high
+		expect(iconSet.resolve('alias7')).toEqual(expectedBar);
 
 		const expectedBaz: ResolvedIconifyIcon = {
 			body: '<g id="baz" />',
