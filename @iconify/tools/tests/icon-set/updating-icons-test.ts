@@ -15,6 +15,7 @@ function minify(str: string): string {
 
 describe('Updating icons', () => {
 	test('Adding icons', () => {
+		const lastModified = 12345;
 		const exported: IconifyJSON = {
 			prefix: 'test',
 			icons: {},
@@ -24,12 +25,22 @@ describe('Updating icons', () => {
 		expect(iconSet.list()).toEqual(list);
 		expect(iconSet.export()).toEqual(exported);
 
+		expect(iconSet.lastModified).toBeFalsy();
+		iconSet.updateLastModified(lastModified);
+		expect(iconSet.lastModified).toBe(lastModified);
+		exported.lastModified = lastModified;
+
 		// Add icon
 		expect(
 			iconSet.setIcon('foo', {
 				body: '<g id="foo" />',
 			})
 		).toBe(true);
+
+		expect(iconSet.lastModified).not.toBe(lastModified);
+		iconSet.updateLastModified(lastModified);
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		exported.icons.foo = {
 			body: '<g id="foo" />',
 		};
@@ -45,6 +56,11 @@ describe('Updating icons', () => {
 				height: 24,
 			})
 		).toBe(true);
+
+		expect(iconSet.lastModified).not.toBe(lastModified);
+		iconSet.updateLastModified(lastModified);
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		exported.icons.bar = {
 			body: '<g id="bar" />',
 			width: 24,
@@ -56,11 +72,17 @@ describe('Updating icons', () => {
 
 		// Bad alias
 		expect(iconSet.setAlias('foo-alias', 'no-parent')).toBe(false);
+		expect(iconSet.lastModified).toBe(lastModified);
 		expect(iconSet.list()).toEqual(list);
 		expect(iconSet.export()).toEqual(exported);
 
 		// Good alias
 		expect(iconSet.setAlias('foo-alias', 'foo')).toBe(true);
+
+		expect(iconSet.lastModified).not.toBe(lastModified);
+		iconSet.updateLastModified(lastModified);
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		exported.aliases = {
 			'foo-alias': {
 				parent: 'foo',
@@ -75,6 +97,7 @@ describe('Updating icons', () => {
 				hFlip: true,
 			})
 		).toBe(false);
+		expect(iconSet.lastModified).toBe(lastModified);
 		expect(iconSet.list()).toEqual(list);
 		expect(iconSet.export()).toEqual(exported);
 
@@ -84,6 +107,11 @@ describe('Updating icons', () => {
 				hFlip: true,
 			})
 		).toBe(true);
+
+		expect(iconSet.lastModified).not.toBe(lastModified);
+		iconSet.updateLastModified(lastModified);
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		exported.aliases['foo-flip'] = {
 			parent: 'foo',
 			hFlip: true,
@@ -98,6 +126,11 @@ describe('Updating icons', () => {
 				vFlip: true,
 			})
 		).toBe(true);
+
+		expect(iconSet.lastModified).not.toBe(lastModified);
+		iconSet.updateLastModified(lastModified);
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		exported.aliases['foo-flip'] = {
 			parent: 'foo',
 			vFlip: true,
@@ -107,6 +140,7 @@ describe('Updating icons', () => {
 	});
 
 	test('Updating from SVG', () => {
+		const lastModified = 123455;
 		const exported: IconifyJSON = {
 			prefix: 'test',
 			icons: {},
@@ -117,6 +151,8 @@ describe('Updating icons', () => {
 		expect(iconSet.list()).toEqual(list);
 		expect(iconSet.export()).toEqual(exported);
 
+		expect(iconSet.lastModified).toBeFalsy();
+
 		// Add icon
 		const svgBody =
 			'<path d="M3 0v1h4v5h-4v1h5v-7h-5zm1 2v1h-4v1h4v1l2-1.5-2-1.5z"/>';
@@ -124,6 +160,12 @@ describe('Updating icons', () => {
 			`<svg xmlns="http://www.w3.org/2000/svg" width="12" height="20" viewBox="-8 -16 24 40">${svgBody}</svg>`
 		);
 		expect(iconSet.fromSVG('foo', svg)).toBe(true);
+		expect(iconSet.lastModified).toBeTruthy();
+
+		// Override lastModified to test functions below, which should not change lastModified
+		iconSet.updateLastModified(lastModified);
+		exported.lastModified = lastModified;
+
 		exported.icons.foo = {
 			body: svgBody,
 			left: -8,
@@ -133,11 +175,14 @@ describe('Updating icons', () => {
 		};
 		list.push('foo');
 		expect(iconSet.list()).toEqual(list);
+
 		expect(iconSet.export()).toEqual(exported);
 
 		// Add category and character
 		expect(iconSet.toggleCharacter('foo', 'f00', true)).toBe(true);
 		expect(iconSet.toggleCategory('foo', 'Test', true)).toBe(true);
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		exported.chars = {
 			f00: 'foo',
 		};
@@ -155,6 +200,7 @@ describe('Updating icons', () => {
 			height: 40,
 		});
 		expect(svg.getBody()).toBe(svgBody);
+		expect(iconSet.lastModified).toBe(lastModified);
 
 		// Change viewBox, import as 'bar'
 		svg.viewBox = {
@@ -163,7 +209,15 @@ describe('Updating icons', () => {
 			width: 32,
 			height: 32,
 		};
+
+		expect(iconSet.lastModified).toBe(lastModified);
 		iconSet.fromSVG('bar', svg);
+
+		// Update should have changed lastModified. Test and change it back
+		expect(iconSet.lastModified).not.toBe(lastModified);
+		iconSet.updateLastModified(lastModified);
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		exported.icons.bar = {
 			body: svgBody,
 			width: 32,
@@ -196,6 +250,7 @@ describe('Updating icons', () => {
 			height: 100,
 		});
 		expect(svg.getBody()).toBe(minify(svgBody2));
+		expect(iconSet.lastModified).toBe(lastModified);
 
 		// Overwrite 'foo', category and character should be copied from old entry
 		expect(iconSet.fromSVG('foo', svg)).toBe(true);
@@ -204,6 +259,12 @@ describe('Updating icons', () => {
 			width: 100,
 			height: 100,
 		};
+
+		// Update should have changed lastModified. Test and change it back
+		expect(iconSet.lastModified).not.toBe(lastModified);
+		iconSet.updateLastModified(lastModified);
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		expect(iconSet.list()).toEqual(list);
 		expect(iconSet.export()).toEqual(exported);
 	});

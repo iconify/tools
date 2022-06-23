@@ -14,13 +14,20 @@ describe('Updating icons', () => {
 	}
 
 	it('Adding icons', () => {
+		const lastModified = 123456;
 		const exported = {
 			prefix: 'test',
+			lastModified,
 			icons: {},
 		};
 		const list = [];
 		const iconSet = blankIconSet('test');
 		expect(iconSet.list()).toEqual(list);
+
+		expect(iconSet.lastModified).toBeFalsy();
+		iconSet.updateLastModified(lastModified);
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		expect(iconSet.export()).toEqual(exported);
 
 		// Add icon
@@ -29,6 +36,11 @@ describe('Updating icons', () => {
 				body: '<g id="foo" />',
 			})
 		).toBe(true);
+
+		expect(iconSet.lastModified).not.toBe(lastModified);
+		iconSet.updateLastModified(lastModified);
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		exported.icons.foo = {
 			body: '<g id="foo" />',
 		};
@@ -44,6 +56,7 @@ describe('Updating icons', () => {
 				height: 24,
 			})
 		).toBe(true);
+		iconSet.updateLastModified(lastModified);
 		exported.icons.bar = {
 			body: '<g id="bar" />',
 			width: 24,
@@ -55,11 +68,17 @@ describe('Updating icons', () => {
 
 		// Bad alias
 		expect(iconSet.setAlias('foo-alias', 'no-parent')).toBe(false);
+		expect(iconSet.lastModified).toBe(lastModified);
 		expect(iconSet.list()).toEqual(list);
 		expect(iconSet.export()).toEqual(exported);
 
 		// Good alias
 		expect(iconSet.setAlias('foo-alias', 'foo')).toBe(true);
+
+		expect(iconSet.lastModified).not.toBe(lastModified);
+		iconSet.updateLastModified(lastModified);
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		exported.aliases = {
 			'foo-alias': {
 				parent: 'foo',
@@ -74,6 +93,7 @@ describe('Updating icons', () => {
 				hFlip: true,
 			})
 		).toBe(false);
+		expect(iconSet.lastModified).toBe(lastModified);
 		expect(iconSet.list()).toEqual(list);
 		expect(iconSet.export()).toEqual(exported);
 
@@ -83,6 +103,11 @@ describe('Updating icons', () => {
 				hFlip: true,
 			})
 		).toBe(true);
+
+		expect(iconSet.lastModified).not.toBe(lastModified);
+		iconSet.updateLastModified(lastModified);
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		exported.aliases['foo-flip'] = {
 			parent: 'foo',
 			hFlip: true,
@@ -97,6 +122,11 @@ describe('Updating icons', () => {
 				vFlip: true,
 			})
 		).toBe(true);
+
+		expect(iconSet.lastModified).not.toBe(lastModified);
+		iconSet.updateLastModified(lastModified);
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		exported.aliases['foo-flip'] = {
 			parent: 'foo',
 			vFlip: true,
@@ -106,6 +136,7 @@ describe('Updating icons', () => {
 	});
 
 	it('Updating from SVG', () => {
+		const lastModified = 123456;
 		const exported = {
 			prefix: 'test',
 			icons: {},
@@ -123,6 +154,12 @@ describe('Updating icons', () => {
 			`<svg xmlns="http://www.w3.org/2000/svg" width="12" height="20" viewBox="-8 -16 24 40">${svgBody}</svg>`
 		);
 		expect(iconSet.fromSVG('foo', svg)).toBe(true);
+
+		expect(iconSet.lastModified).toBeTruthy();
+		iconSet.updateLastModified(lastModified);
+		expect(iconSet.lastModified).toBe(lastModified);
+		exported.lastModified = lastModified;
+
 		exported.icons.foo = {
 			body: svgBody,
 			left: -8,
@@ -145,6 +182,8 @@ describe('Updating icons', () => {
 		});
 		expect(svg.getBody()).toBe(svgBody);
 
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		// Change viewBox, import as 'bar'
 		svg.viewBox = {
 			left: 0,
@@ -153,6 +192,11 @@ describe('Updating icons', () => {
 			height: 32,
 		};
 		iconSet.fromSVG('bar', svg);
+
+		expect(iconSet.lastModified).not.toBe(lastModified);
+		iconSet.updateLastModified(lastModified);
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		exported.icons.bar = {
 			body: svgBody,
 			width: 32,
@@ -178,6 +222,7 @@ describe('Updating icons', () => {
         ${svgBody2}
         </svg>
         `);
+		expect(iconSet.lastModified).toBe(lastModified);
 		expect(svg.viewBox).toEqual({
 			left: 0,
 			top: 0,
@@ -187,6 +232,11 @@ describe('Updating icons', () => {
 		expect(svg.getBody()).toBe(minify(svgBody2));
 
 		expect(iconSet.fromSVG('foo', svg)).toBe(true);
+
+		expect(iconSet.lastModified).not.toBe(lastModified);
+		iconSet.updateLastModified(lastModified);
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		exported.icons.foo = {
 			body: minify(svgBody2),
 			width: 100,

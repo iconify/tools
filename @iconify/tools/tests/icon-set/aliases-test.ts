@@ -221,8 +221,10 @@ describe('Working with aliases', () => {
 	});
 
 	test('Rename icon, test characters and categories', () => {
+		const lastModified = 12345;
 		const iconSetData: IconifyJSON = {
 			prefix: 'foo',
+			lastModified,
 			icons: {
 				bar: {
 					body: '<g id="bar" />',
@@ -274,6 +276,7 @@ describe('Working with aliases', () => {
 		expect(iconSet.exists('baz')).toBe(true);
 		expect(iconSet.exists('variation1')).toBe(true);
 		expect(iconSet.exists('foo')).toBe(false);
+		expect(iconSet.lastModified).toBe(lastModified);
 
 		// Rename 'baz' to 'foo'
 		expect(iconSet.rename('baz', 'foo')).toBe(true);
@@ -283,6 +286,7 @@ describe('Working with aliases', () => {
 		expect(iconSet.exists('baz')).toBe(false);
 		expect(iconSet.exists('variation1')).toBe(true);
 		expect(iconSet.exists('foo')).toBe(true);
+		expect(iconSet.lastModified).not.toBe(lastModified);
 
 		const expectedBaz: ResolvedIconifyIcon = {
 			body: '<g id="baz" />',
@@ -299,6 +303,7 @@ describe('Working with aliases', () => {
 		// Export
 		const iconSetExportedData: IconifyJSON = {
 			prefix: 'foo',
+			lastModified: iconSet.lastModified,
 			icons: {
 				bar: {
 					body: '<g id="bar" />',
@@ -342,8 +347,10 @@ describe('Working with aliases', () => {
 	});
 
 	test('Aliases with categories', () => {
+		const lastModified = 12345;
 		const iconSetData: IconifyJSON = {
 			prefix: 'foo',
+			lastModified,
 			icons: {
 				bar: {
 					body: '<g id="bar" />',
@@ -375,6 +382,7 @@ describe('Working with aliases', () => {
 		// Export
 		const iconSetExportedData: IconifyJSON = {
 			prefix: 'foo',
+			lastModified,
 			icons: {
 				bar: {
 					body: '<g id="bar" />',

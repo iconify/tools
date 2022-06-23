@@ -68,6 +68,9 @@ export class IconSet {
 	// Icon set prefix
 	public prefix!: string;
 
+	// Last modification time
+	public lastModified!: number;
+
 	// All icons
 	public entries!: Record<string, IconSetIconEntry>;
 
@@ -219,6 +222,16 @@ export class IconSet {
 				}
 			}
 		});
+
+		// Last modification time
+		this.lastModified = data.lastModified || 0;
+	}
+
+	/**
+	 * Update last modification time
+	 */
+	updateLastModified(value?: number) {
+		this.lastModified = value || Math.floor(Date.now() / 1000);
 	}
 
 	/**
@@ -444,6 +457,9 @@ export class IconSet {
 		if (info) {
 			result.info = info;
 		}
+		if (this.lastModified) {
+			result.lastModified = this.lastModified;
+		}
 		result.icons = icons;
 		if (Object.keys(aliases).length) {
 			result.aliases = aliases;
@@ -654,6 +670,9 @@ export class IconSet {
 			return 0;
 		}
 
+		// Icon set is about to be modified
+		this.updateLastModified();
+
 		// Update dependencies
 		if (typeof removeDependencies === 'string') {
 			for (const key in entries) {
@@ -730,6 +749,9 @@ export class IconSet {
 			}
 		}
 
+		// Update last modification time
+		this.updateLastModified();
+
 		return true;
 	}
 
@@ -746,6 +768,7 @@ export class IconSet {
 			}
 		}
 		this.entries[name] = item;
+		this.updateLastModified();
 		return true;
 	}
 

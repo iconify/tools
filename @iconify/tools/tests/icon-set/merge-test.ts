@@ -39,8 +39,13 @@ describe('Merging icon sets', () => {
 			})
 		);
 
+		// Merge should have updated lastModified
+		const lastModified = merged.lastModified;
+		expect(lastModified).toBeTruthy();
+
 		const expected: IconifyJSON = {
 			prefix: 'bar',
+			lastModified,
 			icons: {
 				'remove': {
 					body: '<g fill="currentColor"><path d="M15 8H1V7h14v1z"/></g>',
@@ -101,8 +106,13 @@ describe('Merging icon sets', () => {
 			})
 		);
 
+		// Merge should have updated lastModified
+		const lastModified = merged.lastModified;
+		expect(lastModified).toBeTruthy();
+
 		const expected: IconifyJSON = {
 			prefix: 'bar',
+			lastModified,
 			icons: {
 				baz: {
 					body: '<g />',
@@ -157,8 +167,13 @@ describe('Merging icon sets', () => {
 			})
 		);
 
+		// Merge should have updated lastModified
+		const lastModified = merged.lastModified;
+		expect(lastModified).toBeTruthy();
+
 		const expected: IconifyJSON = {
 			prefix: 'bar',
+			lastModified,
 			icons: {
 				icon2: {
 					body: '<g />',

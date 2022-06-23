@@ -9,8 +9,10 @@ import { loadFixture } from '../load';
 
 describe('Loading icon set', () => {
 	test('Simple icon set', () => {
+		const lastModified = 123;
 		const iconSetData: IconifyJSON = {
 			prefix: 'foo',
+			lastModified,
 			icons: {
 				foo: {
 					body: '<g id="foo" />',
@@ -61,6 +63,7 @@ describe('Loading icon set', () => {
 			bar,
 			baz,
 		});
+		expect(iconSet.lastModified).toBe(lastModified);
 
 		// Test exists()
 		expect(iconSet.exists('foo')).toBe(true);
@@ -83,6 +86,7 @@ describe('Loading icon set', () => {
 		// Export icon set
 		expect(iconSet.export()).toEqual({
 			prefix: 'foo',
+			lastModified,
 			icons: {
 				foo: {
 					body: '<g id="foo" />',
@@ -107,8 +111,10 @@ describe('Loading icon set', () => {
 	});
 
 	test('With properties', () => {
+		const lastModified = 13579;
 		const iconSet = new IconSet({
 			prefix: 'foo',
+			lastModified,
 			icons: {
 				'bar-32': {
 					body: '<g />',
@@ -186,6 +192,8 @@ describe('Loading icon set', () => {
 			'bar-20': bar20,
 		});
 
+		expect(iconSet.lastModified).toBe(lastModified);
+
 		// Test exists()
 		expect(iconSet.exists('bar-32')).toBe(true);
 		expect(iconSet.exists('bar-20')).toBe(true);
@@ -224,6 +232,7 @@ describe('Loading icon set', () => {
 		// Export icon set
 		expect(iconSet.export()).toEqual({
 			prefix: 'foo',
+			lastModified,
 			icons: {
 				'bar-32': {
 					body: '<g />',
@@ -299,6 +308,9 @@ describe('Loading icon set', () => {
 		// Info should be undefined
 		expect(iconSet.info).toBeUndefined();
 
+		// Last modification time should not be set
+		expect(iconSet.lastModified).toBe(0);
+
 		// Check themes
 		expect(iconSet.prefixes).toEqual({
 			'16': '16px',
@@ -336,6 +348,9 @@ describe('Loading icon set', () => {
 			palette: false,
 		};
 		expect(iconSet.info).toEqual(expectedInfo);
+
+		// Last modification time should not be set
+		expect(iconSet.lastModified).toBe(0);
 	});
 
 	test('Fluent UI', async () => {

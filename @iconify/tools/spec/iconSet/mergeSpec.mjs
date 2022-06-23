@@ -24,6 +24,7 @@ describe('Merging icon sets', () => {
 
 		const expected = {
 			prefix: 'bar',
+			lastModified: merged.lastModified,
 			icons: {
 				foo: {
 					body: '<g id="foo" />',

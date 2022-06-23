@@ -10,8 +10,10 @@ describe('Importing directory', () => {
 	test('Simple import', async () => {
 		const iconSet = await importDirectory('tests/fixtures/elements/style');
 		expect(iconSet.list()).toEqual(['set', 'style']);
+		expect(iconSet.lastModified).toBeTruthy();
 		expect(iconSet.export()).toEqual({
 			prefix: '',
+			lastModified: iconSet.lastModified,
 			icons: {
 				set: {
 					body: importedSetIcon,
@@ -33,8 +35,10 @@ describe('Importing directory', () => {
 			},
 		});
 		expect(iconSet.list()).toEqual(['test-set', 'test-style']);
+		expect(iconSet.lastModified).toBeTruthy();
 		expect(iconSet.export()).toEqual({
 			prefix: 'foo',
+			lastModified: iconSet.lastModified,
 			icons: {
 				'test-set': {
 					body: importedSetIcon,
