@@ -15,9 +15,7 @@ export async function getGitRepoBranch(
 
 	if (typeof checkout === 'string' && branch !== checkout) {
 		// Checkout correct branch
-		await execAsync(`git checkout ${checkout}`, {
-			cwd: options.target,
-		});
+		await execAsync(`git checkout ${checkout} "${options.target}"`);
 		return await getGitRepoBranch(options);
 	}
 
