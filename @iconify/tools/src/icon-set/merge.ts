@@ -1,5 +1,6 @@
 import { IconSet } from '.';
 import { findMatchingIcon } from './match';
+import { hasIconDataBeenModified } from './modified';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function assertNever(v: never) {
@@ -89,6 +90,23 @@ export function mergeIconSets(oldIcons: IconSet, newIcons: IconSet): IconSet {
 	// Add old icons
 	for (const name in oldEntries) {
 		add(name);
+	}
+
+	// If lastModified is set in at least one set, check if icon set was updated
+	const lastModified1 = oldIcons.lastModified;
+	const lastModified2 = newIcons.lastModified;
+	if (
+		(lastModified1 || lastModified2) &&
+		!hasIconDataBeenModified(oldIcons, newIcons)
+	) {
+		// Icons are identical: set last modification time to lowest of available
+		mergedIcons.updateLastModified(
+			lastModified2
+				? lastModified1
+					? Math.min(lastModified1, lastModified2)
+					: lastModified2
+				: lastModified1
+		);
 	}
 
 	return mergedIcons;

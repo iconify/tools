@@ -240,6 +240,10 @@
 			"require": "./lib/icon-set/merge.cjs",
 			"import": "./lib/icon-set/merge.mjs"
 		},
+		"./lib/icon-set/modified": {
+			"require": "./lib/icon-set/modified.cjs",
+			"import": "./lib/icon-set/modified.mjs"
+		},
 		"./lib/icon-set/props": {
 			"require": "./lib/icon-set/props.cjs",
 			"import": "./lib/icon-set/props.mjs"
