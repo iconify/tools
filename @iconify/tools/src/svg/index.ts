@@ -3,7 +3,8 @@ import type { IconifyIcon } from '@iconify/types';
 import { trimSVG, iconToSVG, defaultIconCustomisations } from '@iconify/utils';
 import { defaultIconProps } from '@iconify/utils/lib/icon/defaults';
 import type { CommonIconProps } from '../icon-set/types';
-import type { IconifyIconCustomisations } from '@iconify/utils/lib/customisations';
+import type { IconifyIconCustomisations } from '@iconify/utils/lib/customisations/defaults';
+import type { CheerioElement } from '../misc/cheerio';
 
 export interface ViewBox {
 	left: number;
@@ -59,9 +60,6 @@ export class SVG {
 					data.attributes[key as keyof typeof data.attributes];
 				svgAttributes += ' ' + key + '="' + value + '"';
 			}
-			if (customisations.inline) {
-				svgAttributes += ' style="vertical-align: -0.125em;"';
-			}
 
 			return '<svg' + svgAttributes + '>' + data.body + '</svg>';
 		}
@@ -74,16 +72,16 @@ export class SVG {
 		if ($root.attr('viewBox') === void 0) {
 			$root.attr(
 				'viewBox',
-				box.left + ' ' + box.top + ' ' + box.width + ' ' + box.height
+				`${box.left} ${box.top} ${box.width} ${box.height}`
 			);
 		}
 
 		// Add missing width/height
 		if ($root.attr('width') === void 0) {
-			$root.attr('width', box.width + '');
+			$root.attr('width', box.width.toString());
 		}
 		if ($root.attr('height') === void 0) {
-			$root.attr('height', box.height + '');
+			$root.attr('height', box.height.toString());
 		}
 
 		return this.$svg.html();
@@ -102,7 +100,7 @@ export class SVG {
 	getBody(): string {
 		// Make sure icon has no attributes on <svg> that affect content
 		const $root = this.$svg(':root');
-		const attribs = $root.get(0).attribs;
+		const attribs = ($root.get(0) as CheerioElement).attribs;
 		for (const key in attribs) {
 			switch (key.split('-').shift()) {
 				case 'fill':
@@ -178,7 +176,10 @@ export class SVG {
 
 		// Check root
 		const $root = this.$svg(':root');
-		if ($root.length > 1 || $root.get(0).tagName !== 'svg') {
+		if (
+			$root.length > 1 ||
+			($root.get(0) as CheerioElement).tagName !== 'svg'
+		) {
 			throw new Error('Invalid SVG file: bad root tag');
 		}
 

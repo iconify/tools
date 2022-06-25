@@ -35,7 +35,7 @@ export async function convertStyleToAttrs(svg: SVG): Promise<void> {
 	}
 
 	// Run SVGO
-	await runSVGO(svg, {
+	runSVGO(svg, {
 		plugins: ['convertStyleToAttrs', 'inlineStyles'],
 		multipass: true,
 	});

@@ -112,10 +112,7 @@ type SVGOOptions = SVGOOptionsWithPlugin | SVGOptionsWithoutPlugin;
 /**
  * Run SVGO on icon
  */
-export async function runSVGO(
-	svg: SVG,
-	options: SVGOOptions = {}
-): Promise<void> {
+export function runSVGO(svg: SVG, options: SVGOOptions = {}) {
 	// Code
 	const code = svg.toString();
 

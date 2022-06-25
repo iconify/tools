@@ -99,7 +99,7 @@ export class IconSet {
 		const defaultProps = filterProps(data, defaultIconDimensions, true);
 
 		// Add icons
-		this.entries = Object.create(null);
+		this.entries = Object.create(null) as typeof this.entries;
 		const entries = this.entries;
 		for (const name in data.icons) {
 			const item = data.icons[name];
@@ -190,8 +190,14 @@ export class IconSet {
 		}
 
 		// Themes
-		const prefixes = (this.prefixes = Object.create(null));
-		const suffixes = (this.suffixes = Object.create(null));
+		const prefixes = (this.prefixes = Object.create(null) as Record<
+			string,
+			string
+		>);
+		const suffixes = (this.suffixes = Object.create(null) as Record<
+			string,
+			string
+		>);
 		if (data.themes) {
 			// Import legacy format
 			for (const key in data.themes) {
@@ -216,7 +222,7 @@ export class IconSet {
 			// Copy data, overwriting imported legacy format
 			const items = data[prop];
 			if (items) {
-				this[prop] = Object.create(null);
+				this[prop] = Object.create(null) as Record<string, string>;
 				for (const key in items) {
 					this[prop][key] = items[key];
 				}
@@ -403,9 +409,11 @@ export class IconSet {
 	 * Export icon set
 	 */
 	export(validate = true): IconifyJSON {
-		const icons: IconifyIcons = Object.create(null);
-		const aliases: IconifyAliases = Object.create(null);
-		const tree = validate ? this.getTree() : {};
+		const icons = Object.create(null) as IconifyIcons;
+		const aliases = Object.create(null) as IconifyAliases;
+		const tree = validate
+			? this.getTree()
+			: (Object.create(null) as ParentIconsTree);
 
 		// Add icons
 		const names = Object.keys(this.entries);
@@ -447,7 +455,7 @@ export class IconSet {
 		if (this.info) {
 			// Update icons count and clone object
 			this.info.total = this.count();
-			info = JSON.parse(JSON.stringify(this.info));
+			info = JSON.parse(JSON.stringify(this.info)) as IconifyInfo;
 		}
 
 		// Generate result
@@ -474,7 +482,7 @@ export class IconSet {
 		}
 
 		// Get categories
-		const categories: IconifyCategories = Object.create(null);
+		const categories = Object.create(null) as IconifyCategories;
 		Array.from(this.categories)
 			// Sort
 			.sort((a, b) => a.title.localeCompare(b.title))
@@ -497,7 +505,10 @@ export class IconSet {
 			const keys = Object.keys(items);
 			if (keys.length) {
 				// Get matching icon names
-				const sortedTheme = Object.create(null);
+				const sortedTheme = Object.create(null) as Record<
+					string,
+					string
+				>;
 				const tested = this.checkTheme(prop === 'prefixes');
 
 				// Add all themes that aren't empty
@@ -524,7 +535,7 @@ export class IconSet {
 	 * Get characters map
 	 */
 	chars(names?: string[]): Record<string, string> {
-		const chars: Record<string, string> = Object.create(null);
+		const chars = Object.create(null) as Record<string, string>;
 		if (!names) {
 			names = Object.keys(this.entries);
 		}
@@ -885,7 +896,7 @@ export class IconSet {
 		const keys = sortThemeKeys(Object.keys(themes));
 
 		const results: CheckThemeResult = {
-			valid: Object.create(null),
+			valid: Object.create(null) as CheckThemeResult['valid'],
 			invalid: [],
 		};
 		keys.forEach((key) => {

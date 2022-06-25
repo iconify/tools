@@ -1,10 +1,5 @@
+import type { CheerioElement, WrappedCheerioElement } from '../misc/cheerio';
 import type { SVG } from './';
-
-/**
- * Shortcuts for Cheerio elements
- */
-export type CheerioElement = cheerio.TagElement;
-export type WrappedCheerioElement = cheerio.Cheerio;
 
 /**
  * Item in callback
@@ -83,5 +78,5 @@ export async function parseSVG(
 
 	const cheerio = svg.$svg;
 	const $root = svg.$svg(':root');
-	await checkNode($root.get(0), []);
+	await checkNode($root.get(0) as cheerio.Element, []);
 }

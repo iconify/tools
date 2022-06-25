@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs';
-import type { IconifyIconCustomisations } from '@iconify/utils/lib/customisations';
+import type { IconifyIconCustomisations } from '@iconify/utils/lib/customisations/defaults';
 import type { IconSet } from '../icon-set';
 import type { ExportTargetOptions } from './helpers/prepare';
 import { prepareDirectoryForExport } from './helpers/prepare';

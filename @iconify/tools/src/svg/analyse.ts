@@ -42,7 +42,7 @@ export async function analyseSVGStructure(
 	if (root._parsed) {
 		// Reload to reset custom properties
 		svg.load(svg.toString());
-		root = svg.$svg(':root').get(0);
+		root = svg.$svg(':root').get(0) as ExtendedRootTagElement;
 	}
 	root._parsed = true;
 	const cheerio = svg.$svg;
@@ -51,7 +51,7 @@ export async function analyseSVGStructure(
 	const elements: AnalyseSVGStructureResult['elements'] = new Map();
 
 	// List of IDs
-	const ids: AnalyseSVGStructureResult['ids'] = Object.create(null);
+	const ids = Object.create(null) as AnalyseSVGStructureResult['ids'];
 
 	// Links
 	let links: AnalyseSVGStructureResult['links'] = [];

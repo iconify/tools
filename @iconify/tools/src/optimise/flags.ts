@@ -94,16 +94,14 @@ function cleanPath(path: string): string {
 		if (currentNumber !== '' && currentCommandType) {
 			let value = Number(currentNumber);
 			if (isNaN(value)) {
-				throw new Error(
-					'Invalid number "' + currentNumber + '" at ' + i
-				);
+				throw new Error(`Invalid number "${currentNumber}" at ${i}`);
 			}
 
 			// Validate arc arguments
 			if (currentCommandType === ARC) {
 				if (currentArgs.length < 2 && value <= 0) {
 					throw new Error(
-						'Expected positive number, got "' + value + '" at ' + i
+						`Expected positive number, got "${value}" at ${i}`
 					);
 				}
 
@@ -126,7 +124,7 @@ function cleanPath(path: string): string {
 						// Valid flag
 						if (isNaN(newValue)) {
 							throw new Error(
-								'Invalid number "' + currentNumber + '" at ' + i
+								`Invalid number "${currentNumber}" at ${i}`
 							);
 						}
 						currentArgs.push(slice);
@@ -136,7 +134,7 @@ function cleanPath(path: string): string {
 					}
 
 					throw new Error(
-						'Expected a flag, got "' + currentNumber + '" at ' + i
+						`Expected a flag, got "${currentNumber}" at ${i}`
 					);
 				}
 			}
@@ -214,12 +212,12 @@ function cleanPath(path: string): string {
 
 		// Expecting new command, so argument should be empty
 		if (currentArgs.length > 0) {
-			throw new Error('Unexpected command at ' + i);
+			throw new Error(`Unexpected command at ${i}`);
 		}
 
 		// Test comma, reset value
 		if (!canParseCommandOrComma) {
-			throw new Error('Command cannot follow comma at ' + i + '');
+			throw new Error(`Command cannot follow comma at ${i}`);
 		}
 		canParseCommandOrComma = false;
 
@@ -293,7 +291,7 @@ function cleanPath(path: string): string {
 				break;
 
 			default:
-				throw new Error('Unexpected character "' + char + '" at ' + i);
+				throw new Error(`Unexpected character "${char}" at ${i}`);
 		}
 	}
 
@@ -306,7 +304,7 @@ function cleanPath(path: string): string {
 			throw new Error('Empty path');
 		}
 		if (currentArgs.length !== argCount[currentCommandType]) {
-			throw new Error('Unexpected end of path at ' + i);
+			throw new Error(`Unexpected end of path at ${i}`);
 		}
 		finishCommand();
 	}

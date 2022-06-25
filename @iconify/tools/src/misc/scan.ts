@@ -87,11 +87,11 @@ export async function scanDirectory(
 			}
 
 			const parts = filename.split('.');
-			const ext = parts.length > 1 ? '.' + parts.pop() : '';
+			const ext = parts.length > 1 ? '.' + (parts.pop() as string) : '';
 			const file = parts.join('.');
 
 			// Callback
-			let callbackResult;
+			let callbackResult: ReturnType<ScanDirectoryCallback>;
 			if (callback) {
 				callbackResult = callback(ext, file, subdir, path, stat);
 				if (callbackResult instanceof Promise) {

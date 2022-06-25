@@ -9,7 +9,7 @@ export function parseInlineStyle(style: string): Record<string, string> | null {
 		return null;
 	}
 
-	const results: Record<string, string> = Object.create(null);
+	const results = Object.create(null) as Record<string, string>;
 	for (let i = 0; i < tokens.length; i++) {
 		const token = tokens[i];
 		if (token.type !== 'rule') {
