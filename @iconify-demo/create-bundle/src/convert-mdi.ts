@@ -94,7 +94,7 @@ const info: IconifyInfo = {
 			});
 
 			// Optimise
-			await runSVGO(svg);
+			runSVGO(svg);
 		} catch (err) {
 			// Invalid icon
 			console.error(`Error parsing ${name}:`, err);

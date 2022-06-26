@@ -67,7 +67,7 @@ const config = {
 								});
 
 								// Optimise, but do not change shapes because they are animated
-								await runSVGO(svg, {
+								runSVGO(svg, {
 									keepShapes: true,
 								});
 

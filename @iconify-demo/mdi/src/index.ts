@@ -122,7 +122,7 @@ const info: IconifyInfo = {
 		});
 
 		// Optimise
-		await runSVGO(svg);
+		runSVGO(svg);
 
 		// Update paths for compatibility with old software
 		await deOptimisePaths(svg);

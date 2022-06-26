@@ -92,21 +92,19 @@ export function mergeIconSets(oldIcons: IconSet, newIcons: IconSet): IconSet {
 		add(name);
 	}
 
-	// If lastModified is set in at least one set, check if icon set was updated
-	const lastModified1 = oldIcons.lastModified;
-	const lastModified2 = newIcons.lastModified;
+	// Keep old lastModified if possible
 	if (
-		(lastModified1 || lastModified2) &&
-		!hasIconDataBeenModified(oldIcons, newIcons)
+		oldIcons.lastModified &&
+		!hasIconDataBeenModified(oldIcons, mergedIcons)
 	) {
-		// Icons are identical: set last modification time to lowest of available
-		mergedIcons.updateLastModified(
-			lastModified2
-				? lastModified1
-					? Math.min(lastModified1, lastModified2)
-					: lastModified2
-				: lastModified1
-		);
+		// Old and merged icon sets are identical: set last modification time to old icon set
+		mergedIcons.updateLastModified(oldIcons.lastModified);
+	} else if (
+		newIcons.lastModified &&
+		!hasIconDataBeenModified(newIcons, mergedIcons)
+	) {
+		// New and merged icon sets are identical: set last modificaiton time to new icon set
+		mergedIcons.updateLastModified(newIcons.lastModified);
 	}
 
 	return mergedIcons;

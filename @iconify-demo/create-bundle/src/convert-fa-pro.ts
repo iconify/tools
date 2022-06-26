@@ -111,7 +111,7 @@ const basePrefix = 'fa-pro-';
 				});
 
 				// Optimise
-				await runSVGO(svg);
+				runSVGO(svg);
 			} catch (err) {
 				// Invalid icon
 				console.error(`Error parsing ${name}:`, err);

@@ -1,3 +1,4 @@
+import type { IconifyJSON } from '@iconify/types';
 import { promises as fs } from 'fs';
 import { exportJSONPackage } from '../../lib/export/json-package';
 import { IconSet } from '../../lib/icon-set';
@@ -72,7 +73,7 @@ describe('Exporting to JSON package', () => {
 		// No metadata or characters to check
 		const actualData = JSON.parse(
 			await fs.readFile(`${targetDir}/icons.json`, 'utf8')
-		);
+		) as IconifyJSON;
 		const expectedData = iconSet.export();
 		expect(actualData).toEqual(expectedData);
 

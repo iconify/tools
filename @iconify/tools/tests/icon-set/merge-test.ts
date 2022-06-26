@@ -117,14 +117,15 @@ describe('Merging icon sets', () => {
 		// Icons are different
 		expect(hasIconDataBeenModified(set1, set2)).toBe(true);
 
-		// Merge icon sets
+		// Merge icon sets: icons should be the same as in old icon set
+		// Aliases tree is different, but icon content is identical
 		const merged = mergeIconSets(set1, set2);
+		expect(hasIconDataBeenModified(set1, merged)).toBe(false);
 
-		// Merge should have updated lastModified, which should not be identical to initial value
+		// Merge should have copied lastModified from old icon set
 		const lastModified = merged.lastModified;
 		expect(lastModified).toBeTruthy();
-		expect(lastModified).not.toBe(lastModified1);
-		expect(lastModified).not.toBe(lastModified2);
+		expect(lastModified).toBe(lastModified1);
 
 		const expected: IconifyJSON = {
 			prefix: 'bar',
@@ -225,8 +226,12 @@ describe('Merging icon sets', () => {
 	});
 
 	test('Fluent UI', async () => {
-		const oldContent = JSON.parse(await loadFixture('fluent.old.json'));
-		const newContent = JSON.parse(await loadFixture('fluent.new.json'));
+		const oldContent = JSON.parse(
+			await loadFixture('fluent.old.json')
+		) as IconifyJSON;
+		const newContent = JSON.parse(
+			await loadFixture('fluent.new.json')
+		) as IconifyJSON;
 
 		const oldIconSet = new IconSet(oldContent);
 		const newIconSet = new IconSet(newContent);

@@ -40,10 +40,10 @@ export function createConfig({ strict = true, dev = true } = {}) {
 
 						// Clean up each icon
 						await iconSet.forEach(async (name) => {
-							const svg = iconSet.toSVG(name);
+							const svg = iconSet.toSVG(name)!;
 
 							// Change color to `currentColor`
-							const blackColor = stringToColor('black');
+							const blackColor = stringToColor('black')!;
 
 							await parseColors(svg, {
 								defaultColor: 'currentColor',
@@ -71,7 +71,7 @@ export function createConfig({ strict = true, dev = true } = {}) {
 							});
 
 							// Optimise
-							await runSVGO(svg);
+							runSVGO(svg);
 
 							// Update paths for compatibility with old software
 							await deOptimisePaths(svg);

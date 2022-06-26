@@ -18,7 +18,7 @@ interface MappedIDs {
 function mapIDsToTags(
 	data: AnalyseSVGStructureResult
 ): Record<string, MappedIDs> {
-	const result: Record<string, MappedIDs> = Object.create(null);
+	const result = Object.create(null) as Record<string, MappedIDs>;
 	for (const id in data.ids) {
 		const index = data.ids[id];
 		const element = data.elements.get(index)!;

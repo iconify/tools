@@ -354,7 +354,9 @@ describe('Loading icon set', () => {
 	});
 
 	test('Fluent UI', async () => {
-		const iconSetData = JSON.parse(await loadFixture('fluent.old.json'));
+		const iconSetData = JSON.parse(
+			await loadFixture('fluent.old.json')
+		) as IconifyJSON;
 		const iconSet = new IconSet(iconSetData);
 
 		expect(iconSet.resolve('accessibility-16-regular')).toEqual({

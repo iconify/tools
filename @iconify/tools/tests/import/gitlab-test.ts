@@ -78,7 +78,7 @@ describe('Downloading Git repository using GitLav API', () => {
 				target + '/' + branch.subdir + '/package.json',
 				'utf8'
 			)
-		);
+		) as Record<string, unknown>;
 		expect(packageContents.version).toBe(branch.version);
 	});
 
@@ -111,7 +111,7 @@ describe('Downloading Git repository using GitLav API', () => {
 				target + '/' + branch.subdir + '/package.json',
 				'utf8'
 			)
-		);
+		) as Record<string, unknown>;
 		expect(packageContents.version).toBe(branch.version);
 	});
 

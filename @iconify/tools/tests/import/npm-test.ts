@@ -56,7 +56,7 @@ describe('Downloading NPM package', () => {
 		// Check contents of package.json
 		const packageContents = JSON.parse(
 			await fs.readFile(target + packageDir + '/package.json', 'utf8')
-		);
+		) as Record<string, unknown>;
 		expect(packageContents.version).toBe(branch.version);
 	});
 
@@ -82,7 +82,7 @@ describe('Downloading NPM package', () => {
 		// Check contents of package.json
 		const packageContents = JSON.parse(
 			await fs.readFile(target + packageDir + '/package.json', 'utf8')
-		);
+		) as Record<string, unknown>;
 		expect(packageContents.version).toBe(branch.version);
 	});
 
