@@ -3,7 +3,6 @@ import type { IconSet } from '../icon-set';
 import type { ExportTargetOptions } from './helpers/prepare';
 import { prepareDirectoryForExport } from './helpers/prepare';
 import { writeJSONFile } from '../misc/write-json';
-import { getTypesVersion } from './helpers/types-version';
 import {
 	exportCustomFiles,
 	ExportOptionsWithCustomFiles,
@@ -97,7 +96,7 @@ export async function exportIconPackage(
 		iconSetInfo: info,
 		...customPackageProps,
 		dependencies: dependencies || {
-			'@iconify/types': '^' + (await getTypesVersion()),
+			'@iconify/types': '*', // '^' + (await getTypesVersion()),
 		},
 	};
 

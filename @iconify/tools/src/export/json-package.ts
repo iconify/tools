@@ -10,7 +10,6 @@ import type {
 	IconifyMetaData,
 } from '@iconify/types';
 import { writeJSONFile } from '../misc/write-json';
-import { getTypesVersion } from './helpers/types-version';
 import {
 	exportCustomFiles,
 	ExportOptionsWithCustomFiles,
@@ -131,7 +130,7 @@ export async function exportJSONPackage(
 		exports: packageJSONExports,
 		iconSet: packageJSONIconSet,
 		dependencies: dependencies || {
-			'@iconify/types': '^' + (await getTypesVersion()),
+			'@iconify/types': '*', // '^' + (await getTypesVersion()),
 		},
 	};
 
