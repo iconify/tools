@@ -139,33 +139,34 @@ describe('Working with aliases', () => {
 			body: '<g />',
 		};
 
+		// Test both resolve() from IconSet and getIconData() from Utils to make sure both generate identical results
 		expect(iconSet.resolve('test')).toEqual(expectedIcon);
-		expect(getIconData(iconSetData, 'test', false)).toEqual(expectedIcon);
+		expect(getIconData(iconSetData, 'test')).toEqual(expectedIcon);
 
 		expect(iconSet.resolve('alias1')).toEqual(expectedIcon);
-		expect(getIconData(iconSetData, 'alias1', false)).toEqual(expectedIcon);
+		expect(getIconData(iconSetData, 'alias1')).toEqual(expectedIcon);
 
 		expect(iconSet.resolve('alias2')).toEqual(expectedIcon);
-		expect(getIconData(iconSetData, 'alias2', false)).toEqual(expectedIcon);
+		expect(getIconData(iconSetData, 'alias2')).toEqual(expectedIcon);
 
 		expect(iconSet.resolve('alias3')).toEqual(expectedIcon);
-		expect(getIconData(iconSetData, 'alias3', false)).toEqual(expectedIcon);
+		expect(getIconData(iconSetData, 'alias3')).toEqual(expectedIcon);
 
 		expect(iconSet.resolve('alias4')).toEqual(expectedIcon);
-		expect(getIconData(iconSetData, 'alias4', false)).toEqual(expectedIcon);
+		expect(getIconData(iconSetData, 'alias4')).toEqual(expectedIcon);
 
 		expect(iconSet.resolve('alias5')).toEqual(expectedIcon);
-		expect(getIconData(iconSetData, 'alias5', false)).toEqual(expectedIcon);
+		expect(getIconData(iconSetData, 'alias5')).toEqual(expectedIcon);
 
 		expect(iconSet.resolve('alias6')).toEqual(expectedIcon);
-		expect(getIconData(iconSetData, 'alias6', false)).toEqual(expectedIcon);
+		expect(getIconData(iconSetData, 'alias6')).toEqual(expectedIcon);
 
 		// Should no longer fail: recursion can be unlimited because of new tree handling algorythm
 		expect(iconSet.resolve('alias7')).toEqual(expectedIcon);
-		expect(getIconData(iconSetData, 'alias7', false)).toEqual(expectedIcon);
+		expect(getIconData(iconSetData, 'alias7')).toEqual(expectedIcon);
 
 		expect(iconSet.resolve('alias8')).toEqual(expectedIcon);
-		expect(getIconData(iconSetData, 'alias8', false)).toEqual(expectedIcon);
+		expect(getIconData(iconSetData, 'alias8')).toEqual(expectedIcon);
 	});
 
 	test('Hidden icons', () => {

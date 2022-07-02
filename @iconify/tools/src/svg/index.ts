@@ -1,7 +1,6 @@
 import cheerio from 'cheerio';
 import type { IconifyIcon } from '@iconify/types';
-import { trimSVG, iconToSVG, defaultIconCustomisations } from '@iconify/utils';
-import { defaultIconProps } from '@iconify/utils/lib/icon/defaults';
+import { trimSVG, iconToSVG } from '@iconify/utils';
 import type { CommonIconProps } from '../icon-set/types';
 import type { IconifyIconCustomisations } from '@iconify/utils/lib/customisations/defaults';
 import type { CheerioElement } from '../misc/cheerio';
@@ -39,16 +38,7 @@ export class SVG {
 	toString(customisations?: IconifyIconCustomisations): string {
 		// Build icon if customisations are set
 		if (customisations) {
-			const data = iconToSVG(
-				{
-					...defaultIconProps,
-					...this.getIcon(),
-				},
-				{
-					...defaultIconCustomisations,
-					...customisations,
-				}
-			);
+			const data = iconToSVG(this.getIcon(), customisations);
 
 			// Generate SVG
 			let svgAttributes = ' xmlns="http://www.w3.org/2000/svg"';

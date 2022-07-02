@@ -12,10 +12,7 @@ import {
 	defaultIconProps,
 } from '@iconify/utils/lib/icon/defaults';
 import { iconToSVG } from '@iconify/utils/lib/svg/build';
-import {
-	defaultIconCustomisations,
-	IconifyIconCustomisations,
-} from '@iconify/utils/lib/customisations/defaults';
+import type { IconifyIconCustomisations } from '@iconify/utils/lib/customisations/defaults';
 import { minifyIconSet } from '@iconify/utils/lib/icon-set/minify';
 import { convertIconSetInfo } from '@iconify/utils/lib/icon-set/convert-info';
 import { filterProps, defaultCommonProps } from './props';
@@ -377,14 +374,11 @@ export class IconSet {
 			height: 'auto',
 		}
 	): string | null {
-		const item = this.resolve(name, true);
+		const item = this.resolve(name);
 		if (!item) {
 			return null;
 		}
-		const result = iconToSVG(item, {
-			...defaultIconCustomisations,
-			...customisations,
-		});
+		const result = iconToSVG(item, customisations);
 
 		const attributes = Object.keys(result.attributes)
 			.map(
