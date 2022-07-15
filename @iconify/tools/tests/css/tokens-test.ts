@@ -296,4 +296,64 @@ describe('getTokens()', () => {
 		];
 		expect(tree).toEqual(expectedTree);
 	});
+
+	test('@font-face', () => {
+		const code =
+			'@font-face { font-family: feedback-iconfont; src: url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff2?t=1630033759944") format("woff2"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff?t=1630033759944") format("woff"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.ttf?t=1630033759944") format("truetype"); }';
+		const tokens = getTokens(code);
+		const expected: CSSToken[] = [
+			{
+				type: 'at-rule',
+				code: '@font-face',
+				index: 0,
+				atRule: 'font-face',
+				atValues: [''],
+			},
+			{
+				type: 'rule',
+				prop: 'font-family',
+				value: 'feedback-iconfont',
+				index: 12,
+			},
+			{
+				type: 'rule',
+				prop: 'src',
+				value: 'url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff2?t=1630033759944") format("woff2"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff?t=1630033759944") format("woff"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.ttf?t=1630033759944") format("truetype")',
+				index: 44,
+			},
+			{ type: 'close', index: 313 },
+		];
+		expect(tokens).toEqual(expected);
+
+		const tree = tokensTree(tokens as CSSToken[]);
+		const expectedTree: CSSTreeToken[] = [
+			{
+				type: 'at-rule',
+				code: '@font-face',
+				index: 0,
+				atRule: 'font-face',
+				atValues: [''],
+				children: [
+					{
+						type: 'rule',
+						prop: 'font-family',
+						value: 'feedback-iconfont',
+						index: 12,
+					},
+					{
+						type: 'rule',
+						prop: 'src',
+						value: 'url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff2?t=1630033759944") format("woff2"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff?t=1630033759944") format("woff"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.ttf?t=1630033759944") format("truetype")',
+						index: 44,
+					},
+				],
+			},
+		];
+		expect(tree).toEqual(expectedTree);
+
+		const output = tokensToString(tree);
+		expect(output).toBe(
+			'@font-face() {\n\tfont-family: feedback-iconfont;\n\tsrc: url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff2?t=1630033759944") format("woff2"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff?t=1630033759944") format("woff"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.ttf?t=1630033759944") format("truetype");\n}\n'
+		);
+	});
 });

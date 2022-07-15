@@ -61,7 +61,7 @@ export async function parseSVGStyle(
 
 		if (tagName === 'style') {
 			// Style tag
-			const content = $element.html();
+			const content = $element.text();
 			if (typeof content !== 'string') {
 				$element.remove();
 				return;

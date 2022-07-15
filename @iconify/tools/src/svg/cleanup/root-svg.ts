@@ -14,7 +14,7 @@ import { maskTags, reusableElementsWithPalette } from '../data/tags';
 /**
  * Clean up SVG
  */
-export async function cleanupSVGRoot(svg: SVG): Promise<void> {
+export function cleanupSVGRoot(svg: SVG) {
 	const cheerio = svg.$svg;
 	const $root = svg.$svg(':root');
 	const root = $root.get(0) as cheerio.TagElement;
@@ -50,7 +50,7 @@ export async function cleanupSVGRoot(svg: SVG): Promise<void> {
 				if (value.slice(-2) === 'px') {
 					// Remove 'px'
 					const num = value.replace('px', '');
-					if (parseFloat(num) + '' === num) {
+					if (parseFloat(num).toString() === num) {
 						$root.attr(attr, num);
 					}
 				}

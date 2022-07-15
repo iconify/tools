@@ -2,6 +2,7 @@ import type { SVG } from '.';
 import { removeBadAttributes } from './cleanup/attribs';
 import { checkBadTags } from './cleanup/bad-tags';
 import { cleanupInlineStyle } from './cleanup/inline-style';
+import { cleanupRootStyle } from './cleanup/root-style';
 import { cleanupSVGRoot } from './cleanup/root-svg';
 import { convertStyleToAttrs } from './cleanup/svgo-style';
 
@@ -16,11 +17,14 @@ export async function cleanupSVG(svg: SVG): Promise<void> {
 	await convertStyleToAttrs(svg);
 
 	// Cleanup <svg> element
-	await cleanupSVGRoot(svg);
+	cleanupSVGRoot(svg);
 
 	// Check for bad tags
 	await checkBadTags(svg);
 
 	// Remove attributes
 	await removeBadAttributes(svg);
+
+	// Clean up root style
+	await cleanupRootStyle(svg);
 }

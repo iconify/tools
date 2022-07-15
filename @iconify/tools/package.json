@@ -368,6 +368,10 @@
 			"require": "./lib/svg/cleanup/inline-style.cjs",
 			"import": "./lib/svg/cleanup/inline-style.mjs"
 		},
+		"./lib/svg/cleanup/root-style": {
+			"require": "./lib/svg/cleanup/root-style.cjs",
+			"import": "./lib/svg/cleanup/root-style.mjs"
+		},
 		"./lib/svg/cleanup/root-svg": {
 			"require": "./lib/svg/cleanup/root-svg.cjs",
 			"import": "./lib/svg/cleanup/root-svg.mjs"

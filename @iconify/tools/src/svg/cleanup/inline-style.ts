@@ -27,7 +27,7 @@ export async function cleanupInlineStyle(svg: SVG): Promise<void> {
 				// Ignore style
 				$element.removeAttr('style');
 			} else {
-				const newStyle: Record<string, string> = Object.create(null);
+				const newStyle = Object.create(null) as Record<string, string>;
 
 				const checkRule = (prop: string, value: string) => {
 					function warn() {
