@@ -8,6 +8,7 @@ export { analyseSVGStructure } from './svg/analyse';
 export { cleanupSVG } from './svg/cleanup';
 export { removeBadAttributes } from './svg/cleanup/attribs';
 export { checkBadTags } from './svg/cleanup/bad-tags';
+export { cleanupRootStyle } from './svg/cleanup/root-style';
 export { cleanupInlineStyle } from './svg/cleanup/inline-style';
 export { cleanupSVGRoot } from './svg/cleanup/root-svg';
 export { convertStyleToAttrs } from './svg/cleanup/svgo-style';
