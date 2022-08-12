@@ -18,7 +18,7 @@ export function cleanupIconKeyword(
 		.toLowerCase()
 		.trim()
 		// Replace few characters with dash
-		.replace(/[_.:]/g, '-')
+		.replace(/[\s_.:]/g, '-')
 		// Remove bad characters
 		.replace(/[^a-z0-9-]/g, '')
 		// Replace repeating dash
