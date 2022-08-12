@@ -8,6 +8,7 @@ import {
 	tagSpecificAnimatedAttributes,
 	tagSpecificNonPresentationalAttributes,
 	tagSpecificPresentationalAttributes,
+	tagSpecificInlineStyles,
 } from '../data/attributes';
 import { parseSVG } from '../parse';
 
@@ -52,6 +53,12 @@ export async function cleanupInlineStyle(svg: SVG): Promise<void> {
 						tagSpecificPresentationalAttributes[tagName]?.has(prop)
 					) {
 						$element.attr(prop, value);
+						return;
+					}
+
+					// Valid style that cannot be converted to attribute
+					if (tagSpecificInlineStyles[tagName]?.has(prop)) {
+						newStyle[prop] = value;
 						return;
 					}
 

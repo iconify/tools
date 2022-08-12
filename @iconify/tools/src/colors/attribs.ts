@@ -38,3 +38,17 @@ export const defaultColorValues: Record<ColorAttributes, Color> = {
 	'stop-color': defaultBlackColor,
 	'flood-color': defaultBlackColor,
 };
+
+/**
+ * Ignore default color for some tags:
+ * - If value is true, allow default color
+ * - If value is attribute name, allow default color if attribute is set
+ *
+ * Parent elements are not checked for these tags!
+ */
+export const allowDefaultColorValue: Partial<
+	Record<ColorAttributes, string | true>
+> = {
+	'stop-color': true,
+	'flood-color': 'flood-opacity',
+};

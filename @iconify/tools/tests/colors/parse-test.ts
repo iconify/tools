@@ -442,4 +442,19 @@ describe('Finding colors', () => {
 			hasGlobalStyle: false,
 		});
 	});
+
+	test('Missing stop-color with stop-opacity', async () => {
+		const svgCode = await loadFixture('amphora_color.svg');
+		const svg = new SVG(svgCode);
+		await removeBadAttributes(svg);
+
+		// Find colors
+		const searchResult = await parseColors(svg, {
+			defaultColor: () => {
+				throw new Error(`Unexpected callback call for defaultColor`);
+			},
+		});
+		expect(searchResult.hasUnsetColor).toBe(false);
+		expect(searchResult.hasGlobalStyle).toBe(false);
+	});
 });

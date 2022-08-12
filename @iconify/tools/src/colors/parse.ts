@@ -8,6 +8,7 @@ import type { SVG } from '../svg';
 import { animateTags, shapeTags } from '../svg/data/tags';
 import { parseSVGStyle } from '../svg/parse-style';
 import {
+	allowDefaultColorValue,
 	ColorAttributes,
 	defaultBlackColor,
 	defaultColorValues,
@@ -174,9 +175,12 @@ export async function parseColors(
 		prop: ColorAttributes,
 		item: ElementsTreeItem,
 		elements: ElementsMap
-	): Color | string {
-		function find(prop: ColorAttributes): Color | string {
+	): Color | string | null {
+		function find(prop: ColorAttributes): Color | string | null {
 			let currentItem: ElementsTreeItem | undefined = item;
+
+			const allowDefaultColor = allowDefaultColorValue[prop];
+
 			while (currentItem) {
 				const element = elements.get(
 					currentItem.index
@@ -187,17 +191,30 @@ export async function parseColors(
 					return color;
 				}
 
+				// Allow default color?
+				if (allowDefaultColor) {
+					if (
+						allowDefaultColor === true ||
+						element.attribs[allowDefaultColor]
+					) {
+						return null;
+					}
+				}
+
+				// Parent item
 				currentItem = currentItem.parent;
 				if (currentItem?.usedAsMask) {
 					// Used as mask: color from parent item is irrelevant
 					return defaultColorValues[prop];
 				}
 			}
+
 			return defaultColorValues[prop];
 		}
 
 		let propColor = find(prop);
 		if (
+			propColor !== null &&
 			typeof propColor === 'object' &&
 			propColor.type === 'current' &&
 			prop !== 'color'

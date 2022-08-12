@@ -129,4 +129,47 @@ describe('Validating colors', () => {
 			hasGlobalStyle: false,
 		});
 	});
+
+	test('Icon with palette in filter', async () => {
+		const svgCode = await loadFixture('elements/feFlood.svg');
+		const svg = new SVG(svgCode);
+
+		// Palette
+		const result = await validateColors(svg, false);
+		expect(result).toEqual({
+			colors: ['green'].map(stringToColor),
+			hasUnsetColor: false,
+			hasGlobalStyle: false,
+		});
+	});
+
+	test('Icon with palette with filter without color', async () => {
+		const svgCode = await loadFixture('1st_place_medal_color.svg');
+		const svg = new SVG(svgCode);
+
+		// Palette
+		const result = await validateColors(svg, false);
+		expect(result.hasGlobalStyle).toBe(false);
+		expect(result.hasUnsetColor).toBe(false);
+
+		// currentColor should not be there
+		await expect(() => {
+			return validateColors(svg, true);
+		}).rejects.toThrow();
+	});
+
+	test('Missing stop-color with stop-opacity', async () => {
+		const svgCode = await loadFixture('amphora_color.svg');
+		const svg = new SVG(svgCode);
+
+		// Palette
+		const result = await validateColors(svg, false);
+		expect(result.hasGlobalStyle).toBe(false);
+		expect(result.hasUnsetColor).toBe(false);
+
+		// currentColor should not be there
+		await expect(() => {
+			return validateColors(svg, true);
+		}).rejects.toThrow();
+	});
 });

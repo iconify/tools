@@ -442,3 +442,10 @@ export const tagSpecificNonPresentationalAttributes: Record<
 		'type',
 	]),
 };
+
+/**
+ * Styles to keep in tags
+ */
+export const tagSpecificInlineStyles: Record<string, Set<string>> = {
+	mask: new Set(['mask-type']),
+};
