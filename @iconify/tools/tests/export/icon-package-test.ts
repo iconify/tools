@@ -79,6 +79,14 @@ describe('Exporting to icon package', () => {
 			expect(content).toBe(expected);
 		});
 
+		// Check package.json to make sure it uses wildcard
+		const packageContent = JSON.parse(
+			await fs.readFile(targetDir + '/package.json', 'utf8')
+		) as Record<string, unknown>;
+		expect(packageContent['dependencies']).toEqual({
+			'@iconify/types': '*',
+		});
+
 		// Clean up
 		await fs.rm(targetDir, {
 			recursive: true,
