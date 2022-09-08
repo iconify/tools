@@ -22,7 +22,7 @@
 		"test:tools": "npm run test --workspace=@iconify/tools"
 	},
 	"devDependencies": {
-		"@iconify/iconify": "^3.0.0-beta.1",
+		"@iconify/iconify": "^3.0.0",
 		"@iconify/json": "^2.0.1",
 		"@mdi/svg": "^6.5.95",
 		"@types/jest": "^27.4.0",
