@@ -32,9 +32,9 @@
 		"@types/tar": "^6.1.0",
 		"cheerio": "^1.0.0-rc.10",
 		"extract-zip": "^2.0.1",
-		"local-pkg": "^0.4.1",
+		"local-pkg": "^0.4.2",
 		"node-fetch": "^2.6.7",
-		"pathe": "^0.2.0",
+		"pathe": "^0.3.7",
 		"svgo": "^2.8.0",
 		"tar": "^6.1.11"
 	},
