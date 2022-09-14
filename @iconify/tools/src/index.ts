@@ -38,6 +38,7 @@ export { downloadFile } from './download/api/download';
 // Manipulation
 export { parseColors, isEmptyColor } from './colors/parse';
 export { validateColors } from './colors/validate';
+export { detectIconSetPalette } from './colors/detect';
 export { runSVGO } from './optimise/svgo';
 export { deOptimisePaths } from './optimise/flags';
 export { scaleSVG } from './optimise/scale';

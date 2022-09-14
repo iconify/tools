@@ -48,6 +48,10 @@
 			"require": "./lib/colors/attribs.cjs",
 			"import": "./lib/colors/attribs.mjs"
 		},
+		"./lib/colors/detect": {
+			"require": "./lib/colors/detect.cjs",
+			"import": "./lib/colors/detect.mjs"
+		},
 		"./lib/colors/parse": {
 			"require": "./lib/colors/parse.cjs",
 			"import": "./lib/colors/parse.mjs"
