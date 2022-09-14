@@ -38,6 +38,9 @@
 		"svgo": "^2.8.0",
 		"tar": "^6.1.11"
 	},
+	"peerDependencies": {
+		"@iconify/types": "*"
+	},
 	"exports": {
 		"./*": "./*",
 		".": {
