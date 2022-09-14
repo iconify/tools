@@ -16,6 +16,7 @@ export { convertStyleToAttrs } from './svg/cleanup/svgo-style';
 // IconSet class
 export { IconSet, blankIconSet } from './icon-set/index';
 export { mergeIconSets } from './icon-set/merge';
+export { addTagsToIconSet } from './icon-set/tags';
 
 // Import
 export { importFromFigma } from './import/figma/index';

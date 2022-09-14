@@ -255,6 +255,10 @@
 			"require": "./lib/icon-set/props.cjs",
 			"import": "./lib/icon-set/props.mjs"
 		},
+		"./lib/icon-set/tags": {
+			"require": "./lib/icon-set/tags.cjs",
+			"import": "./lib/icon-set/tags.mjs"
+		},
 		"./lib/icon-set/types": {
 			"require": "./lib/icon-set/types.cjs",
 			"import": "./lib/icon-set/types.mjs"
