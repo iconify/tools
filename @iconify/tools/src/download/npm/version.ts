@@ -18,7 +18,22 @@ export async function getNPMVersion(
 ): Promise<GetNPMVersionResult> {
 	const tag = options.tag || 'latest';
 	const result = await execAsync(`npm view ${options.package}@${tag} --json`);
-	const data = JSON.parse(result.stdout);
+
+	interface NPMViewResponse {
+		'name': string;
+		'dist-tags': Record<string, string>;
+		'versions': string[];
+		'time': Record<string, string>;
+		'version': string;
+		'dist'?: {
+			integrity: string;
+			shasum: string;
+			tarball: string;
+			fileCount: number;
+			unpackedSize: number;
+		};
+	}
+	const data = JSON.parse(result.stdout) as NPMViewResponse;
 	return {
 		version: data.version,
 		file: data.dist?.tarball,
@@ -29,6 +44,13 @@ export async function getNPMVersion(
  * Get version of package from filename
  */
 export async function getPackageVersion(target: string): Promise<string> {
-	return JSON.parse(await fs.readFile(target + '/package.json', 'utf8'))
-		.version;
+	interface PackageContent {
+		name: string;
+		version: string;
+	}
+	return (
+		JSON.parse(
+			await fs.readFile(target + '/package.json', 'utf8')
+		) as PackageContent
+	).version;
 }

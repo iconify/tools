@@ -9,9 +9,16 @@ interface StoredFile {
 	filename: string;
 	expires: number;
 }
-const storedFiles: Record<string, Record<string, StoredFile>> = Object.create(
-	null
-);
+const storedFiles = Object.create(null) as Record<
+	string,
+	Record<string, StoredFile>
+>;
+
+interface StoredContent {
+	version: number;
+	expires: number;
+	data: string;
+}
 
 /**
  * Unique key
@@ -34,24 +41,18 @@ export async function storeAPICache(
 	data: string
 ): Promise<void> {
 	const expires = Date.now() + options.ttl * 1000;
-	const filename = options.dir + '/' + key + '.' + expires + '.json';
+	const filename =
+		options.dir + '/' + key + '.' + expires.toString() + '.json';
 	if (!storedFiles[options.dir]) {
 		await getStoredFiles(options.dir);
 	}
 
-	await fs.writeFile(
-		filename,
-		JSON.stringify(
-			{
-				version: cacheVersion,
-				expires,
-				data,
-			},
-			null,
-			4
-		),
-		'utf8'
-	);
+	const content: StoredContent = {
+		version: cacheVersion,
+		expires,
+		data,
+	};
+	await fs.writeFile(filename, JSON.stringify(content, null, 4), 'utf8');
 	storedFiles[options.dir][key] = {
 		filename,
 		expires,
@@ -75,7 +76,9 @@ export async function getAPICache(
 	const time = Date.now();
 
 	try {
-		const content = JSON.parse(await fs.readFile(item.filename, 'utf8'));
+		const content = JSON.parse(
+			await fs.readFile(item.filename, 'utf8')
+		) as StoredContent;
 		return content.version === cacheVersion && content.expires > time
 			? content.data
 			: null;
@@ -95,7 +98,9 @@ export function clearAPICache(dir: string): Promise<void> {
  * Find all stored files
  */
 async function getStoredFiles(dir: string, clear = false): Promise<void> {
-	const storage = (!clear && storedFiles[dir]) || Object.create(null);
+	const storage =
+		(!clear && storedFiles[dir]) ||
+		(Object.create(null) as Record<string, StoredFile>);
 	const time = Date.now();
 	storedFiles[dir] = storage;
 
@@ -126,7 +131,7 @@ async function getStoredFiles(dir: string, clear = false): Promise<void> {
 			}
 
 			// Valid
-			const cacheKey = parts[0] as string;
+			const cacheKey = parts[0];
 			storage[cacheKey] = {
 				filename,
 				expires,

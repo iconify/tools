@@ -25,7 +25,7 @@ export function styleParseError(
 
 		const code2 = code.slice(0, end);
 		const line = code2.length - code2.replace(/\n/g, '').length + 1;
-		fullMessage = message + ' on line ' + line;
+		fullMessage = message + ' on line ' + line.toString();
 	}
 
 	return {

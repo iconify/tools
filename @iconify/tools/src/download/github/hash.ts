@@ -18,7 +18,13 @@ export async function getGitHubRepoHash(
 	if (typeof data !== 'string') {
 		throw new Error(`Error downloading data from GitHub API: ${data}`);
 	}
-	const content = JSON.parse(data);
+
+	interface GitHubAPIResponse {
+		commit?: {
+			sha: string;
+		};
+	}
+	const content = JSON.parse(data) as GitHubAPIResponse;
 	const hash = content?.commit?.sha;
 	if (typeof hash !== 'string') {
 		throw new Error('Error parsing GitHub API response');

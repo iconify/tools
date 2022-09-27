@@ -16,12 +16,12 @@ function assertNever(v: never) {
 /**
  * Get node ids for icons
  */
-export async function getFigmaIconNodes(
+export function getFigmaIconNodes(
 	document: FigmaDocument,
 	options: FigmaGetIconNodesOptions
-): Promise<FigmaNodesImportResult> {
+): FigmaNodesImportResult {
 	const nodes: FigmaNodesImportResult = {
-		icons: Object.create(null),
+		icons: Object.create(null) as FigmaNodesImportResult['icons'],
 	};
 	let found = 0;
 

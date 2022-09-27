@@ -62,7 +62,7 @@ export async function figmaFilesQuery(
 		params.set('version', options.version);
 	}
 	if (options.depth) {
-		params.set('depth', options.depth + '');
+		params.set('depth', options.depth.toString());
 	}
 	const queryParams: APIQueryParams = {
 		uri: 'https://api.figma.com/v1/files/' + options.file,
@@ -141,7 +141,7 @@ export async function figmaFilesQuery(
 	// Parse JSON
 	let parsedData: Record<string, unknown>;
 	try {
-		parsedData = JSON.parse(data);
+		parsedData = JSON.parse(data) as Record<string, unknown>;
 	} catch (err) {
 		throw new Error(`Error retrieving document from API: invalid data`);
 	}
@@ -255,7 +255,7 @@ export async function figmaImagesQuery(
 		if (lastError) {
 			throw new Error(
 				`Error retrieving image data from API${
-					lastError ? ': ' + lastError : ''
+					lastError ? ': ' + lastError.toString() : ''
 				}`
 			);
 		} else {
@@ -302,7 +302,9 @@ export async function figmaDownloadImages(
 
 	if (!count) {
 		throw new Error(
-			`Error retrieving images${lastError ? ': ' + lastError : ''}`
+			`Error retrieving images${
+				lastError ? ': ' + lastError.toString() : ''
+			}`
 		);
 	}
 	nodes.downloadedIconsCount = count;

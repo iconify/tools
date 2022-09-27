@@ -57,7 +57,7 @@ export async function importFromFigma(
 	options.version = document.version;
 
 	// Get nodes
-	const nodes = await getFigmaIconNodes(document, options);
+	const nodes = getFigmaIconNodes(document, options);
 
 	// Get images
 	await figmaImagesQuery(options, nodes, cacheOptions);

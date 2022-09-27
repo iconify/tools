@@ -19,7 +19,14 @@ export async function getGitLabRepoHash(
 	if (typeof data !== 'string') {
 		throw new Error(`Error downloading data from GitLab API: ${data}`);
 	}
-	const content = JSON.parse(data);
+
+	interface GitLabAPIResponse {
+		name: string;
+		commit: {
+			id: string;
+		};
+	}
+	const content = JSON.parse(data) as GitLabAPIResponse | GitLabAPIResponse[];
 	const item = (content instanceof Array ? content : [content]).find(
 		(item) =>
 			item.name === options.branch && typeof item.commit.id === 'string'
