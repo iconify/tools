@@ -1,4 +1,4 @@
-import { resolve } from 'path';
+import { resolve } from 'pathe';
 import { exec } from 'child_process';
 import type { ExecOptions } from 'child_process';
 

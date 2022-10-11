@@ -2,7 +2,7 @@ import { stringToColor } from '@iconify/utils/lib/colors';
 import { SVG } from '../../lib/svg';
 import { parseColors, isEmptyColor } from '../../lib/colors/parse';
 import { removeBadAttributes } from '../../lib/svg/cleanup/attribs';
-import { loadFixture } from '../load';
+import { loadFixture } from '../../lib/tests/load';
 
 describe('Finding colors', () => {
 	test('Icon without colors', async () => {

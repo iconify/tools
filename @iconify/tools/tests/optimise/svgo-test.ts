@@ -1,6 +1,6 @@
 import { SVG } from '../../lib/svg';
 import { runSVGO } from '../../lib/optimise/svgo';
-import { loadFixture } from '../load';
+import { loadFixture } from '../../lib/tests/load';
 
 describe('Optimising icon with animations', () => {
 	test('Keeping shape', () => {

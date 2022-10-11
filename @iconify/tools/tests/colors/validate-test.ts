@@ -1,7 +1,7 @@
 import { SVG } from '../../lib/svg';
 import { validateColors } from '../../lib/colors/validate';
 import { stringToColor } from '@iconify/utils/lib/colors';
-import { loadFixture } from '../load';
+import { loadFixture } from '../../lib/tests/load';
 
 describe('Validating colors', () => {
 	test('Icon without colors', async () => {
