@@ -15,22 +15,21 @@ export function execAsync(
 	options?: ExecOptions
 ): Promise<ExecResult> {
 	return new Promise((fulfill, reject) => {
-		const fullOptions = {
-			...options,
-			encoding: 'utf8',
-		};
-		if (fullOptions.cwd) {
+		if (typeof options?.cwd === 'string') {
 			// Relative directories sometimes do not work, so resolve directory first
-			fullOptions.cwd = resolve(fullOptions.cwd);
+			options = {
+				...options,
+				cwd: resolve(options.cwd),
+			};
 		}
-		exec(cmd, fullOptions, (error, stdout, stderr) => {
+		exec(cmd, options, (error, stdout, stderr) => {
 			if (error) {
 				reject(error);
 			} else {
 				fulfill({
 					stdout,
 					stderr,
-				});
+				} as ExecResult);
 			}
 		});
 	});
