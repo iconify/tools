@@ -83,6 +83,14 @@ import { parseColors, isEmptyColor } from '@iconify/tools/lib/colors/parse';
 
 Full documentation is too big for simple README file. See [Iconify Tools documentation](https://docs.iconify.design/tools/tools2/) for detailed documentation with code samples.
 
+## Sponsors
+
+<p align="center">
+  <a href="https://github.com/sponsors/cyberalien">
+    <img src='https://cyberalien.github.io/static/sponsors.svg'/>
+  </a>
+</p>
+
 ## License
 
 Library is released with MIT license.
