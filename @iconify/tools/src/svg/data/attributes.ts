@@ -39,7 +39,6 @@ export const junkSVGAttributes = new Set([
  * Attributes and styles often added by bad software to wrong tags, such as Adobe Illustrator and Inkscape
  */
 export const badSoftwareAttributes = new Set([
-	'color-interpolation-filters',
 	'isolation',
 	'enable-background',
 	'overflow',
