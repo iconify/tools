@@ -20,7 +20,7 @@ export function createConfig({ strict = true, dev = true } = {}) {
 		},
 		presets: [
 			presetIcons({
-				autoInstall: true,
+				autoInstall: false,
 				collections: {
 					// Loading IconifyJSON data
 					'test': async () => {

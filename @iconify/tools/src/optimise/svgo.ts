@@ -1,5 +1,5 @@
 import { optimize } from 'svgo';
-import type { OptimizeOptions, Plugin } from 'svgo';
+import type { Config, PluginConfig } from 'svgo';
 import type { SVG } from '../svg';
 
 interface CleanupIDsOption {
@@ -16,7 +16,7 @@ interface GetSVGOPluingOptions extends CleanupIDsOption {
 /**
  * Get list of plugins
  */
-export function getSVGOPlugins(options: GetSVGOPluingOptions): Plugin[] {
+export function getSVGOPlugins(options: GetSVGOPluingOptions): PluginConfig[] {
 	return [
 		'cleanupAttrs',
 		'mergeStyles',
@@ -43,7 +43,7 @@ export function getSVGOPlugins(options: GetSVGOPluingOptions): Plugin[] {
 		// Plugins that are bugged when using animations
 		...((options.animated
 			? []
-			: ['removeUselessStrokeAndFill']) as Plugin[]),
+			: ['removeUselessStrokeAndFill']) as PluginConfig[]),
 
 		// Plugins that modify shapes or are bugged when using animations
 		...((options.animated || options.keepShapes
@@ -66,13 +66,13 @@ export function getSVGOPlugins(options: GetSVGOPluingOptions): Plugin[] {
 					},
 					// 'removeOffCanvasPaths', // bugged for some icons
 					'reusePaths',
-			  ]) as Plugin[]),
+			  ]) as PluginConfig[]),
 
 		// Clean up IDs
 		...((options.cleanupIDs !== false
 			? [
 					{
-						name: 'cleanupIDs',
+						name: 'cleanupIds',
 						params: {
 							prefix:
 								typeof options.cleanupIDs === 'string'
@@ -81,7 +81,7 @@ export function getSVGOPlugins(options: GetSVGOPluingOptions): Plugin[] {
 						},
 					},
 			  ]
-			: []) as Plugin[]),
+			: []) as PluginConfig[]),
 	];
 }
 
@@ -96,7 +96,7 @@ interface SVGOCommonOptions {
 // Options list with custom plugins list
 interface SVGOOptionsWithPlugin extends SVGOCommonOptions {
 	// Custom SVGO plugins list
-	plugins: Plugin[];
+	plugins: PluginConfig[];
 }
 
 // Options list without plugins list
@@ -120,7 +120,7 @@ export function runSVGO(svg: SVG, options: SVGOOptions = {}) {
 	const multipass = options.multipass !== false;
 
 	// Plugins list
-	let plugins: Plugin[];
+	let plugins: PluginConfig[];
 	if (options.plugins) {
 		plugins = options.plugins;
 	} else {
@@ -135,7 +135,7 @@ export function runSVGO(svg: SVG, options: SVGOOptions = {}) {
 	}
 
 	// Run SVGO
-	const pluginOptions: OptimizeOptions = {
+	const pluginOptions: Config = {
 		plugins,
 		multipass,
 	};

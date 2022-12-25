@@ -9,9 +9,12 @@
 		"start": "node ./lib/bundle-svg-full.js"
 	},
 	"dependencies": {
-		"@iconify/tools": "^2.1.0"
+		"@iconify/tools": "workspace:^"
 	},
 	"devDependencies": {
-		"typescript": "^4.8.4"
+		"@iconify/iconify": "^3.0.1",
+		"@iconify/json": "^2.1.156",
+		"@types/node": "^18.11.17",
+		"typescript": "^4.9.4"
 	}
 }

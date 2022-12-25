@@ -1,19 +1,26 @@
 {
-	"name": "@iconify-demo/unplugin-svelte",
-	"private": "true",
-	"type": "module",
+	"name": "unplugin-svelte",
+	"version": "0.0.1",
 	"scripts": {
-		"build": "svelte-kit build",
-		"check": "svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
-		"dev": "svelte-kit dev",
-		"preview": "svelte-kit preview"
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"devDependencies": {
-		"@sveltejs/kit": "next",
-		"svelte": "^3.51.0",
+		"@fontsource/fira-mono": "^4.5.10",
+		"@iconify/tools": "workspace:^",
+		"@neoconfetti/svelte": "^1.0.0",
+		"@sveltejs/adapter-auto": "^1.0.0",
+		"@sveltejs/kit": "^1.0.0",
+		"@types/cookie": "^0.5.1",
+		"svelte": "^3.54.0",
 		"svelte-check": "^2.9.2",
-		"svelte-preprocess": "^4.10.7",
-		"tslib": "^2.4.0"
-	}
+		"tslib": "^2.4.1",
+		"typescript": "^4.9.3",
+		"unplugin-icons": "^0.14.15",
+		"vite": "^4.0.0"
+	},
+	"type": "module"
 }

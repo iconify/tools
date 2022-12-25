@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
     // Import from SVG
     import SVGIonAccessibility from 'virtual:icons/svg-ion/accessibility'
     import SVGIonBalloonOutline from 'virtual:icons/svg-ion/balloon-outline'
@@ -9,8 +9,13 @@
 
 </script>
 
+<svelte:head>
+	<title>Home</title>
+	<meta name="description" content="Svelte demo app" />
+</svelte:head>
+
 <main>
-    <section>
+	<section>
         <h1>Importing from 512x512 monotone SVG (imported one by one on demand)</h1>
         <p>Black 1em icon, changes color on hover: <SVGIonAccessibility /></p>
         <p>Green 2em icon: <SVGIonBalloonOutline style="font-size: 2em; color: #327335;"/></p>    
