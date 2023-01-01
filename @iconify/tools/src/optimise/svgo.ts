@@ -1,14 +1,15 @@
 import { optimize } from 'svgo';
 import type { Config, PluginConfig } from 'svgo';
 import type { SVG } from '../svg';
+import { replaceIDs } from '@iconify/utils/lib/svg/id';
 
 interface CleanupIDsOption {
 	// Cleanup IDs, value is prefix to add to IDs, default is 'svgID'. False to disable it
 	// Do not use dashes in ID, it breaks some SVG animations
-	cleanupIDs?: string | false;
+	cleanupIDs?: string | ((id: string) => string) | false;
 }
 
-interface GetSVGOPluingOptions extends CleanupIDsOption {
+interface GetSVGOPluginOptions extends CleanupIDsOption {
 	animated?: boolean;
 	keepShapes?: boolean;
 }
@@ -16,7 +17,7 @@ interface GetSVGOPluingOptions extends CleanupIDsOption {
 /**
  * Get list of plugins
  */
-export function getSVGOPlugins(options: GetSVGOPluingOptions): PluginConfig[] {
+export function getSVGOPlugins(options: GetSVGOPluginOptions): PluginConfig[] {
 	return [
 		'cleanupAttrs',
 		'mergeStyles',
@@ -67,21 +68,6 @@ export function getSVGOPlugins(options: GetSVGOPluingOptions): PluginConfig[] {
 					// 'removeOffCanvasPaths', // bugged for some icons
 					'reusePaths',
 			  ]) as PluginConfig[]),
-
-		// Clean up IDs
-		...((options.cleanupIDs !== false
-			? [
-					{
-						name: 'cleanupIds',
-						params: {
-							prefix:
-								typeof options.cleanupIDs === 'string'
-									? options.cleanupIDs
-									: 'svgID',
-						},
-					},
-			  ]
-			: []) as PluginConfig[]),
 	];
 }
 
@@ -150,6 +136,26 @@ export function runSVGO(svg: SVG, options: SVGOOptions = {}) {
 	}
 
 	// Sometimes empty definitions are not removed: remove them
-	const content = result.data.replace(/<defs\/>/g, '');
+	let content = result.data.replace(/<defs\/>/g, '');
+
+	// Replace IDs, but only if plugins list is not set
+	if (!options.plugins) {
+		const prefix =
+			options.cleanupIDs !== void 0 ? options.cleanupIDs : 'svgID';
+		if (prefix !== false) {
+			let counter = 0;
+			content = replaceIDs(
+				content,
+				typeof prefix === 'string'
+					? () => {
+							// Return prefix with number
+							return prefix + (counter++).toString(36);
+					  }
+					: prefix
+			);
+		}
+	}
+
+	// Load content
 	svg.load(content);
 }
