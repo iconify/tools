@@ -68,6 +68,11 @@ export function getSVGOPlugins(options: GetSVGOPluginOptions): PluginConfig[] {
 					// 'removeOffCanvasPaths', // bugged for some icons
 					'reusePaths',
 			  ]) as PluginConfig[]),
+
+		// Clean up IDs, first run
+		...((options.cleanupIDs !== false
+			? ['cleanupIds']
+			: []) as PluginConfig[]),
 	];
 }
 
