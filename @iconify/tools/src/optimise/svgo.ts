@@ -156,6 +156,21 @@ export function runSVGO(svg: SVG, options: SVGOOptions = {}) {
 		}
 	}
 
+	// Fix reusePaths result
+	if (
+		!options.plugins ||
+		options.plugins.find((item) => {
+			if (typeof item === 'string') {
+				return item === 'reusePaths';
+			}
+			return item.name === 'reusePaths';
+		})
+	) {
+		content = content
+			.replace(' xmlns:xlink="http://www.w3.org/1999/xlink"', '')
+			.replaceAll('xlink:href=', 'href=');
+	}
+
 	// Load content
 	svg.load(content);
 }

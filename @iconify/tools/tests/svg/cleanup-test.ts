@@ -169,4 +169,12 @@ describe('Cleaning up SVG', () => {
 			content.replace(/\s*\n\s*/g, '').replace(/" \/>/g, '"/>')
 		);
 	});
+
+	test('Icon with xlink', async () => {
+		const svg = new SVG(await loadFixture('elements/mpath.svg'));
+		await cleanupSVG(svg);
+		expect(svg.toMinifiedString()).toBe(
+			'<svg width="100%" height="100%" viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="498" height="298" fill="none" stroke="blue" stroke-width="2"/><path id="path1" d="M100,250 C 100,50 400,50 400,250" fill="none" stroke="blue" stroke-width="7.06"/><circle cx="100" cy="250" r="17.64" fill="blue"/><circle cx="250" cy="100" r="17.64" fill="blue"/><circle cx="400" cy="250" r="17.64" fill="blue"/><path d="M-25,-12.5 L25,-12.5 L 0,-87.5 z" fill="yellow" stroke="red" stroke-width="7.06"><animateMotion dur="6s" repeatCount="indefinite" rotate="auto"><mpath href="#path1"/></animateMotion></path></svg>'
+		);
+	});
 });

@@ -82,7 +82,7 @@ importers:
 
   '@iconify/tools':
     specifiers:
-      '@iconify/utils': ^2.0.5
+      '@iconify/utils': ^2.0.9
       '@types/cheerio': ^0.22.31
       '@types/jest': ^29.2.4
       '@types/node': ^18.11.17
@@ -110,7 +110,7 @@ importers:
       typescript: ^4.9.4
       unbuild: ^1.0.2
     dependencies:
-      '@iconify/utils': 2.0.5
+      '@iconify/utils': 2.0.9
       '@types/cheerio': 0.22.31
       '@types/node-fetch': 2.6.2
       '@types/tar': 6.1.3
@@ -157,10 +157,10 @@ packages:
 
   /@antfu/utils/0.5.2:
     resolution: {integrity: sha512-CQkeV+oJxUazwjlHD0/3ZD08QWKuGQkhnrKo3e6ly5pd48VUpXbb77q0xMU4+vc2CkJnDS02Eq/M9ugyX20XZA==}
+    dev: true
 
   /@antfu/utils/0.7.2:
     resolution: {integrity: sha512-vy9fM3pIxZmX07dL+VX1aZe7ynZ+YyB0jY+jE6r3hOK6GNY2t6W8rzpFC4tgpbXUYABkFQwgJq2XYXlxbXAI0g==}
-    dev: true
 
   /@babel/code-frame/7.18.6:
     resolution: {integrity: sha512-TDCmlK5eOvH+eH7cdAFlNXeVJqWIQ7gW9tY1GJIpUtFb6CmjVyq2VM3u71bOyR8CRihcCgMUYoDNyLXao3+70Q==}
@@ -785,6 +785,20 @@ packages:
       local-pkg: 0.4.2
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /@iconify/utils/2.0.9:
+    resolution: {integrity: sha512-ropNqaeamoxZvXxvaTJXrI0MrqdWdDVIs/mW7/sEQbNi0aXYUGL2iuLs1da3QR163gyG63kiyTsqw2oQYamw3Q==}
+    dependencies:
+      '@antfu/install-pkg': 0.1.1
+      '@antfu/utils': 0.7.2
+      '@iconify/types': 2.0.0
+      debug: 4.3.4
+      kolorist: 1.6.0
+      local-pkg: 0.4.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /@istanbuljs/load-nyc-config/1.1.0:
     resolution: {integrity: sha512-VjeHSlIzpv/NyD3N0YuHfXOPDIixcA1q2ZV98wsMqcYlPmv2n3Yb2lYP9XMElnaFVXg5A7YLTeLu6V84uQDjmQ==}
