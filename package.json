@@ -19,6 +19,7 @@
 	"scripts": {
 		"build": "pnpm recursive run build",
 		"test": "pnpm recursive run test",
+		"lint": "pnpm recursive run lint",
 		"build:tools": "pnpm recursive --filter \"./@iconify/tools\" run build",
 		"test:tools": "pnpm recursive --filter \"./@iconify/tools\" run test"
 	}
