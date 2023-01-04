@@ -21,6 +21,7 @@
 		"test": "pnpm recursive run test",
 		"lint": "pnpm recursive run lint",
 		"build:tools": "pnpm recursive --filter \"./@iconify/tools\" run build",
-		"test:tools": "pnpm recursive --filter \"./@iconify/tools\" run test"
+		"test:tools": "pnpm recursive --filter \"./@iconify/tools\" run test",
+		"lint:tools": "pnpm recursive --filter \"./@iconify/tools\" run lint"
 	}
 }
