@@ -82,6 +82,7 @@ importers:
 
   '@iconify/tools':
     specifiers:
+      '@iconify/types': ^2.0.0
       '@iconify/utils': ^2.0.9
       '@types/cheerio': ^0.22.31
       '@types/jest': ^29.2.4
@@ -110,6 +111,7 @@ importers:
       typescript: ^4.9.4
       unbuild: ^1.0.2
     dependencies:
+      '@iconify/types': 2.0.0
       '@iconify/utils': 2.0.9
       '@types/cheerio': 0.22.31
       '@types/node-fetch': 2.6.2
