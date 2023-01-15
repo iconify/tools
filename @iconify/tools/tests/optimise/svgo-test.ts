@@ -98,4 +98,17 @@ describe('Optimising icon with animations', () => {
 			'<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><defs><path id="svgID0" fill="#555" fill-rule="evenodd" d="M13 35h12L13 23v12Z" clip-rule="evenodd"/><path id="svgID1" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M13 35h12L13 23v12Z" clip-rule="evenodd"/></defs><mask id="svgID2"><g fill="none"><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M44 44 4 4v40h40Z"/><use href="#svgID0" fill-rule="evenodd" clip-rule="evenodd"/><use href="#svgID0" fill-rule="evenodd" clip-rule="evenodd"/><use href="#svgID0" fill-rule="evenodd" clip-rule="evenodd"/><use href="#svgID0" fill-rule="evenodd" clip-rule="evenodd"/><use href="#svgID1" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" clip-rule="evenodd"/><use href="#svgID1" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" clip-rule="evenodd"/><use href="#svgID1" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" clip-rule="evenodd"/><use href="#svgID1" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" clip-rule="evenodd"/><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M30 44v-3m-6 3v-3m-6 3v-3m-6 3v-3m-8-5h3m-3-6h3m-3-6h3m-3-6h3"/></g></mask><path d="M0 0h48v48H0z" mask="url(#svgID2)"/></svg>'
 		);
 	});
+
+	test('IDs in animated icon', () => {
+		const svg = new SVG(
+			'<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,21L15.6,16.2C14.6,15.45 13.35,15 12,15C10.65,15 9.4,15.45 8.4,16.2L12,21" opacity="0"><animate id="spinner_jbAr" begin="0;spinner_8ff3.end+0.2s" attributeName="opacity" calcMode="discrete" dur="0.25s" values="0;1" fill="freeze"/><animate id="spinner_8ff3" begin="spinner_aTlH.end+0.5s" attributeName="opacity" dur="0.001s" values="1;0" fill="freeze"/></path><path d="M12,9C9.3,9 6.81,9.89 4.8,11.4L6.6,13.8C8.1,12.67 9.97,12 12,12C14.03,12 15.9,12.67 17.4,13.8L19.2,11.4C17.19,9.89 14.7,9 12,9Z" opacity="0"><animate id="spinner_dof4" begin="spinner_jbAr.end" attributeName="opacity" calcMode="discrete" dur="0.25s" values="0;1" fill="freeze"/><animate begin="spinner_aTlH.end+0.5s" attributeName="opacity" dur="0.001s" values="1;0" fill="freeze"/></path><path d="M12,3C7.95,3 4.21,4.34 1.2,6.6L3,9C5.5,7.12 8.62,6 12,6C15.38,6 18.5,7.12 21,9L22.8,6.6C19.79,4.34 16.05,3 12,3" opacity="0"><animate id="spinner_aTlH" begin="spinner_dof4.end" attributeName="opacity" calcMode="discrete" dur="0.25s" values="0;1" fill="freeze"/><animate begin="spinner_aTlH.end+0.5s" attributeName="opacity" dur="0.001s" values="1;0" fill="freeze"/></path></svg>'
+		);
+		runSVGO(svg, {
+			keepShapes: true,
+		});
+
+		// Should replace all IDs
+		const code = svg.toMinifiedString();
+		expect(code.indexOf('spinner_')).toBe(-1);
+	});
 });

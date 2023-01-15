@@ -70,7 +70,8 @@ export function getSVGOPlugins(options: GetSVGOPluginOptions): PluginConfig[] {
 			  ]) as PluginConfig[]),
 
 		// Clean up IDs, first run
-		...((options.cleanupIDs !== false
+		// Sometimes bugs out on animated icons. Do not use with animations!
+		...((!options.animated && options.cleanupIDs !== false
 			? ['cleanupIds']
 			: []) as PluginConfig[]),
 	];
