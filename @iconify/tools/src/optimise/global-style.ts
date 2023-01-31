@@ -43,6 +43,9 @@ export async function cleanupGlobalStyle(svg: SVG): Promise<void> {
 		});
 	});
 
+	// List of classes to remove
+	const removeClasses: Set<string> = new Set();
+
 	// Parse style
 	try {
 		await parseSVGStyle(svg, async (styleItem) => {
@@ -50,16 +53,6 @@ export async function cleanupGlobalStyle(svg: SVG): Promise<void> {
 			if (styleItem.type !== 'global') {
 				return returnValue;
 			}
-
-			// Handle only simple selectors
-			/*
-			if (
-				styleItem.selectors.length !== 1 ||
-				styleItem.selectorTokens.length !== 1
-			) {
-				return returnValue;
-			}
-			*/
 
 			// Do not handle media queries
 			const selectorTokens = styleItem.selectorTokens;
@@ -173,40 +166,32 @@ export async function cleanupGlobalStyle(svg: SVG): Promise<void> {
 				containsTempAttr = true;
 			});
 
-			// Remove class attribute
-			const classMatches: string[] = matches
-				.filter((item) => item.type === 'class')
-				.map((item) => item.value);
-			if (
-				classMatches.length &&
-				styleItem.nextTokens[0]?.type === 'close'
-			) {
-				// Can remove class
-				await parseSVG(svg, (svgItem) => {
-					const $element = svgItem.$element;
-					if (!isMatch('', $element)) {
-						return;
-					}
+			// Mark class for removal
+			matches.forEach((match) => {
+				if (match.type === 'class') {
+					removeClasses.add(match.value);
+				}
+			});
+		});
 
-					// Remove class
-					const classList = getClassList($element.attr('class'));
-					if (!classList) {
-						return;
-					}
+		// Remove classes
+		await parseSVG(svg, (svgItem) => {
+			const $element = svgItem.$element;
 
-					const filtered = classList.filter(
-						(item) => classMatches.indexOf(item) === -1
-					);
-					if (!filtered.length) {
-						$element.removeAttr('class');
-					} else {
-						$element.attr('class', filtered.join(' '));
-					}
-				});
+			// Get list of classes
+			const classList = getClassList($element.attr('class'));
+			if (!classList) {
+				return;
 			}
 
-			// Remove rule
-			return;
+			const filtered = classList.filter(
+				(item) => !removeClasses.has(item)
+			);
+			if (!filtered.length) {
+				$element.removeAttr('class');
+			} else {
+				$element.attr('class', filtered.join(' '));
+			}
 		});
 
 		// Remove temporary attributes
