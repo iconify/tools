@@ -39,8 +39,8 @@ describe('Checking themes', () => {
 		// Test suffixes
 		expect(iconSet.checkTheme(false)).toEqual({
 			valid: {
-				'bold': shortNames.map((name) => name + '-bold'),
-				'line': shortNames.map((name) => name + '-line'),
+				'bold': shortNames.map((name) => `${name}-bold`),
+				'line': shortNames.map((name) => `${name}-line`),
 				'': shortNames,
 			},
 			invalid: [],
@@ -94,13 +94,13 @@ describe('Checking themes', () => {
 		// Test prefixes
 		const invalid: string[] = [];
 		shortNames.forEach((name) => {
-			invalid.push('twotone-' + name);
+			invalid.push(`twotone-${name}`);
 			invalid.push(name);
 		});
 		expect(iconSet.checkTheme(true)).toEqual({
 			valid: {
-				bold: shortNames.map((name) => 'bold-' + name),
-				line: shortNames.map((name) => 'line-' + name),
+				bold: shortNames.map((name) => `bold-${name}`),
+				line: shortNames.map((name) => `line-${name}`),
 				solid: [],
 			},
 			invalid,
@@ -175,16 +175,16 @@ describe('Checking themes', () => {
 		// Test prefixes
 		const other24: string[] = [];
 		shortNames.forEach((name) => {
-			other24.push('24-twotone-' + name);
-			other24.push('24-' + name);
+			other24.push(`24-twotone-${name}`);
+			other24.push(`24-${name}`);
 		});
 		expect(iconSet.checkTheme(true)).toEqual({
 			valid: {
-				'24-outline': shortNames.map((name) => '24-outline-' + name),
+				'24-outline': shortNames.map((name) => `24-outline-${name}`),
 				'24-solid': [],
 				'24': other24,
 			},
-			invalid: shortNames.map((name) => '20-' + name),
+			invalid: shortNames.map((name) => `20-${name}`),
 		});
 
 		// Export data and check themes

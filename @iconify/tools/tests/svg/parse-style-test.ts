@@ -31,7 +31,6 @@ describe('Parsing style', () => {
 								`Unexpected selectors: "${selectors}"`
 							);
 					}
-					break;
 				}
 
 				case 'opacity': {
@@ -41,7 +40,7 @@ describe('Parsing style', () => {
 					// Change selector token
 					const selectorToken = item.selectorTokens[0];
 					if (!selectorToken || selectorToken.type !== 'selector') {
-						throw new Error(`Bad selector token`);
+						throw new Error('Bad selector token');
 					}
 					selectorToken.selectors = ['.whatever'];
 

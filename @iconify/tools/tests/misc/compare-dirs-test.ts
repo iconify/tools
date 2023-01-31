@@ -5,14 +5,14 @@ describe('Comparing directories', () => {
 
 	test('Identical directories', async () => {
 		expect(
-			await compareDirectories(rootDir + '/original', rootDir + '/copy')
+			await compareDirectories(`${rootDir}/original`, `${rootDir}/copy`)
 		).toBe(true);
 
 		// Different versions
 		expect(
 			await compareDirectories(
-				rootDir + '/original',
-				rootDir + '/different-version'
+				`${rootDir}/original`,
+				`${rootDir}/different-version`
 			)
 		).toBe(true);
 	});
@@ -20,22 +20,22 @@ describe('Comparing directories', () => {
 	test('Different directories', async () => {
 		expect(
 			await compareDirectories(
-				rootDir + '/original',
-				rootDir + '/extra-file'
+				`${rootDir}/original`,
+				`${rootDir}/extra-file`
 			)
 		).toBe(false);
 		expect(
 			await compareDirectories(
-				rootDir + '/original',
-				rootDir + '/missing-file'
+				`${rootDir}/original`,
+				`${rootDir}/missing-file`
 			)
 		).toBe(false);
 
 		// Different spacing
 		expect(
 			await compareDirectories(
-				rootDir + '/original',
-				rootDir + '/formatted',
+				`${rootDir}/original`,
+				`${rootDir}/formatted`,
 				{
 					ignoreNewLine: false,
 				}
@@ -45,8 +45,8 @@ describe('Comparing directories', () => {
 		// Different versions
 		expect(
 			await compareDirectories(
-				rootDir + '/original',
-				rootDir + '/different-version',
+				`${rootDir}/original`,
+				`${rootDir}/different-version`,
 				{
 					ignoreVersions: false,
 				}

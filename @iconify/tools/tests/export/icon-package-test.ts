@@ -72,16 +72,17 @@ describe('Exporting to icon package', () => {
 				'utf8'
 			);
 			const data = iconSet.resolve(name);
-			const expected =
-				'const data = ' +
-				JSON.stringify(data, null, '\t') +
-				';\nexport default data;\n';
+			const expected = `const data = ${JSON.stringify(
+				data,
+				null,
+				'\t'
+			)};\nexport default data;\n`;
 			expect(content).toBe(expected);
 		});
 
 		// Check package.json to make sure it uses wildcard
 		const packageContent = JSON.parse(
-			await fs.readFile(targetDir + '/package.json', 'utf8')
+			await fs.readFile(`${targetDir}/package.json`, 'utf8')
 		) as Record<string, unknown>;
 		expect(packageContent['dependencies']).toEqual({
 			'@iconify/types': '*',
@@ -154,10 +155,11 @@ describe('Exporting to icon package', () => {
 				'utf8'
 			);
 			const data = iconSet.resolve(name);
-			const expected =
-				'const data = ' +
-				JSON.stringify(data, null, '\t') +
-				';\nexports.__esModule = true;\nexports.default = data;\n';
+			const expected = `const data = ${JSON.stringify(
+				data,
+				null,
+				'\t'
+			)};\nexports.__esModule = true;\nexports.default = data;\n`;
 			expect(content).toBe(expected);
 		});
 

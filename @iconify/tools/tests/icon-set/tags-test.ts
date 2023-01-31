@@ -45,7 +45,7 @@ describe('Adding tags', () => {
 		const iconSet = new IconSet(iconSetData);
 
 		const tags = await addTagsToIconSet(iconSet);
-		expect(tags).toEqual([sizeTags.gridPrefix + '16', sizeTags.square]);
+		expect(tags).toEqual([`${sizeTags.gridPrefix}16`, sizeTags.square]);
 	});
 
 	test('Icons with different width', async () => {
@@ -67,7 +67,7 @@ describe('Adding tags', () => {
 		const iconSet = new IconSet(iconSetData);
 
 		const tags = await addTagsToIconSet(iconSet);
-		expect(tags).toEqual([sizeTags.heightPrefix + '24']);
+		expect(tags).toEqual([`${sizeTags.heightPrefix}24`]);
 	});
 
 	test('Monotone icons, set in info', async () => {

@@ -53,7 +53,7 @@ describe('Downloading Git repository', () => {
 
 		// Check contents of package.json
 		const packageContents = JSON.parse(
-			await fs.readFile(target + '/package.json', 'utf8')
+			await fs.readFile(`${target}/package.json`, 'utf8')
 		) as Record<string, unknown>;
 		expect(packageContents.version).toBe(branch.version);
 	});
@@ -78,7 +78,7 @@ describe('Downloading Git repository', () => {
 
 		// Check contents of package.json
 		const packageContents = JSON.parse(
-			await fs.readFile(target + '/package.json', 'utf8')
+			await fs.readFile(`${target}/package.json`, 'utf8')
 		) as Record<string, unknown>;
 		expect(packageContents.version).toBe(branch.version);
 	});

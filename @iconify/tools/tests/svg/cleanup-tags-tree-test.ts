@@ -51,7 +51,7 @@ const throwToSVG: Set<string> = new Set(['bad/svg.svg']);
 describe('Checking tags tree', () => {
 	goodExamples.forEach((name) => {
 		test(name, async () => {
-			const content = await loadFixture('elements/' + name);
+			const content = await loadFixture(`elements/${name}`);
 			const svg = new SVG(content);
 			await checkBadTags(svg);
 		});
@@ -60,7 +60,7 @@ describe('Checking tags tree', () => {
 	// Bad elements
 	Object.keys(badExamples).forEach((name) => {
 		test(name, async () => {
-			const content = await loadFixture('elements/' + name);
+			const content = await loadFixture(`elements/${name}`);
 			const svg = new SVG(content);
 			try {
 				await checkBadTags(svg);
@@ -83,7 +83,7 @@ describe('Checking tags tree', () => {
 		const names = Object.keys(badExamples);
 		for (let i = 0; i < names.length; i++) {
 			const name = names[i];
-			const content = await loadFixture('elements/' + name);
+			const content = await loadFixture(`elements/${name}`);
 			const svg = new SVG(content);
 
 			try {

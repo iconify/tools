@@ -31,7 +31,7 @@ describe('Importing directory', () => {
 		const iconSet = await importDirectory('tests/fixtures/elements/style', {
 			prefix: 'foo',
 			keyword: (item) => {
-				return 'test-' + item.file;
+				return `test-${item.file}`;
 			},
 		});
 		expect(iconSet.list()).toEqual(['test-set', 'test-style']);

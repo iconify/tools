@@ -79,7 +79,7 @@ describe('Exporting to JSON package', () => {
 
 		// Check package.json to make sure it uses wildcard
 		const packageContent = JSON.parse(
-			await fs.readFile(targetDir + '/package.json', 'utf8')
+			await fs.readFile(`${targetDir}/package.json`, 'utf8')
 		) as Record<string, unknown>;
 		expect(packageContent['dependencies']).toEqual({
 			'@iconify/types': '*',

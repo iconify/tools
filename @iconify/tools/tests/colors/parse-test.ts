@@ -366,7 +366,7 @@ describe('Finding colors', () => {
 		// Find colors
 		const searchResult = await parseColors(svg, {
 			defaultColor: () => {
-				throw new Error(`Unexpected callback call for defaultColor`);
+				throw new Error('Unexpected callback call for defaultColor');
 			},
 		});
 		expect(searchResult).toEqual({
@@ -397,7 +397,7 @@ describe('Finding colors', () => {
 		// Find colors
 		const searchResult = await parseColors(svg, {
 			defaultColor: () => {
-				throw new Error(`Unexpected callback call for defaultColor`);
+				throw new Error('Unexpected callback call for defaultColor');
 			},
 		});
 		expect(searchResult).toEqual({
@@ -421,7 +421,7 @@ describe('Finding colors', () => {
 		// Find colors
 		const searchResult = await parseColors(svg, {
 			defaultColor: () => {
-				throw new Error(`Unexpected callback call for defaultColor`);
+				throw new Error('Unexpected callback call for defaultColor');
 			},
 		});
 		expect(searchResult).toEqual({
@@ -451,7 +451,7 @@ describe('Finding colors', () => {
 		// Find colors
 		const searchResult = await parseColors(svg, {
 			defaultColor: () => {
-				throw new Error(`Unexpected callback call for defaultColor`);
+				throw new Error('Unexpected callback call for defaultColor');
 			},
 		});
 		expect(searchResult.hasUnsetColor).toBe(false);
