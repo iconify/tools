@@ -87,7 +87,8 @@ export function getFigmaIconNodes(
 		switch (parentNodeType) {
 			case 'CANVAS':
 			case 'FRAME':
-			case 'GROUP': {
+			case 'GROUP':
+			case 'SECTION': {
 				const parentItem: FigmaParentNodeData = {
 					...node,
 					type: parentNodeType,

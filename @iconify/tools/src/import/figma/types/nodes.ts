@@ -3,7 +3,11 @@ import type { FigmaIconNode, FigmaNodesImportResult } from './result';
 
 // Node types that can be parent nodes
 // 'CANVAS' in API is equal to 'PAGE' in plugins
-export type FigmaImportParentNodeType = 'CANVAS' | 'FRAME' | 'GROUP';
+export type FigmaImportParentNodeType =
+	| 'CANVAS'
+	| 'FRAME'
+	| 'GROUP'
+	| 'SECTION';
 
 // Node types that can be icons
 export type FigmaImportIconNodeType = IconFigmaNode['type'];
