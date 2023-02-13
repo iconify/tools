@@ -162,7 +162,9 @@ export async function exportJSONPackage(
 
 			// Import data from JSON file
 			cjsImports.push(`const ${attr} = require('${relativeFile}');`);
-			mjsImports.push(`import ${attr} from '${relativeFile}';`);
+			mjsImports.push(
+				`import ${attr} from '${relativeFile}' assert { type: 'json' };`
+			);
 
 			// Add data to package.json
 			packageJSONIconSet[attr] = attr + '.json';
