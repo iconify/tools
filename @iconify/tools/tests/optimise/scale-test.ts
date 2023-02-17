@@ -11,4 +11,14 @@ describe('Scaling icon', () => {
 			'<svg width="60" height="20" viewBox="0 0 60 20"><path d="M15 10H7.5A7.5 7.5 0 1 0 15 2.5z"/></svg>'
 		);
 	});
+
+	test('Scale and shift', () => {
+		const svg = new SVG(
+			'<svg width="24" height="24" viewBox="0 96 960 960"><path d="M480 696h60v-90l70 90h73l-93-120 93-120h-73l-70 90v-90h-60v240Zm-140 0h60V456H280v60h60v180ZM200 936q-33 0-56.5-23.5T120 856V296q0-33 23.5-56.5T200 216h560q33 0 56.5 23.5T840 296v560q0 33-23.5 56.5T760 936H200Zm0-80h560V296H200v560Zm0-560v560-560Z"/></svg>'
+		);
+		scaleSVG(svg, 1 / 40);
+		expect(svg.toMinifiedString()).toBe(
+			'<svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 15h1.5v-2.25L15.25 15h1.825l-2.325-3 2.325-3H15.25l-1.75 2.25V9H12v6Zm-3.5 0H10V9H7v1.5h1.5V15ZM5 21q-.825 0-1.413-.587T3 19V5q0-.825.588-1.413T5 3h14q.825 0 1.413.588T21 5v14q0 .825-.588 1.413T19 21H5Zm0-2h14V5H5v14ZM5 5v14V5Z"/></svg>'
+		);
+	});
 });
