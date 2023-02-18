@@ -124,6 +124,13 @@ export function runSVGO(svg: SVG, options: SVGOOptions = {}) {
 			...options,
 			animated,
 		});
+
+		// Check for moveElemsAttrsToGroup bug: https://github.com/svg/svgo/issues/1752
+		if (code.includes('filter=') && code.includes('transform=')) {
+			plugins = plugins.filter(
+				(item) => item !== 'moveElemsAttrsToGroup'
+			);
+		}
 	}
 
 	// Run SVGO
