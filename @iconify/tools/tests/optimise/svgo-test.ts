@@ -111,4 +111,21 @@ describe('Optimising icon with animations', () => {
 		const code = svg.toMinifiedString();
 		expect(code.indexOf('spinner_')).toBe(-1);
 	});
+
+	test('Filter with transform', () => {
+		const svg = new SVG(
+			'<svg width="320" height="320" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g filter="url(#filter1_i_18_3767)"><rect x="19.087" y="12.7969" width="14" height="6" rx="3" transform="rotate(31.3889 19.087 12.7969)" fill="#DE773D"/><rect x="19.087" y="12.7969" width="14" height="6" rx="3" transform="rotate(31.3889 19.087 12.7969)" fill="url(#paint8_radial_18_3767)"/><rect x="19.087" y="12.7969" width="14" height="6" rx="3" transform="rotate(31.3889 19.087 12.7969)" fill="url(#paint9_linear_18_3767)"/><rect x="19.087" y="12.7969" width="14" height="6" rx="3" transform="rotate(31.3889 19.087 12.7969)" fill="url(#paint10_radial_18_3767)"/><rect x="19.087" y="12.7969" width="14" height="6" rx="3" transform="rotate(31.3889 19.087 12.7969)" fill="url(#paint11_radial_18_3767)"/></g><defs><filter id="filter1_i_18_3767" x="17.085" y="13.7699" width="12.9801" height="10.3176" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dx="0.15" dy="-0.15"/><feGaussianBlur stdDeviation="0.5"/><feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/><feColorMatrix type="matrix" values="0 0 0 0 0.580392 0 0 0 0 0.25098 0 0 0 0 0.309804 0 0 0 1 0"/><feBlend mode="normal" in2="shape" result="effect1_innerShadow_18_3767"/></filter><radialGradient id="paint8_radial_18_3767" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(28.5912 19.9011) rotate(-84.3783) scale(5.08751 7.13795)"><stop offset="0.175294" stop-color="#983C50"/><stop offset="1" stop-color="#983C50" stop-opacity="0"/></radialGradient><linearGradient id="paint9_linear_18_3767" x1="26.0987" y1="12.6361" x2="25.9033" y2="14.4759" gradientUnits="userSpaceOnUse"><stop stop-color="#EB9251"/><stop offset="1" stop-color="#EB9251" stop-opacity="0"/></linearGradient><radialGradient id="paint10_radial_18_3767" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(31.5998 13.6726) rotate(95.481) scale(2.5 1.64694)"><stop stop-color="#FFB075"/><stop offset="1" stop-color="#FFB075" stop-opacity="0"/></radialGradient><radialGradient id="paint11_radial_18_3767" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(23.9116 17.6313) rotate(-45.9881) scale(3.47146 4.6882)"><stop offset="0.845647" stop-color="#FFAA6F"/><stop offset="1" stop-color="#FFAA6F" stop-opacity="0"/></radialGradient></defs></svg>'
+		);
+		runSVGO(svg, {
+			keepShapes: true,
+		});
+
+		// Should not include group with both transform and filter
+		const code = svg.toMinifiedString();
+		const groupStart = code.indexOf('<g ');
+		const groupEnd = code.indexOf('>', groupStart);
+		const group = code.slice(groupStart, groupEnd);
+		expect(group.includes('filter=')).toBe(true);
+		expect(group.includes('transform=')).toBe(false);
+	});
 });
