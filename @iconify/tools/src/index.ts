@@ -42,6 +42,7 @@ export { validateColors } from './colors/validate';
 export { detectIconSetPalette } from './colors/detect';
 export { runSVGO } from './optimise/svgo';
 export { deOptimisePaths } from './optimise/flags';
+export { resetSVGOrigin } from './optimise/origin';
 export { scaleSVG } from './optimise/scale';
 export { cleanupGlobalStyle } from './optimise/global-style';
 
