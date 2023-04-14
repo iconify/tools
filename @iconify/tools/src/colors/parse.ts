@@ -6,7 +6,12 @@ import {
 import type { Color } from '@iconify/utils/lib/colors/types';
 import type { SVG } from '../svg';
 import { animateTags, shapeTags } from '../svg/data/tags';
-import { parseSVGStyle } from '../svg/parse-style';
+import {
+	ParseSVGStyleCallbackItem,
+	ParseSVGStyleCallbackResult,
+	parseSVGStyle,
+	parseSVGStyleSync,
+} from '../svg/parse-style';
 import {
 	allowDefaultColorValue,
 	ColorAttributes,
@@ -49,7 +54,8 @@ export interface FindColorsResult {
  * - 'remove' to remove shape or rule
  */
 type ParseColorsCallbackResult = Color | string | 'remove' | 'unset';
-type ParseColorsCallback = (
+
+type ParseColorsCallback<T> = (
 	attr: ColorAttributes,
 	// Value is Color if color can be parsed, string if color is unsupported/invalid
 	colorString: string,
@@ -58,7 +64,7 @@ type ParseColorsCallback = (
 	// tagName and item are set only for colors found in element, it is not set for colors in global style
 	tagName?: string,
 	item?: ExtendedTagElementWithColors
-) => ParseColorsCallbackResult | Promise<ParseColorsCallbackResult>;
+) => T;
 
 /**
  * Callback for default color
@@ -73,14 +79,22 @@ export type ParseColorOptionsDefaultColorCallback = (
 /**
  * Options
  */
-
-export interface ParseColorsOptions extends AnalyseSVGStructureOptions {
+interface Options<T> extends AnalyseSVGStructureOptions {
 	// Callback
-	callback?: ParseColorsCallback;
+	callback?: T;
 
 	// Default color
 	defaultColor?: Color | string | ParseColorOptionsDefaultColorCallback;
 }
+
+export type ParseColorsOptions = Options<
+	ParseColorsCallback<
+		ParseColorsCallbackResult | Promise<ParseColorsCallbackResult>
+	>
+>;
+export type ParseColorsSyncOptions = Options<
+	ParseColorsCallback<ParseColorsCallbackResult>
+>;
 
 /**
  * Properties to check
@@ -103,15 +117,50 @@ export interface ExtendedTagElementWithColors extends ExtendedTagElement {
 }
 
 /**
- * Find colors in icon
- *
- * Clean up icon before running this function to convert style to attributes using
- * cleanupInlineStyle() or cleanupSVG(), otherwise results might be inaccurate
+ * Context to pass between various functions
  */
-export async function parseColors(
-	svg: SVG,
-	options: ParseColorsOptions = {}
-): Promise<FindColorsResult> {
+interface ParserContext {
+	result: FindColorsResult;
+	defaultColor:
+		| Color
+		| ParseColorOptionsDefaultColorCallback
+		| null
+		| undefined;
+	rawOptions: AnalyseSVGStructureOptions;
+	findColor: (color: Color | string, add: boolean) => Color | string | null;
+	addColorToItem: (
+		prop: ColorAttributes,
+		color: Color | string,
+		item?: ExtendedTagElementWithColors,
+		add?: boolean
+	) => void;
+	getElementColor: (
+		prop: ColorAttributes,
+		item: ElementsTreeItem,
+		elements: ElementsMap
+	) => Color | string | null;
+	checkColor: (
+		done: (result?: string) => void,
+		prop: ColorAttributes,
+		value: string,
+		item?: ExtendedTagElementWithColors
+	) => void;
+	parseStyleItem: (
+		item: ParseSVGStyleCallbackItem,
+		done: (result: ParseSVGStyleCallbackResult) => void
+	) => void;
+}
+
+/**
+ * Init data and reusable functions that use it
+ */
+function createContext(
+	options: Omit<Options<void>, 'callback'>,
+	callback?: (
+		params: Parameters<ParseColorsCallback<void>>,
+		done: (result: ParseColorsCallbackResult) => void
+	) => void
+): ParserContext {
 	const result: FindColorsResult = {
 		colors: [],
 		hasUnsetColor: false,
@@ -228,16 +277,17 @@ export async function parseColors(
 	/**
 	 * Change color
 	 */
-	async function checkColor(
+	function checkColor(
+		done: (result?: string) => void,
 		prop: ColorAttributes,
 		value: string,
 		item?: ExtendedTagElementWithColors
-	): Promise<string | undefined> {
+	): void {
 		// Ignore empty values
 		switch (value.trim().toLowerCase()) {
 			case '':
 			case 'inherit':
-				return;
+				return done();
 		}
 
 		// Resolve color
@@ -248,84 +298,105 @@ export async function parseColors(
 		if (parsedColor?.type === 'function' && parsedColor.func === 'url') {
 			// Add to item, so it won't be treated as missing, but do not add to results
 			addColorToItem(prop, defaultValue, item, false);
-			return value;
+			return done(value);
 		}
 
 		// Check if callback exists
-		if (!options.callback) {
+		if (!callback) {
 			addColorToItem(prop, defaultValue, item);
-			return value;
+			return done(value);
 		}
 
 		// Call callback
-		let callbackResult = options.callback(
-			prop,
-			value,
-			parsedColor,
-			item?.tagName,
-			item
-		);
-		callbackResult =
-			callbackResult instanceof Promise
-				? await callbackResult
-				: callbackResult;
+		callback(
+			[prop, value, parsedColor, item?.tagName, item],
+			(callbackResult) => {
+				// Remove entry
+				switch (callbackResult) {
+					case 'remove': {
+						return done(item ? callbackResult : void 0);
+					}
 
-		// Remove entry
-		switch (callbackResult) {
-			case 'remove': {
-				return item ? callbackResult : void 0;
+					case 'unset':
+						return done();
+				}
+
+				if (
+					callbackResult === value ||
+					(parsedColor && callbackResult === parsedColor)
+				) {
+					// Not changed
+					addColorToItem(prop, defaultValue, item);
+					return done(value);
+				}
+
+				if (typeof callbackResult === 'string') {
+					const newColor = stringToColor(callbackResult);
+					addColorToItem(prop, newColor || callbackResult, item);
+					return done(callbackResult);
+				}
+
+				// Color
+				const newValue = colorToString(callbackResult);
+				addColorToItem(prop, callbackResult, item);
+				return done(newValue);
 			}
-
-			case 'unset':
-				return;
-		}
-
-		if (
-			callbackResult === value ||
-			(parsedColor && callbackResult === parsedColor)
-		) {
-			// Not changed
-			addColorToItem(prop, defaultValue, item);
-			return value;
-		}
-
-		if (typeof callbackResult === 'string') {
-			const newColor = stringToColor(callbackResult);
-			addColorToItem(prop, newColor || callbackResult, item);
-			return callbackResult;
-		}
-
-		// Color
-		const newValue = colorToString(callbackResult);
-		addColorToItem(prop, callbackResult, item);
-		return newValue;
+		);
 	}
 
-	// Parse colors in style
-	await parseSVGStyle(svg, async (item) => {
+	/**
+	 * Wrapped callback for parseSVGStyle / parseSVGStyleSync
+	 */
+	function parseStyleItem(
+		item: ParseSVGStyleCallbackItem,
+		done: (result: ParseSVGStyleCallbackResult) => void
+	): void {
 		const prop = item.prop;
 		const value = item.value;
 		if (propsToCheck.indexOf(prop) === -1) {
-			return value;
+			return done(value);
 		}
 
 		// Color
 		const attr = prop as ColorAttributes;
-		const newValue = await checkColor(attr, value);
-		if (newValue === void 0) {
-			return newValue;
-		}
+		checkColor(
+			(newValue) => {
+				if (newValue === void 0) {
+					return done(newValue);
+				}
 
-		// Got color
-		if (item.type === 'global') {
-			result.hasGlobalStyle = true;
-		}
+				// Got color
+				if (item.type === 'global') {
+					result.hasGlobalStyle = true;
+				}
 
-		return newValue;
-	});
+				return done(newValue);
+			},
+			attr,
+			value
+		);
+	}
 
+	return {
+		result,
+		defaultColor,
+		rawOptions: options,
+		findColor,
+		addColorToItem,
+		getElementColor,
+		checkColor,
+		parseStyleItem,
+	};
+}
+
+/**
+ * Check SVG, call done() when done
+ *
+ * Uses callback hell to support both synchronous and async callbacks
+ */
+function analyseSVG(svg: SVG, context: ParserContext, done: () => void): void {
 	// Analyse SVG
-	const iconData = analyseSVGStructure(svg, options);
+	const iconData = analyseSVGStructure(svg, context.rawOptions);
 	const { elements, tree } = iconData;
 	const cheerio = svg.$svg;
 	const removedElements: Set<number> = new Set();
@@ -359,17 +430,19 @@ export async function parseColors(
 		cheerio(element).remove();
 	}
 
-	// Parse tree item
-	async function parseTreeItem(item: ElementsTreeItem) {
+	/**
+	 * Parse tree item and its children
+	 */
+	function parseTreeItem(item: ElementsTreeItem, done: () => void) {
 		const index = item.index;
 		if (removedElements.has(index) || parsedElements.has(index)) {
-			return;
+			return done();
 		}
 		parsedElements.add(index);
 
 		const element = elements.get(index) as ExtendedTagElementWithColors;
 		if (element._removed) {
-			return;
+			return done();
 		}
 
 		const { tagName, attribs } = element;
@@ -388,69 +461,91 @@ export async function parseColors(
 		}
 
 		// Check common properties
-		for (let i = 0; i < propsToCheck.length; i++) {
-			const prop = propsToCheck[i] as ColorAttributes;
-			if (prop === 'fill' && animateTags.has(tagName)) {
-				// 'fill' has different meaning in animations
-				continue;
-			}
+		function parseCommonProps(done: () => void): void {
+			const propsQueue: [ColorAttributes, string][] = [];
+			for (let i = 0; i < propsToCheck.length; i++) {
+				const prop = propsToCheck[i] as ColorAttributes;
+				if (prop === 'fill' && animateTags.has(tagName)) {
+					// 'fill' has different meaning in animations
+					continue;
+				}
 
-			const value = attribs[prop];
-			if (value !== void 0) {
-				const newValue = await checkColor(prop, value, element);
-				if (newValue !== value) {
-					if (newValue === void 0) {
-						// Unset
-						cheerio(element).removeAttr(prop);
-						if (element._colors) {
-							delete element._colors[prop];
-						}
-					} else if (newValue === 'remove') {
-						// Remove element
-						removeElement(index, element);
-						return;
-					} else {
-						// Change attribute
-						// Value in element._colors is changed in checkColor()
-						cheerio(element).attr(prop, newValue);
-					}
+				const value = attribs[prop];
+				if (value !== void 0) {
+					propsQueue.push([prop, value]);
 				}
 			}
+
+			const parsePropsQueue = () => {
+				const queueItem = propsQueue.shift();
+				if (!queueItem) {
+					return done();
+				}
+
+				const [prop, value] = queueItem;
+				context.checkColor(
+					(newValue) => {
+						if (newValue !== value) {
+							if (newValue === void 0) {
+								// Unset
+								cheerio(element).removeAttr(prop);
+								if (element._colors) {
+									delete element._colors[prop];
+								}
+							} else if (newValue === 'remove') {
+								// Remove element
+								removeElement(index, element);
+							} else {
+								// Change attribute
+								// Value in element._colors is changed in checkColor()
+								cheerio(element).attr(prop, newValue);
+							}
+						}
+
+						// Next queue item
+						return parsePropsQueue();
+					},
+					prop,
+					value,
+					element
+				);
+			};
+
+			parsePropsQueue();
 		}
 
 		// Check animations
-		if (animateTags.has(tagName)) {
-			const attr = attribs.attributeName as ColorAttributes;
-			if (propsToCheck.indexOf(attr) !== -1) {
-				// Valid property
-				for (let i = 0; i < animatePropsToCheck.length; i++) {
-					const elementProp = animatePropsToCheck[i];
-					const fullValue = attribs[elementProp];
-					if (typeof fullValue !== 'string') {
-						continue;
-					}
-
-					// Split values
-					const splitValues = fullValue.split(';');
-					let updatedValues = false;
-					for (let j = 0; j < splitValues.length; j++) {
-						const value = splitValues[j];
-						if (value !== void 0) {
-							const newValue = await checkColor(
-								elementProp as ColorAttributes,
-								value
-								// Do not pass third parameter
-							);
-							if (newValue !== value) {
-								updatedValues = true;
-								splitValues[j] =
-									typeof newValue === 'string'
-										? newValue
-										: '';
-							}
+		function checkAnimations(done: () => void): void {
+			const propsQueue: [string, string][] = [];
+			if (animateTags.has(tagName)) {
+				const attr = attribs.attributeName as ColorAttributes;
+				if (propsToCheck.indexOf(attr) !== -1) {
+					// Valid property
+					for (let i = 0; i < animatePropsToCheck.length; i++) {
+						const elementProp = animatePropsToCheck[i];
+						const fullValue = attribs[elementProp];
+						if (typeof fullValue !== 'string') {
+							continue;
 						}
+						propsQueue.push([elementProp, fullValue]);
 					}
+				}
+			}
 
+			const parsePropsQueue = (): void => {
+				const queueItem = propsQueue.shift();
+				if (!queueItem) {
+					// Parsed all items
+					return done();
+				}
+				const [elementProp, fullValue] = queueItem;
+
+				// Split values, check each one separately
+				const splitValues = fullValue.split(';');
+				let updatedValues = false;
+
+				// Parsed all items
+				const parsedAllItems = (): void => {
 					// Merge values back
 					if (updatedValues) {
 						cheerio(element).attr(
@@ -458,73 +553,238 @@ export async function parseColors(
 							splitValues.join(';')
 						);
 					}
-				}
-			}
+
+					// Parse next queue item
+					return parsePropsQueue();
+				};
+
+				// Check one item
+				const parseItem = (index: number): void => {
+					if (index >= splitValues.length) {
+						return parsedAllItems();
+					}
+
+					const value = splitValues[index];
+					if (value === void 0) {
+						return parseItem(index + 1);
+					}
+
+					context.checkColor(
+						(newValue) => {
+							if (newValue !== value) {
+								updatedValues = true;
+								splitValues[index] =
+									typeof newValue === 'string'
+										? newValue
+										: '';
+							}
+							parseItem(index + 1);
+						},
+						elementProp as ColorAttributes,
+						value
+						// Do not pass third parameter
+					);
+				};
+				parseItem(0);
+			};
+
+			parsePropsQueue();
 		}
 
-		// Check shape for default colors
-		if (!result.hasGlobalStyle) {
-			// Get list of properties required to render element
-			let requiredProps: ColorAttributes[] | undefined;
+		// Callback hell !!!
+		parseCommonProps(() => {
+			checkAnimations(() => {
+				// Check shape for default colors
+				if (!context.result.hasGlobalStyle) {
+					// Get list of properties required to render element
+					let requiredProps: ColorAttributes[] | undefined;
 
-			if (shapeTags.has(tagName)) {
-				requiredProps = shapeColorAttributes;
-			}
+					if (shapeTags.has(tagName)) {
+						requiredProps = shapeColorAttributes;
+					}
 
-			specialColorAttributes.forEach((attr) => {
-				if (tagSpecificPresentationalAttributes[tagName]?.has(attr)) {
-					requiredProps = [attr];
-				}
-			});
+					specialColorAttributes.forEach((attr) => {
+						if (
+							tagSpecificPresentationalAttributes[tagName]?.has(
+								attr
+							)
+						) {
+							requiredProps = [attr];
+						}
+					});
 
-			// Check colors
-			if (requiredProps) {
-				const itemColors = element._colors || (element._colors = {});
+					// Check colors
+					if (requiredProps) {
+						const itemColors =
+							element._colors || (element._colors = {});
 
-				for (let i = 0; i < requiredProps.length; i++) {
-					const prop = requiredProps[i];
-					const color = getElementColor(prop, item, elements);
-					if (color === defaultBlackColor) {
-						// Default black color: change it
-						if (defaultColor) {
-							const defaultColorValue =
-								typeof defaultColor === 'function'
-									? defaultColor(
-											prop,
-											element,
-											item,
-											iconData
-									  )
-									: defaultColor;
-
-							// Add color to results and change attribute
-							findColor(defaultColorValue, true);
-							cheerio(element).attr(
+						for (let i = 0; i < requiredProps.length; i++) {
+							const prop = requiredProps[i];
+							const color = context.getElementColor(
 								prop,
-								colorToString(defaultColorValue)
+								item,
+								elements
 							);
-							itemColors[prop] = defaultColorValue;
-						} else {
-							result.hasUnsetColor = true;
+							if (color === defaultBlackColor) {
+								// Default black color: change it
+								const defaultColor = context.defaultColor;
+								if (defaultColor) {
+									const defaultColorValue =
+										typeof defaultColor === 'function'
+											? defaultColor(
+													prop,
+													element,
+													item,
+													iconData
+											  )
+											: defaultColor;
+
+									// Add color to results and change attribute
+									context.findColor(defaultColorValue, true);
+									cheerio(element).attr(
+										prop,
+										colorToString(defaultColorValue)
+									);
+									itemColors[prop] = defaultColorValue;
+								} else {
+									context.result.hasUnsetColor = true;
+								}
+							}
 						}
 					}
 				}
-			}
-		}
 
-		// Parse child elements
-		for (let i = 0; i < item.children.length; i++) {
-			const childItem = item.children[i];
-			if (!childItem.usedAsMask) {
-				await parseTreeItem(childItem);
-			}
-		}
+				// Parse child elements
+				let index = 0;
+				const parseChildItem = () => {
+					if (index >= item.children.length) {
+						// Done
+						return done();
+					}
+
+					const childItem = item.children[index];
+					index++;
+					if (!childItem.usedAsMask) {
+						parseTreeItem(childItem, parseChildItem);
+					} else {
+						parseChildItem();
+					}
+				};
+				parseChildItem();
+			});
+		});
 	}
 
 	// Parse tree, starting with <svg>
-	await parseTreeItem(tree);
+	parseTreeItem(tree, done);
+}
 
-	return result;
+/**
+ * Find colors in icon
+ *
+ * Clean up icon before running this function to convert style to attributes using
+ * cleanupInlineStyle() or cleanupSVG(), otherwise results might be inaccurate
+ */
+export function parseColors(
+	svg: SVG,
+	options: ParseColorsOptions = {}
+): Promise<FindColorsResult> {
+	const callback = options.callback;
+	return new Promise((fulfill, reject) => {
+		// Init stuff
+		let context: ParserContext;
+		try {
+			context = createContext(
+				options,
+				callback
+					? (params, done) => {
+							try {
+								const result = callback(...params);
+								if (result instanceof Promise) {
+									result.then(done).catch(reject);
+								} else {
+									done(result);
+								}
+							} catch (err) {
+								reject(err);
+							}
+					  }
+					: void 0
+			);
+		} catch (err) {
+			reject(err);
+			return;
+		}
+
+		// Parse colors in style asynchronously
+		parseSVGStyle(svg, (item) => {
+			return new Promise((fulfill, reject) => {
+				try {
+					context.parseStyleItem(item, fulfill);
+				} catch (err) {
+					reject(err);
+				}
+			});
+		})
+			.then(() => {
+				// Analyse SVG
+				try {
+					analyseSVG(svg, context, () => {
+						fulfill(context.result);
+					});
+				} catch (err) {
+					reject(err);
+				}
+			})
+			.catch(reject);
+	});
+}
+
+/**
+ * Find colors in icon, synchronous version
+ *
+ * Clean up icon before running this function to convert style to attributes using
+ * cleanupInlineStyle() or cleanupSVG(), otherwise results might be inaccurate
+ */
+export function parseColorsSync(
+	svg: SVG,
+	options: ParseColorsSyncOptions = {}
+): FindColorsResult {
+	const callback = options.callback;
+
+	// Init stuff
+	const context = createContext(
+		options,
+		callback
+			? (params, done) => {
+					done(callback(...params));
+			  }
+			: void 0
+	);
+
+	// Parse colors in style synchronously
+	parseSVGStyleSync(svg, (item) => {
+		let isSync = true;
+		let result: ParseSVGStyleCallbackResult;
+		context.parseStyleItem(item, (value) => {
+			if (!isSync) {
+				throw new Error('parseStyleItem callback supposed to be sync');
+			}
+			result = value;
+		});
+		isSync = false;
+		return result;
+	});
+
+	// Analyse SVG
+	let isSync = true;
+	analyseSVG(svg, context, () => {
+		if (!isSync) {
+			throw new Error('analyseSVG callback supposed to be sync');
+		}
+	});
+	isSync = false;
+	return context.result;
 }
 
 /**

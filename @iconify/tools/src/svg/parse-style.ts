@@ -60,7 +60,6 @@ type InternalCallback = (
 ) => void;
 
 function parseItem(
-	svg: SVG,
 	item: ParseSVGCallbackItem,
 	callback: InternalCallback,
 	done: Next
@@ -258,7 +257,6 @@ export async function parseSVGStyle(
 		return new Promise((fulfill, reject) => {
 			try {
 				parseItem(
-					svg,
 					item,
 					(styleItem, done) => {
 						try {
@@ -291,7 +289,6 @@ export function parseSVGStyleSync(
 	let isSync = true;
 	parseSVGSync(svg, (item) => {
 		parseItem(
-			svg,
 			item,
 			(styleItem, done) => {
 				done(callback(styleItem));
