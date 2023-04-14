@@ -1,5 +1,5 @@
 import { SVG } from '../../lib/svg';
-import { validateColors } from '../../lib/colors/validate';
+import { validateColors, validateColorsSync } from '../../lib/colors/validate';
 import { stringToColor } from '@iconify/utils/lib/colors';
 import { loadFixture } from '../../lib/tests/load';
 
@@ -16,6 +16,7 @@ describe('Validating colors', () => {
 			hasUnsetColor: true,
 			hasGlobalStyle: false,
 		});
+		expect(validateColorsSync(svg, true)).toEqual(result);
 
 		// currentColor should not have been found either, but hasUnsetColor is set
 		result = await validateColors(svg, false);
@@ -24,6 +25,7 @@ describe('Validating colors', () => {
 			hasUnsetColor: true,
 			hasGlobalStyle: false,
 		});
+		expect(validateColorsSync(svg, false)).toEqual(result);
 	});
 
 	test('Monotone icon', async () => {
@@ -45,10 +47,20 @@ describe('Validating colors', () => {
 			hasGlobalStyle: false,
 		});
 
+		// Sync version
+		expect(
+			validateColorsSync(svg, true, {
+				defaultColor: 'currentColor',
+			})
+		).toEqual(result);
+
 		// currentColor is set, so checking for palette should throw an error
 		await expect(() => {
 			return validateColors(svg, false);
 		}).rejects.toThrow();
+		expect(() => {
+			validateColorsSync(svg, false);
+		}).toThrow();
 	});
 
 	test('Icon with palette', async () => {
@@ -64,10 +76,16 @@ describe('Validating colors', () => {
 			hasGlobalStyle: false,
 		});
 
+		// Sync version
+		expect(validateColorsSync(svg, false)).toEqual(result);
+
 		// currentColor should not be there
 		await expect(() => {
 			return validateColors(svg, true);
 		}).rejects.toThrow();
+		expect(() => {
+			validateColorsSync(svg, true);
+		}).toThrow();
 	});
 
 	test('Mixed icon', async () => {
@@ -79,11 +97,17 @@ describe('Validating colors', () => {
 		await expect(() => {
 			return validateColors(svg, true);
 		}).rejects.toThrow();
+		expect(() => {
+			validateColorsSync(svg, true);
+		}).toThrow();
 
 		// Should throw because of currentColor
 		await expect(() => {
 			return validateColors(svg, false);
 		}).rejects.toThrow();
+		expect(() => {
+			validateColorsSync(svg, false);
+		}).toThrow();
 	});
 
 	test('URI', async () => {
@@ -128,6 +152,9 @@ describe('Validating colors', () => {
 			hasUnsetColor: true,
 			hasGlobalStyle: false,
 		});
+
+		// Sync version
+		expect(validateColorsSync(svg, false)).toEqual(result);
 	});
 
 	test('Icon with palette in filter', async () => {
@@ -141,6 +168,9 @@ describe('Validating colors', () => {
 			hasUnsetColor: false,
 			hasGlobalStyle: false,
 		});
+
+		// Sync version
+		expect(validateColorsSync(svg, false)).toEqual(result);
 	});
 
 	test('Icon with palette with filter without color', async () => {
@@ -152,10 +182,16 @@ describe('Validating colors', () => {
 		expect(result.hasGlobalStyle).toBe(false);
 		expect(result.hasUnsetColor).toBe(false);
 
+		// Sync version
+		expect(validateColorsSync(svg, false)).toEqual(result);
+
 		// currentColor should not be there
 		await expect(() => {
 			return validateColors(svg, true);
 		}).rejects.toThrow();
+		expect(() => {
+			validateColorsSync(svg, true);
+		}).toThrow();
 	});
 
 	test('Missing stop-color with stop-opacity', async () => {
@@ -167,9 +203,15 @@ describe('Validating colors', () => {
 		expect(result.hasGlobalStyle).toBe(false);
 		expect(result.hasUnsetColor).toBe(false);
 
+		// Sync version
+		expect(validateColorsSync(svg, false)).toEqual(result);
+
 		// currentColor should not be there
 		await expect(() => {
 			return validateColors(svg, true);
 		}).rejects.toThrow();
+		expect(() => {
+			validateColorsSync(svg, true);
+		}).toThrow();
 	});
 });
