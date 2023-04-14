@@ -4,17 +4,17 @@ import { detectIconSetPalette } from '../../lib/colors/detect';
 import { loadFixture } from '../../lib/tests/load';
 
 describe('Detecting palette', () => {
-	test('Empty icon set', async () => {
+	test('Empty icon set', () => {
 		const iconSetData: IconifyJSON = {
 			prefix: 'foo',
 			icons: {},
 		};
 		const iconSet = new IconSet(iconSetData);
 
-		expect(await detectIconSetPalette(iconSet)).toBe(null);
+		expect(detectIconSetPalette(iconSet)).toBe(null);
 	});
 
-	test('Icons with palette', async () => {
+	test('Icons with palette', () => {
 		const iconSetData: IconifyJSON = {
 			prefix: 'foo',
 			icons: {
@@ -28,10 +28,10 @@ describe('Detecting palette', () => {
 		};
 		const iconSet = new IconSet(iconSetData);
 
-		expect(await detectIconSetPalette(iconSet)).toBe(true);
+		expect(detectIconSetPalette(iconSet)).toBe(true);
 	});
 
-	test('Icons without palette', async () => {
+	test('Icons without palette', () => {
 		const iconSetData: IconifyJSON = {
 			prefix: 'foo',
 			icons: {
@@ -46,10 +46,10 @@ describe('Detecting palette', () => {
 		};
 		const iconSet = new IconSet(iconSetData);
 
-		expect(await detectIconSetPalette(iconSet)).toBe(false);
+		expect(detectIconSetPalette(iconSet)).toBe(false);
 	});
 
-	test('Mixed', async () => {
+	test('Mixed', () => {
 		const iconSetData: IconifyJSON = {
 			prefix: 'foo',
 			icons: {
@@ -63,10 +63,10 @@ describe('Detecting palette', () => {
 		};
 		const iconSet = new IconSet(iconSetData);
 
-		expect(await detectIconSetPalette(iconSet)).toBe(null);
+		expect(detectIconSetPalette(iconSet)).toBe(null);
 	});
 
-	test('No colors', async () => {
+	test('No colors', () => {
 		const iconSetData: IconifyJSON = {
 			prefix: 'foo',
 			icons: {
@@ -77,7 +77,7 @@ describe('Detecting palette', () => {
 		};
 		const iconSet = new IconSet(iconSetData);
 
-		expect(await detectIconSetPalette(iconSet)).toBe(null);
+		expect(detectIconSetPalette(iconSet)).toBe(null);
 	});
 
 	test('arty-animated.json', async () => {
@@ -86,7 +86,7 @@ describe('Detecting palette', () => {
 		) as IconifyJSON;
 		const iconSet = new IconSet(iconSetData);
 
-		expect(await detectIconSetPalette(iconSet)).toBe(false);
+		expect(detectIconSetPalette(iconSet)).toBe(false);
 	});
 
 	test('codicon.json', async () => {
@@ -95,7 +95,7 @@ describe('Detecting palette', () => {
 		) as IconifyJSON;
 		const iconSet = new IconSet(iconSetData);
 
-		expect(await detectIconSetPalette(iconSet)).toBe(false);
+		expect(detectIconSetPalette(iconSet)).toBe(false);
 	});
 
 	test('fluent.json', async () => {
@@ -104,6 +104,6 @@ describe('Detecting palette', () => {
 		) as IconifyJSON;
 		const iconSet = new IconSet(iconSetData);
 
-		expect(await detectIconSetPalette(iconSet)).toBe(false);
+		expect(detectIconSetPalette(iconSet)).toBe(false);
 	});
 });

@@ -18,10 +18,10 @@ export const sizeTags = {
 /**
  * Add tags to icon set
  */
-export async function addTagsToIconSet(
+export function addTagsToIconSet(
 	iconSet: IconSet,
 	customTags?: string[]
-): Promise<string[]> {
+): string[] {
 	const info = iconSet.info;
 	const tags: string[] = [];
 
@@ -41,7 +41,7 @@ export async function addTagsToIconSet(
 		// Palette
 		let hasPalette: boolean | null | undefined = info?.palette;
 		if (hasPalette === void 0) {
-			hasPalette = await detectIconSetPalette(iconSet);
+			hasPalette = detectIconSetPalette(iconSet);
 		}
 
 		if (hasPalette === true) {

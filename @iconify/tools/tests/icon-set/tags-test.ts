@@ -7,7 +7,7 @@ import {
 } from '../../lib/icon-set/tags';
 
 describe('Adding tags', () => {
-	test('Empty icon set', async () => {
+	test('Empty icon set', () => {
 		const iconSetData: IconifyJSON = {
 			prefix: 'foo',
 			icons: {
@@ -19,11 +19,11 @@ describe('Adding tags', () => {
 		};
 		const iconSet = new IconSet(iconSetData);
 
-		const tags = await addTagsToIconSet(iconSet);
+		const tags = addTagsToIconSet(iconSet);
 		expect(tags).toEqual([]);
 	});
 
-	test('Square icons with same grid', async () => {
+	test('Square icons with same grid', () => {
 		const iconSetData: IconifyJSON = {
 			prefix: 'foo',
 			icons: {
@@ -44,11 +44,11 @@ describe('Adding tags', () => {
 		};
 		const iconSet = new IconSet(iconSetData);
 
-		const tags = await addTagsToIconSet(iconSet);
+		const tags = addTagsToIconSet(iconSet);
 		expect(tags).toEqual([`${sizeTags.gridPrefix}16`, sizeTags.square]);
 	});
 
-	test('Icons with different width', async () => {
+	test('Icons with different width', () => {
 		const iconSetData: IconifyJSON = {
 			prefix: 'foo',
 			icons: {
@@ -66,11 +66,11 @@ describe('Adding tags', () => {
 		};
 		const iconSet = new IconSet(iconSetData);
 
-		const tags = await addTagsToIconSet(iconSet);
+		const tags = addTagsToIconSet(iconSet);
 		expect(tags).toEqual([`${sizeTags.heightPrefix}24`]);
 	});
 
-	test('Monotone icons, set in info', async () => {
+	test('Monotone icons, set in info', () => {
 		const iconSetData: IconifyJSON = {
 			prefix: 'foo',
 			info: {
@@ -98,11 +98,11 @@ describe('Adding tags', () => {
 		};
 		const iconSet = new IconSet(iconSetData);
 
-		const tags = await addTagsToIconSet(iconSet);
+		const tags = addTagsToIconSet(iconSet);
 		expect(tags).toEqual([paletteTags.monotone]);
 	});
 
-	test('Icons with palette, set in info', async () => {
+	test('Icons with palette, set in info', () => {
 		const iconSetData: IconifyJSON = {
 			prefix: 'foo',
 			info: {
@@ -130,11 +130,11 @@ describe('Adding tags', () => {
 		};
 		const iconSet = new IconSet(iconSetData);
 
-		const tags = await addTagsToIconSet(iconSet);
+		const tags = addTagsToIconSet(iconSet);
 		expect(tags).toEqual([paletteTags.palette]);
 	});
 
-	test('Icons with palette, detected', async () => {
+	test('Icons with palette, detected', () => {
 		const iconSetData: IconifyJSON = {
 			prefix: 'foo',
 			icons: {
@@ -152,7 +152,7 @@ describe('Adding tags', () => {
 		};
 		const iconSet = new IconSet(iconSetData);
 
-		const tags = await addTagsToIconSet(iconSet);
+		const tags = addTagsToIconSet(iconSet);
 		expect(tags).toEqual([paletteTags.palette]);
 	});
 });

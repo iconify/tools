@@ -1,18 +1,16 @@
 import type { IconSet } from '../icon-set';
-import { isEmptyColor, parseColors } from './parse';
+import { isEmptyColor, parseColorsSync } from './parse';
 
 /**
  * Detect palette
  *
  * Returns null if icon set has mixed colors
  */
-export async function detectIconSetPalette(
-	iconSet: IconSet
-): Promise<boolean | null> {
+export function detectIconSetPalette(iconSet: IconSet): boolean | null {
 	let palette: boolean | null | undefined;
 
-	await iconSet.forEach(
-		async (name) => {
+	iconSet.forEachSync(
+		(name) => {
 			if (palette === null) {
 				return;
 			}
@@ -23,7 +21,7 @@ export async function detectIconSetPalette(
 			}
 
 			let iconPalette: boolean | null | undefined;
-			await parseColors(svg, {
+			parseColorsSync(svg, {
 				callback: (attr, colorStr, color) => {
 					if (!color) {
 						// Something went wrong
