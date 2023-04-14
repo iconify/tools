@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { SVG } from './index';
-import { parseSVG } from './parse';
+import { parseSVGSync } from './parse';
 import type { ParseSVGCallbackItem } from './parse';
 import type {
 	AnalyseSVGStructureResult,
@@ -30,10 +30,10 @@ import { analyseTagError } from './analyse/error';
  *
  * Before running this function run cleanup functions to change inline style to attributes and fix attributes
  */
-export async function analyseSVGStructure(
+export function analyseSVGStructure(
 	svg: SVG,
 	options: AnalyseSVGStructureOptions = {}
-): Promise<AnalyseSVGStructureResult> {
+): AnalyseSVGStructureResult {
 	// Options
 	const fixErrors = options.fixErrors;
 
@@ -158,7 +158,7 @@ export async function analyseSVGStructure(
 
 	// Find all reusable elements and all usages
 	let index = 0;
-	await parseSVG(svg, (item) => {
+	parseSVGSync(svg, (item) => {
 		const { tagName, parents } = item;
 		if (styleTag.has(tagName)) {
 			item.testChildren = false;

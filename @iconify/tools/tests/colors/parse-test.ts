@@ -416,7 +416,7 @@ describe('Finding colors', () => {
 	test('Fill and clip-path using same id', async () => {
 		const svgCode = await loadFixture('arangodb.svg');
 		const svg = new SVG(svgCode);
-		await removeBadAttributes(svg);
+		removeBadAttributes(svg);
 
 		// Find colors
 		const searchResult = await parseColors(svg, {
@@ -446,7 +446,7 @@ describe('Finding colors', () => {
 	test('Missing stop-color with stop-opacity', async () => {
 		const svgCode = await loadFixture('amphora_color.svg');
 		const svg = new SVG(svgCode);
-		await removeBadAttributes(svg);
+		removeBadAttributes(svg);
 
 		// Find colors
 		const searchResult = await parseColors(svg, {

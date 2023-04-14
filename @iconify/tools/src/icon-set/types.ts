@@ -104,14 +104,18 @@ export interface CheckThemeResult {
 }
 
 /**
- * Callback for asyncForEach function
+ * Callback for forEach functions
  *
  * Return false to stop loop
  */
-type IconSetAsyncForEachCallbackResult = void | false;
+type IconSetForEachCallbackResult = void | false;
+
 export type IconSetAsyncForEachCallback = (
 	name: string,
 	type: IconSetIconEntry['type']
-) =>
-	| Promise<IconSetAsyncForEachCallbackResult>
-	| IconSetAsyncForEachCallbackResult;
+) => Promise<IconSetForEachCallbackResult> | IconSetForEachCallbackResult;
+
+export type IconSetSyncForEachCallback = (
+	name: string,
+	type: IconSetIconEntry['type']
+) => IconSetForEachCallbackResult;

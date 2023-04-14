@@ -4,17 +4,17 @@ import {
 	badAttributePrefixes,
 	badSoftwareAttributes,
 } from '../data/attributes';
-import { parseSVGStyle } from '../parse-style';
+import { parseSVGStyleSync } from '../parse-style';
 import { runSVGO } from '../../optimise/svgo';
 
 /**
  * Expand inline style
  */
-export async function convertStyleToAttrs(svg: SVG): Promise<void> {
+export function convertStyleToAttrs(svg: SVG): void {
 	let hasStyle = false;
 
 	// Clean up style, removing useless junk
-	await parseSVGStyle(svg, (item) => {
+	parseSVGStyleSync(svg, (item) => {
 		const prop = item.prop;
 		if (
 			// Attributes / properties now allowed

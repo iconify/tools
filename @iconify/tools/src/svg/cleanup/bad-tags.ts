@@ -1,5 +1,5 @@
 import type { SVG } from '../../svg';
-import { parseSVG } from '../parse';
+import { parseSVGSync } from '../parse';
 import {
 	allValidTags,
 	animateMotionChildTags,
@@ -42,8 +42,8 @@ requiredParentTags.set(new Set(['animateMotion']), animateMotionChildTags);
 /**
  * Test for bag tags
  */
-export async function checkBadTags(svg: SVG): Promise<void> {
-	await parseSVG(svg, (item) => {
+export function checkBadTags(svg: SVG): void {
+	parseSVGSync(svg, (item) => {
 		const tagName = item.tagName;
 		const $element = item.$element;
 

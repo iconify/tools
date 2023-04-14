@@ -6,13 +6,13 @@ import {
 	tagSpecificPresentationalAttributes,
 } from '../data/attributes';
 import { defsTag } from '../data/tags';
-import { parseSVG } from '../parse';
+import { parseSVGSync } from '../parse';
 
 /**
  * Remove useless attributes
  */
-export async function removeBadAttributes(svg: SVG): Promise<void> {
-	await parseSVG(svg, (item) => {
+export function removeBadAttributes(svg: SVG): void {
+	parseSVGSync(svg, (item) => {
 		const tagName = item.tagName;
 		const attribs = item.element.attribs;
 		const $element = item.$element;

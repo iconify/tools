@@ -53,7 +53,7 @@ describe('Checking tags tree', () => {
 		test(name, async () => {
 			const content = await loadFixture(`elements/${name}`);
 			const svg = new SVG(content);
-			await checkBadTags(svg);
+			checkBadTags(svg);
 		});
 	});
 
@@ -63,7 +63,7 @@ describe('Checking tags tree', () => {
 			const content = await loadFixture(`elements/${name}`);
 			const svg = new SVG(content);
 			try {
-				await checkBadTags(svg);
+				checkBadTags(svg);
 			} catch (err) {
 				const error = err as Error;
 				expect(error.message).toBe(
@@ -102,17 +102,15 @@ describe('Checking tags tree', () => {
 		}
 
 		// Run test
-		let isAsync = true;
-		await iconSet.forEach(async (name, type) => {
+		iconSet.forEachSync((name, type) => {
 			expect(type).toBe('icon');
-			expect(isAsync).toBe(true);
 			toTest.delete(name);
 
 			const svg = iconSet.toSVG(name) as SVG;
 			expect(svg).not.toBeNull();
 
 			try {
-				await checkBadTags(svg);
+				checkBadTags(svg);
 			} catch (err) {
 				const error = err as Error;
 				expect(error.message).toBe(
@@ -123,7 +121,6 @@ describe('Checking tags tree', () => {
 			throw new Error(`Expected exception in ${name}`);
 		});
 
-		isAsync = false;
 		expect(toTest.size).toBe(0);
 	});
 });

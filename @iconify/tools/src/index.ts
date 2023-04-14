@@ -1,7 +1,7 @@
 // SVG class and functions
 export { SVG } from './svg/index';
-export { parseSVG } from './svg/parse';
-export { parseSVGStyle } from './svg/parse-style';
+export { parseSVG, parseSVGSync } from './svg/parse';
+export { parseSVGStyle, parseSVGStyleSync } from './svg/parse-style';
 export { analyseSVGStructure } from './svg/analyse';
 
 // SVG cleanup

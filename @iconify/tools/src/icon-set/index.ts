@@ -26,6 +26,7 @@ import type {
 	IconSetIconEntry,
 	IconSetIconType,
 	IconSetIconVariation,
+	IconSetSyncForEachCallback,
 	ResolvedIconifyIcon,
 } from './types';
 import { SVG } from '../svg';
@@ -266,6 +267,28 @@ export class IconSet {
 				if (result instanceof Promise) {
 					result = await result;
 				}
+				if (result === false) {
+					return;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Synchronous version of forEach function to loop through all entries.
+	 *
+	 * Callback should return false to stop loop.
+	 */
+	forEachSync(
+		callback: IconSetSyncForEachCallback,
+		types: IconSetIconType[] = ['icon', 'variation', 'alias']
+	): void {
+		const names = this.list(types);
+		for (let i = 0; i < names.length; i++) {
+			const name = names[i];
+			const item = this.entries[name];
+			if (item) {
+				const result = callback(name, item.type);
 				if (result === false) {
 					return;
 				}

@@ -9,22 +9,22 @@ import { convertStyleToAttrs } from './cleanup/svgo-style';
 /**
  * Clean up SVG before parsing/optimising it
  */
-export async function cleanupSVG(svg: SVG): Promise<void> {
+export function cleanupSVG(svg: SVG): void {
 	// Remove junk from style
-	await cleanupInlineStyle(svg);
+	cleanupInlineStyle(svg);
 
 	// Expand style
-	await convertStyleToAttrs(svg);
+	convertStyleToAttrs(svg);
 
 	// Cleanup <svg> element
 	cleanupSVGRoot(svg);
 
 	// Check for bad tags
-	await checkBadTags(svg);
+	checkBadTags(svg);
 
 	// Remove attributes
-	await removeBadAttributes(svg);
+	removeBadAttributes(svg);
 
 	// Clean up root style
-	await cleanupRootStyle(svg);
+	cleanupRootStyle(svg);
 }

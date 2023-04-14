@@ -89,7 +89,7 @@ export async function importFromFigma(
 		// Import SVG
 		try {
 			const svg = new SVG(item.content);
-			await cleanupSVG(svg);
+			cleanupSVG(svg);
 			iconSet.fromSVG(item.keyword, svg);
 		} catch (err) {
 			missing.push(item);

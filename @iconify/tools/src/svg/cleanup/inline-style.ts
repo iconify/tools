@@ -10,13 +10,13 @@ import {
 	tagSpecificPresentationalAttributes,
 	tagSpecificInlineStyles,
 } from '../data/attributes';
-import { parseSVG } from '../parse';
+import { parseSVGSync } from '../parse';
 
 /**
  * Expand inline style
  */
-export async function cleanupInlineStyle(svg: SVG): Promise<void> {
-	await parseSVG(svg, (item) => {
+export function cleanupInlineStyle(svg: SVG): void {
+	parseSVGSync(svg, (item) => {
 		const $element = item.$element;
 		const attribs = item.element.attribs;
 		const tagName = item.tagName;

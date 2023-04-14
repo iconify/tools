@@ -138,7 +138,7 @@ function mapTree(data: AnalyseSVGStructureResult): MappedElementsTreeItem {
 }
 
 describe('Analysing SVG structure', () => {
-	test('Mask that uses path', async () => {
+	test('Mask that uses path', () => {
 		const svgCode = `<svg width="256px" height="256px" viewBox="0 0 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
 			<defs>
 				<path d="M2.27464661e-14,0 L254.693878,3.04336596e-14 L254.693878,160.344259 C255.3267,161.198982 255.762422,162.157626 256,163.39634 L256,168.36419 C255.762422,169.608049 255.3267,170.691008 254.693878,171.604678 L254.693878,256 L0,256 L0,192 L0,64 L2.27464661e-14,0 Z" id="path-1"></path>
@@ -157,7 +157,7 @@ describe('Analysing SVG structure', () => {
 		const svg = new SVG(svgCode);
 
 		// Analyse stuff
-		const result = await analyseSVGStructure(svg);
+		const result = analyseSVGStructure(svg);
 
 		// Make sure IDs belong to correct tags
 		const tagsWithID = mapIDsToTags(result);
@@ -352,7 +352,7 @@ describe('Analysing SVG structure', () => {
 		});
 	});
 
-	test('Several references to same element', async () => {
+	test('Several references to same element', () => {
 		const svgCode = `<svg width="256" height="256" viewBox="0 0 256 256">
 			<defs>
 				<symbol id="def1" fill="purple">
@@ -366,7 +366,7 @@ describe('Analysing SVG structure', () => {
 		const svg = new SVG(svgCode);
 
 		// Analyse stuff
-		const result = await analyseSVGStructure(svg);
+		const result = analyseSVGStructure(svg);
 
 		// Make sure IDs belong to correct tags
 		const tagsWithID = mapIDsToTags(result);
@@ -509,7 +509,7 @@ describe('Analysing SVG structure', () => {
 		});
 	});
 
-	test('Missing definition', async () => {
+	test('Missing definition', () => {
 		const svgCode = `<svg width="256px" height="256px" viewBox="0 0 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
 			<defs>
 				<radialGradient cx="16.6089694%" cy="17.3718345%" fx="16.6089694%" fy="17.3718345%" r="118.520308%" id="radialGradient-3">
@@ -528,7 +528,7 @@ describe('Analysing SVG structure', () => {
 
 		// Analyse stuff
 		try {
-			await analyseSVGStructure(svg);
+			analyseSVGStructure(svg);
 			throw new Error('Expected to throw');
 		} catch (err) {
 			expect(err instanceof Error).toBe(true);
@@ -538,7 +538,7 @@ describe('Analysing SVG structure', () => {
 		}
 	});
 
-	test('Recursion', async () => {
+	test('Recursion', () => {
 		const svgCode = `<svg width="256px" height="256px" viewBox="0 0 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
 			<g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
 				<mask id="mask-2" fill="white">
@@ -551,7 +551,7 @@ describe('Analysing SVG structure', () => {
 
 		// Analyse stuff
 		try {
-			await analyseSVGStructure(svg);
+			analyseSVGStructure(svg);
 			throw new Error('Expected to throw');
 		} catch (err) {
 			expect(err instanceof Error).toBe(true);
@@ -559,7 +559,7 @@ describe('Analysing SVG structure', () => {
 		}
 	});
 
-	test('clipPath without id', async () => {
+	test('clipPath without id', () => {
 		const svgCode = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
 			<defs><clipPath><path fill="none" d="M124-288l388-672 388 672H124z" clip-rule="evenodd"/></clipPath></defs><path d="M508 624a112 112 0 0 0 112-112c0-3.28-.15-6.53-.43-9.74L498.26 623.57c3.21.28 6.45.43 9.74.43zm370.72-458.44L836 122.88a8 8 0 0 0-11.31 0L715.37 232.23Q624.91 186 512 186q-288.3 0-430.2 300.3a60.3 60.3 0 0 0 0 51.5q56.7 119.43 136.55 191.45L112.56 835a8 8 0 0 0 0 11.31L155.25 889a8 8 0 0 0 11.31 0l712.16-712.12a8 8 0 0 0 0-11.32zM332 512a176 176 0 0 1 258.88-155.28l-48.62 48.62a112.08 112.08 0 0 0-140.92 140.92l-48.62 48.62A175.09 175.09 0 0 1 332 512z"/><path d="M942.2 486.2Q889.4 375 816.51 304.85L672.37 449A176.08 176.08 0 0 1 445 676.37L322.74 798.63Q407.82 838 512 838q288.3 0 430.2-300.3a60.29 60.29 0 0 0 0-51.5z"/>
 		</svg>`;
@@ -567,7 +567,7 @@ describe('Analysing SVG structure', () => {
 
 		// Analyse stuff
 		try {
-			await analyseSVGStructure(svg);
+			analyseSVGStructure(svg);
 			throw new Error('Expected to throw');
 		} catch (err) {
 			expect(err instanceof Error).toBe(true);
@@ -577,7 +577,7 @@ describe('Analysing SVG structure', () => {
 		}
 	});
 
-	test('clipPath without id, fixed', async () => {
+	test('clipPath without id, fixed', () => {
 		const svgCode = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
 			<defs><clipPath><path fill="none" d="M124-288l388-672 388 672H124z" clip-rule="evenodd"/></clipPath></defs><path d="M508 624a112 112 0 0 0 112-112c0-3.28-.15-6.53-.43-9.74L498.26 623.57c3.21.28 6.45.43 9.74.43zm370.72-458.44L836 122.88a8 8 0 0 0-11.31 0L715.37 232.23Q624.91 186 512 186q-288.3 0-430.2 300.3a60.3 60.3 0 0 0 0 51.5q56.7 119.43 136.55 191.45L112.56 835a8 8 0 0 0 0 11.31L155.25 889a8 8 0 0 0 11.31 0l712.16-712.12a8 8 0 0 0 0-11.32zM332 512a176 176 0 0 1 258.88-155.28l-48.62 48.62a112.08 112.08 0 0 0-140.92 140.92l-48.62 48.62A175.09 175.09 0 0 1 332 512z"/><path d="M942.2 486.2Q889.4 375 816.51 304.85L672.37 449A176.08 176.08 0 0 1 445 676.37L322.74 798.63Q407.82 838 512 838q288.3 0 430.2-300.3a60.29 60.29 0 0 0 0-51.5z"/>
 		</svg>`;
@@ -592,7 +592,7 @@ describe('Analysing SVG structure', () => {
 			};
 
 			// Analyse stuff
-			await analyseSVGStructure(svg, {
+			analyseSVGStructure(svg, {
 				fixErrors: true,
 			});
 
@@ -607,7 +607,7 @@ describe('Analysing SVG structure', () => {
 		}
 	});
 
-	test('Using symbol that does not exist', async () => {
+	test('Using symbol that does not exist', () => {
 		const svgCode = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
 			<path d="M508 624a112 112 0 0 0 112-112c0-3.28-.15-6.53-.43-9.74L498.26 623.57c3.21.28 6.45.43 9.74.43zm370.72-458.44L836 122.88a8 8 0 0 0-11.31 0L715.37 232.23Q624.91 186 512 186q-288.3 0-430.2 300.3a60.3 60.3 0 0 0 0 51.5q56.7 119.43 136.55 191.45L112.56 835a8 8 0 0 0 0 11.31L155.25 889a8 8 0 0 0 11.31 0l712.16-712.12a8 8 0 0 0 0-11.32zM332 512a176 176 0 0 1 258.88-155.28l-48.62 48.62a112.08 112.08 0 0 0-140.92 140.92l-48.62 48.62A175.09 175.09 0 0 1 332 512z"/><path d="M942.2 486.2Q889.4 375 816.51 304.85L672.37 449A176.08 176.08 0 0 1 445 676.37L322.74 798.63Q407.82 838 512 838q288.3 0 430.2-300.3a60.29 60.29 0 0 0 0-51.5z"/>
 			<use href="#leaf"/>
@@ -616,7 +616,7 @@ describe('Analysing SVG structure', () => {
 
 		// Analyse stuff
 		try {
-			await analyseSVGStructure(svg);
+			analyseSVGStructure(svg);
 			throw new Error('Expected to throw');
 		} catch (err) {
 			expect(err instanceof Error).toBe(true);
@@ -626,7 +626,7 @@ describe('Analysing SVG structure', () => {
 		}
 	});
 
-	test('Using symbol that does not exist, fixed', async () => {
+	test('Using symbol that does not exist, fixed', () => {
 		const svgCode = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
 			<use href="#leaf"/>
 			<path d="M508 624a112 112 0 0 0 112-112c0-3.28-.15-6.53-.43-9.74L498.26 623.57c3.21.28 6.45.43 9.74.43zm370.72-458.44L836 122.88a8 8 0 0 0-11.31 0L715.37 232.23Q624.91 186 512 186q-288.3 0-430.2 300.3a60.3 60.3 0 0 0 0 51.5q56.7 119.43 136.55 191.45L112.56 835a8 8 0 0 0 0 11.31L155.25 889a8 8 0 0 0 11.31 0l712.16-712.12a8 8 0 0 0 0-11.32zM332 512a176 176 0 0 1 258.88-155.28l-48.62 48.62a112.08 112.08 0 0 0-140.92 140.92l-48.62 48.62A175.09 175.09 0 0 1 332 512z"/><path d="M942.2 486.2Q889.4 375 816.51 304.85L672.37 449A176.08 176.08 0 0 1 445 676.37L322.74 798.63Q407.82 838 512 838q288.3 0 430.2-300.3a60.29 60.29 0 0 0 0-51.5z" fill="url(#missing-gradient)"/>
@@ -642,7 +642,7 @@ describe('Analysing SVG structure', () => {
 			};
 
 			// Analyse stuff
-			await analyseSVGStructure(svg, {
+			analyseSVGStructure(svg, {
 				fixErrors: true,
 			});
 

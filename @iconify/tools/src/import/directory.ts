@@ -29,18 +29,25 @@ export interface ImportDirectoryFileEntry {
  * Callback can be asynchronous
  */
 type ImportDirectoryKeywordCallbackResult = string | undefined;
-export type ImportDirectoryKeywordCallback = (
+
+type Callback<T> = (
 	file: ImportDirectoryFileEntry,
 	defaultKeyword: string,
 	iconSet: IconSet
-) =>
-	| ImportDirectoryKeywordCallbackResult
-	| Promise<ImportDirectoryKeywordCallbackResult>;
+) => T;
+
+type AsyncCallback<T> = Callback<T | Promise<T>>;
+
+export type ImportDirectoryKeywordCallback =
+	AsyncCallback<ImportDirectoryKeywordCallbackResult>;
+
+export type ImportDirectoryKeywordSyncCallback =
+	Callback<ImportDirectoryKeywordCallbackResult>;
 
 /**
  * Options
  */
-interface ImportDirectoryOptions {
+interface ImportDirectoryOptions<K> {
 	// Icon set prefix, you can set it later
 	prefix?: string;
 
@@ -48,7 +55,7 @@ interface ImportDirectoryOptions {
 	includeSubDirs?: boolean;
 
 	// Callback to get keyword for icon
-	keyword?: ImportDirectoryKeywordCallback;
+	keyword?: K;
 
 	// Does not throw error when icon fails to load (default: true)
 	ignoreImportErrors?: boolean;
@@ -59,7 +66,7 @@ interface ImportDirectoryOptions {
  */
 export async function importDirectory(
 	path: string,
-	options: ImportDirectoryOptions = {}
+	options: ImportDirectoryOptions<ImportDirectoryKeywordCallback> = {}
 ): Promise<IconSet> {
 	// Find all files
 	const files = await scanDirectory(path, (ext, file, subdir, path) => {
@@ -103,7 +110,7 @@ export async function importDirectory(
 				'utf8'
 			);
 			const svg = new SVG(content);
-			await cleanupSVG(svg);
+			cleanupSVG(svg);
 
 			iconSet.fromSVG(keyword, svg);
 		} catch (err) {

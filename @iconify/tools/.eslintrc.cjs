@@ -26,6 +26,7 @@ module.exports = {
 		'no-mixed-spaces-and-tabs': ['off'],
 		'no-unused-vars': ['off'],
 		// '@typescript-eslint/no-unused-vars-experimental': ['error'],
+		'@typescript-eslint/restrict-template-expressions': ['off'],
 	},
 	overrides: [
 		{

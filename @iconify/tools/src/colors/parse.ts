@@ -325,7 +325,7 @@ export async function parseColors(
 	});
 
 	// Analyse SVG
-	const iconData = await analyseSVGStructure(svg, options);
+	const iconData = analyseSVGStructure(svg, options);
 	const { elements, tree } = iconData;
 	const cheerio = svg.$svg;
 	const removedElements: Set<number> = new Set();

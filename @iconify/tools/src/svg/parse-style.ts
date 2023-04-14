@@ -4,6 +4,7 @@ import { tokensToString } from '../css/parser/export';
 import { getTokens } from '../css/parser/tokens';
 import { tokensTree } from '../css/parser/tree';
 import type { CSSRuleToken, CSSToken } from '../css/parser/types';
+import { parseSVGSync } from './parse';
 import { parseSVG, ParseSVGCallbackItem } from './parse';
 
 /**
@@ -44,64 +45,99 @@ export type ParseSVGStyleCallback = (
 	item: ParseSVGStyleCallbackItem
 ) => ParseSVGStyleCallbackResult | Promise<ParseSVGStyleCallbackResult>;
 
+export type ParseSVGStyleCallbackSync = (
+	item: ParseSVGStyleCallbackItem
+) => ParseSVGStyleCallbackResult;
+
 /**
- * Parse styles in SVG
- *
- * This function finds CSS in SVG, parses it, calls callback for each rule.
- * Callback should return new value (string) or undefined to remove rule.
- * Callback can be asynchronous.
+ * Internal function with callback hell to support both sync and async code
  */
-export async function parseSVGStyle(
+type Next = () => void;
+type CallbackNext = (result: ParseSVGStyleCallbackResult) => void;
+type InternalCallback = (
+	item: ParseSVGStyleCallbackItem,
+	next: CallbackNext
+) => void;
+
+function parseItem(
 	svg: SVG,
-	callback: ParseSVGStyleCallback
-): Promise<void> {
-	return parseSVG(svg, async (item) => {
-		const tagName = item.tagName;
-		const $element = item.$element;
+	item: ParseSVGCallbackItem,
+	callback: InternalCallback,
+	done: Next
+) {
+	const tagName = item.tagName;
+	const $element = item.$element;
 
-		if (tagName === 'style') {
-			// Style tag
-			const content = $element.text();
-			if (typeof content !== 'string') {
-				$element.remove();
-				return;
+	// Parse <style> tag
+	function parseStyleItem(done: Next) {
+		const content = $element.text();
+		if (typeof content !== 'string') {
+			$element.remove();
+			return done();
+		}
+
+		const tokens = getTokens(content);
+		if (!(tokens instanceof Array)) {
+			// Invalid style
+			throw new Error('Error parsing style');
+		}
+
+		// Parse all tokens
+		let changed = false;
+		const selectorStart: number[] = [];
+		const newTokens: (CSSToken | null)[] = [];
+
+		// Called when all tokens are parsed
+		const parsedTokens = () => {
+			if (changed) {
+				// Update style
+				const tree = tokensTree(
+					newTokens.filter((token) => token !== null) as CSSToken[]
+				);
+
+				if (!tree.length) {
+					// Empty
+					$element.remove();
+				} else {
+					const newContent = tokensToString(tree);
+					item.$element.text(newContent);
+				}
 			}
 
-			const tokens = getTokens(content);
-			if (!(tokens instanceof Array)) {
-				// Invalid style
-				throw new Error('Error parsing style');
+			done();
+		};
+
+		// Parse next token
+		const nextToken = (): void => {
+			const token = tokens.shift();
+			if (token === void 0) {
+				return parsedTokens();
 			}
 
-			// Parse all tokens
-			let changed = false;
-			const selectorStart: number[] = [];
-			const newTokens: (CSSToken | null)[] = [];
-			for (let i = 0; i < tokens.length; i++) {
-				const token = tokens[i];
-				switch (token.type) {
-					case 'selector':
-					case 'at-rule':
-						selectorStart.push(newTokens.length);
-						break;
+			switch (token.type) {
+				case 'selector':
+				case 'at-rule':
+					selectorStart.push(newTokens.length);
+					break;
 
-					case 'close':
-						selectorStart.pop();
-						break;
-				}
+				case 'close':
+					selectorStart.pop();
+					break;
+			}
 
-				if (token.type !== 'rule') {
-					newTokens.push(token);
-					continue;
-				}
+			if (token.type !== 'rule') {
+				newTokens.push(token);
+				return nextToken();
+			}
 
-				const value = token.value;
+			const value = token.value;
 
-				const selectorTokens = selectorStart
-					.map((index) => newTokens[index])
-					.filter((item) => item !== null) as CSSToken[];
+			const selectorTokens = selectorStart
+				.map((index) => newTokens[index])
+				.filter((item) => item !== null) as CSSToken[];
 
-				let result = callback({
+			callback(
+				{
 					type: 'global',
 					prop: token.prop,
 					value,
@@ -119,92 +155,153 @@ export async function parseSVGStyle(
 						[] as string[]
 					),
 					prevTokens: newTokens,
-					nextTokens: tokens.slice(i + 1),
-				});
-				if (result instanceof Promise) {
-					result = await result;
-				}
-
-				if (result !== void 0) {
-					if (result !== value) {
+					nextTokens: tokens.slice(0),
+				},
+				(result) => {
+					if (result !== void 0) {
+						if (result !== value) {
+							changed = true;
+							token.value = result;
+						}
+						newTokens.push(token);
+					} else {
+						// Delete token
 						changed = true;
-						token.value = result;
 					}
-					newTokens.push(token);
-				} else {
-					// Delete token
-					changed = true;
+
+					nextToken();
 				}
-			}
-
-			if (!changed) {
-				return;
-			}
-
-			// Update style
-			const tree = tokensTree(
-				newTokens.filter((token) => token !== null) as CSSToken[]
 			);
-			if (!tree.length) {
-				// Empty
-				$element.remove();
-				return;
+		};
+		nextToken();
+	}
+
+	if (tagName === 'style') {
+		return parseStyleItem(done);
+	}
+
+	// Parse style
+	const attribs = item.element.attribs;
+	if (attribs.style === void 0) {
+		return done();
+	}
+
+	const parsedStyle = parseInlineStyle(attribs.style);
+	if (parsedStyle === null) {
+		// Ignore style
+		$element.removeAttr('style');
+		return done();
+	}
+
+	// List of properties to parse, status
+	const propsQueue = Object.keys(parsedStyle);
+	let changed = false;
+
+	// Called when all properties are parsed
+	const parsedProps = () => {
+		if (changed) {
+			const newStyle = Object.keys(parsedStyle)
+				.map((key) => key + ':' + parsedStyle[key] + ';')
+				.join('');
+			if (!newStyle.length) {
+				$element.removeAttr('style');
+			} else {
+				$element.attr('style', newStyle);
 			}
+		}
+		done();
+	};
 
-			const newContent = tokensToString(tree);
-			item.$element.text(newContent);
-			return;
+	// Parse next property
+	const nextProp = (): void => {
+		const prop = propsQueue.shift();
+		if (prop === void 0) {
+			return parsedProps();
 		}
 
-		// Parse style
-		const attribs = item.element.attribs;
-		if (attribs.style === void 0) {
-			return;
-		}
-
-		const parsedStyle = parseInlineStyle(attribs.style);
-		if (parsedStyle === null) {
-			// Ignore style
-			$element.removeAttr('style');
-			return;
-		}
-
-		const props = Object.keys(parsedStyle);
-		let changed = false;
-		for (let i = 0; i < props.length; i++) {
-			const prop = props[i];
-			const value = parsedStyle[prop];
-			let result = callback({
+		const value = parsedStyle[prop];
+		callback(
+			{
 				type: 'inline',
 				prop,
 				value,
 				item,
-			});
-			if (result instanceof Promise) {
-				result = await result;
+			},
+			(result) => {
+				if (result !== value) {
+					changed = true;
+					if (result === void 0) {
+						delete parsedStyle[prop];
+					} else {
+						parsedStyle[prop] = result;
+					}
+				}
+				nextProp();
 			}
+		);
+	};
+	nextProp();
+}
 
-			if (result !== value) {
-				changed = true;
-				if (result === void 0) {
-					delete parsedStyle[prop];
-				} else {
-					parsedStyle[prop] = result;
+/**
+ * Parse styles in SVG
+ *
+ * This function finds CSS in SVG, parses it, calls callback for each rule.
+ * Callback should return new value (string) or undefined to remove rule.
+ * Callback can be asynchronous.
+ */
+export async function parseSVGStyle(
+	svg: SVG,
+	callback: ParseSVGStyleCallback
+): Promise<void> {
+	return parseSVG(svg, (item) => {
+		return new Promise((fulfill, reject) => {
+			try {
+				parseItem(
+					svg,
+					item,
+					(styleItem, done) => {
+						try {
+							const result = callback(styleItem);
+							if (result instanceof Promise) {
+								result.then(done).catch(reject);
+							} else {
+								done(result);
+							}
+						} catch (err) {
+							reject(err);
+						}
+					},
+					fulfill
+				);
+			} catch (err) {
+				reject(err);
+			}
+		});
+	});
+}
+
+/**
+ * Synchronous version
+ */
+export function parseSVGStyleSync(
+	svg: SVG,
+	callback: ParseSVGStyleCallbackSync
+): void {
+	let isSync = true;
+	parseSVGSync(svg, (item) => {
+		parseItem(
+			svg,
+			item,
+			(styleItem, done) => {
+				done(callback(styleItem));
+			},
+			() => {
+				if (!isSync) {
+					throw new Error('parseSVGStyleSync callback was async');
 				}
 			}
-		}
-
-		// Update style
-		if (!changed) {
-			return;
-		}
-		const newStyle = Object.keys(parsedStyle)
-			.map((key) => key + ':' + parsedStyle[key] + ';')
-			.join('');
-		if (!newStyle.length) {
-			$element.removeAttr('style');
-		} else {
-			$element.attr('style', newStyle);
-		}
+		);
 	});
+	isSync = false;
 }
