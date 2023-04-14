@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { apiCacheKey, getAPICache, storeAPICache } from './cache';
 import type { APICacheOptions, APIQueryParams } from './types';
 

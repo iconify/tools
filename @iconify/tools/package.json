@@ -28,12 +28,10 @@
 		"@iconify/types": "^2.0.0",
 		"@iconify/utils": "^2.1.4",
 		"@types/cheerio": "^0.22.31",
-		"@types/node-fetch": "^2.6.2",
 		"@types/tar": "^6.1.4",
 		"cheerio": "^1.0.0-rc.12",
 		"extract-zip": "^2.0.1",
 		"local-pkg": "^0.4.3",
-		"node-fetch": "^2.6.9",
 		"pathe": "^1.1.0",
 		"svgo": "^3.0.2",
 		"tar": "^6.1.13"

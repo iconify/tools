@@ -1,7 +1,6 @@
-import fetch from 'node-fetch';
 import { promisify } from 'util';
 import { pipeline } from 'stream';
-import { createWriteStream } from 'fs';
+import { writeFile } from 'fs/promises';
 import type { APIQueryParams } from './types';
 
 const streamPipeline = promisify(pipeline);
@@ -24,6 +23,6 @@ export async function downloadFile(
 	if (!response.ok || !response.body) {
 		throw new Error(`Error downloading ${url}: ${response.status}`);
 	}
-
-	await streamPipeline(response.body, createWriteStream(target));
+	const data = await response.arrayBuffer();
+	await writeFile(target, Buffer.from(data));
 }
