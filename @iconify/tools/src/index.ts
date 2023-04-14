@@ -20,7 +20,7 @@ export { addTagsToIconSet } from './icon-set/tags';
 
 // Import
 export { importFromFigma } from './import/figma/index';
-export { importDirectory } from './import/directory';
+export { importDirectory, importDirectorySync } from './import/directory';
 
 // Download (for import)
 export { downloadGitRepo } from './download/git/index';
@@ -54,7 +54,7 @@ export { exportJSONPackage } from './export/json-package';
 // Misc: files, directories and archives
 export { writeJSONFile } from './misc/write-json';
 export { prepareDirectoryForExport } from './export/helpers/prepare';
-export { scanDirectory } from './misc/scan';
+export { scanDirectory, scanDirectorySync } from './misc/scan';
 export { compareDirectories } from './misc/compare-dirs';
 export { unzip } from './download/helpers/unzip';
 export { untar } from './download/helpers/untar';

@@ -1,4 +1,7 @@
-import { importDirectory } from '../../lib/import/directory';
+import {
+	importDirectory,
+	importDirectorySync,
+} from '../../lib/import/directory';
 
 // Content of imported icons
 const importedSetIcon =
@@ -11,7 +14,8 @@ describe('Importing directory', () => {
 		const iconSet = await importDirectory('tests/fixtures/elements/style');
 		expect(iconSet.list()).toEqual(['set', 'style']);
 		expect(iconSet.lastModified).toBeTruthy();
-		expect(iconSet.export()).toEqual({
+		const exported = iconSet.export();
+		expect(exported).toEqual({
 			prefix: '',
 			lastModified: iconSet.lastModified,
 			icons: {
@@ -25,18 +29,28 @@ describe('Importing directory', () => {
 			width: 10,
 			height: 10,
 		});
+
+		// Synchronous
+		const iconSet2 = importDirectorySync('tests/fixtures/elements/style');
+		expect(iconSet2.export()).toEqual(exported);
 	});
 
 	test('Callback', async () => {
 		const iconSet = await importDirectory('tests/fixtures/elements/style', {
 			prefix: 'foo',
 			keyword: (item) => {
-				return `test-${item.file}`;
+				// async callback
+				return new Promise((fulfill) => {
+					setTimeout(() => {
+						fulfill(`test-${item.file}`);
+					});
+				});
 			},
 		});
 		expect(iconSet.list()).toEqual(['test-set', 'test-style']);
 		expect(iconSet.lastModified).toBeTruthy();
-		expect(iconSet.export()).toEqual({
+		const exported = iconSet.export();
+		expect(exported).toEqual({
 			prefix: 'foo',
 			lastModified: iconSet.lastModified,
 			icons: {
@@ -50,5 +64,14 @@ describe('Importing directory', () => {
 			width: 10,
 			height: 10,
 		});
+
+		// Synchronous
+		const iconSet2 = importDirectorySync('tests/fixtures/elements/style', {
+			prefix: 'foo',
+			keyword: (item) => {
+				return `test-${item.file}`;
+			},
+		});
+		expect(iconSet2.export()).toEqual(exported);
 	});
 });
