@@ -11,17 +11,17 @@ importers:
         version: link:../../@iconify/tools
     devDependencies:
       '@iconify/iconify':
-        specifier: ^3.0.1
-        version: 3.0.1
+        specifier: ^3.1.0
+        version: 3.1.0
       '@iconify/json':
-        specifier: ^2.1.156
-        version: 2.1.156
+        specifier: ^2.2.50
+        version: 2.2.50
       '@types/node':
-        specifier: ^18.11.17
-        version: 18.11.17
+        specifier: ^18.15.11
+        version: 18.15.11
       typescript:
-        specifier: ^4.9.4
-        version: 4.9.4
+        specifier: ^5.0.4
+        version: 5.0.4
 
   '@iconify-demo/mdi':
     dependencies:
@@ -1022,17 +1022,17 @@ packages:
       '@iconify/types': 2.0.0
     dev: true
 
-  /@iconify/iconify@3.0.1:
-    resolution: {integrity: sha512-OPqVBTh8YsfrYZRVFv3OkmFNLqacM0dy/Oiw1h2wO+RZW5LieNGHlG2f9pzaeVRFWbEB8LHTeo8mcwgUTUbibQ==}
+  /@iconify/iconify@3.1.0:
+    resolution: {integrity: sha512-Xyz+N5NSIiHj7G228CvFUcMKBz3BbpUTAuPnK2ariEUM7891F8ysD6Gh8782f3En1U4Qz70F0tzuyF8BhCfTQg==}
     dependencies:
       '@iconify/types': 2.0.0
     dev: true
 
-  /@iconify/json@2.1.156:
-    resolution: {integrity: sha512-QaLf/XSPRe6i35Z9WIRBxlWOLykDXNnEGYFf+9E+GWLmRqVQ2VNyTsEo6CNZqP5eGQRDPJyNhd+2vH+gbehGDg==}
+  /@iconify/json@2.2.50:
+    resolution: {integrity: sha512-1npM4qNRV7WTNEsaey98DhOwxuAcHALjYEtebDGwdLGnh7Pim8ysj031RtZfyfOG2uYuXPobiRgJ0QHG246Y3Q==}
     dependencies:
       '@iconify/types': 2.0.0
-      pathe: 0.3.9
+      pathe: 1.1.0
     dev: true
 
   /@iconify/types@2.0.0:
@@ -4299,10 +4299,6 @@ packages:
   /path-type@4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
     engines: {node: '>=8'}
-    dev: true
-
-  /pathe@0.3.9:
-    resolution: {integrity: sha512-6Y6s0vT112P3jD8dGfuS6r+lpa0qqNrLyHPOwvXMnyNTQaYiwgau2DP3aNDsR13xqtGj7rrPo+jFUATpU6/s+g==}
     dev: true
 
   /pathe@1.1.0:

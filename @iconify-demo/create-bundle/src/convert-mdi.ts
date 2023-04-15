@@ -3,9 +3,9 @@ import { dirname } from 'path';
 
 // Installation: npm install --save-dev @iconify/tools @mdi/svg
 import {
-	importDirectory,
+	importDirectorySync,
 	cleanupSVG,
-	parseColors,
+	parseColorsSync,
 	isEmptyColor,
 	runSVGO,
 	cleanupIconKeyword,
@@ -47,7 +47,7 @@ const info: IconifyInfo = {
 // Import icons
 (async function () {
 	// Import icons
-	const iconSet = await importDirectory(sourceSVGDir, {
+	const iconSet = importDirectorySync(sourceSVGDir, {
 		prefix,
 	});
 
@@ -55,7 +55,7 @@ const info: IconifyInfo = {
 	iconSet.info = info;
 
 	// Validate, clean up, fix palette and optimise
-	await iconSet.forEach(async (name, type) => {
+	iconSet.forEachSync((name, type) => {
 		if (type !== 'icon') {
 			return;
 		}
@@ -81,10 +81,10 @@ const info: IconifyInfo = {
 		// Clean up and optimise icons
 		try {
 			// Clean up icon code
-			await cleanupSVG(svg);
+			cleanupSVG(svg);
 
 			// Replace color with currentColor, add if missing
-			await parseColors(svg, {
+			parseColorsSync(svg, {
 				defaultColor: 'currentColor',
 				callback: (attr, colorStr, color) => {
 					return !color || isEmptyColor(color)

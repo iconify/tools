@@ -1,9 +1,9 @@
 import { promises as fs } from 'fs';
 import {
 	downloadGitRepo,
-	importDirectory,
+	importDirectorySync,
 	cleanupSVG,
-	parseColors,
+	parseColorsSync,
 	isEmptyColor,
 	runSVGO,
 } from '@iconify/tools';
@@ -71,7 +71,7 @@ const basePrefix = 'fa-pro-';
 		const prefix = basePrefix + theme;
 
 		// Import icons
-		const iconSet = await importDirectory(source, {
+		const iconSet = importDirectorySync(source, {
 			prefix,
 		});
 
@@ -82,7 +82,7 @@ const basePrefix = 'fa-pro-';
 		iconSet.info = info;
 
 		// Validate, clean up, fix palette and optimise
-		await iconSet.forEach(async (name, type) => {
+		iconSet.forEachSync((name, type) => {
 			if (type !== 'icon') {
 				return;
 			}
@@ -98,10 +98,10 @@ const basePrefix = 'fa-pro-';
 			// Clean up and optimise icons
 			try {
 				// Clean up icon code
-				await cleanupSVG(svg);
+				cleanupSVG(svg);
 
 				// Replace color with currentColor, add if missing
-				await parseColors(svg, {
+				parseColorsSync(svg, {
 					defaultColor: 'currentColor',
 					callback: (attr, colorStr, color) => {
 						return !color || isEmptyColor(color)
