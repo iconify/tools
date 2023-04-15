@@ -32,7 +32,9 @@ describe('Importing directory', () => {
 
 		// Synchronous
 		const iconSet2 = importDirectorySync('tests/fixtures/elements/style');
-		expect(iconSet2.export()).toEqual(exported);
+		const exported2 = iconSet2.export();
+		exported2.lastModified = exported.lastModified; // could be different
+		expect(exported2).toEqual(exported);
 	});
 
 	test('Callback', async () => {
@@ -72,6 +74,8 @@ describe('Importing directory', () => {
 				return `test-${item.file}`;
 			},
 		});
-		expect(iconSet2.export()).toEqual(exported);
+		const exported2 = iconSet2.export();
+		exported2.lastModified = exported.lastModified; // could be different
+		expect(exported2).toEqual(exported);
 	});
 });
