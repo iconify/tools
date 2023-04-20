@@ -126,13 +126,9 @@ describe('getTokens()', () => {
 			{ type: 'close', index: 38 },
 			{
 				type: 'at-rule',
-				code: '@media (min-width: 700px) and (orientation: landscape), not all and (monochrome)',
 				index: 39,
-				atRule: 'media',
-				atValues: [
-					['min-width: 700px', 'orientation: landscape'],
-					'not all and (monochrome)',
-				],
+				rule: 'media',
+				value: '(min-width: 700px) and (orientation: landscape), not all and (monochrome)',
 			},
 			{ type: 'selector', code: 'a', index: 122, selectors: ['a'] },
 			{
@@ -166,13 +162,9 @@ describe('getTokens()', () => {
 
 			{
 				type: 'at-rule',
-				code: '@media (min-width: 700px) and (orientation: landscape), not all and (monochrome)',
 				index: 39,
-				atRule: 'media',
-				atValues: [
-					['min-width: 700px', 'orientation: landscape'],
-					'not all and (monochrome)',
-				],
+				rule: 'media',
+				value: '(min-width: 700px) and (orientation: landscape), not all and (monochrome)',
 				children: [
 					{
 						type: 'selector',
@@ -195,7 +187,7 @@ describe('getTokens()', () => {
 
 		const output = tokensToString(tree);
 		expect(output).toBe(
-			'a {\n\tcolor: red;\n\ttext-decoration: none;\n}\n@media(min-width: 700px), (orientation: landscape), not all and (monochrome) {\n\ta {\n\t\ttext-decoration: underline;\n\t}\n}\n'
+			'a {\n\tcolor: red;\n\ttext-decoration: none;\n}\n@media (min-width: 700px) and (orientation: landscape), not all and (monochrome) {\n\ta {\n\t\ttext-decoration: underline;\n\t}\n}\n'
 		);
 	});
 
@@ -304,10 +296,9 @@ describe('getTokens()', () => {
 		const expected: CSSToken[] = [
 			{
 				type: 'at-rule',
-				code: '@font-face',
 				index: 0,
-				atRule: 'font-face',
-				atValues: [''],
+				rule: 'font-face',
+				value: '',
 			},
 			{
 				type: 'rule',
@@ -329,10 +320,9 @@ describe('getTokens()', () => {
 		const expectedTree: CSSTreeToken[] = [
 			{
 				type: 'at-rule',
-				code: '@font-face',
 				index: 0,
-				atRule: 'font-face',
-				atValues: [''],
+				rule: 'font-face',
+				value: '',
 				children: [
 					{
 						type: 'rule',
@@ -353,7 +343,7 @@ describe('getTokens()', () => {
 
 		const output = tokensToString(tree);
 		expect(output).toBe(
-			'@font-face() {\n\tfont-family: feedback-iconfont;\n\tsrc: url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff2?t=1630033759944") format("woff2"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff?t=1630033759944") format("woff"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.ttf?t=1630033759944") format("truetype");\n}\n'
+			'@font-face {\n\tfont-family: feedback-iconfont;\n\tsrc: url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff2?t=1630033759944") format("woff2"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff?t=1630033759944") format("woff"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.ttf?t=1630033759944") format("truetype");\n}\n'
 		);
 	});
 });

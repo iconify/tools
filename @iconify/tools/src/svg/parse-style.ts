@@ -3,9 +3,18 @@ import { parseInlineStyle } from '../css/parse';
 import { tokensToString } from '../css/parser/export';
 import { getTokens } from '../css/parser/tokens';
 import { tokensTree } from '../css/parser/tree';
-import type { CSSRuleToken, CSSToken } from '../css/parser/types';
+import type {
+	CSSAtRuleToken,
+	CSSRuleToken,
+	CSSToken,
+} from '../css/parser/types';
 import { parseSVGSync } from './parse';
 import { parseSVG, ParseSVGCallbackItem } from './parse';
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function assertNever(v: never) {
+	//
+}
 
 /**
  * Item in callback
@@ -29,9 +38,28 @@ interface ParseSVGStyleCallbackItemGlobal
 	nextTokens: CSSToken[];
 }
 
+interface ParseSVGStyleCallbackItemGlobalAtRule
+	extends ParseSVGStyleCallbackItemCommon {
+	token: CSSAtRuleToken;
+	childTokens: CSSToken[];
+	prevTokens: (CSSToken | null)[];
+	nextTokens: CSSToken[];
+}
+interface ParseSVGStyleCallbackItemGlobalGenericAtRule
+	extends ParseSVGStyleCallbackItemGlobalAtRule {
+	type: 'at-rule';
+}
+interface ParseSVGStyleCallbackItemGlobalKeyframesAtRule
+	extends ParseSVGStyleCallbackItemGlobalAtRule {
+	type: 'keyframes';
+	from: Record<string, string>;
+}
+
 export type ParseSVGStyleCallbackItem =
 	| ParseSVGStyleCallbackItemInline
-	| ParseSVGStyleCallbackItemGlobal;
+	| ParseSVGStyleCallbackItemGlobal
+	| ParseSVGStyleCallbackItemGlobalGenericAtRule
+	| ParseSVGStyleCallbackItemGlobalKeyframesAtRule;
 
 /**
  * Result: undefined to remove item, string to change/keep item
@@ -84,7 +112,7 @@ function parseItem(
 		// Parse all tokens
 		let changed = false;
 		const selectorStart: number[] = [];
-		const newTokens: (CSSToken | null)[] = [];
+		let newTokens: (CSSToken | null)[] = [];
 
 		// Called when all tokens are parsed
 		const parsedTokens = () => {
@@ -99,7 +127,7 @@ function parseItem(
 					$element.remove();
 				} else {
 					const newContent = tokensToString(tree);
-					item.$element.text(newContent);
+					item.$element.text('\n' + newContent);
 				}
 			}
 
@@ -115,62 +143,192 @@ function parseItem(
 
 			switch (token.type) {
 				case 'selector':
-				case 'at-rule':
 					selectorStart.push(newTokens.length);
-					break;
+					newTokens.push(token);
+					return nextToken();
 
 				case 'close':
 					selectorStart.pop();
-					break;
-			}
+					newTokens.push(token);
+					return nextToken();
 
-			if (token.type !== 'rule') {
-				newTokens.push(token);
-				return nextToken();
-			}
+				case 'at-rule': {
+					selectorStart.push(newTokens.length);
 
-			const value = token.value;
+					const prop = token.rule;
+					const value = token.value;
 
-			const selectorTokens = selectorStart
-				.map((index) => newTokens[index])
-				.filter((item) => item !== null) as CSSToken[];
+					const isAnimation =
+						prop === 'keyframes' ||
+						(prop.slice(0, 1) === '-' &&
+							prop.split('-').pop() === 'keyframes');
 
-			callback(
-				{
-					type: 'global',
-					prop: token.prop,
-					value,
-					token,
-					selectorTokens,
-					selectors: selectorTokens.reduce(
-						(prev: string[], current: CSSToken) => {
-							switch (current.type) {
-								case 'selector': {
-									return prev.concat(current.selectors);
+					// Get all child tokens, including closing token
+					const childTokens: CSSToken[] = [];
+					const animationRules = Object.create(null) as Record<
+						string,
+						string
+					>;
+					let depth = 1;
+					let index = 0;
+					let isFrom = false;
+
+					while (depth > 0) {
+						const childToken = tokens[index];
+						index++;
+						if (!childToken) {
+							throw new Error('Something went wrong parsing CSS');
+						}
+						childTokens.push(childToken);
+						switch (childToken.type) {
+							case 'close': {
+								depth--;
+								isFrom = false;
+								break;
+							}
+							case 'selector': {
+								depth++;
+								if (isAnimation) {
+									const rule = childToken.code;
+									if (rule === 'from' || rule === '0%') {
+										isFrom = true;
+									}
+								}
+								break;
+							}
+
+							case 'at-rule': {
+								depth++;
+								if (isAnimation) {
+									throw new Error(
+										'Nested at-rule in keyframes ???'
+									);
+								}
+								break;
+							}
+
+							case 'rule': {
+								if (isAnimation && isFrom) {
+									animationRules[childToken.prop] =
+										childToken.value;
+								}
+								break;
+							}
+
+							default:
+								assertNever(childToken);
+						}
+					}
+					const skipCount = childTokens.length;
+
+					callback(
+						isAnimation
+							? {
+									type: 'keyframes',
+									prop,
+									value,
+									token,
+									childTokens,
+									from: animationRules,
+									prevTokens: newTokens,
+									nextTokens: tokens.slice(0),
+							  }
+							: {
+									type: 'at-rule',
+									prop,
+									value,
+									token,
+									childTokens,
+									prevTokens: newTokens,
+									nextTokens: tokens.slice(0),
+							  },
+						(result) => {
+							if (result !== void 0) {
+								if (isAnimation) {
+									// Allow changing animation name
+									if (result !== value) {
+										changed = true;
+										token.value = result;
+									}
+									newTokens.push(token);
+
+									// Skip all child tokens, copy them as is
+									for (let i = 0; i < skipCount; i++) {
+										tokens.shift();
+									}
+									newTokens = newTokens.concat(childTokens);
+								} else {
+									// Not animation
+									if (result !== value) {
+										throw new Error(
+											'Changing value for at-rule is not supported'
+										);
+									}
+									newTokens.push(token);
+								}
+							} else {
+								// Delete token and all child tokens
+								changed = true;
+								for (let i = 0; i < skipCount; i++) {
+									tokens.shift();
 								}
 							}
-							return prev;
-						},
-						[] as string[]
-					),
-					prevTokens: newTokens,
-					nextTokens: tokens.slice(0),
-				},
-				(result) => {
-					if (result !== void 0) {
-						if (result !== value) {
-							changed = true;
-							token.value = result;
-						}
-						newTokens.push(token);
-					} else {
-						// Delete token
-						changed = true;
-					}
 
-					nextToken();
+							nextToken();
+						}
+					);
+					return;
 				}
-			);
+
+				case 'rule': {
+					const value = token.value;
+					const selectorTokens = selectorStart
+						.map((index) => newTokens[index])
+						.filter((item) => item !== null) as CSSToken[];
+					callback(
+						{
+							type: 'global',
+							prop: token.prop,
+							value,
+							token,
+							selectorTokens,
+							selectors: selectorTokens.reduce(
+								(prev: string[], current: CSSToken) => {
+									switch (current.type) {
+										case 'selector': {
+											return prev.concat(
+												current.selectors
+											);
+										}
+									}
+									return prev;
+								},
+								[] as string[]
+							),
+							prevTokens: newTokens,
+							nextTokens: tokens.slice(0),
+						},
+						(result) => {
+							if (result !== void 0) {
+								if (result !== value) {
+									changed = true;
+									token.value = result;
+								}
+								newTokens.push(token);
+							} else {
+								// Delete token
+								changed = true;
+							}
+
+							nextToken();
+						}
+					);
+					return;
+				}
+
+				default:
+					assertNever(token);
+			}
 		};
 		nextToken();
 	}

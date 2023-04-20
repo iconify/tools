@@ -1,9 +1,4 @@
-import type {
-	CSSATValue,
-	CSSRuleToken,
-	CSSTokenWithSelector,
-	TextToken,
-} from './types';
+import type { CSSRuleToken, CSSTokenWithSelector, TextToken } from './types';
 
 /**
  * Merge text tokens to string
@@ -129,9 +124,6 @@ export function textTokensToRule(tokens: TextToken[]): CSSRuleToken | null {
 	return result.value.length ? result : null;
 }
 
-// Rules that needs extra parsing
-const nestableAtRules = ['media', 'supports'];
-
 /**
  * Create at-rule or selector token from text tokens
  */
@@ -146,45 +138,16 @@ export function textTokensToSelector(
 		return null;
 	}
 
-	if (selectors[0].charAt(0) === '@') {
-		const atRule = selectors[0].split(/\s+/, 1)[0].slice(1).toLowerCase();
-		selectors[0] = selectors[0].slice(1 + atRule.length).trim();
-		const atValues = selectors as CSSATValue[];
-
-		// Remove parenthesis for at-rules that can be nested, such as @media
-		if (nestableAtRules.indexOf(atRule) !== -1) {
-			atValues.forEach((item, index) => {
-				if (
-					typeof item !== 'string' ||
-					item.charAt(0) !== '(' ||
-					item.charAt(item.length - 1) !== ')'
-				) {
-					return;
-				}
-
-				const list = item
-					.slice(1, -1)
-					.split(/\)\s?and\s?\(/i)
-					.map((item) => item.trim());
-				let match = true;
-				list.forEach((item) => {
-					if (item.indexOf('(') !== -1 || item.indexOf(')') !== -1) {
-						match = false;
-					}
-				});
-
-				if (match) {
-					atValues[index] = list;
-				}
-			});
-		}
+	if (code.charAt(0) === '@') {
+		const parts = code.split(/\s+/);
+		const rule = (parts.shift() as string).slice(1);
+		const value = parts.join(' ').trim();
 
 		return {
 			type: 'at-rule',
-			code,
 			index,
-			atRule,
-			atValues,
+			rule,
+			value,
 		};
 	} else {
 		return {

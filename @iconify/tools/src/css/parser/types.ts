@@ -36,9 +36,8 @@ export interface CSSSelectorToken {
 export interface CSSAtRuleToken {
 	type: 'at-rule';
 	index: number;
-	code: string;
-	atRule: string;
-	atValues: CSSATValue[];
+	rule: string;
+	value: string;
 }
 
 // Closes selector or at-rule: '}'

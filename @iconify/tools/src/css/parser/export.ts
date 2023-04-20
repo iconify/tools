@@ -1,4 +1,4 @@
-import type { CSSATValue, CSSTreeToken } from './types';
+import type { CSSTreeToken } from './types';
 
 const tab = '\t';
 const nl = '\n';
@@ -45,8 +45,7 @@ function parseToken(
 		}
 
 		case 'at-rule': {
-			content =
-				'@' + token.atRule + joinAtValues(token.atValues, compact);
+			content = `@${token.rule} ${token.value}`.trim();
 			break;
 		}
 
@@ -66,20 +65,4 @@ function parseToken(
 		children.join('') +
 		(compact ? '}' : tab.repeat(depth) + '}' + nl)
 	);
-}
-
-/**
- * Join at-rule values
- */
-function joinAtValues(values: CSSATValue[], compact: boolean): string {
-	return values
-		.map((item) => {
-			const value =
-				typeof item === 'string' ? item : joinAtValues(item, compact);
-			if (value.slice(0, 1) === '(' || value.slice(-1) === ')') {
-				return value;
-			}
-			return '(' + value + ')';
-		})
-		.join(compact ? ',' : ', ');
 }
