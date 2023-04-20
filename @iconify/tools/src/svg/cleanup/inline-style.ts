@@ -13,6 +13,43 @@ import {
 import { parseSVGSync } from '../parse';
 
 /**
+ * Allowed rules
+ *
+ * Contains full rules + partial rules.
+ * Partial rule = first part of rule split by '-' + '*'
+ */
+const allowedStyleRules: Set<string> = new Set([
+	// Animations
+	'animation',
+	'animation*',
+	'offset',
+	'offset*',
+	// Transformations
+	'transform',
+	'transform*',
+	'translate',
+	// Transitions
+	'transition',
+	'transition*',
+]);
+
+/**
+ * Known ignored rules, exported by junk software
+ *
+ * Full or partial (see above)
+ *
+ * Checked after tag specific attributes, so list contains some valid attributes, but when used in wrong place
+ */
+const knownIgnoredRules: Set<string> = new Set([
+	// Illustrator / Inkscape junk
+	'solid*',
+	'paint*',
+	'shape*',
+	'color-interpolation-filters',
+	'stop-opacity',
+]);
+
+/**
  * Expand inline style
  */
 export function cleanupInlineStyle(svg: SVG): void {
@@ -57,7 +94,12 @@ export function cleanupInlineStyle(svg: SVG): void {
 					}
 
 					// Valid style that cannot be converted to attribute
-					if (tagSpecificInlineStyles[tagName]?.has(prop)) {
+					const partial = (prop.split('-').shift() as string) + '*';
+					if (
+						tagSpecificInlineStyles[tagName]?.has(prop) ||
+						allowedStyleRules.has(prop) ||
+						allowedStyleRules.has(partial)
+					) {
 						newStyle[prop] = value;
 						return;
 					}
@@ -79,7 +121,9 @@ export function cleanupInlineStyle(svg: SVG): void {
 						badSoftwareAttributes.has(prop) ||
 						badAttributePrefixes.has(
 							prop.split('-').shift() as string
-						)
+						) ||
+						knownIgnoredRules.has(prop) ||
+						knownIgnoredRules.has(partial)
 					) {
 						return;
 					}

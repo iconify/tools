@@ -30,11 +30,6 @@ export function cleanupRootStyle(svg: SVG): CleanupRootStyleResult {
 				return item.value;
 
 			case 'at-rule':
-				if (item.prop === 'supports') {
-					// Keep @supports
-					return item.value;
-				}
-
 				// at-rule: remove it
 				(
 					result.removedAtRules || (result.removedAtRules = new Set())
