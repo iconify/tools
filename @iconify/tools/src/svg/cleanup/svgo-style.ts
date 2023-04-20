@@ -15,6 +15,11 @@ export function convertStyleToAttrs(svg: SVG): void {
 
 	// Clean up style, removing useless junk
 	parseSVGStyleSync(svg, (item) => {
+		if (item.type !== 'inline' && item.type !== 'global') {
+			return item.value;
+		}
+
+		// Inline or global
 		const prop = item.prop;
 		if (
 			// Attributes / properties now allowed

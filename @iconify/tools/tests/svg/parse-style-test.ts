@@ -1,6 +1,5 @@
 import { SVG } from '../../lib/svg';
 import { parseSVGStyle } from '../../lib/svg/parse-style';
-import { loadFixture } from '../../lib/tests/load';
 
 describe('Parsing style', () => {
 	test('Global style', async () => {
