@@ -19,10 +19,11 @@
 		"lint": "eslint src/**/*.ts",
 		"prebuild": "npm run lint && npm run clean",
 		"build": "unbuild",
-		"test:jest-cjs": "jest --clearCache --config=jest.config.cjs  && jest --runInBand --config=jest.config.cjs",
-		"test:jest-esm": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --clearCache --config=jest.config.mjs && cross-env NODE_OPTIONS=--experimental-vm-modules npx jest --runInBand --config=jest.config.mjs",
+		"test:jest-cjs": "jest --clearCache --config=jest.config.cjs && jest --runInBand --config=jest.config.cjs",
+		"test:jest-esm": "cross-env NODE_OPTIONS=--experimental-vm-modules TEST_REMOTE=false jest --clearCache --config=jest.config.mjs && cross-env NODE_OPTIONS=--experimental-vm-modules npx jest --runInBand --config=jest.config.mjs",
 		"test:jasmine": "cross-env NODE_OPTIONS='--experimental-vm-modules --experimental-json-modules' npx jasmine",
-		"test": "npm run test:jest-cjs && npm run test:jest-esm && npm run test:jasmine"
+		"test": "npm run test:jest-cjs && npm run test:jest-esm && npm run test:jasmine",
+		"test:ci": "cross-env TEST_REMOTE=false npm run test"
 	},
 	"dependencies": {
 		"@iconify/types": "^2.0.0",
@@ -526,10 +527,10 @@
 			"import": "./lib/svg/parse-style.mjs",
 			"types": "./lib/svg/parse-style.d.ts"
 		},
-		"./lib/tests/load": {
-			"require": "./lib/tests/load.cjs",
-			"import": "./lib/tests/load.mjs",
-			"types": "./lib/tests/load.d.ts"
+		"./lib/tests/helpers": {
+			"require": "./lib/tests/helpers.cjs",
+			"import": "./lib/tests/helpers.mjs",
+			"types": "./lib/tests/helpers.d.ts"
 		}
 	}
 }

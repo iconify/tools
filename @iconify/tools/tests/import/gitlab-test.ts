@@ -4,6 +4,7 @@ import {
 	DownloadGitLabRepoResult,
 } from '../../lib/download/gitlab';
 import { prepareDirectoryForExport } from '../../lib/export/helpers/prepare';
+import { isTestingRemote } from '../../lib/tests/helpers';
 
 const target = 'cache/gitlab';
 
@@ -33,6 +34,9 @@ const testBranches: TestBranches[] = [
 	},
 ];
 
+// Wrap in test() or test.skip()
+const runTest = isTestingRemote() && token ? test : test.skip;
+
 describe('Downloading Git repository using GitLav API', () => {
 	beforeAll(async () => {
 		// Remove old cache
@@ -51,7 +55,7 @@ describe('Downloading Git repository using GitLav API', () => {
 
 	let lastResult: DownloadGitLabRepoResult | 'not_modified';
 
-	(token ? test : test.skip)('Downloading main branch', async () => {
+	runTest('Downloading main branch', async () => {
 		if (!token) {
 			return;
 		}
@@ -79,7 +83,7 @@ describe('Downloading Git repository using GitLav API', () => {
 		expect(packageContents.version).toBe(branch.version);
 	});
 
-	(token ? test : test.skip)('Downloading archive branch', async () => {
+	runTest('Downloading archive branch', async () => {
 		if (!token) {
 			return;
 		}
@@ -109,7 +113,7 @@ describe('Downloading Git repository using GitLav API', () => {
 		expect(packageContents.version).toBe(branch.version);
 	});
 
-	(token ? test : test.skip)('Checking not_modified', async () => {
+	runTest('Checking not_modified', async () => {
 		if (!token) {
 			return;
 		}
@@ -127,7 +131,7 @@ describe('Downloading Git repository using GitLav API', () => {
 		expect(result).toBe('not_modified');
 	});
 
-	(token ? test : test.skip)('Checking out main branch again', async () => {
+	runTest('Checking out main branch again', async () => {
 		if (!token) {
 			return;
 		}

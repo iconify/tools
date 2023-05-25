@@ -1,7 +1,7 @@
 import type { IconifyJSON } from '@iconify/types';
 import { IconSet } from '../../lib/icon-set';
 import { detectIconSetPalette } from '../../lib/colors/detect';
-import { loadFixture } from '../../lib/tests/load';
+import { loadFixture } from '../../lib/tests/helpers';
 
 describe('Detecting palette', () => {
 	test('Empty icon set', () => {

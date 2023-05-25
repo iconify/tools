@@ -1,6 +1,6 @@
 import { SVG } from '../../lib/svg';
 import { convertStyleToAttrs } from '../../lib/svg/cleanup/svgo-style';
-import { loadFixture } from '../../lib/tests/load';
+import { loadFixture } from '../../lib/tests/helpers';
 
 describe('Converting style to attributes', () => {
 	test('Simple style', () => {

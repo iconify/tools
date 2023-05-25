@@ -1,6 +1,6 @@
 import { SVG } from '../../lib/svg';
 import { cleanupSVG } from '../../lib/svg/cleanup';
-import { loadFixture } from '../../lib/tests/load';
+import { loadFixture } from '../../lib/tests/helpers';
 
 describe('Cleaning up SVG', () => {
 	test('Moving fill to content', () => {

@@ -1,6 +1,6 @@
 import { SVG } from '../../lib/svg';
 import { cleanupGlobalStyle } from '../../lib/optimise/global-style';
-import { loadFixture } from '../../lib/tests/load';
+import { loadFixture } from '../../lib/tests/helpers';
 
 describe('Removing global style', () => {
 	test('Simple icon', async () => {

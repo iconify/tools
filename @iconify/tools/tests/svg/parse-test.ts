@@ -1,7 +1,7 @@
 import { SVG } from '../../lib/svg';
 import { cleanupSVG } from '../../lib/svg/cleanup';
 import { parseSVG, parseSVGSync } from '../../lib/svg/parse';
-import { loadFixture } from '../../lib/tests/load';
+import { loadFixture } from '../../lib/tests/helpers';
 
 describe('Parsing SVG', () => {
 	test('Removing grid', async () => {

@@ -4,6 +4,7 @@ import {
 	DownloadNPMPackageResult,
 } from '../../lib/download/npm';
 import { prepareDirectoryForExport } from '../../lib/export/helpers/prepare';
+import { isTestingRemote } from '../../lib/tests/helpers';
 
 const target = 'cache/npm';
 
@@ -26,6 +27,9 @@ const testBranches: TestVersions[] = [
 
 const packageDir = '/package';
 
+// Wrap in test() or test.skip()
+const runTest = isTestingRemote() ? test : test.skip;
+
 describe('Downloading NPM package', () => {
 	beforeAll(async () => {
 		// Remove old cache
@@ -37,7 +41,7 @@ describe('Downloading NPM package', () => {
 
 	let lastResult: DownloadNPMPackageResult | 'not_modified';
 
-	test('Downloading latest tag', async () => {
+	runTest('Downloading latest tag', async () => {
 		const branch = testBranches[0];
 		const result = await downloadNPMPackage({
 			ifModifiedSince: true,
@@ -60,7 +64,7 @@ describe('Downloading NPM package', () => {
 		expect(packageContents.version).toBe(branch.version);
 	});
 
-	test('Downloading old version', async () => {
+	runTest('Downloading old version', async () => {
 		const branch = testBranches[1];
 		const result = await downloadNPMPackage({
 			ifModifiedSince: true,
@@ -86,7 +90,7 @@ describe('Downloading NPM package', () => {
 		expect(packageContents.version).toBe(branch.version);
 	});
 
-	test('Checking not_modified', async () => {
+	runTest('Checking not_modified', async () => {
 		const branch = testBranches[1];
 
 		// Use last result for ifModifiedSince
@@ -99,7 +103,7 @@ describe('Downloading NPM package', () => {
 		expect(result).toBe('not_modified');
 	});
 
-	test('Checking out latest tag again', async () => {
+	runTest('Checking out latest tag again', async () => {
 		const branch = testBranches[0];
 		const result = await downloadNPMPackage({
 			ifModifiedSince: lastResult,

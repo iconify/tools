@@ -5,7 +5,7 @@ import type {
 	IconSetIconVariation,
 	ResolvedIconifyIcon,
 } from '../../lib/icon-set/types';
-import { loadFixture } from '../../lib/tests/load';
+import { loadFixture } from '../../lib/tests/helpers';
 
 describe('Loading icon set', () => {
 	test('Simple icon set', () => {

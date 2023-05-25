@@ -6,7 +6,7 @@ import {
 	isEmptyColor,
 } from '../../lib/colors/parse';
 import { removeBadAttributes } from '../../lib/svg/cleanup/attribs';
-import { loadFixture } from '../../lib/tests/load';
+import { loadFixture } from '../../lib/tests/helpers';
 
 describe('Finding colors', () => {
 	test('Icon without colors', async () => {

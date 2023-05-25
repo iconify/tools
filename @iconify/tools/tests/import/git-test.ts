@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import { downloadGitRepo, DownloadGitRepoResult } from '../../lib/download/git';
 import { prepareDirectoryForExport } from '../../lib/export/helpers/prepare';
+import { isTestingRemote } from '../../lib/tests/helpers';
 
 const target = 'cache/git';
 
@@ -24,6 +25,9 @@ const testBranches: TestBranches[] = [
 	},
 ];
 
+// Wrap in test() or test.skip()
+const runTest = isTestingRemote() ? test : test.skip;
+
 describe('Downloading Git repository', () => {
 	beforeAll(async () => {
 		// Remove old cache
@@ -35,7 +39,7 @@ describe('Downloading Git repository', () => {
 
 	let lastResult: DownloadGitRepoResult | 'not_modified';
 
-	test('Downloading main branch', async () => {
+	runTest('Downloading main branch', async () => {
 		const branch = testBranches[0];
 		const result = await downloadGitRepo({
 			ifModifiedSince: true,
@@ -58,7 +62,7 @@ describe('Downloading Git repository', () => {
 		expect(packageContents.version).toBe(branch.version);
 	});
 
-	test('Downloading archive branch', async () => {
+	runTest('Downloading archive branch', async () => {
 		const branch = testBranches[1];
 		const result = await downloadGitRepo({
 			ifModifiedSince: true,
@@ -83,7 +87,7 @@ describe('Downloading Git repository', () => {
 		expect(packageContents.version).toBe(branch.version);
 	});
 
-	test('Checking not_modified', async () => {
+	runTest('Checking not_modified', async () => {
 		const branch = testBranches[1];
 
 		// Use last result for ifModifiedSince
@@ -96,7 +100,7 @@ describe('Downloading Git repository', () => {
 		expect(result).toBe('not_modified');
 	});
 
-	test('Checking out main branch again', async () => {
+	runTest('Checking out main branch again', async () => {
 		const branch = testBranches[0];
 		const result = await downloadGitRepo({
 			ifModifiedSince: lastResult,

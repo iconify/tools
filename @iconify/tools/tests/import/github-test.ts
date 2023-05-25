@@ -4,6 +4,7 @@ import {
 	DownloadGitHubRepoResult,
 } from '../../lib/download/github';
 import { prepareDirectoryForExport } from '../../lib/export/helpers/prepare';
+import { isTestingRemote } from '../../lib/tests/helpers';
 
 const target = 'cache/github';
 
@@ -36,6 +37,9 @@ const testBranches: TestBranches[] = [
 	},
 ];
 
+// Wrap in test() or test.skip()
+const runTest = isTestingRemote() && token ? test : test.skip;
+
 describe('Downloading Git repository using GitHub API', () => {
 	let lastResult: DownloadGitHubRepoResult | 'not_modified';
 
@@ -54,7 +58,7 @@ describe('Downloading Git repository using GitHub API', () => {
 		}
 	});
 
-	(token ? test : test.skip)('Downloading main branch', async () => {
+	runTest('Downloading main branch', async () => {
 		if (!token) {
 			return;
 		}
@@ -83,7 +87,7 @@ describe('Downloading Git repository using GitHub API', () => {
 		expect(packageContents.version).toBe(branch.version);
 	});
 
-	(token ? test : test.skip)('Downloading archive branch', async () => {
+	runTest('Downloading archive branch', async () => {
 		if (!token) {
 			return;
 		}
@@ -114,7 +118,7 @@ describe('Downloading Git repository using GitHub API', () => {
 		expect(packageContents.version).toBe(branch.version);
 	});
 
-	(token ? test : test.skip)('Checking not_modified', async () => {
+	runTest('Checking not_modified', async () => {
 		if (!token) {
 			return;
 		}
@@ -133,7 +137,7 @@ describe('Downloading Git repository using GitHub API', () => {
 		expect(result).toBe('not_modified');
 	});
 
-	(token ? test : test.skip)('Checking out main branch again', async () => {
+	runTest('Checking out main branch again', async () => {
 		if (!token) {
 			return;
 		}

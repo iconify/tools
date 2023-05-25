@@ -1,6 +1,6 @@
 import { SVG } from '../../lib/svg';
 import type { ViewBox } from '../../lib/svg';
-import { loadFixture } from '../../lib/tests/load';
+import { loadFixture } from '../../lib/tests/helpers';
 
 describe('Loading SVG', () => {
 	test('Simple SVG', () => {
