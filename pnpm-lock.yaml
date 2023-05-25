@@ -23,6 +23,19 @@ importers:
         specifier: ^5.0.4
         version: 5.0.4
 
+  '@iconify-demo/doc-samples':
+    dependencies:
+      '@iconify/tools':
+        specifier: workspace:^
+        version: link:../../@iconify/tools
+    devDependencies:
+      '@types/node':
+        specifier: ^18.15.11
+        version: 18.15.11
+      typescript:
+        specifier: ^5.0.4
+        version: 5.0.4
+
   '@iconify-demo/mdi':
     dependencies:
       '@iconify/tools':

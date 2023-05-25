@@ -1,0 +1,18 @@
+{
+	"name": "@iconify-demo/doc-samples",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Code samples used in documentation",
+	"license": "MIT",
+	"scripts": {
+		"build": "tsc -b"
+	},
+	"type": "module",
+	"dependencies": {
+		"@iconify/tools": "workspace:^"
+	},
+	"devDependencies": {
+		"@types/node": "^18.15.11",
+		"typescript": "^5.0.4"
+	}
+}
