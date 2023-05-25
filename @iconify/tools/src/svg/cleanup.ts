@@ -1,15 +1,20 @@
 import type { SVG } from '.';
 import { removeBadAttributes } from './cleanup/attribs';
-import { checkBadTags } from './cleanup/bad-tags';
+import { CheckBadTagsOptions, checkBadTags } from './cleanup/bad-tags';
 import { cleanupInlineStyle } from './cleanup/inline-style';
 import { cleanupRootStyle } from './cleanup/root-style';
 import { cleanupSVGRoot } from './cleanup/root-svg';
 import { convertStyleToAttrs } from './cleanup/svgo-style';
 
 /**
+ * Options
+ */
+export type CleanupSVGOptions = CheckBadTagsOptions;
+
+/**
  * Clean up SVG before parsing/optimising it
  */
-export function cleanupSVG(svg: SVG): void {
+export function cleanupSVG(svg: SVG, options?: CleanupSVGOptions): void {
 	// Remove junk from style
 	cleanupInlineStyle(svg);
 
@@ -20,7 +25,7 @@ export function cleanupSVG(svg: SVG): void {
 	cleanupSVGRoot(svg);
 
 	// Check for bad tags
-	checkBadTags(svg);
+	checkBadTags(svg, options);
 
 	// Remove attributes
 	removeBadAttributes(svg);

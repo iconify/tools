@@ -40,9 +40,25 @@ requiredParentTags.set(gradientTags, gradientChildTags);
 requiredParentTags.set(new Set(['animateMotion']), animateMotionChildTags);
 
 /**
+ * Options
+ */
+export interface CheckBadTagsOptions {
+	keepTitles?: boolean;
+}
+
+const defaultOptions: Required<CheckBadTagsOptions> = {
+	keepTitles: false,
+};
+
+/**
  * Test for bag tags
  */
-export function checkBadTags(svg: SVG): void {
+export function checkBadTags(svg: SVG, options?: CheckBadTagsOptions): void {
+	const { keepTitles } = {
+		...defaultOptions,
+		...options,
+	};
+
 	parseSVGSync(svg, (item) => {
 		const tagName = item.tagName;
 		const $element = item.$element;
@@ -52,6 +68,18 @@ export function checkBadTags(svg: SVG): void {
 			if (item.parents.length) {
 				// Technically code is correct, but it badly complicates parsing, so not supported
 				throw new Error(`Unexpected element: <${tagName}>`);
+			}
+			return;
+		}
+
+		// Optional
+		if (keepTitles && tagName === 'title') {
+			// Allow title
+			const content = $element.html();
+			if (content?.includes('<') || content?.includes('>')) {
+				// Bad title
+				$element.remove();
+				item.testChildren = false;
 			}
 			return;
 		}

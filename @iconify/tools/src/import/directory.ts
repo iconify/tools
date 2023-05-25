@@ -3,7 +3,7 @@ import { blankIconSet, IconSet } from '../icon-set';
 import { cleanupIconKeyword } from '../misc/keyword';
 import { scanDirectory, scanDirectorySync } from '../misc/scan';
 import { SVG } from '../svg';
-import { cleanupSVG } from '../svg/cleanup';
+import { CleanupSVGOptions, cleanupSVG } from '../svg/cleanup';
 
 /**
  * Entry for file
@@ -47,7 +47,7 @@ export type ImportDirectoryKeywordSyncCallback =
 /**
  * Options
  */
-interface ImportDirectoryOptions<K> {
+interface ImportDirectoryOptions<K> extends CleanupSVGOptions {
 	// Icon set prefix, you can set it later
 	prefix?: string;
 
@@ -103,7 +103,7 @@ function importDir(
 					try {
 						// Clean it up
 						const svg = new SVG(content);
-						cleanupSVG(svg);
+						cleanupSVG(svg, options);
 						iconSet.fromSVG(keyword, svg);
 					} catch (err) {
 						if (options.ignoreImportErrors !== false) {

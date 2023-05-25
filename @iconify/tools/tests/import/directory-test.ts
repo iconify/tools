@@ -8,6 +8,7 @@ const importedSetIcon =
 	'<style>.round{rx:5px;fill:green}</style><rect id="me" width="10" height="10"><set attributeName="class" to="round" begin="me.click" dur="2s"/></rect>';
 const importedStyleIcon =
 	'<circle cx="5" cy="5" r="4" fill="gold" stroke="maroon" stroke-width="2px"/>';
+const importedStyleIconWithTitle = '<title>Circle</title>' + importedStyleIcon;
 
 describe('Importing directory', () => {
 	test('Simple import', async () => {
@@ -37,9 +38,10 @@ describe('Importing directory', () => {
 		expect(exported2).toEqual(exported);
 	});
 
-	test('Callback', async () => {
+	test('Callback, keep title', async () => {
 		const iconSet = await importDirectory('tests/fixtures/elements/style', {
 			prefix: 'foo',
+			keepTitles: true,
 			keyword: (item) => {
 				// async callback
 				return new Promise((fulfill) => {
@@ -60,7 +62,7 @@ describe('Importing directory', () => {
 					body: importedSetIcon,
 				},
 				'test-style': {
-					body: importedStyleIcon,
+					body: importedStyleIconWithTitle,
 				},
 			},
 			width: 10,
@@ -70,6 +72,7 @@ describe('Importing directory', () => {
 		// Synchronous
 		const iconSet2 = importDirectorySync('tests/fixtures/elements/style', {
 			prefix: 'foo',
+			keepTitles: true,
 			keyword: (item) => {
 				return `test-${item.file}`;
 			},

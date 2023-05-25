@@ -191,7 +191,7 @@ describe('Finding colors', () => {
 
 		// Gloabl style in SVG should not have changed
 		expect(svg.toMinifiedString()).toBe(
-			'<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" width="10" height="10"><style>circle {fill: gold;stroke: maroon;stroke-width: 2px;}</style><circle cx="5" cy="5" r="4"/></svg>'
+			'<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" width="10" height="10"><title>Circle</title><style>circle {fill: gold;stroke: maroon;stroke-width: 2px;}</style><circle cx="5" cy="5" r="4"/></svg>'
 		);
 
 		// Find colors
@@ -207,7 +207,7 @@ describe('Finding colors', () => {
 
 		// SVG should not have changed
 		expect(svg.toMinifiedString()).toBe(
-			'<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" width="10" height="10"><style>circle {fill: gold;stroke: maroon;stroke-width: 2px;}</style><circle cx="5" cy="5" r="4"/></svg>'
+			'<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" width="10" height="10"><title>Circle</title><style>circle {fill: gold;stroke: maroon;stroke-width: 2px;}</style><circle cx="5" cy="5" r="4"/></svg>'
 		);
 
 		// Replace colors
@@ -249,7 +249,7 @@ describe('Finding colors', () => {
 
 		// Default color should not have been added because of global style
 		expect(svg.toMinifiedString()).toBe(
-			'<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" width="10" height="10"><style>circle {fill: purple;stroke: green;stroke-width: 2px;}</style><circle cx="5" cy="5" r="4"/></svg>'
+			'<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg" width="10" height="10"><title>Circle</title><style>circle {fill: purple;stroke: green;stroke-width: 2px;}</style><circle cx="5" cy="5" r="4"/></svg>'
 		);
 	});
 
