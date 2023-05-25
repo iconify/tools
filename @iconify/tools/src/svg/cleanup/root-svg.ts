@@ -118,6 +118,7 @@ export function cleanupSVGRoot(svg: SVG) {
 			const tagName = child.tagName;
 			if (
 				tagName === 'style' ||
+				tagName === 'title' ||
 				reusableElementsWithPalette.has(tagName) ||
 				maskTags.has(tagName)
 			) {
