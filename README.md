@@ -12,6 +12,34 @@ First install it by running this command:
 npm install @iconify/tools --save
 ```
 
+## Functions
+
+Functions incuded in Iconify Tools:
+
+-   Download packages from git repository, GitHub API, GitLab API, NPM repository.
+-   Import SVGs from directory (and downloaded package), Figma API.
+-   Clean up, optimise, validate icons.
+-   Parse or change icon palette.
+-   Export icon sets in various formats.
+
+See [Iconify Tools documentation](https://iconify.design/docs/libraries/tools/).
+
+### Limitations
+
+This library is optinionated.
+
+It does not allow the following content in icons:
+
+-   Scripts and event listeners.
+-   Any remote resources: images, fonts, links, etc...
+-   Raster images. They do not belong in scalable icons.
+-   Text. Text is rendered differently in various operating systems, so it should not be used in SVG. Convert text to shapes.
+-   All tags and attributes that are not approved are removed, including all XML namespaces.
+
+All limitations listed above are by design.
+
+Iconify Tools library is designed to export icons that are safe to use in any environment and render identically for all users.
+
 ## Example
 
 The following code example does the following:
@@ -95,4 +123,4 @@ Full documentation is too big for simple README file. See [Iconify Tools documen
 
 Library is released with MIT license.
 
-© 2021 - 2023 Vjacheslav Trushkin
+© 2021-PRESENT Vjacheslav Trushkin
