@@ -93,4 +93,4 @@ If you need to import or parse icons synchronously, such as in config file of pa
 
 Library is released with MIT license.
 
-© 2021 Vjacheslav Trushkin
+© 2021-PRESENT Vjacheslav Trushkin

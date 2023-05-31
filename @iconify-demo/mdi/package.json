@@ -14,7 +14,7 @@
 		"@iconify/tools": "workspace:^"
 	},
 	"devDependencies": {
-		"@types/node": "^18.15.11",
+		"@types/node": "^18.16.16",
 		"typescript": "^5.0.4"
 	}
 }

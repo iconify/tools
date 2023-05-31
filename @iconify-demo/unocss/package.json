@@ -9,14 +9,15 @@
 	},
 	"dependencies": {
 		"@iconify/tools": "workspace:^",
-		"vue": "^3.2.47"
+		"vue": "^3.3.4"
 	},
 	"devDependencies": {
-		"@iconify-json/carbon": "^1.1.16",
-		"@vitejs/plugin-vue": "^4.1.0",
+		"@iconify-json/carbon": "^1.1.17",
+		"@types/node": "^18.16.16",
+		"@vitejs/plugin-vue": "^4.2.3",
 		"typescript": "^5.0.4",
-		"unocss": "^0.51.4",
-		"vite": "^4.2.1",
-		"vue-tsc": "^1.2.0"
+		"unocss": "^0.52.7",
+		"vite": "^4.2.3",
+		"vue-tsc": "^1.6.5"
 	}
 }
