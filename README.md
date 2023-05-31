@@ -50,7 +50,7 @@ import { parseColors, isEmptyColor } from '@iconify/tools/lib/colors/parse';
 
 		// Clean up and optimise icons
 		try {
-			await cleanupSVG(svg);
+			cleanupSVG(svg);
 			await parseColors(svg, {
 				defaultColor: 'currentColor',
 				callback: (attr, colorStr, color) => {
@@ -59,7 +59,7 @@ import { parseColors, isEmptyColor } from '@iconify/tools/lib/colors/parse';
 						: 'currentColor';
 				},
 			});
-			await runSVGO(svg);
+			runSVGO(svg);
 		} catch (err) {
 			// Invalid icon
 			console.error(`Error parsing ${name}:`, err);
@@ -81,7 +81,7 @@ import { parseColors, isEmptyColor } from '@iconify/tools/lib/colors/parse';
 
 ## Documentation
 
-Full documentation is too big for simple README file. See [Iconify Tools documentation](https://docs.iconify.design/tools/tools2/) for detailed documentation with code samples.
+Full documentation is too big for simple README file. See [Iconify Tools documentation](https://iconify.design/docs/libraries/tools/) for detailed documentation with code samples.
 
 ## Sponsors
 
@@ -95,4 +95,4 @@ Full documentation is too big for simple README file. See [Iconify Tools documen
 
 Library is released with MIT license.
 
-© 2021, 2022 Vjacheslav Trushkin
+© 2021 - 2023 Vjacheslav Trushkin
