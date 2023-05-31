@@ -132,15 +132,19 @@ export function importDirectory(
 	options: ImportDirectoryOptions<ImportDirectoryKeywordCallback> = {}
 ): Promise<IconSet> {
 	return new Promise((fulfill, reject) => {
-		scanDirectory(path, (ext, file, subdir, path) => {
-			const result: ImportDirectoryFileEntry = {
-				file,
-				ext,
-				subdir,
-				path,
-			};
-			return isValidFile(result) ? result : false;
-		})
+		scanDirectory(
+			path,
+			(ext, file, subdir, path) => {
+				const result: ImportDirectoryFileEntry = {
+					file,
+					ext,
+					subdir,
+					path,
+				};
+				return isValidFile(result) ? result : false;
+			},
+			options.includeSubDirs !== false
+		)
 			.then((files) => {
 				// Create blank icon set
 				const iconSet = blankIconSet(options.prefix || '');
@@ -186,15 +190,19 @@ export function importDirectorySync(
 	path: string,
 	options: ImportDirectoryOptions<ImportDirectoryKeywordSyncCallback> = {}
 ): IconSet {
-	const files = scanDirectorySync(path, (ext, file, subdir, path) => {
-		const result: ImportDirectoryFileEntry = {
-			file,
-			ext,
-			subdir,
-			path,
-		};
-		return isValidFile(result) ? result : false;
-	});
+	const files = scanDirectorySync(
+		path,
+		(ext, file, subdir, path) => {
+			const result: ImportDirectoryFileEntry = {
+				file,
+				ext,
+				subdir,
+				path,
+			};
+			return isValidFile(result) ? result : false;
+		},
+		options.includeSubDirs !== false
+	);
 
 	// Create blank icon set
 	const iconSet = blankIconSet(options.prefix || '');

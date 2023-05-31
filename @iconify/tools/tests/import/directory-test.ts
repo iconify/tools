@@ -2,6 +2,7 @@ import {
 	importDirectory,
 	importDirectorySync,
 } from '../../lib/import/directory';
+import { cleanupIconKeyword } from '../../lib/misc/keyword';
 
 // Content of imported icons
 const importedSetIcon =
@@ -80,5 +81,28 @@ describe('Importing directory', () => {
 		const exported2 = iconSet2.export();
 		exported2.lastModified = exported.lastModified; // could be different
 		expect(exported2).toEqual(exported);
+	});
+
+	test('Subdirs', () => {
+		// Import with subdirs
+		const iconSet1 = importDirectorySync('tests/fixtures/subdirs');
+		expect(iconSet1.list()).toEqual(['apps', 'caret-back', 'camera']);
+
+		// Import without subdirs
+		const iconSet2 = importDirectorySync('tests/fixtures/subdirs', {
+			includeSubDirs: false,
+		});
+		expect(iconSet2.list()).toEqual([]);
+
+		// Custom keyword
+		const iconSet3 = importDirectorySync('tests/fixtures/subdirs', {
+			keyword: (item) => cleanupIconKeyword(item.subdir + item.file),
+		});
+		expect(iconSet3.list()).toEqual([
+			'outline-apps',
+			'outline-caret-back',
+			'regular-apps',
+			'regular-camera',
+		]);
 	});
 });
