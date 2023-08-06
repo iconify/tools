@@ -110,6 +110,7 @@ export async function exportJSONPackage(
 		{
 			'./*': './*',
 			'.': {
+				types: './index.d.ts',
 				require: './index.js',
 				import: './index.mjs',
 			},

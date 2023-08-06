@@ -12,9 +12,9 @@
 		"@iconify/tools": "workspace:^"
 	},
 	"devDependencies": {
-		"@iconify/iconify": "^3.1.0",
-		"@iconify/json": "^2.2.72",
-		"@types/node": "^18.16.16",
-		"typescript": "^5.0.4"
+		"@iconify/iconify": "^3.1.1",
+		"@iconify/json": "^2.2.98",
+		"@types/node": "^18.17.3",
+		"typescript": "^5.1.6"
 	}
 }
