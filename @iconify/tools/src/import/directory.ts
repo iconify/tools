@@ -58,7 +58,7 @@ interface ImportDirectoryOptions<K> extends CleanupSVGOptions {
 	keyword?: K;
 
 	// Does not throw error when icon fails to load (default: true)
-	ignoreImportErrors?: boolean;
+	ignoreImportErrors?: boolean | 'warn';
 }
 
 /**
@@ -106,8 +106,19 @@ function importDir(
 						cleanupSVG(svg, options);
 						iconSet.fromSVG(keyword, svg);
 					} catch (err) {
-						if (options.ignoreImportErrors !== false) {
-							throw err;
+						const ignore = options.ignoreImportErrors ?? false;
+
+						if (ignore === false || ignore === 'warn') {
+							let msg = `Failed to import "${keyword}"`;
+							if (err instanceof Error) {
+								msg += `: ${err.message}`;
+							}
+
+							if (ignore === false) {
+								throw new Error(msg);
+							} else {
+								console.warn(msg);
+							}
 						}
 					}
 

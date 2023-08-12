@@ -105,4 +105,37 @@ describe('Importing directory', () => {
 			'regular-camera',
 		]);
 	});
+
+	test('Ignore errors option', async () => {
+		// Default option value: should throw error
+		let threw = false;
+		try {
+			importDirectorySync('tests/fixtures');
+		} catch (err) {
+			threw = true;
+		}
+		expect(threw).toBeTruthy();
+
+		// Async
+		threw = false;
+		try {
+			await importDirectory('tests/fixtures');
+		} catch {
+			threw = true;
+		}
+		expect(threw).toBeTruthy();
+
+		// Change option
+		const iconSet1 = importDirectorySync('tests/fixtures', {
+			ignoreImportErrors: true,
+		});
+		expect(iconSet1.entries['a']).toBeUndefined();
+		expect(iconSet1.entries['spin']).toBeDefined();
+
+		const iconSet2 = await importDirectory('tests/fixtures', {
+			ignoreImportErrors: true,
+		});
+		expect(iconSet2.entries['a']).toBeUndefined();
+		expect(iconSet2.entries['spin']).toBeDefined();
+	});
 });
