@@ -1,20 +1,28 @@
 {
 	"name": "@iconify-demo/unocss",
-	"private": "true",
+	"private": true,
+	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"build": "vue-tsc --noEmit && vite build",
+		"build": "vue-tsc && vite build",
 		"preview": "vite preview"
 	},
 	"dependencies": {
 		"@iconify/tools": "workspace:^",
+		"@unocss/reset": "^0.55.0",
 		"vue": "^3.3.4"
 	},
 	"devDependencies": {
+		"@antfu/eslint-config": "^0.40.2",
+		"@antfu/ni": "^0.21.5",
 		"@iconify-json/carbon": "^1.1.18",
+		"@iconify/types": "^2.0.0",
+		"@iconify/utils": "^2.1.7",
 		"@types/node": "^18.17.3",
+		"@unocss/eslint-config": "^0.55.0",
 		"@vitejs/plugin-vue": "^4.2.3",
+		"eslint": "^8.47.0",
 		"typescript": "^5.1.6",
 		"unocss": "^0.52.7",
 		"vite": "^4.4.8",
