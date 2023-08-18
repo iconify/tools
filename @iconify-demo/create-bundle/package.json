@@ -13,8 +13,8 @@
 	},
 	"devDependencies": {
 		"@iconify/iconify": "^3.1.1",
-		"@iconify/json": "^2.2.98",
-		"@types/node": "^18.17.3",
+		"@iconify/json": "^2.2.103",
+		"@types/node": "^18.17.5",
 		"typescript": "^5.1.6"
 	}
 }
