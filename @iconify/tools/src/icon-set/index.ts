@@ -739,7 +739,7 @@ export class IconSet {
 	}
 
 	/**
-	 * Remove icon
+	 * Rename icon
 	 */
 	rename(oldName: string, newName: string): boolean {
 		const entries = this.entries;
@@ -751,7 +751,6 @@ export class IconSet {
 			}
 		}
 
-		// Rename icon
 		if (!entries[oldName]) {
 			return false;
 		}
