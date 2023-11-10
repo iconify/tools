@@ -44,6 +44,7 @@ export { runSVGO } from './optimise/svgo';
 export { removeFigmaClipPathFromSVG } from './optimise/figma';
 export { deOptimisePaths } from './optimise/flags';
 export { resetSVGOrigin } from './optimise/origin';
+export { convertSVGToMask } from './optimise/mask';
 export { scaleSVG } from './optimise/scale';
 export { cleanupGlobalStyle } from './optimise/global-style';
 

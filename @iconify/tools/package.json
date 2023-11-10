@@ -437,6 +437,11 @@
 			"require": "./lib/optimise/global-style.cjs",
 			"import": "./lib/optimise/global-style.mjs"
 		},
+		"./lib/optimise/mask": {
+			"types": "./lib/optimise/mask.d.ts",
+			"require": "./lib/optimise/mask.cjs",
+			"import": "./lib/optimise/mask.mjs"
+		},
 		"./lib/optimise/origin": {
 			"types": "./lib/optimise/origin.d.ts",
 			"require": "./lib/optimise/origin.cjs",
