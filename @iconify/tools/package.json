@@ -422,6 +422,11 @@
 			"require": "./lib/misc/write-json.cjs",
 			"import": "./lib/misc/write-json.mjs"
 		},
+		"./lib/optimise/figma": {
+			"types": "./lib/optimise/figma.d.ts",
+			"require": "./lib/optimise/figma.cjs",
+			"import": "./lib/optimise/figma.mjs"
+		},
 		"./lib/optimise/flags": {
 			"types": "./lib/optimise/flags.d.ts",
 			"require": "./lib/optimise/flags.cjs",

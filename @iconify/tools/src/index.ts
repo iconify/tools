@@ -41,6 +41,7 @@ export { parseColors, parseColorsSync, isEmptyColor } from './colors/parse';
 export { validateColors, validateColorsSync } from './colors/validate';
 export { detectIconSetPalette } from './colors/detect';
 export { runSVGO } from './optimise/svgo';
+export { removeFigmaClipPathFromSVG } from './optimise/figma';
 export { deOptimisePaths } from './optimise/flags';
 export { resetSVGOrigin } from './optimise/origin';
 export { scaleSVG } from './optimise/scale';
