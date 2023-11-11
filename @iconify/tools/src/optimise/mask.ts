@@ -18,6 +18,12 @@ interface SVGToMaskOptions {
 	// Transparent color(s), lower case
 	transparent?: ColorCheck;
 
+	// Custom colors, returns opacity (0-1) or color value
+	custom?: (
+		value: string,
+		color: Color | null
+	) => string | number | undefined;
+
 	// Force mask if nothing to mask
 	force?: boolean;
 
@@ -25,10 +31,13 @@ interface SVGToMaskOptions {
 	id?: string;
 }
 
-const defaultOptions: Required<SVGToMaskOptions> = {
+const defaultBlackColors: string[] = ['black', '#000', '#000000'];
+const defaultWhiteColors: string[] = ['white', '#fff', '#ffffff'];
+
+const defaultOptions: Required<Omit<SVGToMaskOptions, 'custom'>> = {
 	color: 'currentColor',
-	solid: ['black', '#000', '#000000', 'currentcolor'],
-	transparent: ['white', '#fff', '#ffffff'],
+	solid: [...defaultBlackColors, 'currentcolor'],
+	transparent: defaultWhiteColors,
 	force: false,
 	id: 'mask',
 };
@@ -66,6 +75,7 @@ export function convertSVGToMask(
 	let foundSolid = false;
 	let foundTransparent = false;
 	let failed = false;
+	let hasCustomValue = false;
 	const backup = svg.toString();
 	parseColorsSync(svg, {
 		callback: (attr, colorStr, color) => {
@@ -85,6 +95,35 @@ export function convertSVGToMask(
 				foundTransparent = true;
 				return '#000';
 			}
+			if (props.custom) {
+				let customValue = props.custom(colorStr, color);
+				if (typeof customValue === 'number') {
+					// Convert to hex color
+					const num = Math.max(
+						Math.min(Math.round(customValue * 255), 255),
+						0
+					);
+					let str = num.toString(16);
+					if (str.length < 2) {
+						str = '0' + str;
+					}
+					if (str[0] === str[1]) {
+						str = str[0];
+					}
+					customValue = '#' + str + str + str;
+				}
+				if (typeof customValue === 'string') {
+					// Mark as found, return value
+					if (defaultBlackColors.includes(customValue)) {
+						foundSolid = true;
+					} else if (defaultWhiteColors.includes(customValue)) {
+						foundTransparent = true;
+					} else {
+						hasCustomValue = true;
+					}
+					return customValue;
+				}
+			}
 
 			failed = true;
 			console.warn('Unexpected color:', colorStr);
@@ -92,7 +131,9 @@ export function convertSVGToMask(
 		},
 	});
 
-	if (failed || !foundSolid || (!foundTransparent && !props.force)) {
+	// Check if there are transparent elements
+	const hasColors = hasCustomValue || (foundSolid && foundTransparent);
+	if (failed || (!hasColors && !props.force)) {
 		// Failed or nothing to mask
 		svg.load(backup);
 		return false;
