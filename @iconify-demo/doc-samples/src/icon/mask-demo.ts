@@ -13,9 +13,6 @@ const svg = new SVG(
 convertSVGToMask(svg, {
 	// Set rectangle color to currentColor
 	color: 'currentColor',
-	// Do not specify solid and transparent colors (resets default values)
-	solid: [],
-	transparent: [],
 	// Use custom option instead of options above, returning color as is
 	custom: (color) => color,
 });
