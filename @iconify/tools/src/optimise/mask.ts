@@ -96,7 +96,7 @@ export function convertSVGToMask(
 				return '#000';
 			}
 			if (props.custom) {
-				let customValue = props.custom(colorStr, color);
+				let customValue = props.custom(colorStr.toLowerCase(), color);
 				if (typeof customValue === 'number') {
 					// Convert to hex color
 					const num = Math.max(
