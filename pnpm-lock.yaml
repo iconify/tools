@@ -143,9 +143,6 @@ importers:
       '@iconify/utils':
         specifier: ^2.1.10
         version: 2.1.10
-      '@types/cheerio':
-        specifier: ^0.22.32
-        version: 0.22.32
       '@types/tar':
         specifier: ^6.1.6
         version: 6.1.6
@@ -1670,12 +1667,6 @@ packages:
     dependencies:
       '@babel/types': 7.21.4
     dev: true
-
-  /@types/cheerio@0.22.32:
-    resolution: {integrity: sha512-4RrpCp5ufWTLb6/1RCOjazRhUM6DTD79l763det29n8kLmPB7XeN46cxlUf2GsSF+0g6CbWT5nYl8C/Gs15bdg==}
-    dependencies:
-      '@types/node': 18.18.0
-    dev: false
 
   /@types/cookie@0.5.2:
     resolution: {integrity: sha512-DBpRoJGKJZn7RY92dPrgoMew8xCWc2P71beqsjyhEI/Ds9mOyVmBwtekyfhpwFIVt1WrxTonFifiOZ62V8CnNA==}

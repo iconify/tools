@@ -1,3 +1,5 @@
+import * as cheerio from 'cheerio';
+
 import type { SVG } from '../../svg';
 import {
 	badAttributes,
@@ -17,7 +19,7 @@ import { maskTags, reusableElementsWithPalette } from '../data/tags';
 export function cleanupSVGRoot(svg: SVG) {
 	const cheerio = svg.$svg;
 	const $root = svg.$svg(':root');
-	const root = $root.get(0) as cheerio.TagElement;
+	const root = $root.get(0) as cheerio.Element;
 	const tagName = 'svg';
 	if (root.tagName !== tagName) {
 		throw new Error(`Unexpected root tag <${root.tagName}>`);

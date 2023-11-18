@@ -1,6 +1,7 @@
+import * as cheerio from 'cheerio';
+
 import type { CheerioElement, WrappedCheerioElement } from '../misc/cheerio';
 import type { SVG } from './';
-
 /**
  * Item in callback
  */
