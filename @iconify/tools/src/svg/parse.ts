@@ -19,10 +19,7 @@ export interface ParseSVGCallbackItem {
 /**
  * Callback function
  */
-type Callback<T> = (item: ParseSVGCallbackItem) => T;
-
-export type ParseSVGCallback = Callback<void | Promise<void>>;
-export type ParseSVGCallbackSync = Callback<void>;
+export type ParseSVGCallback = (item: ParseSVGCallbackItem) => void;
 
 /**
  * Parse, using callback hell to support both sync and async versions
@@ -88,29 +85,8 @@ function parse(svg: SVG, callback: InternalCallback, done: Next) {
  * Parse SVG
  *
  * This function finds all elements in SVG and calls callback for each element.
- * Callback can be asynchronous.
  */
-export function parseSVG(svg: SVG, callback: ParseSVGCallback): Promise<void> {
-	return new Promise((fulfill, reject) => {
-		parse(
-			svg,
-			(item, next) => {
-				const result = callback(item);
-				if (result instanceof Promise) {
-					result.then(next).catch(reject);
-				} else {
-					next();
-				}
-			},
-			fulfill
-		);
-	});
-}
-
-/**
- * Sync version
- */
-export function parseSVGSync(svg: SVG, callback: ParseSVGCallbackSync): void {
+export function parseSVG(svg: SVG, callback: ParseSVGCallback): void {
 	let isSync = true;
 	parse(
 		svg,

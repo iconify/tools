@@ -1,7 +1,7 @@
 // SVG class and functions
 export { SVG } from './svg/index';
-export { parseSVG, parseSVGSync } from './svg/parse';
-export { parseSVGStyle, parseSVGStyleSync } from './svg/parse-style';
+export { parseSVG } from './svg/parse';
+export { parseSVGStyle } from './svg/parse-style';
 export { analyseSVGStructure } from './svg/analyse';
 
 // SVG cleanup
@@ -37,8 +37,8 @@ export { downloadPackage } from './download/index';
 export { downloadFile } from './download/api/download';
 
 // Manipulation
-export { parseColors, parseColorsSync, isEmptyColor } from './colors/parse';
-export { validateColors, validateColorsSync } from './colors/validate';
+export { parseColors, isEmptyColor } from './colors/parse';
+export { validateColors } from './colors/validate';
 export { detectIconSetPalette } from './colors/detect';
 export { runSVGO } from './optimise/svgo';
 export { removeFigmaClipPathFromSVG } from './optimise/figma';

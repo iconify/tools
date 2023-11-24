@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { SVG } from './index';
-import { parseSVGSync } from './parse';
+import { parseSVG } from './parse';
 import type { ParseSVGCallbackItem } from './parse';
 import type {
 	AnalyseSVGStructureResult,
@@ -158,7 +158,7 @@ export function analyseSVGStructure(
 
 	// Find all reusable elements and all usages
 	let index = 0;
-	parseSVGSync(svg, (item) => {
+	parseSVG(svg, (item) => {
 		const { tagName, parents } = item;
 		if (styleTag.has(tagName)) {
 			item.testChildren = false;

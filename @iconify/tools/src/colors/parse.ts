@@ -10,7 +10,6 @@ import {
 	ParseSVGStyleCallbackItem,
 	ParseSVGStyleCallbackResult,
 	parseSVGStyle,
-	parseSVGStyleSync,
 } from '../svg/parse-style';
 import {
 	allowDefaultColorValue,
@@ -88,11 +87,6 @@ interface Options<T> extends AnalyseSVGStructureOptions {
 }
 
 export type ParseColorsOptions = Options<
-	ParseColorsCallback<
-		ParseColorsCallbackResult | Promise<ParseColorsCallbackResult>
-	>
->;
-export type ParseColorsSyncOptions = Options<
 	ParseColorsCallback<ParseColorsCallbackResult>
 >;
 
@@ -688,67 +682,6 @@ function analyseSVG(svg: SVG, context: ParserContext, done: () => void): void {
 export function parseColors(
 	svg: SVG,
 	options: ParseColorsOptions = {}
-): Promise<FindColorsResult> {
-	const callback = options.callback;
-	return new Promise((fulfill, reject) => {
-		// Init stuff
-		let context: ParserContext;
-		try {
-			context = createContext(
-				options,
-				callback
-					? (params, done) => {
-							try {
-								const result = callback(...params);
-								if (result instanceof Promise) {
-									result.then(done).catch(reject);
-								} else {
-									done(result);
-								}
-							} catch (err) {
-								reject(err);
-							}
-					  }
-					: void 0
-			);
-		} catch (err) {
-			reject(err);
-			return;
-		}
-
-		// Parse colors in style asynchronously
-		parseSVGStyle(svg, (item) => {
-			return new Promise((fulfill, reject) => {
-				try {
-					context.parseStyleItem(item, fulfill);
-				} catch (err) {
-					reject(err);
-				}
-			});
-		})
-			.then(() => {
-				// Analyse SVG
-				try {
-					analyseSVG(svg, context, () => {
-						fulfill(context.result);
-					});
-				} catch (err) {
-					reject(err);
-				}
-			})
-			.catch(reject);
-	});
-}
-
-/**
- * Find colors in icon, synchronous version
- *
- * Clean up icon before running this function to convert style to attributes using
- * cleanupInlineStyle() or cleanupSVG(), otherwise results might be inaccurate
- */
-export function parseColorsSync(
-	svg: SVG,
-	options: ParseColorsSyncOptions = {}
 ): FindColorsResult {
 	const callback = options.callback;
 
@@ -763,7 +696,7 @@ export function parseColorsSync(
 	);
 
 	// Parse colors in style synchronously
-	parseSVGStyleSync(svg, (item) => {
+	parseSVGStyle(svg, (item) => {
 		let isSync = true;
 		let result: ParseSVGStyleCallbackResult;
 		context.parseStyleItem(item, (value) => {

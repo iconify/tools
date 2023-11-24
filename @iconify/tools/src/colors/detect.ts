@@ -1,5 +1,5 @@
 import type { IconSet } from '../icon-set';
-import { isEmptyColor, parseColorsSync } from './parse';
+import { isEmptyColor, parseColors } from './parse';
 
 /**
  * Detect palette
@@ -21,7 +21,7 @@ export function detectIconSetPalette(iconSet: IconSet): boolean | null {
 			}
 
 			let iconPalette: boolean | null | undefined;
-			parseColorsSync(svg, {
+			parseColors(svg, {
 				callback: (attr, colorStr, color) => {
 					if (!color) {
 						// Something went wrong

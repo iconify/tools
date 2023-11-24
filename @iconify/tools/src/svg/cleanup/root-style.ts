@@ -1,5 +1,5 @@
 import type { SVG } from '..';
-import { parseSVGStyleSync } from '../parse-style';
+import { parseSVGStyle } from '../parse-style';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function assertNever(v: never) {
@@ -19,7 +19,7 @@ interface CleanupRootStyleResult {
 export function cleanupRootStyle(svg: SVG): CleanupRootStyleResult {
 	const result: CleanupRootStyleResult = {};
 
-	parseSVGStyleSync(svg, (item) => {
+	parseSVGStyle(svg, (item) => {
 		switch (item.type) {
 			case 'inline':
 				// Keep it

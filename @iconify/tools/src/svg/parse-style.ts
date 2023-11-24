@@ -8,7 +8,6 @@ import type {
 	CSSRuleToken,
 	CSSToken,
 } from '../css/parser/types';
-import { parseSVGSync } from './parse';
 import { parseSVG, ParseSVGCallbackItem } from './parse';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -70,10 +69,6 @@ export type ParseSVGStyleCallbackResult = string | undefined;
  * Callback function
  */
 export type ParseSVGStyleCallback = (
-	item: ParseSVGStyleCallbackItem
-) => ParseSVGStyleCallbackResult | Promise<ParseSVGStyleCallbackResult>;
-
-export type ParseSVGStyleCallbackSync = (
 	item: ParseSVGStyleCallbackItem
 ) => ParseSVGStyleCallbackResult;
 
@@ -405,47 +400,10 @@ function parseItem(
  *
  * This function finds CSS in SVG, parses it, calls callback for each rule.
  * Callback should return new value (string) or undefined to remove rule.
- * Callback can be asynchronous.
  */
-export async function parseSVGStyle(
-	svg: SVG,
-	callback: ParseSVGStyleCallback
-): Promise<void> {
-	return parseSVG(svg, (item) => {
-		return new Promise((fulfill, reject) => {
-			try {
-				parseItem(
-					item,
-					(styleItem, done) => {
-						try {
-							const result = callback(styleItem);
-							if (result instanceof Promise) {
-								result.then(done).catch(reject);
-							} else {
-								done(result);
-							}
-						} catch (err) {
-							reject(err);
-						}
-					},
-					fulfill
-				);
-			} catch (err) {
-				reject(err);
-			}
-		});
-	});
-}
-
-/**
- * Synchronous version
- */
-export function parseSVGStyleSync(
-	svg: SVG,
-	callback: ParseSVGStyleCallbackSync
-): void {
+export function parseSVGStyle(svg: SVG, callback: ParseSVGStyleCallback): void {
 	let isSync = true;
-	parseSVGSync(svg, (item) => {
+	parseSVG(svg, (item) => {
 		parseItem(
 			item,
 			(styleItem, done) => {

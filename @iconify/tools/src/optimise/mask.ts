@@ -1,5 +1,5 @@
 import { Color } from '@iconify/utils/lib/colors/types';
-import { isEmptyColor, parseColorsSync } from '../colors/parse';
+import { isEmptyColor, parseColors } from '../colors/parse';
 import { SVG } from '../svg';
 import { iconToHTML, parseSVGContent, splitSVGDefs } from '@iconify/utils';
 
@@ -77,7 +77,7 @@ export function convertSVGToMask(
 	let failed = false;
 	let hasCustomValue = false;
 	const backup = svg.toString();
-	parseColorsSync(svg, {
+	parseColors(svg, {
 		callback: (attr, colorStr, color) => {
 			if (!color || isEmptyColor(color)) {
 				// Do not change it

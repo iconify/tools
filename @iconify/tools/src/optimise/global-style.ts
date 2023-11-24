@@ -15,13 +15,13 @@ const tempDataAttrbiute = 'data-gstyle-temp';
 /**
  * Expand global style
  */
-export async function cleanupGlobalStyle(svg: SVG): Promise<void> {
+export function cleanupGlobalStyle(svg: SVG) {
 	const backup = svg.toString();
 	let containsTempAttr = false;
 
 	// Find all animated classes
 	const animatedClasses: Set<string> = new Set();
-	await parseSVG(svg, (item) => {
+	parseSVG(svg, (item) => {
 		if (!animateTags.has(item.tagName)) {
 			return;
 		}
@@ -48,7 +48,7 @@ export async function cleanupGlobalStyle(svg: SVG): Promise<void> {
 
 	// Parse style
 	try {
-		await parseSVGStyle(svg, async (styleItem) => {
+		parseSVGStyle(svg, (styleItem) => {
 			const returnValue = styleItem.value;
 			if (styleItem.type !== 'global') {
 				return returnValue;
@@ -135,7 +135,7 @@ export async function cleanupGlobalStyle(svg: SVG): Promise<void> {
 			};
 
 			// Parse all elements
-			await parseSVG(svg, (svgItem) => {
+			parseSVG(svg, (svgItem) => {
 				const tagName = svgItem.tagName;
 				const $element = svgItem.$element;
 				if (!isMatch(tagName, $element)) {
@@ -175,7 +175,7 @@ export async function cleanupGlobalStyle(svg: SVG): Promise<void> {
 		});
 
 		// Remove classes
-		await parseSVG(svg, (svgItem) => {
+		parseSVG(svg, (svgItem) => {
 			const $element = svgItem.$element;
 
 			// Get list of classes
@@ -196,7 +196,7 @@ export async function cleanupGlobalStyle(svg: SVG): Promise<void> {
 
 		// Remove temporary attributes
 		if (containsTempAttr) {
-			await parseSVG(svg, (item) => {
+			parseSVG(svg, (item) => {
 				item.$element.removeAttr(tempDataAttrbiute);
 			});
 		}
