@@ -22,18 +22,20 @@ export interface ParseSVGCallbackItem {
 export type ParseSVGCallback = (item: ParseSVGCallbackItem) => void;
 
 /**
- * Parse, using callback hell to support both sync and async versions
+ * Parse SVG
+ *
+ * This function finds all elements in SVG and calls callback for each element.
  */
-type Next = () => void;
-type InternalCallback = (item: ParseSVGCallbackItem, next: Next) => void;
-function parse(svg: SVG, callback: InternalCallback, done: Next) {
+export function parseSVG(svg: SVG, callback: ParseSVGCallback): void {
+	const cheerio = svg.$svg;
+	const $root = svg.$svg(':root');
+
 	function checkNode(
 		element: CheerioElement,
-		parents: ParseSVGCallbackItem[],
-		done: Next
+		parents: ParseSVGCallbackItem[]
 	) {
 		if (element.type !== 'tag') {
-			return done();
+			return;
 		}
 
 		const $element = cheerio(element);
@@ -49,56 +51,33 @@ function parse(svg: SVG, callback: InternalCallback, done: Next) {
 		};
 
 		// Run callback
-		callback(item, () => {
-			// Test child nodes
-			const newParents = parents.slice(0);
-			newParents.unshift(item);
+		callback(item);
 
-			let queue: CheerioElement[] = [];
-			if (tagName !== 'style' && item.testChildren && !item.removeNode) {
-				const children = $element.children().toArray();
-				queue = children.slice(0);
+		// Test child nodes
+		const newParents = parents.slice(0);
+		newParents.unshift(item);
+
+		let queue: CheerioElement[] = [];
+		if (tagName !== 'style' && item.testChildren && !item.removeNode) {
+			const children = $element.children().toArray();
+			queue = children.slice(0);
+		}
+
+		while (queue.length) {
+			const queueItem = queue.shift();
+			if (!queueItem || item.removeNode) {
+				// Do not parse child items if item is marked for removal
+				break;
 			}
 
-			const next = () => {
-				const queueItem = queue.shift();
-				if (!queueItem) {
-					// Remove node
-					if (item.removeNode) {
-						$element.remove();
-					}
-					return done();
-				}
+			checkNode(queueItem, newParents);
+		}
 
-				checkNode(queueItem, newParents, next);
-			};
-			next();
-		});
+		// Remove node
+		if (item.removeNode) {
+			$element.remove();
+		}
 	}
 
-	const cheerio = svg.$svg;
-	const $root = svg.$svg(':root');
-	checkNode($root.get(0) as CheerioElement, [], done);
-}
-
-/**
- * Parse SVG
- *
- * This function finds all elements in SVG and calls callback for each element.
- */
-export function parseSVG(svg: SVG, callback: ParseSVGCallback): void {
-	let isSync = true;
-	parse(
-		svg,
-		(item, next) => {
-			callback(item);
-			next();
-		},
-		() => {
-			if (!isSync) {
-				throw new Error('parseSVGSync callback was async');
-			}
-		}
-	);
-	isSync = false;
+	checkNode($root.get(0) as CheerioElement, []);
 }
