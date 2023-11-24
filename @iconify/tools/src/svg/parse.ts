@@ -1,6 +1,5 @@
 import type { CheerioElement, WrappedCheerioElement } from '../misc/cheerio';
 import type { SVG } from './';
-
 /**
  * Item in callback
  */
@@ -32,7 +31,7 @@ type Next = () => void;
 type InternalCallback = (item: ParseSVGCallbackItem, next: Next) => void;
 function parse(svg: SVG, callback: InternalCallback, done: Next) {
 	function checkNode(
-		element: cheerio.Element,
+		element: CheerioElement,
 		parents: ParseSVGCallbackItem[],
 		done: Next
 	) {
@@ -58,7 +57,7 @@ function parse(svg: SVG, callback: InternalCallback, done: Next) {
 			const newParents = parents.slice(0);
 			newParents.unshift(item);
 
-			let queue: cheerio.Element[] = [];
+			let queue: CheerioElement[] = [];
 			if (tagName !== 'style' && item.testChildren && !item.removeNode) {
 				const children = $element.children().toArray();
 				queue = children.slice(0);
@@ -82,7 +81,7 @@ function parse(svg: SVG, callback: InternalCallback, done: Next) {
 
 	const cheerio = svg.$svg;
 	const $root = svg.$svg(':root');
-	checkNode($root.get(0) as cheerio.Element, [], done);
+	checkNode($root.get(0) as CheerioElement, [], done);
 }
 
 /**

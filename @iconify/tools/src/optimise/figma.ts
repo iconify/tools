@@ -1,3 +1,4 @@
+import { CheerioElement } from '../misc/cheerio';
 import { SVG } from '../svg';
 import { defsTag, maskTags, symbolTag } from '../svg/data/tags';
 
@@ -10,7 +11,7 @@ function isTinyNumber(value: string, limit: number): boolean {
 }
 
 interface CheckClipPathResult {
-	node: cheerio.TagElement;
+	node: CheerioElement;
 	attribs: Record<string, string>;
 }
 
@@ -20,7 +21,7 @@ interface CheckClipPathResult {
  * Returns CheckClipPathResult on success, false on error
  */
 function checkClipPathNode(
-	clipNode: cheerio.TagElement,
+	clipNode: CheerioElement,
 	expectedWidth: number,
 	expectedHeight: number
 ): CheckClipPathResult | false {
@@ -134,7 +135,7 @@ export function removeFigmaClipPathFromSVG(svg: SVG): boolean {
 	const backup = svg.toString();
 
 	// Shapes
-	const shapesToClip: cheerio.TagElement[] = [];
+	const shapesToClip: CheerioElement[] = [];
 
 	// Find expected clip path id
 	let clipID: string | undefined;
@@ -175,7 +176,7 @@ export function removeFigmaClipPathFromSVG(svg: SVG): boolean {
 
 	// Check clip path node
 	// Returns CheckClipPathResult on success, false on error, undefined if this is not clip path we need
-	const checkClipPath = (node: cheerio.TagElement) => {
+	const checkClipPath = (node: CheerioElement) => {
 		const id = node.attribs['id'];
 		if (id !== clipID) {
 			return;

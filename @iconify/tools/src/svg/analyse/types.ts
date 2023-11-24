@@ -1,3 +1,5 @@
+import { CheerioElement } from '../../misc/cheerio';
+
 /**
  * Options
  */
@@ -75,7 +77,7 @@ interface ExtendedTagElementRelations {
  * Extended tag
  */
 export interface ExtendedTagElement
-	extends cheerio.TagElement,
+	extends CheerioElement,
 		ExtendedTagElementUses,
 		ExtendedTagElementRelations {
 	// Node index

@@ -1,4 +1,4 @@
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import type { IconifyIcon } from '@iconify/types';
 import { trimSVG, iconToSVG } from '@iconify/utils';
 import type { CommonIconProps } from '../icon-set/types';
@@ -20,7 +20,7 @@ export type { IconifyIconCustomisations, IconifyIcon };
  */
 export class SVG {
 	// Cheerio tree, initialized in load()
-	public $svg!: cheerio.Root;
+	public $svg!: cheerio.CheerioAPI;
 
 	// Dimensions, initialized in load()
 	public viewBox!: ViewBox;

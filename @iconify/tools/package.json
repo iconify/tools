@@ -28,7 +28,6 @@
 	"dependencies": {
 		"@iconify/types": "^2.0.0",
 		"@iconify/utils": "^2.1.12",
-		"@types/cheerio": "^0.22.35",
 		"@types/tar": "^6.1.10",
 		"cheerio": "1.0.0-rc.12",
 		"extract-zip": "^2.0.1",
