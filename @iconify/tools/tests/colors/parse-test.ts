@@ -457,4 +457,27 @@ describe('Finding colors', () => {
 		expect(searchResult.hasUnsetColor).toBe(false);
 		expect(searchResult.hasGlobalStyle).toBe(false);
 	});
+
+	test('Async callback', async () => {
+		const svgCode = await loadFixture('fci-biomass.svg');
+		const svg = new SVG(svgCode);
+
+		// Find colors
+		let threw = false;
+		try {
+			parseColors(svg, {
+				// @ts-expect-error Testing legacy code, should no longer work
+				callback: () => {
+					return new Promise((resolve) => {
+						setTimeout(() => {
+							resolve('remove');
+						}, 0);
+					});
+				},
+			});
+		} catch {
+			threw = true;
+		}
+		expect(threw).toBeTruthy();
+	});
 });

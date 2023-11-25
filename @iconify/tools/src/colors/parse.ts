@@ -58,7 +58,7 @@ type ParseColorsCallback = (
 	// tagName and item are set only for colors found in element, it is not set for colors in global style
 	tagName?: string,
 	item?: ExtendedTagElementWithColors
-) => ParseColorsCallbackResult | Promise<ParseColorsCallbackResult>;
+) => ParseColorsCallbackResult;
 
 /**
  * Callback for default color
@@ -265,8 +265,9 @@ export function parseColors(
 			item?.tagName,
 			item
 		);
-		if (callbackResult instanceof Promise) {
-			throw new Error(`parseColors does not support async callbacks`);
+		if ((callbackResult as unknown) instanceof Promise) {
+			// Old code
+			throw new Error('parseColors does not support async callbacks');
 		}
 
 		// Remove entry

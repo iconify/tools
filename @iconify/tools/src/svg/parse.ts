@@ -51,7 +51,11 @@ export function parseSVG(svg: SVG, callback: ParseSVGCallback): void {
 		};
 
 		// Run callback
-		callback(item);
+		const callbackResult = callback(item);
+		if ((callbackResult as unknown) instanceof Promise) {
+			// Old code
+			throw new Error('parseSVG does not support async callbacks');
+		}
 
 		// Test child nodes
 		const newParents = parents.slice(0);

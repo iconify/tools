@@ -73,6 +73,16 @@ export type ParseSVGStyleCallback = (
 ) => ParseSVGStyleCallbackResult;
 
 /**
+ * Check callback result for Promise instance, which used to be supported in old version
+ */
+function assertNotOldCode(value: unknown) {
+	if (value instanceof Promise) {
+		// Old code
+		throw new Error('parseSVGStyle does not support async callbacks');
+	}
+}
+
+/**
  * Parse styles in SVG
  *
  * This function finds CSS in SVG, parses it, calls callback for each rule.
@@ -214,6 +224,8 @@ export function parseSVGStyle(svg: SVG, callback: ParseSVGStyleCallback): void {
 						);
 
 						if (result !== void 0) {
+							assertNotOldCode(result);
+
 							if (isAnimation) {
 								// Allow changing animation name
 								if (result !== value) {
@@ -275,6 +287,8 @@ export function parseSVGStyle(svg: SVG, callback: ParseSVGStyleCallback): void {
 							nextTokens: tokens.slice(0),
 						});
 						if (result !== void 0) {
+							assertNotOldCode(result);
+
 							if (result !== value) {
 								changed = true;
 								token.value = result;
@@ -339,6 +353,7 @@ export function parseSVGStyle(svg: SVG, callback: ParseSVGStyleCallback): void {
 				value,
 				item,
 			});
+			assertNotOldCode(result);
 
 			if (result !== value) {
 				changed = true;
