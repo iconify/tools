@@ -50,7 +50,6 @@ export { cleanupGlobalStyle } from './optimise/global-style';
 
 // Export
 export { exportToDirectory } from './export/directory';
-export { exportIconPackage } from './export/icon-package';
 export { exportJSONPackage } from './export/json-package';
 
 // Misc: files, directories and archives
