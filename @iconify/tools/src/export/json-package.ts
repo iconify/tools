@@ -23,6 +23,9 @@ export interface ExportJSONPackageOptions
 		ExportOptionsWithCustomFiles {
 	// package.json contents
 	package?: Record<string, unknown>;
+
+	// Callback to update package.json data, allowing to add custom stuff
+	customisePackage?: (contents: Record<string, unknown>) => void;
 }
 
 interface ExportContents {
@@ -216,6 +219,7 @@ export async function exportJSONPackage(
 	await exportCustomFiles(dir, options, files);
 
 	// Save package.json
+	options.customisePackage?.(packageJSON);
 	await writeJSONFile(dir + '/package.json', packageJSON);
 	files.add('package.json');
 
