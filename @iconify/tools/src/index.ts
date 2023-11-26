@@ -64,4 +64,5 @@ export { untar } from './download/helpers/untar';
 export { execAsync } from './misc/exec';
 export { cleanupIconKeyword } from './misc/keyword';
 export { bumpVersion } from './misc/bump-version';
+export { axiosConfig } from './download/api/config';
 export { sendAPIQuery } from './download/api/index';

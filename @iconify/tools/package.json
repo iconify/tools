@@ -31,6 +31,7 @@
 		"@iconify/types": "^2.0.0",
 		"@iconify/utils": "^2.1.12",
 		"@types/tar": "^6.1.10",
+		"axios": "^1.6.2",
 		"cheerio": "1.0.0-rc.12",
 		"extract-zip": "^2.0.1",
 		"local-pkg": "^0.4.3",
@@ -125,6 +126,11 @@
 			"types": "./lib/download/api/cache.d.ts",
 			"require": "./lib/download/api/cache.cjs",
 			"import": "./lib/download/api/cache.mjs"
+		},
+		"./lib/download/api/config": {
+			"types": "./lib/download/api/config.d.ts",
+			"require": "./lib/download/api/config.cjs",
+			"import": "./lib/download/api/config.mjs"
 		},
 		"./lib/download/api/download": {
 			"types": "./lib/download/api/download.d.ts",

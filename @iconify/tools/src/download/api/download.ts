@@ -1,5 +1,7 @@
+import axios from 'axios';
 import { writeFile } from 'fs/promises';
 import type { APIQueryParams } from './types';
+import { axiosConfig } from './config';
 
 /**
  * Download file
@@ -12,13 +14,16 @@ export async function downloadFile(
 	const url = query.uri + (params ? '?' + params : '');
 	const headers = query.headers;
 
-	const response = await fetch(url, {
+	const response = await axios.get(url, {
+		...axiosConfig,
 		headers,
+		responseType: 'arraybuffer',
 	});
 
-	if (!response.ok || !response.body) {
+	if (response.status !== 200) {
 		throw new Error(`Error downloading ${url}: ${response.status}`);
 	}
-	const data = await response.arrayBuffer();
+
+	const data = response.data as ArrayBuffer;
 	await writeFile(target, Buffer.from(data));
 }

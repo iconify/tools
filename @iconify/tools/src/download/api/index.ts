@@ -1,5 +1,7 @@
+import axios from 'axios';
 import { apiCacheKey, getAPICache, storeAPICache } from './cache';
 import type { APICacheOptions, APIQueryParams } from './types';
+import { axiosConfig } from './config';
 
 /**
  * Send API query
@@ -35,14 +37,20 @@ async function sendQuery(query: APIQueryParams): Promise<number | string> {
 	console.log('Fetch:', url);
 	const headers = query.headers;
 	try {
-		const response = await fetch(url, {
+		const response = await axios.get(url, {
+			...axiosConfig,
 			headers,
+			responseType: 'text',
 		});
-		if (response.status >= 400) {
+
+		if (response.status !== 200) {
 			return response.status;
 		}
+		if (typeof response.data !== 'string') {
+			return 404;
+		}
 
-		return await response.text();
+		return response.data;
 	} catch (err) {
 		return 404;
 	}
