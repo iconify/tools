@@ -147,6 +147,11 @@
 			"require": "./lib/download/api/index.cjs",
 			"import": "./lib/download/api/index.mjs"
 		},
+		"./lib/download/api/queue": {
+			"types": "./lib/download/api/queue.d.ts",
+			"require": "./lib/download/api/queue.cjs",
+			"import": "./lib/download/api/queue.mjs"
+		},
 		"./lib/download/api/types": {
 			"types": "./lib/download/api/types.d.ts",
 			"require": "./lib/download/api/types.cjs",
