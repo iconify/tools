@@ -50,7 +50,7 @@ export function getSVGOPlugins(options: GetSVGOPluginOptions): PluginConfig[] {
 		...((options.animated || options.keepShapes
 			? []
 			: [
-					'removeHiddenElems',
+					// 'removeHiddenElems', // bugged: not working before 3.0.4, breaks some icons since 3.0.4
 					'convertShapeToPath',
 					'convertEllipseToCircle',
 					{

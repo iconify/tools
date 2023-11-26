@@ -138,4 +138,20 @@ describe('Optimising icon with animations', () => {
 		const code = svg.toMinifiedString();
 		expect(code.includes('<title>Test</title>')).toBe(true);
 	});
+
+	test('SVGO 3.0.4 regression', () => {
+		const svgCode = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+		<path fill="#BD202E" d="M15.852 62.452Z"/>
+		<path fill="#BD202E" d="M15.852 62.452Z" opacity=".35"/>
+	</svg>`;
+		const svg = new SVG(svgCode);
+
+		// SVGO
+		runSVGO(svg);
+
+		// Analyse stuff to make sure there are no bugs
+		analyseSVGStructure(svg, {
+			fixErrors: false,
+		});
+	});
 });
