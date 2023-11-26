@@ -1,9 +1,5 @@
-import { promisify } from 'util';
-import { pipeline } from 'stream';
 import { writeFile } from 'fs/promises';
 import type { APIQueryParams } from './types';
-
-const streamPipeline = promisify(pipeline);
 
 /**
  * Download file
