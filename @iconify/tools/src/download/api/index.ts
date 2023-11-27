@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { apiCacheKey, getAPICache, storeAPICache } from './cache';
 import type { APICacheOptions, APIQueryParams } from './types';
-import { axiosConfig, axiosLog } from './config';
+import { axiosConfig, fetchCallbacks } from './config';
 
 /**
  * Send API query
@@ -36,10 +36,10 @@ async function sendQuery(query: APIQueryParams): Promise<number | string> {
 	const url = query.uri + (params ? '?' + params : '');
 	const headers = query.headers;
 
-	axiosLog.onStart?.(url, query);
+	fetchCallbacks.onStart?.(url, query);
 
 	function fail(value?: number) {
-		axiosLog.onError?.(url, query, value);
+		fetchCallbacks.onError?.(url, query, value);
 		return value ?? 404;
 	}
 
@@ -57,7 +57,7 @@ async function sendQuery(query: APIQueryParams): Promise<number | string> {
 			return fail();
 		}
 
-		axiosLog.onSuccess?.(url, query);
+		fetchCallbacks.onSuccess?.(url, query);
 
 		return response.data;
 	} catch (err) {

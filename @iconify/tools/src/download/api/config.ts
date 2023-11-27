@@ -11,15 +11,15 @@ export const axiosConfig: Omit<
 	// Empty by default. Add properties
 };
 
-interface AxiosLog {
+interface AxiosCallbacks {
 	onStart?: (url: string, params: APIQueryParams) => void;
 	onSuccess?: (url: string, params: APIQueryParams) => void;
 	onError?: (url: string, params: APIQueryParams, errorCode?: number) => void;
 }
 
 /**
- * Customisable console.log for fetching
+ * Customisable callbacks, used for logging
  */
-export const axiosLog: AxiosLog = {
+export const fetchCallbacks: AxiosCallbacks = {
 	onStart: (url) => console.log('Fetching:', url),
 };
