@@ -27,7 +27,7 @@ export interface ConcurrentQueriesCommonParams<T> {
 	//
 	// If callback is present, runConcurrentQueries() will not throw an error, it will call
 	// callback instead, which should throw an error if runConcurrentQueries() should be aborted
-	onfail?: (
+	onFail?: (
 		index: number,
 		error: unknown,
 		params: ConcurrentQueriesParams<T>
@@ -118,10 +118,10 @@ export function runConcurrentQueries<T>(
 			}
 
 			// check for callback
-			if (allParams.onfail) {
+			if (allParams.onFail) {
 				let retry: void | Promise<void>;
 				try {
-					retry = allParams.onfail(index, err, params);
+					retry = allParams.onFail(index, err, params);
 				} catch (err2) {
 					// Callback threw error: use that error
 					err = err2;
