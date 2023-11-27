@@ -32,6 +32,16 @@ export interface ConcurrentQueriesCommonParams<T> {
 		error: unknown,
 		params: ConcurrentQueriesParams<T>
 	) => void | Promise<void>;
+
+	// Callback to run on success, intended to be used for custom logging
+	onSuccess?: (
+		index: number,
+		params: ConcurrentQueriesParams<T>,
+		result: T
+	) => void;
+
+	// Callbacks to run before running Promise, intended to be used for custom logging
+	onStart?: (index: number, params: ConcurrentQueriesParams<T>) => void;
 }
 
 export interface ConcurrentQueriesParamsWithCount<T>
@@ -156,14 +166,21 @@ export function runConcurrentQueries<T>(
 			// Mark as resolving
 			resolving.add(index);
 
-			// Get promise and run it
+			// Get promise
 			const p = isCallback
 				? paramsWithCount.callback(index)
 				: paramsWithPromises.promises[index];
 
+			// Log
+			allParams.onStart?.(index, params);
+
+			// Run it
 			p.then((value) => {
 				resolving.delete(index);
 				results[index] = value;
+
+				// Log and resolve
+				allParams.onSuccess?.(index, params, value);
 				resolvedItem();
 			}).catch((err) => {
 				if (retry < retries) {

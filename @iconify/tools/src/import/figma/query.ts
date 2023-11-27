@@ -38,7 +38,10 @@ export type FigmaConcurrentQueriesParamsFunction =
 export interface FigmaConcurrentQueriesParams<
 	T extends FigmaConcurrentQueriesParamsFunction
 > {
+	// Function that is called
 	function: T;
+
+	// Payload as array. Use `index` from onFail() to get correct item from array
 	payload: T extends 'figmaImagesQuery' ? string[][] : FigmaIconNodeWithURL[];
 }
 
