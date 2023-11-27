@@ -4,7 +4,10 @@ import { APIQueryParams } from './types';
 /**
  * Axios config, customisable
  */
-export const axiosConfig: AxiosRequestConfig = {
+export const axiosConfig: Omit<
+	AxiosRequestConfig,
+	'headers' | 'responseType' | 'url' | 'method' | 'data'
+> = {
 	// Empty by default. Add properties
 };
 
