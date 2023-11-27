@@ -4,7 +4,10 @@ import {
 	clearAPICache,
 	getAPICache,
 } from '../../download/api/cache';
-import { runConcurrentQueries } from '../../download/api/queue';
+import {
+	ConcurrentQueriesParamsWithCount,
+	runConcurrentQueries,
+} from '../../download/api/queue';
 import type { APICacheOptions, APIQueryParams } from '../../download/api/types';
 import type { DocumentNotModified } from '../../download/types/modified';
 import type {
@@ -18,6 +21,26 @@ import type {
 	FigmaImagesQueryOptions,
 } from './types/options';
 import type { FigmaIconNode, FigmaNodesImportResult } from './types/result';
+
+/**
+ * Extra parameters added to runConcurrentQueries()
+ *
+ * Can be used to identify failed items in onfail callback
+ */
+interface FigmaIconNodeWithURL extends FigmaIconNode {
+	url: string;
+}
+
+export type FigmaConcurrentQueriesParamsFunction =
+	| 'figmaImagesQuery'
+	| 'figmaDownloadImages';
+
+export interface FigmaConcurrentQueriesParams<
+	T extends FigmaConcurrentQueriesParamsFunction
+> {
+	function: T;
+	payload: T extends 'figmaImagesQuery' ? string[][] : FigmaIconNodeWithURL[];
+}
 
 /**
  * Compare last modified dates
@@ -181,9 +204,6 @@ export async function figmaImagesQuery(
 	const maxLength = 2048 - uri.length;
 	const svgOptions = options.svgOptions || {};
 
-	let lastError: number | undefined;
-	let found = 0;
-
 	// Send query
 	const query = (ids: string[]): Promise<FigmaAPIImagesResponse> => {
 		return new Promise((resolve, reject) => {
@@ -254,12 +274,24 @@ export async function figmaImagesQuery(
 	}
 
 	// Get data
-	const results = await runConcurrentQueries(queue.length, (index) =>
-		query(queue[index])
-	);
+	const queryParams: ConcurrentQueriesParamsWithCount<FigmaAPIImagesResponse> &
+		FigmaConcurrentQueriesParams<'figmaImagesQuery'> = {
+		// Params
+		total: queue.length,
+		callback: (index) => query(queue[index]),
+		// Payload to identify failed items in onfail callback
+		function: 'figmaImagesQuery',
+		payload: queue,
+	};
+	const results = await runConcurrentQueries(queryParams);
 
 	// Parse data
+	let found = 0;
 	results.forEach((data) => {
+		if (!data) {
+			// skip
+			return;
+		}
 		const images = data.images;
 		for (const id in images) {
 			const node = nodes.icons[id];
@@ -273,15 +305,7 @@ export async function figmaImagesQuery(
 
 	// Validate results
 	if (!found) {
-		if (lastError) {
-			throw new Error(
-				`Error retrieving image data from API${
-					lastError ? ': ' + lastError.toString() : ''
-				}`
-			);
-		} else {
-			throw new Error('No valid icon layers were found');
-		}
+		throw new Error('No valid icon layers were found');
 	}
 	nodes.generatedIconsCount = found;
 	return nodes;
@@ -299,45 +323,46 @@ export async function figmaDownloadImages(
 	let count = 0;
 
 	// Filter data
-	interface FigmaIconNodeWithURL extends FigmaIconNode {
-		url: string;
-	}
-	const filtered = Object.create(null) as Record<
-		string,
-		FigmaIconNodeWithURL
-	>;
+	const filtered: FigmaIconNodeWithURL[] = [];
 	for (let i = 0; i < ids.length; i++) {
 		const id = ids[i];
 		const item = icons[id];
 		if (item.url) {
-			filtered[id] = item as FigmaIconNodeWithURL;
+			filtered.push(item as FigmaIconNodeWithURL);
 		}
 	}
-	const keys = Object.keys(filtered);
 
 	// Download everything
-	await runConcurrentQueries(keys.length, (index) => {
-		return new Promise((resolve, reject) => {
-			const id = keys[index];
-			const item = filtered[id];
-			sendAPIQuery(
-				{
-					uri: item.url,
-				},
-				cache
-			)
-				.then((data) => {
-					if (typeof data === 'string') {
-						count++;
-						item.content = data;
-						resolve(true);
-					} else {
-						reject(data);
-					}
-				})
-				.catch(reject);
-		});
-	});
+	const params: ConcurrentQueriesParamsWithCount<undefined> &
+		FigmaConcurrentQueriesParams<'figmaDownloadImages'> = {
+		// Params
+		total: filtered.length,
+		callback: (index) => {
+			return new Promise((resolve, reject) => {
+				const item = filtered[index];
+				sendAPIQuery(
+					{
+						uri: item.url,
+					},
+					cache
+				)
+					.then((data) => {
+						if (typeof data === 'string') {
+							count++;
+							item.content = data;
+							resolve(undefined);
+						} else {
+							reject(data);
+						}
+					})
+					.catch(reject);
+			});
+		},
+		// Payload to identify failed items in onfail callback
+		function: 'figmaDownloadImages',
+		payload: filtered,
+	};
+	await runConcurrentQueries(params);
 
 	// Make sure something was downloaded
 	if (!count) {

@@ -13,9 +13,10 @@ describe('Testing concurrency', () => {
 		const callbacks: Set<number> = new Set();
 		const resolved: Set<number> = new Set();
 
-		const result = await runConcurrentQueries(
-			keys.length,
-			(index) => {
+		const result = await runConcurrentQueries({
+			total: keys.length,
+
+			callback: (index) => {
 				expect(callbacks.has(index)).toBeFalsy();
 				expect(resolved.has(index)).toBeFalsy();
 
@@ -28,7 +29,7 @@ describe('Testing concurrency', () => {
 					expect(Array.from(resolved)).toEqual([0]);
 				}
 
-				const key = keys[index] as keyof typeof tests;
+				const key = keys[index];
 				const delay = tests[key];
 				return new Promise((resolve) => {
 					setTimeout(() => {
@@ -37,8 +38,8 @@ describe('Testing concurrency', () => {
 					}, delay);
 				});
 			},
-			3
-		);
+			limit: 3,
+		});
 
 		expect(result).toEqual(Object.values(tests));
 	});
