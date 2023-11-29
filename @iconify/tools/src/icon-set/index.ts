@@ -152,7 +152,7 @@ export class IconSet {
 
 		// Info
 		const info = data.info && convertIconSetInfo(data.info);
-		this.info = info || void 0;
+		this.info = info || undefined;
 
 		// Characters map
 		if (data.chars) {
@@ -242,10 +242,9 @@ export class IconSet {
 	 * List icons
 	 */
 	list(types: IconSetIconType[] = ['icon', 'variation']): string[] {
-		return Object.keys(this.entries).filter((name) => {
-			const type = this.entries[name].type;
-			return types.indexOf(type) !== -1;
-		});
+		return Object.keys(this.entries).filter((name) =>
+			types.includes(this.entries[name].type)
+		);
 	}
 
 	/**
@@ -323,7 +322,7 @@ export class IconSet {
 				return (resolved[name] = []);
 			}
 
-			if (resolved[name] === void 0) {
+			if (resolved[name] === undefined) {
 				// Mark as failed if parent alias points to this icon to avoid infinite loop
 				resolved[name] = null;
 

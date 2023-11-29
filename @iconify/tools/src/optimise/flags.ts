@@ -331,7 +331,7 @@ function cleanPath(path: string): string {
 						}
 
 						// No space if previous entry had dot
-						if (item.params[index - 1].indexOf('.') !== -1) {
+						if (item.params[index - 1].includes('.')) {
 							break;
 						}
 

@@ -27,7 +27,7 @@ export function convertStyleToAttrs(svg: SVG): void {
 			badSoftwareAttributes.has(prop) ||
 			badAttributePrefixes.has(prop.split('-').shift() as string)
 		) {
-			return void 0;
+			return;
 		}
 
 		hasStyle = true;

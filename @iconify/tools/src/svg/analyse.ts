@@ -240,7 +240,7 @@ export function analyseSVGStructure(
 			}
 
 			// Check if element has its own id
-			if (element._id === void 0) {
+			if (element._id === undefined) {
 				const id = attribs['id'];
 				if (typeof id === 'string') {
 					if (ids[id] && fixErrors) {
@@ -404,7 +404,7 @@ export function analyseSVGStructure(
 
 		// Add all child elements
 		element._childElements?.forEach((childIndex) => {
-			if (usedItems.indexOf(childIndex) !== -1) {
+			if (usedItems.includes(childIndex)) {
 				throw new Error('Recursion');
 			}
 			const childItem: ElementsTreeItem = {

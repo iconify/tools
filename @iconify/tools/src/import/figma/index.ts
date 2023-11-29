@@ -34,7 +34,7 @@ export async function importFromFigma(
 				ttl: options.cacheAPITTL || 60 * 60 * 24,
 				dir: options.cacheDir,
 		  }
-		: void 0;
+		: undefined;
 
 	const cacheSVGOptions: APICacheOptions | undefined = options.cacheDir
 		? {
@@ -42,7 +42,7 @@ export async function importFromFigma(
 				ttl: options.cacheSVGTTL || 60 * 60 * 24 * 30,
 				dir: options.cacheDir,
 		  }
-		: void 0;
+		: undefined;
 
 	// Get document
 	const document = await figmaFilesQuery(

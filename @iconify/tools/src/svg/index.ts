@@ -42,7 +42,7 @@ export class SVG {
 
 			// Generate SVG
 			let svgAttributes = ' xmlns="http://www.w3.org/2000/svg"';
-			if (data.body.indexOf('xlink:') !== -1) {
+			if (data.body.includes('xlink:')) {
 				svgAttributes += ' xmlns:xlink="http://www.w3.org/1999/xlink"';
 			}
 			for (const key in data.attributes) {
@@ -60,7 +60,7 @@ export class SVG {
 		const box = this.viewBox;
 
 		// Add missing viewBox attribute
-		if ($root.attr('viewBox') === void 0) {
+		if ($root.attr('viewBox') === undefined) {
 			$root.attr(
 				'viewBox',
 				`${box.left} ${box.top} ${box.width} ${box.height}`
@@ -68,10 +68,10 @@ export class SVG {
 		}
 
 		// Add missing width/height
-		if ($root.attr('width') === void 0) {
+		if ($root.attr('width') === undefined) {
 			$root.attr('width', box.width.toString());
 		}
-		if ($root.attr('height') === void 0) {
+		if ($root.attr('height') === undefined) {
 			$root.attr('height', box.height.toString());
 		}
 
@@ -176,7 +176,7 @@ export class SVG {
 
 		// Get dimensions and origin
 		const viewBox = $root.attr('viewBox');
-		if (viewBox !== void 0) {
+		if (viewBox !== undefined) {
 			const list = viewBox.split(' ');
 
 			this.viewBox = {

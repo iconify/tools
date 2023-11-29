@@ -40,7 +40,7 @@ export function addTagsToIconSet(
 	if (iconNames.length) {
 		// Palette
 		let hasPalette: boolean | null | undefined = info?.palette;
-		if (hasPalette === void 0) {
+		if (hasPalette === undefined) {
 			hasPalette = detectIconSetPalette(iconSet);
 		}
 
@@ -70,7 +70,7 @@ export function addTagsToIconSet(
 			}
 
 			// Check grid
-			if (height === void 0) {
+			if (height === undefined) {
 				height = iconHeight;
 			} else if (height && iconHeight !== height) {
 				// Failed

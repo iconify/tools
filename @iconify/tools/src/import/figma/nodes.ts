@@ -99,8 +99,8 @@ export function getFigmaIconNodes(
 					// Check page against allowed pages list
 					const allowedPages = options.pages;
 					if (
-						allowedPages.indexOf(node.id) === -1 &&
-						allowedPages.indexOf(node.name.trim()) === -1
+						!allowedPages.includes(node.id) &&
+						!allowedPages.includes(node.name.trim())
 					) {
 						return;
 					}

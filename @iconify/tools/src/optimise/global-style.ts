@@ -123,7 +123,7 @@ export function cleanupGlobalStyle(svg: SVG) {
 							const className = $element.attr('class');
 							if (
 								className &&
-								getClassList(className).indexOf(value) !== -1
+								getClassList(className).includes(value)
 							) {
 								return true;
 							}
@@ -148,7 +148,7 @@ export function cleanupGlobalStyle(svg: SVG) {
 				);
 
 				const prop = styleItem.prop;
-				if ($element.attr(prop) !== void 0) {
+				if ($element.attr(prop) !== undefined) {
 					// Previously added attribute?
 					if (addedAttributes.has(prop)) {
 						// Two CSS rules are applied to same element: abort parsing and restore content from backup.

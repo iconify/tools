@@ -47,7 +47,7 @@ export function removeBadAttributes(svg: SVG): void {
 				switch (namespace) {
 					case 'xlink': {
 						// Deprecated: use without namespace
-						if (attribs[newAttr] === void 0) {
+						if (attribs[newAttr] === undefined) {
 							$element.attr(newAttr, attribs[attr]);
 						}
 						break;

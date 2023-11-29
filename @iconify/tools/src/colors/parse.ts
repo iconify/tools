@@ -187,7 +187,7 @@ export function parseColors(
 				) as ExtendedTagElementWithColors;
 
 				const color = element._colors?.[prop];
-				if (color !== void 0) {
+				if (color !== undefined) {
 					return color;
 				}
 
@@ -273,7 +273,7 @@ export function parseColors(
 		// Remove entry
 		switch (callbackResult) {
 			case 'remove': {
-				return item ? callbackResult : void 0;
+				return item ? callbackResult : undefined;
 			}
 
 			case 'unset':
@@ -305,14 +305,14 @@ export function parseColors(
 	parseSVGStyle(svg, (item) => {
 		const prop = item.prop;
 		const value = item.value;
-		if (propsToCheck.indexOf(prop) === -1) {
+		if (!propsToCheck.includes(prop)) {
 			return value;
 		}
 
 		// Color
 		const attr = prop as ColorAttributes;
 		const newValue = checkColor(attr, value);
-		if (newValue === void 0) {
+		if (newValue === undefined) {
 			return newValue;
 		}
 
@@ -396,10 +396,10 @@ export function parseColors(
 			}
 
 			const value = attribs[prop];
-			if (value !== void 0) {
+			if (value !== undefined) {
 				const newValue = checkColor(prop, value, element);
 				if (newValue !== value) {
-					if (newValue === void 0) {
+					if (newValue === undefined) {
 						// Unset
 						cheerio(element).removeAttr(prop);
 						if (element._colors) {
@@ -421,7 +421,7 @@ export function parseColors(
 		// Check animations
 		if (animateTags.has(tagName)) {
 			const attr = attribs.attributeName as ColorAttributes;
-			if (propsToCheck.indexOf(attr) !== -1) {
+			if (propsToCheck.includes(attr)) {
 				// Valid property
 				for (let i = 0; i < animatePropsToCheck.length; i++) {
 					const elementProp = animatePropsToCheck[i];
@@ -435,7 +435,7 @@ export function parseColors(
 					let updatedValues = false;
 					for (let j = 0; j < splitValues.length; j++) {
 						const value = splitValues[j];
-						if (value !== void 0) {
+						if (value !== undefined) {
 							const newValue = checkColor(
 								elementProp as ColorAttributes,
 								value

@@ -223,7 +223,7 @@ export function parseSVGStyle(svg: SVG, callback: ParseSVGStyleCallback): void {
 								  }
 						);
 
-						if (result !== void 0) {
+						if (result !== undefined) {
 							assertNotOldCode(result);
 
 							if (isAnimation) {
@@ -286,7 +286,7 @@ export function parseSVGStyle(svg: SVG, callback: ParseSVGStyleCallback): void {
 							prevTokens: newTokens,
 							nextTokens: tokens.slice(0),
 						});
-						if (result !== void 0) {
+						if (result !== undefined) {
 							assertNotOldCode(result);
 
 							if (result !== value) {
@@ -332,7 +332,7 @@ export function parseSVGStyle(svg: SVG, callback: ParseSVGStyleCallback): void {
 
 		// Parse style
 		const attribs = item.element.attribs;
-		if (attribs.style === void 0) {
+		if (attribs.style === undefined) {
 			return;
 		}
 
@@ -357,7 +357,7 @@ export function parseSVGStyle(svg: SVG, callback: ParseSVGStyleCallback): void {
 
 			if (result !== value) {
 				changed = true;
-				if (result === void 0) {
+				if (result === undefined) {
 					delete parsedStyle[prop];
 				} else {
 					parsedStyle[prop] = result;

@@ -117,8 +117,7 @@ export function runSVGO(svg: SVG, options: SVGOOptions = {}) {
 		plugins = options.plugins;
 	} else {
 		// Check for animations: convertShapeToPath and removeHiddenElems plugins currently might ruin animations
-		const animated =
-			code.indexOf('<animate') !== -1 || code.indexOf('<set') !== -1;
+		const animated = code.includes('<animate') || code.includes('<set');
 
 		plugins = getSVGOPlugins({
 			...options,
@@ -154,7 +153,7 @@ export function runSVGO(svg: SVG, options: SVGOOptions = {}) {
 	// Replace IDs, but only if plugins list is not set
 	if (!options.plugins) {
 		const prefix =
-			options.cleanupIDs !== void 0 ? options.cleanupIDs : 'svgID';
+			options.cleanupIDs !== undefined ? options.cleanupIDs : 'svgID';
 		if (prefix !== false) {
 			let counter = 0;
 			content = replaceIDs(
