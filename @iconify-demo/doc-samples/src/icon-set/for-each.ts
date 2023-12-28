@@ -27,7 +27,7 @@ const iconSet = new IconSet({
 
 // Synchronous example: renaming all icons
 console.log('Starting synchronous forEach()');
-iconSet.forEachSync((name) => {
+iconSet.forEach((name) => {
 	iconSet.rename(name, 'renamed-' + name);
 	console.log(`Renaming: ${name}`);
 });
@@ -48,7 +48,7 @@ console.log('Starting async forEach()');
 			// Clean up icon
 			console.log(`Cleaning up: ${name}`);
 			try {
-				await cleanupSVG(svg);
+				cleanupSVG(svg);
 			} catch (err) {
 				// Something went wrong: remove icon
 				iconSet.remove(name);
@@ -56,7 +56,7 @@ console.log('Starting async forEach()');
 			}
 
 			// Change colors to red
-			await parseColors(svg, {
+			parseColors(svg, {
 				defaultColor: 'red',
 				callback: (attr, colorStr, color) => {
 					return !color || isEmptyColor(color) ? colorStr : 'red';

@@ -1,6 +1,6 @@
 import * as cheerio from 'cheerio';
 import type { IconifyIcon } from '@iconify/types';
-import { trimSVG, iconToSVG } from '@iconify/utils';
+import { trimSVG, iconToSVG, prettifySVG } from '@iconify/utils';
 import type { CommonIconProps } from '../icon-set/types';
 import type { IconifyIconCustomisations } from '@iconify/utils/lib/customisations/defaults';
 import type { CheerioElement } from '../misc/cheerio';
@@ -83,6 +83,14 @@ export class SVG {
 	 */
 	toMinifiedString(customisations?: IconifyIconCustomisations): string {
 		return trimSVG(this.toString(customisations));
+	}
+
+	/**
+	 * Get SVG as string with whitespaces
+	 */
+	toPrettyString(customisations?: IconifyIconCustomisations): string {
+		const str = this.toMinifiedString(customisations);
+		return prettifySVG(str) ?? str;
 	}
 
 	/**

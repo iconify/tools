@@ -9,7 +9,7 @@ import {
 } from '@iconify/tools';
 
 (async () => {
-	// Create empty icon set
+	// Create an empty icon set
 	const iconSet = blankIconSet('test');
 
 	// Read icon, create SVG instance
@@ -20,8 +20,8 @@ import {
 	cleanupSVG(svg);
 
 	// Assume icon is monotone: replace color with currentColor, add if missing
-	// If icon is not monotone, remove this code
-	await parseColors(svg, {
+	// If icons are not monotone, remove this code
+	parseColors(svg, {
 		defaultColor: 'currentColor',
 		callback: (attr, colorStr, color) => {
 			return !color || isEmptyColor(color) ? colorStr : 'currentColor';

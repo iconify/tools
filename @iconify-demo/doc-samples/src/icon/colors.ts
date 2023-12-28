@@ -26,55 +26,56 @@ const iconSet = new IconSet({
 	},
 });
 
-(async () => {
-	await iconSet.forEach(async (name, type) => {
-		if (type !== 'icon') {
-			// Ignore aliases and variations: they inherit content from parent icon, so there is nothing to change
-			return;
-		}
+// Parse all icons in icon set
+iconSet.forEach((name, type) => {
+	if (type !== 'icon') {
+		// Ignore aliases and variations: they inherit content from parent icon, so there is nothing to change
+		return;
+	}
 
-		const svg = iconSet.toSVG(name);
-		if (svg) {
-			await parseColors(svg, {
-				// Change default color to 'currentColor'
-				defaultColor: 'currentColor',
+	// Get icon as SVG class instance
+	const svg = iconSet.toSVG(name);
+	if (svg) {
+		// Parse colors in SVG instance
+		parseColors(svg, {
+			// Change default color to 'currentColor'
+			defaultColor: 'currentColor',
 
-				// Callback to parse each color
-				callback: (attr, colorStr, color) => {
-					if (!color) {
-						// color === null, so color cannot be parsed
-						// Return colorStr to keep old value
-						return colorStr;
-					}
+			// Callback to parse each color
+			callback: (attr, colorStr, color) => {
+				if (!color) {
+					// color === null, so color cannot be parsed
+					// Return colorStr to keep old value
+					return colorStr;
+				}
 
-					if (isEmptyColor(color)) {
-						// Color is empty: 'none' or 'transparent'
-						// Return color object to keep old value
-						return color;
-					}
+				if (isEmptyColor(color)) {
+					// Color is empty: 'none' or 'transparent'
+					// Return color object to keep old value
+					return color;
+				}
 
-					// Black color: change to 'currentColor'
-					if (compareColors(color, stringToColor('black'))) {
-						return 'currentColor';
-					}
+				// Black color: change to 'currentColor'
+				if (compareColors(color, stringToColor('black'))) {
+					return 'currentColor';
+				}
 
-					// White color: belongs to white background rectangle: remove rectangle
-					if (compareColors(color, stringToColor('white'))) {
-						return 'remove';
-					}
+				// White color: belongs to white background rectangle: remove rectangle
+				if (compareColors(color, stringToColor('white'))) {
+					return 'remove';
+				}
 
-					// Unexpected color. Add code to check for it
-					throw new Error(
-						`Unexpected color "${colorStr}" in attribute ${attr}`
-					);
-				},
-			});
+				// Unexpected color. Add code to check for it
+				throw new Error(
+					`Unexpected color "${colorStr}" in attribute ${attr}`
+				);
+			},
+		});
 
-			// Update icon in icon set
-			iconSet.fromSVG(name, svg);
-		}
-	});
+		// Update icon in icon set
+		iconSet.fromSVG(name, svg);
+	}
+});
 
-	// Export icon set
-	console.log(iconSet.export());
-})();
+// Export icon set
+console.log(iconSet.export());

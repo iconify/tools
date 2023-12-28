@@ -31,13 +31,16 @@ const config = {
 					);
 
 					// Clean up each icon
-					await iconSet.forEach(async (name) => {
+					await iconSet.forEach((name) => {
 						const svg = iconSet.toSVG(name);
+						if (!svg) {
+							return;
+						}
 
 						// Change color to `currentColor`
 						const blackColor = stringToColor('black');
 
-						await parseColors(svg, {
+						parseColors(svg, {
 							defaultColor: 'currentColor',
 							callback: (attr, colorStr, color) => {
 								// console.log('Color:', colorStr, color);
@@ -80,12 +83,12 @@ const config = {
 					const svg = new SVG(content);
 
 					// Clean up icon
-					await cleanupSVG(svg);
+					cleanupSVG(svg);
 
 					// Change color to `currentColor`
 					const blackColor = stringToColor('black');
 
-					await parseColors(svg, {
+					parseColors(svg, {
 						defaultColor: 'currentColor',
 						callback: (attr, colorStr, color) => {
 							// console.log('Color:', colorStr, color);
@@ -108,10 +111,10 @@ const config = {
 					});
 
 					// Optimise
-					await runSVGO(svg);
+					runSVGO(svg);
 
 					// Update paths for compatibility with old software
-					await deOptimisePaths(svg);
+					deOptimisePaths(svg);
 
 					// Return icon
 					// First parameter must be set to change height to '1em' !

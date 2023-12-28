@@ -51,6 +51,7 @@ export { cleanupGlobalStyle } from './optimise/global-style';
 // Export
 export { exportToDirectory } from './export/directory';
 export { exportJSONPackage } from './export/json-package';
+export { exportIconPackage } from './export/icon-package';
 
 // Misc: files, directories and archives
 export { writeJSONFile } from './misc/write-json';

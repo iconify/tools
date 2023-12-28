@@ -2,7 +2,7 @@ import {
 	importDirectorySync,
 	cleanupSVG,
 	runSVGO,
-	parseColorsSync,
+	parseColors,
 	isEmptyColor,
 } from '@iconify/tools';
 
@@ -31,7 +31,7 @@ iconSet.forEachSync((name, type) => {
 
 		// Assume icon is monotone: replace color with currentColor, add if missing
 		// If icon is not monotone, remove this code
-		parseColorsSync(svg, {
+		parseColors(svg, {
 			defaultColor: 'currentColor',
 			callback: (attr, colorStr, color) => {
 				return !color || isEmptyColor(color)

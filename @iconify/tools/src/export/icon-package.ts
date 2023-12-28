@@ -36,8 +36,6 @@ export default data;
  * Export icon set as single icon packages
  *
  * Was used for exporting `@iconify-icons/{prefix}` packages
- *
- * @deprecated Packages with single icons are no longer maintained.
  */
 export async function exportIconPackage(
 	iconSet: IconSet,
