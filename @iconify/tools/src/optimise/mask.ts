@@ -1,5 +1,5 @@
 import { Color } from '@iconify/utils/lib/colors/types';
-import { isEmptyColor, parseColorsSync } from '../colors/parse';
+import { isEmptyColor, parseColors } from '../colors/parse';
 import { SVG } from '../svg';
 import { iconToHTML, parseSVGContent, splitSVGDefs } from '@iconify/utils';
 
@@ -77,26 +77,16 @@ export function convertSVGToMask(
 	let failed = false;
 	let hasCustomValue = false;
 	const backup = svg.toString();
-	parseColorsSync(svg, {
+	parseColors(svg, {
 		callback: (attr, colorStr, color) => {
 			if (!color || isEmptyColor(color)) {
 				// Do not change it
 				return colorStr;
 			}
 
-			// Check if color is solid
-			if (check(props.solid, colorStr, color)) {
-				// Solid
-				foundSolid = true;
-				return '#fff';
-			}
-			if (check(props.transparent, colorStr, color)) {
-				// Transparent
-				foundTransparent = true;
-				return '#000';
-			}
+			// Check for custom color callback first
 			if (props.custom) {
-				let customValue = props.custom(colorStr, color);
+				let customValue = props.custom(colorStr.toLowerCase(), color);
 				if (typeof customValue === 'number') {
 					// Convert to hex color
 					const num = Math.max(
@@ -123,6 +113,18 @@ export function convertSVGToMask(
 					}
 					return customValue;
 				}
+			}
+
+			// Check if color is solid
+			if (check(props.solid, colorStr, color)) {
+				// Solid
+				foundSolid = true;
+				return '#fff';
+			}
+			if (check(props.transparent, colorStr, color)) {
+				// Transparent
+				foundTransparent = true;
+				return '#000';
 			}
 
 			failed = true;

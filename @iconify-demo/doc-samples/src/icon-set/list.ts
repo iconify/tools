@@ -37,35 +37,33 @@ console.log(iconSet.list(['icon', 'variation', 'alias']));
 // [ 'add', 'debug-pause', 'triangle-left' ]
 console.log(iconSet.list(['icon']));
 
-// Function can also be used to parse all icons in icon set
-(async () => {
-	const icons = iconSet.list();
-	for (let i = 0; i < icons.length; i++) {
-		const name = icons[i];
-		const svg = iconSet.toSVG(name);
-		if (svg) {
-			// Clean up icon
-			try {
-				await cleanupSVG(svg);
-			} catch (err) {
-				// Something went wrong: remove icon
-				iconSet.remove(name);
-				continue;
-			}
-
-			// Change colors to red
-			await parseColors(svg, {
-				defaultColor: 'red',
-				callback: (attr, colorStr, color) => {
-					return !color || isEmptyColor(color) ? colorStr : 'red';
-				},
-			});
-
-			// Update code
-			iconSet.fromSVG(name, svg);
+// Function can also be used to parse all icons in icon set, though `forEach()` is a better choice for this code
+const icons = iconSet.list();
+for (let i = 0; i < icons.length; i++) {
+	const name = icons[i];
+	const svg = iconSet.toSVG(name);
+	if (svg) {
+		// Clean up icon
+		try {
+			cleanupSVG(svg);
+		} catch (err) {
+			// Something went wrong: remove icon
+			iconSet.remove(name);
+			continue;
 		}
-	}
 
-	// Export updated icon set
-	console.log(iconSet.export());
-})();
+		// Change colors to red
+		parseColors(svg, {
+			defaultColor: 'red',
+			callback: (attr, colorStr, color) => {
+				return !color || isEmptyColor(color) ? colorStr : 'red';
+			},
+		});
+
+		// Update code
+		iconSet.fromSVG(name, svg);
+	}
+}
+
+// Export updated icon set
+console.log(iconSet.export());

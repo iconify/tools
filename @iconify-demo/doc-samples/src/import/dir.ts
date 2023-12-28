@@ -13,7 +13,7 @@ import {
 	});
 
 	// Validate, clean up, fix palette and optimise
-	await iconSet.forEach(async (name, type) => {
+	iconSet.forEach((name, type) => {
 		if (type !== 'icon') {
 			return;
 		}
@@ -32,7 +32,7 @@ import {
 
 			// Assume icon is monotone: replace color with currentColor, add if missing
 			// If icon is not monotone, remove this code
-			await parseColors(svg, {
+			parseColors(svg, {
 				defaultColor: 'currentColor',
 				callback: (attr, colorStr, color) => {
 					return !color || isEmptyColor(color)

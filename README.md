@@ -64,7 +64,7 @@ import { parseColors, isEmptyColor } from '@iconify/tools/lib/colors/parse';
 	});
 
 	// Validate, clean up, fix palette and optimise
-	await iconSet.forEach(async (name, type) => {
+	iconSet.forEachSync((name, type) => {
 		if (type !== 'icon') {
 			return;
 		}
@@ -79,7 +79,7 @@ import { parseColors, isEmptyColor } from '@iconify/tools/lib/colors/parse';
 		// Clean up and optimise icons
 		try {
 			cleanupSVG(svg);
-			await parseColors(svg, {
+			parseColors(svg, {
 				defaultColor: 'currentColor',
 				callback: (attr, colorStr, color) => {
 					return !color || isEmptyColor(color)

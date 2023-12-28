@@ -87,13 +87,13 @@ const cacheDir = 'cache/quill';
 	const iconSet = result.iconSet;
 
 	// Check colors in icons
-	await iconSet.forEach(async (name) => {
+	iconSet.forEachSync((name) => {
 		const svg = iconSet.toSVG(name);
 		if (!svg) {
 			return;
 		}
 
-		await parseColors(svg, {
+		parseColors(svg, {
 			// Change default color to 'currentColor'
 			defaultColor: 'currentColor',
 

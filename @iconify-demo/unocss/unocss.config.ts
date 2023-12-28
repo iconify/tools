@@ -18,14 +18,15 @@ function loadCustomIconSet(): CustomIconLoader {
 		importDirectory('assets/svg', {
 			prefix: 'svg',
 		}).then((iconSet) => {
+			// Parse all icons: optimise, clean up palette
 			iconSet
-				.forEach(async (name) => {
+				.forEachSync((name) => {
 					const svg = iconSet.toSVG(name)!;
 
 					// Change color to `currentColor`
 					const blackColor = stringToColor('black')!;
 
-					await parseColors(svg, {
+					parseColors(svg, {
 						defaultColor: 'currentColor',
 						callback: (attr, colorStr, color) => {
 							// console.log('Color:', colorStr, color);
@@ -50,17 +51,17 @@ function loadCustomIconSet(): CustomIconLoader {
 					runSVGO(svg);
 
 					// Update paths for compatibility with old software
-					await deOptimisePaths(svg);
+					deOptimisePaths(svg);
 
 					// Update icon in icon set
 					iconSet.fromSVG(name, svg);
-				})
-				.then(() => {
-					resolve(iconSet);
-				})
-				.catch((err) => {
-					reject(err);
 				});
+
+			// Resolve with icon set
+			resolve(iconSet);
+				
+		}).catch((err) => {
+			reject(err);
 		});
 	});
 

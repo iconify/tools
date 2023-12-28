@@ -10,7 +10,7 @@ import {
 	tagSpecificPresentationalAttributes,
 	tagSpecificInlineStyles,
 } from '../data/attributes';
-import { parseSVGSync } from '../parse';
+import { parseSVG } from '../parse';
 
 /**
  * Allowed rules
@@ -53,7 +53,7 @@ const knownIgnoredRules: Set<string> = new Set([
  * Expand inline style
  */
 export function cleanupInlineStyle(svg: SVG): void {
-	parseSVGSync(svg, (item) => {
+	parseSVG(svg, (item) => {
 		const $element = item.$element;
 		const attribs = item.element.attribs;
 		const tagName = item.tagName;

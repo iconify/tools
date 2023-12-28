@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { SVG } from './index';
-import { parseSVGSync } from './parse';
+import { parseSVG } from './parse';
 import type { ParseSVGCallbackItem } from './parse';
 import type {
 	AnalyseSVGStructureResult,
@@ -158,7 +158,7 @@ export function analyseSVGStructure(
 
 	// Find all reusable elements and all usages
 	let index = 0;
-	parseSVGSync(svg, (item) => {
+	parseSVG(svg, (item) => {
 		const { tagName, parents } = item;
 		if (styleTag.has(tagName)) {
 			item.testChildren = false;
@@ -240,7 +240,7 @@ export function analyseSVGStructure(
 			}
 
 			// Check if element has its own id
-			if (element._id === void 0) {
+			if (element._id === undefined) {
 				const id = attribs['id'];
 				if (typeof id === 'string') {
 					if (ids[id] && fixErrors) {
@@ -404,7 +404,7 @@ export function analyseSVGStructure(
 
 		// Add all child elements
 		element._childElements?.forEach((childIndex) => {
-			if (usedItems.indexOf(childIndex) !== -1) {
+			if (usedItems.includes(childIndex)) {
 				throw new Error('Recursion');
 			}
 			const childItem: ElementsTreeItem = {

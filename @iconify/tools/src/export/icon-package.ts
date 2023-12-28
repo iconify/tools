@@ -35,7 +35,7 @@ export default data;
 /**
  * Export icon set as single icon packages
  *
- * Used for exporting `@iconify-icons/{prefix}` packages
+ * Was used for exporting `@iconify-icons/{prefix}` packages
  */
 export async function exportIconPackage(
 	iconSet: IconSet,
@@ -92,7 +92,7 @@ export async function exportIconPackage(
 			description ||
 			`Iconify icon components for ${info ? info.name : iconSet.prefix}`,
 		version,
-		type: esm ? 'module' : void 0,
+		type: esm ? 'module' : undefined,
 		iconSetInfo: info,
 		...customPackageProps,
 		dependencies: dependencies || {

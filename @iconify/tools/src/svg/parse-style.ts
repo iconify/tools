@@ -8,7 +8,6 @@ import type {
 	CSSRuleToken,
 	CSSToken,
 } from '../css/parser/types';
-import { parseSVGSync } from './parse';
 import { parseSVG, ParseSVGCallbackItem } from './parse';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -71,222 +70,201 @@ export type ParseSVGStyleCallbackResult = string | undefined;
  */
 export type ParseSVGStyleCallback = (
 	item: ParseSVGStyleCallbackItem
-) => ParseSVGStyleCallbackResult | Promise<ParseSVGStyleCallbackResult>;
-
-export type ParseSVGStyleCallbackSync = (
-	item: ParseSVGStyleCallbackItem
 ) => ParseSVGStyleCallbackResult;
 
 /**
- * Internal function with callback hell to support both sync and async code
+ * Check callback result for Promise instance, which used to be supported in old version
  */
-type Next = () => void;
-type CallbackNext = (result: ParseSVGStyleCallbackResult) => void;
-type InternalCallback = (
-	item: ParseSVGStyleCallbackItem,
-	next: CallbackNext
-) => void;
+function assertNotOldCode(value: unknown) {
+	if (value instanceof Promise) {
+		// Old code
+		throw new Error('parseSVGStyle does not support async callbacks');
+	}
+}
 
-function parseItem(
-	item: ParseSVGCallbackItem,
-	callback: InternalCallback,
-	done: Next
-) {
-	const tagName = item.tagName;
-	const $element = item.$element;
+/**
+ * Parse styles in SVG
+ *
+ * This function finds CSS in SVG, parses it, calls callback for each rule.
+ * Callback should return new value (string) or undefined to remove rule.
+ */
+export function parseSVGStyle(svg: SVG, callback: ParseSVGStyleCallback): void {
+	parseSVG(svg, (item) => {
+		const tagName = item.tagName;
+		const $element = item.$element;
 
-	// Parse <style> tag
-	function parseStyleItem(done: Next) {
-		const content = $element.text();
-		if (typeof content !== 'string') {
-			$element.remove();
-			return done();
-		}
+		// Parse <style> tag
+		function parseStyleItem() {
+			const content = $element.text();
+			if (typeof content !== 'string') {
+				$element.remove();
+				return;
+			}
 
-		const tokens = getTokens(content);
-		if (!(tokens instanceof Array)) {
-			// Invalid style
-			throw new Error('Error parsing style');
-		}
+			const tokens = getTokens(content);
+			if (!(tokens instanceof Array)) {
+				// Invalid style
+				throw new Error('Error parsing style');
+			}
 
-		// Parse all tokens
-		let changed = false;
-		const selectorStart: number[] = [];
-		let newTokens: (CSSToken | null)[] = [];
+			// Parse all tokens
+			let changed = false;
+			const selectorStart: number[] = [];
+			let newTokens: (CSSToken | null)[] = [];
 
-		// Called when all tokens are parsed
-		const parsedTokens = () => {
-			if (changed) {
-				// Update style
-				const tree = tokensTree(
-					newTokens.filter((token) => token !== null) as CSSToken[]
-				);
-
-				if (!tree.length) {
-					// Empty
-					$element.remove();
-				} else {
-					const newContent = tokensToString(tree);
-					item.$element.text('\n' + newContent);
+			while (tokens.length) {
+				const token = tokens.shift();
+				if (!token) {
+					break;
 				}
-			}
 
-			done();
-		};
+				switch (token.type) {
+					case 'selector':
+						selectorStart.push(newTokens.length);
+						newTokens.push(token);
+						break;
 
-		// Parse next token
-		const nextToken = (): void => {
-			const token = tokens.shift();
-			if (token === void 0) {
-				return parsedTokens();
-			}
+					case 'close':
+						selectorStart.pop();
+						newTokens.push(token);
+						break;
 
-			switch (token.type) {
-				case 'selector':
-					selectorStart.push(newTokens.length);
-					newTokens.push(token);
-					return nextToken();
+					case 'at-rule': {
+						selectorStart.push(newTokens.length);
 
-				case 'close':
-					selectorStart.pop();
-					newTokens.push(token);
-					return nextToken();
+						const prop = token.rule;
+						const value = token.value;
 
-				case 'at-rule': {
-					selectorStart.push(newTokens.length);
+						const isAnimation =
+							prop === 'keyframes' ||
+							(prop.slice(0, 1) === '-' &&
+								prop.split('-').pop() === 'keyframes');
 
-					const prop = token.rule;
-					const value = token.value;
+						// Get all child tokens, including closing token
+						const childTokens: CSSToken[] = [];
+						const animationRules = Object.create(null) as Record<
+							string,
+							string
+						>;
+						let depth = 1;
+						let index = 0;
+						let isFrom = false;
 
-					const isAnimation =
-						prop === 'keyframes' ||
-						(prop.slice(0, 1) === '-' &&
-							prop.split('-').pop() === 'keyframes');
-
-					// Get all child tokens, including closing token
-					const childTokens: CSSToken[] = [];
-					const animationRules = Object.create(null) as Record<
-						string,
-						string
-					>;
-					let depth = 1;
-					let index = 0;
-					let isFrom = false;
-
-					while (depth > 0) {
-						const childToken = tokens[index];
-						index++;
-						if (!childToken) {
-							throw new Error('Something went wrong parsing CSS');
-						}
-						childTokens.push(childToken);
-						switch (childToken.type) {
-							case 'close': {
-								depth--;
-								isFrom = false;
-								break;
+						while (depth > 0) {
+							const childToken = tokens[index];
+							index++;
+							if (!childToken) {
+								throw new Error(
+									'Something went wrong parsing CSS'
+								);
 							}
-							case 'selector': {
-								depth++;
-								if (isAnimation) {
-									const rule = childToken.code;
-									if (rule === 'from' || rule === '0%') {
-										isFrom = true;
-									}
+							childTokens.push(childToken);
+							switch (childToken.type) {
+								case 'close': {
+									depth--;
+									isFrom = false;
+									break;
 								}
-								break;
-							}
-
-							case 'at-rule': {
-								depth++;
-								if (isAnimation) {
-									throw new Error(
-										'Nested at-rule in keyframes ???'
-									);
-								}
-								break;
-							}
-
-							case 'rule': {
-								if (isAnimation && isFrom) {
-									animationRules[childToken.prop] =
-										childToken.value;
-								}
-								break;
-							}
-
-							default:
-								assertNever(childToken);
-						}
-					}
-					const skipCount = childTokens.length;
-
-					callback(
-						isAnimation
-							? {
-									type: 'keyframes',
-									prop,
-									value,
-									token,
-									childTokens,
-									from: animationRules,
-									prevTokens: newTokens,
-									nextTokens: tokens.slice(0),
-							  }
-							: {
-									type: 'at-rule',
-									prop,
-									value,
-									token,
-									childTokens,
-									prevTokens: newTokens,
-									nextTokens: tokens.slice(0),
-							  },
-						(result) => {
-							if (result !== void 0) {
-								if (isAnimation) {
-									// Allow changing animation name
-									if (result !== value) {
-										changed = true;
-										token.value = result;
+								case 'selector': {
+									depth++;
+									if (isAnimation) {
+										const rule = childToken.code;
+										if (rule === 'from' || rule === '0%') {
+											isFrom = true;
+										}
 									}
-									newTokens.push(token);
+									break;
+								}
 
-									// Skip all child tokens, copy them as is
-									for (let i = 0; i < skipCount; i++) {
-										tokens.shift();
-									}
-									newTokens = newTokens.concat(childTokens);
-								} else {
-									// Not animation
-									if (result !== value) {
+								case 'at-rule': {
+									depth++;
+									if (isAnimation) {
 										throw new Error(
-											'Changing value for at-rule is not supported'
+											'Nested at-rule in keyframes ???'
 										);
 									}
-									newTokens.push(token);
+									break;
 								}
-							} else {
-								// Delete token and all child tokens
-								changed = true;
+
+								case 'rule': {
+									if (isAnimation && isFrom) {
+										animationRules[childToken.prop] =
+											childToken.value;
+									}
+									break;
+								}
+
+								default:
+									assertNever(childToken);
+							}
+						}
+						const skipCount = childTokens.length;
+
+						const result = callback(
+							isAnimation
+								? {
+										type: 'keyframes',
+										prop,
+										value,
+										token,
+										childTokens,
+										from: animationRules,
+										prevTokens: newTokens,
+										nextTokens: tokens.slice(0),
+								  }
+								: {
+										type: 'at-rule',
+										prop,
+										value,
+										token,
+										childTokens,
+										prevTokens: newTokens,
+										nextTokens: tokens.slice(0),
+								  }
+						);
+
+						if (result !== undefined) {
+							assertNotOldCode(result);
+
+							if (isAnimation) {
+								// Allow changing animation name
+								if (result !== value) {
+									changed = true;
+									token.value = result;
+								}
+								newTokens.push(token);
+
+								// Skip all child tokens, copy them as is
 								for (let i = 0; i < skipCount; i++) {
 									tokens.shift();
 								}
+								newTokens = newTokens.concat(childTokens);
+							} else {
+								// Not animation
+								if (result !== value) {
+									throw new Error(
+										'Changing value for at-rule is not supported'
+									);
+								}
+								newTokens.push(token);
 							}
-
-							nextToken();
+						} else {
+							// Delete token and all child tokens
+							changed = true;
+							for (let i = 0; i < skipCount; i++) {
+								tokens.shift();
+							}
 						}
-					);
-					return;
-				}
 
-				case 'rule': {
-					const value = token.value;
-					const selectorTokens = selectorStart
-						.map((index) => newTokens[index])
-						.filter((item) => item !== null) as CSSToken[];
-					callback(
-						{
+						break;
+					}
+
+					case 'rule': {
+						const value = token.value;
+						const selectorTokens = selectorStart
+							.map((index) => newTokens[index])
+							.filter((item) => item !== null) as CSSToken[];
+						const result = callback({
 							type: 'global',
 							prop: token.prop,
 							value,
@@ -307,55 +285,87 @@ function parseItem(
 							),
 							prevTokens: newTokens,
 							nextTokens: tokens.slice(0),
-						},
-						(result) => {
-							if (result !== void 0) {
-								if (result !== value) {
-									changed = true;
-									token.value = result;
-								}
-								newTokens.push(token);
-							} else {
-								// Delete token
+						});
+						if (result !== undefined) {
+							assertNotOldCode(result);
+
+							if (result !== value) {
 								changed = true;
+								token.value = result;
 							}
-
-							nextToken();
+							newTokens.push(token);
+						} else {
+							// Delete token
+							changed = true;
 						}
-					);
-					return;
+
+						break;
+					}
+
+					default:
+						assertNever(token);
 				}
-
-				default:
-					assertNever(token);
 			}
-		};
-		nextToken();
-	}
 
-	if (tagName === 'style') {
-		return parseStyleItem(done);
-	}
+			// Done
+			if (changed) {
+				// Update style
+				const tree = tokensTree(
+					newTokens.filter((token) => token !== null) as CSSToken[]
+				);
 
-	// Parse style
-	const attribs = item.element.attribs;
-	if (attribs.style === void 0) {
-		return done();
-	}
+				if (!tree.length) {
+					// Empty
+					$element.remove();
+				} else {
+					const newContent = tokensToString(tree);
+					item.$element.text('\n' + newContent);
+				}
+			}
+		}
 
-	const parsedStyle = parseInlineStyle(attribs.style);
-	if (parsedStyle === null) {
-		// Ignore style
-		$element.removeAttr('style');
-		return done();
-	}
+		// Parse <style> tag
+		if (tagName === 'style') {
+			parseStyleItem();
+			return;
+		}
 
-	// List of properties to parse, status
-	const propsQueue = Object.keys(parsedStyle);
-	let changed = false;
+		// Parse style
+		const attribs = item.element.attribs;
+		if (attribs.style === undefined) {
+			return;
+		}
 
-	// Called when all properties are parsed
-	const parsedProps = () => {
+		const parsedStyle = parseInlineStyle(attribs.style);
+		if (parsedStyle === null) {
+			// Ignore style
+			$element.removeAttr('style');
+			return;
+		}
+
+		// Parse all props
+		let changed = false;
+		for (const prop in parsedStyle) {
+			const value = parsedStyle[prop];
+			const result = callback({
+				type: 'inline',
+				prop,
+				value,
+				item,
+			});
+			assertNotOldCode(result);
+
+			if (result !== value) {
+				changed = true;
+				if (result === undefined) {
+					delete parsedStyle[prop];
+				} else {
+					parsedStyle[prop] = result;
+				}
+			}
+		}
+
+		// Done
 		if (changed) {
 			const newStyle = Object.keys(parsedStyle)
 				.map((key) => key + ':' + parsedStyle[key] + ';')
@@ -366,97 +376,5 @@ function parseItem(
 				$element.attr('style', newStyle);
 			}
 		}
-		done();
-	};
-
-	// Parse next property
-	const nextProp = (): void => {
-		const prop = propsQueue.shift();
-		if (prop === void 0) {
-			return parsedProps();
-		}
-
-		const value = parsedStyle[prop];
-		callback(
-			{
-				type: 'inline',
-				prop,
-				value,
-				item,
-			},
-			(result) => {
-				if (result !== value) {
-					changed = true;
-					if (result === void 0) {
-						delete parsedStyle[prop];
-					} else {
-						parsedStyle[prop] = result;
-					}
-				}
-				nextProp();
-			}
-		);
-	};
-	nextProp();
-}
-
-/**
- * Parse styles in SVG
- *
- * This function finds CSS in SVG, parses it, calls callback for each rule.
- * Callback should return new value (string) or undefined to remove rule.
- * Callback can be asynchronous.
- */
-export async function parseSVGStyle(
-	svg: SVG,
-	callback: ParseSVGStyleCallback
-): Promise<void> {
-	return parseSVG(svg, (item) => {
-		return new Promise((fulfill, reject) => {
-			try {
-				parseItem(
-					item,
-					(styleItem, done) => {
-						try {
-							const result = callback(styleItem);
-							if (result instanceof Promise) {
-								result.then(done).catch(reject);
-							} else {
-								done(result);
-							}
-						} catch (err) {
-							reject(err);
-						}
-					},
-					fulfill
-				);
-			} catch (err) {
-				reject(err);
-			}
-		});
 	});
-}
-
-/**
- * Synchronous version
- */
-export function parseSVGStyleSync(
-	svg: SVG,
-	callback: ParseSVGStyleCallbackSync
-): void {
-	let isSync = true;
-	parseSVGSync(svg, (item) => {
-		parseItem(
-			item,
-			(styleItem, done) => {
-				done(callback(styleItem));
-			},
-			() => {
-				if (!isSync) {
-					throw new Error('parseSVGStyleSync callback was async');
-				}
-			}
-		);
-	});
-	isSync = false;
 }

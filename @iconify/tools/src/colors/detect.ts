@@ -1,5 +1,5 @@
 import type { IconSet } from '../icon-set';
-import { isEmptyColor, parseColorsSync } from './parse';
+import { isEmptyColor, parseColors } from './parse';
 
 /**
  * Detect palette
@@ -21,7 +21,7 @@ export function detectIconSetPalette(iconSet: IconSet): boolean | null {
 			}
 
 			let iconPalette: boolean | null | undefined;
-			parseColorsSync(svg, {
+			parseColors(svg, {
 				callback: (attr, colorStr, color) => {
 					if (!color) {
 						// Something went wrong
@@ -36,7 +36,7 @@ export function detectIconSetPalette(iconSet: IconSet): boolean | null {
 
 					// Check color
 					const isColor = color.type !== 'current';
-					if (iconPalette === void 0) {
+					if (iconPalette === undefined) {
 						// First entry: assign it
 						iconPalette = isColor;
 						return color;
@@ -51,12 +51,12 @@ export function detectIconSetPalette(iconSet: IconSet): boolean | null {
 				},
 			});
 
-			if (iconPalette === void 0) {
+			if (iconPalette === undefined) {
 				// No colors found
 				iconPalette = null;
 			}
 
-			if (palette === void 0) {
+			if (palette === undefined) {
 				// First icon
 				palette = iconPalette;
 			} else if (palette !== iconPalette) {
@@ -67,5 +67,5 @@ export function detectIconSetPalette(iconSet: IconSet): boolean | null {
 		['icon']
 	);
 
-	return palette === void 0 ? null : palette;
+	return palette ?? null;
 }

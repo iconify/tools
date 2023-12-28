@@ -1,7 +1,7 @@
 // SVG class and functions
 export { SVG } from './svg/index';
-export { parseSVG, parseSVGSync } from './svg/parse';
-export { parseSVGStyle, parseSVGStyleSync } from './svg/parse-style';
+export { parseSVG } from './svg/parse';
+export { parseSVGStyle } from './svg/parse-style';
 export { analyseSVGStructure } from './svg/analyse';
 
 // SVG cleanup
@@ -37,8 +37,8 @@ export { downloadPackage } from './download/index';
 export { downloadFile } from './download/api/download';
 
 // Manipulation
-export { parseColors, parseColorsSync, isEmptyColor } from './colors/parse';
-export { validateColors, validateColorsSync } from './colors/validate';
+export { parseColors, isEmptyColor } from './colors/parse';
+export { validateColors } from './colors/validate';
 export { detectIconSetPalette } from './colors/detect';
 export { runSVGO } from './optimise/svgo';
 export { removeFigmaClipPathFromSVG } from './optimise/figma';
@@ -50,8 +50,8 @@ export { cleanupGlobalStyle } from './optimise/global-style';
 
 // Export
 export { exportToDirectory } from './export/directory';
-export { exportIconPackage } from './export/icon-package';
 export { exportJSONPackage } from './export/json-package';
+export { exportIconPackage } from './export/icon-package';
 
 // Misc: files, directories and archives
 export { writeJSONFile } from './misc/write-json';
@@ -65,4 +65,6 @@ export { untar } from './download/helpers/untar';
 export { execAsync } from './misc/exec';
 export { cleanupIconKeyword } from './misc/keyword';
 export { bumpVersion } from './misc/bump-version';
+export { axiosConfig, fetchCallbacks } from './download/api/config';
 export { sendAPIQuery } from './download/api/index';
+export { runConcurrentQueries, defaultQueueParams } from './download/api/queue';

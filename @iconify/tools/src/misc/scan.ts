@@ -63,7 +63,7 @@ function split(filename: string): SplitResult {
 }
 
 function isIgnoredResult(result: unknown) {
-	return result === void 0 || result === false || result === null;
+	return result === undefined || result === false || result === null;
 }
 
 /**

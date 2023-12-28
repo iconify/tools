@@ -23,6 +23,9 @@ export interface ExportJSONPackageOptions
 		ExportOptionsWithCustomFiles {
 	// package.json contents
 	package?: Record<string, unknown>;
+
+	// Callback to update package.json data, allowing to add custom stuff
+	customisePackage?: (contents: Record<string, unknown>) => void;
 }
 
 interface ExportContents {
@@ -73,7 +76,7 @@ export async function exportJSONPackage(
 		icons: exportedJSON.icons,
 	};
 	iconsKeys.forEach((attr) => {
-		if (exportedJSON[attr] !== void 0) {
+		if (exportedJSON[attr] !== undefined) {
 			icons[attr as 'aliases'] = exportedJSON[attr as 'aliases'];
 		}
 	});
@@ -94,11 +97,11 @@ export async function exportJSONPackage(
 				prefix: iconSet.prefix,
 				...exportedJSON.info,
 		  }
-		: void 0;
+		: undefined;
 	const contents: ExportContents = {
 		icons,
 		info,
-		metadata: hasMetadata ? metadata : void 0,
+		metadata: hasMetadata ? metadata : undefined,
 		chars: exportedJSON.chars,
 	};
 
@@ -157,7 +160,7 @@ export async function exportJSONPackage(
 		cjsExports.push(`exports.${attr} = ${attr};`);
 		mjsExports.push(attr);
 
-		if (data !== void 0) {
+		if (data !== undefined) {
 			// Save JSON file
 			await writeJSONFile(`${dir}/${jsonFilename}`, data);
 
@@ -216,6 +219,7 @@ export async function exportJSONPackage(
 	await exportCustomFiles(dir, options, files);
 
 	// Save package.json
+	options.customisePackage?.(packageJSON);
 	await writeJSONFile(dir + '/package.json', packageJSON);
 	files.add('package.json');
 

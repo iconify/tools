@@ -4,7 +4,7 @@ import {
 	badAttributePrefixes,
 	badSoftwareAttributes,
 } from '../data/attributes';
-import { parseSVGStyleSync } from '../parse-style';
+import { parseSVGStyle } from '../parse-style';
 import { runSVGO } from '../../optimise/svgo';
 
 /**
@@ -14,7 +14,7 @@ export function convertStyleToAttrs(svg: SVG): void {
 	let hasStyle = false;
 
 	// Clean up style, removing useless junk
-	parseSVGStyleSync(svg, (item) => {
+	parseSVGStyle(svg, (item) => {
 		if (item.type !== 'inline' && item.type !== 'global') {
 			return item.value;
 		}
@@ -27,7 +27,7 @@ export function convertStyleToAttrs(svg: SVG): void {
 			badSoftwareAttributes.has(prop) ||
 			badAttributePrefixes.has(prop.split('-').shift() as string)
 		) {
-			return void 0;
+			return;
 		}
 
 		hasStyle = true;

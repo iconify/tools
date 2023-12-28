@@ -57,7 +57,7 @@ export async function downloadGitRepo(
 	const { remote, branch } = options;
 
 	// Check for last commit
-	const hasHashInTarget = options.target.indexOf('{hash}') !== -1;
+	const hasHashInTarget = options.target.includes('{hash}');
 	const ifModifiedSince = options.ifModifiedSince;
 	if (ifModifiedSince || hasHashInTarget) {
 		// Get actual hash

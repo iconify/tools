@@ -331,7 +331,7 @@ function cleanPath(path: string): string {
 						}
 
 						// No space if previous entry had dot
-						if (item.params[index - 1].indexOf('.') !== -1) {
+						if (item.params[index - 1].includes('.')) {
 							break;
 						}
 
@@ -350,8 +350,8 @@ function cleanPath(path: string): string {
 /**
  * De-optimise paths. Compressed paths are still not supported by some software.
  */
-export async function deOptimisePaths(svg: SVG): Promise<void> {
-	await parseSVG(svg, (item) => {
+export function deOptimisePaths(svg: SVG) {
+	parseSVG(svg, (item) => {
 		if (item.tagName !== 'path') {
 			return;
 		}

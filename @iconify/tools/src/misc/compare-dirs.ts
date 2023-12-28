@@ -60,7 +60,7 @@ export async function compareDirectories(
 	// Check all files
 	for (let i = 0; i < files1.length; i++) {
 		const file = files1[i];
-		if (files2.indexOf(file) === -1) {
+		if (!files2.includes(file)) {
 			return false;
 		}
 
@@ -85,8 +85,8 @@ export async function compareDirectories(
 		}
 		if (ignoreNewLine) {
 			// Remove space before new line (\r\n -> \n), remove new line at the end
-			content1 = content1.replace(/\s+\n/g, '\n').trimRight();
-			content2 = content2.replace(/\s+\n/g, '\n').trimRight();
+			content1 = content1.replace(/\s+\n/g, '\n').trimEnd();
+			content2 = content2.replace(/\s+\n/g, '\n').trimEnd();
 		}
 		if (ignoreVersions && file.split('/').pop() === 'package.json') {
 			// Ignore versions in package.json

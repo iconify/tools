@@ -1,5 +1,5 @@
 import type { SVG } from '../../svg';
-import { parseSVGSync } from '../parse';
+import { parseSVG } from '../parse';
 import {
 	allValidTags,
 	animateMotionChildTags,
@@ -59,7 +59,7 @@ export function checkBadTags(svg: SVG, options?: CheckBadTagsOptions): void {
 		...options,
 	};
 
-	parseSVGSync(svg, (item) => {
+	parseSVG(svg, (item) => {
 		const tagName = item.tagName;
 		const $element = item.$element;
 

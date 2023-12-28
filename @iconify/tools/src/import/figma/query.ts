@@ -4,6 +4,10 @@ import {
 	clearAPICache,
 	getAPICache,
 } from '../../download/api/cache';
+import {
+	ConcurrentQueriesParamsWithCount,
+	runConcurrentQueries,
+} from '../../download/api/queue';
 import type { APICacheOptions, APIQueryParams } from '../../download/api/types';
 import type { DocumentNotModified } from '../../download/types/modified';
 import type {
@@ -16,7 +20,30 @@ import type {
 	FigmaFilesQueryOptions,
 	FigmaImagesQueryOptions,
 } from './types/options';
-import type { FigmaNodesImportResult } from './types/result';
+import type { FigmaIconNode, FigmaNodesImportResult } from './types/result';
+
+/**
+ * Extra parameters added to runConcurrentQueries()
+ *
+ * Can be used to identify failed items in onfail callback
+ */
+interface FigmaIconNodeWithURL extends FigmaIconNode {
+	url: string;
+}
+
+export type FigmaConcurrentQueriesParamsFunction =
+	| 'figmaImagesQuery'
+	| 'figmaDownloadImages';
+
+export interface FigmaConcurrentQueriesParams<
+	T extends FigmaConcurrentQueriesParamsFunction
+> {
+	// Function that is called
+	function: T;
+
+	// Payload as array. Use `index` from onFail() to get correct item from array
+	payload: T extends 'figmaImagesQuery' ? string[][] : FigmaIconNodeWithURL[];
+}
 
 /**
  * Compare last modified dates
@@ -180,87 +207,108 @@ export async function figmaImagesQuery(
 	const maxLength = 2048 - uri.length;
 	const svgOptions = options.svgOptions || {};
 
-	let ids: string[] = [];
-	let idsLength = 0;
-	let lastError: number | undefined;
-	let found = 0;
-
 	// Send query
-	const query = async () => {
-		const params = new URLSearchParams({
-			ids: ids.join(','),
-			format: 'svg',
-		});
-		if (options.version) {
-			params.set('version', options.version);
-		}
-		if (svgOptions.includeID) {
-			params.set('svg_include_id', 'true');
-		}
-		if (svgOptions.simplifyStroke) {
-			params.set('svg_simplify_stroke', 'true');
-		}
-		if (svgOptions.useAbsoluteBounds) {
-			params.set('use_absolute_bounds', 'true');
-		}
-
-		const data = await sendAPIQuery(
-			{
-				uri,
-				params,
-				headers: {
-					'X-FIGMA-TOKEN': options.token,
-				},
-			},
-			cache
-		);
-		if (typeof data === 'number') {
-			lastError = data;
-			return;
-		}
-		try {
-			const parsedData = JSON.parse(data) as FigmaAPIImagesResponse;
-			const images = parsedData.images;
-			for (const id in images) {
-				const node = nodes.icons[id];
-				const target = images[id];
-				if (node && target) {
-					node.url = target;
-					found++;
-				}
+	const query = (ids: string[]): Promise<FigmaAPIImagesResponse> => {
+		return new Promise((resolve, reject) => {
+			const params = new URLSearchParams({
+				ids: ids.join(','),
+				format: 'svg',
+			});
+			if (options.version) {
+				params.set('version', options.version);
 			}
-		} catch (err) {
-			return;
-		}
+			if (svgOptions.includeID) {
+				params.set('svg_include_id', 'true');
+			}
+			if (svgOptions.simplifyStroke) {
+				params.set('svg_simplify_stroke', 'true');
+			}
+			if (svgOptions.useAbsoluteBounds) {
+				params.set('use_absolute_bounds', 'true');
+			}
+
+			sendAPIQuery(
+				{
+					uri,
+					params,
+					headers: {
+						'X-FIGMA-TOKEN': options.token,
+					},
+				},
+				cache
+			)
+				.then((data) => {
+					if (typeof data === 'number') {
+						reject(data);
+						return;
+					}
+
+					let parsedData: FigmaAPIImagesResponse;
+					try {
+						parsedData = JSON.parse(data) as FigmaAPIImagesResponse;
+					} catch {
+						reject('Bad API response');
+						return;
+					}
+
+					resolve(parsedData);
+				})
+				.catch(reject);
+		});
 	};
 
-	// Loop all ids
+	// Generate queue
+	let ids: string[] = [];
+	let idsLength = 0;
 	const allKeys = Object.keys(nodes.icons);
+	const queue: string[][] = [];
 	for (let i = 0; i < allKeys.length; i++) {
 		const id = allKeys[i];
 		ids.push(id);
 		idsLength += id.length + 1;
 		if (idsLength >= maxLength) {
-			await query();
+			queue.push(ids.slice(0));
 			ids = [];
 			idsLength = 0;
 		}
 	}
 	if (idsLength) {
-		await query();
+		queue.push(ids.slice(0));
 	}
 
-	// Check data
-	if (!found) {
-		if (lastError) {
-			throw new Error(
-				`Error retrieving image data from API${
-					lastError ? ': ' + lastError.toString() : ''
-				}`
-			);
-		} else {
-			throw new Error('No valid icon layers were found');
+	// Get data
+	const queryParams: ConcurrentQueriesParamsWithCount<FigmaAPIImagesResponse> &
+		FigmaConcurrentQueriesParams<'figmaImagesQuery'> = {
+		// Params
+		total: queue.length,
+		callback: (index) => query(queue[index]),
+		// Payload to identify failed items in onfail callback
+		function: 'figmaImagesQuery',
+		payload: queue,
+	};
+	const results = await runConcurrentQueries(queryParams);
+
+	// Parse data
+	let found = 0;
+	results.forEach((data) => {
+		if (!data) {
+			// skip
+			return;
 		}
+		const images = data.images;
+		for (const id in images) {
+			const node = nodes.icons[id];
+			const target = images[id];
+			if (node && target) {
+				node.url = target;
+				found++;
+			}
+		}
+	});
+
+	// Validate results
+	if (!found) {
+		throw new Error('No valid icon layers were found');
 	}
 	nodes.generatedIconsCount = found;
 	return nodes;
@@ -276,37 +324,55 @@ export async function figmaDownloadImages(
 	const icons = nodes.icons;
 	const ids = Object.keys(icons);
 	let count = 0;
-	let lastError: number | undefined;
 
+	// Filter data
+	const filtered: FigmaIconNodeWithURL[] = [];
 	for (let i = 0; i < ids.length; i++) {
 		const id = ids[i];
 		const item = icons[id];
-		if (!item.url) {
-			continue;
-		}
-		const result = await sendAPIQuery(
-			{
-				uri: item.url,
-			},
-			cache
-		);
-		if (typeof result === 'number') {
-			lastError = result;
-			continue;
-		}
-		if (typeof result === 'string') {
-			count++;
-			item.content = result;
+		if (item.url) {
+			filtered.push(item as FigmaIconNodeWithURL);
 		}
 	}
 
+	// Download everything
+	const params: ConcurrentQueriesParamsWithCount<undefined> &
+		FigmaConcurrentQueriesParams<'figmaDownloadImages'> = {
+		// Params
+		total: filtered.length,
+		callback: (index) => {
+			return new Promise((resolve, reject) => {
+				const item = filtered[index];
+				sendAPIQuery(
+					{
+						uri: item.url,
+					},
+					cache
+				)
+					.then((data) => {
+						if (typeof data === 'string') {
+							count++;
+							item.content = data;
+							resolve(undefined);
+						} else {
+							reject(data);
+						}
+					})
+					.catch(reject);
+			});
+		},
+		// Payload to identify failed items in onfail callback
+		function: 'figmaDownloadImages',
+		payload: filtered,
+	};
+	await runConcurrentQueries(params);
+
+	// Make sure something was downloaded
 	if (!count) {
-		throw new Error(
-			`Error retrieving images${
-				lastError ? ': ' + lastError.toString() : ''
-			}`
-		);
+		throw new Error('Error retrieving images');
 	}
+
+	// Update counter and return node
 	nodes.downloadedIconsCount = count;
 	return nodes;
 }

@@ -1,6 +1,6 @@
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import type { IconifyIcon } from '@iconify/types';
-import { trimSVG, iconToSVG } from '@iconify/utils';
+import { trimSVG, iconToSVG, prettifySVG } from '@iconify/utils';
 import type { CommonIconProps } from '../icon-set/types';
 import type { IconifyIconCustomisations } from '@iconify/utils/lib/customisations/defaults';
 import type { CheerioElement } from '../misc/cheerio';
@@ -20,7 +20,7 @@ export type { IconifyIconCustomisations, IconifyIcon };
  */
 export class SVG {
 	// Cheerio tree, initialized in load()
-	public $svg!: cheerio.Root;
+	public $svg!: cheerio.CheerioAPI;
 
 	// Dimensions, initialized in load()
 	public viewBox!: ViewBox;
@@ -42,7 +42,7 @@ export class SVG {
 
 			// Generate SVG
 			let svgAttributes = ' xmlns="http://www.w3.org/2000/svg"';
-			if (data.body.indexOf('xlink:') !== -1) {
+			if (data.body.includes('xlink:')) {
 				svgAttributes += ' xmlns:xlink="http://www.w3.org/1999/xlink"';
 			}
 			for (const key in data.attributes) {
@@ -60,7 +60,7 @@ export class SVG {
 		const box = this.viewBox;
 
 		// Add missing viewBox attribute
-		if ($root.attr('viewBox') === void 0) {
+		if ($root.attr('viewBox') === undefined) {
 			$root.attr(
 				'viewBox',
 				`${box.left} ${box.top} ${box.width} ${box.height}`
@@ -68,10 +68,10 @@ export class SVG {
 		}
 
 		// Add missing width/height
-		if ($root.attr('width') === void 0) {
+		if ($root.attr('width') === undefined) {
 			$root.attr('width', box.width.toString());
 		}
-		if ($root.attr('height') === void 0) {
+		if ($root.attr('height') === undefined) {
 			$root.attr('height', box.height.toString());
 		}
 
@@ -83,6 +83,14 @@ export class SVG {
 	 */
 	toMinifiedString(customisations?: IconifyIconCustomisations): string {
 		return trimSVG(this.toString(customisations));
+	}
+
+	/**
+	 * Get SVG as string with whitespaces
+	 */
+	toPrettyString(customisations?: IconifyIconCustomisations): string {
+		const str = this.toMinifiedString(customisations);
+		return prettifySVG(str) ?? str;
 	}
 
 	/**
@@ -176,7 +184,7 @@ export class SVG {
 
 		// Get dimensions and origin
 		const viewBox = $root.attr('viewBox');
-		if (viewBox !== void 0) {
+		if (viewBox !== undefined) {
 			const list = viewBox.split(' ');
 
 			this.viewBox = {
