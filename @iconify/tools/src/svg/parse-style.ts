@@ -211,7 +211,7 @@ export function parseSVGStyle(svg: SVG, callback: ParseSVGStyleCallback): void {
 										from: animationRules,
 										prevTokens: newTokens,
 										nextTokens: tokens.slice(0),
-								  }
+									}
 								: {
 										type: 'at-rule',
 										prop,
@@ -220,7 +220,7 @@ export function parseSVGStyle(svg: SVG, callback: ParseSVGStyleCallback): void {
 										childTokens,
 										prevTokens: newTokens,
 										nextTokens: tokens.slice(0),
-								  }
+									}
 						);
 
 						if (result !== undefined) {
