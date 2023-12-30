@@ -34,12 +34,14 @@ function checkClipPathNode(
 	}
 
 	// Check child nodes: should have only <rect />
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 	const children = clipNode.children.filter((node) => node.type !== 'text');
 	if (children.length !== 1) {
 		return false;
 	}
 
 	const childNode = children[0];
+	// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 	if (childNode.type !== 'tag' || childNode.children.length) {
 		// Not tag or has children
 		return false;
@@ -141,6 +143,7 @@ export function removeFigmaClipPathFromSVG(svg: SVG): boolean {
 	let clipID: string | undefined;
 	for (let i = 0; i < children.length; i++) {
 		const node = children[i];
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 		if (node.type === 'tag') {
 			const tagName = node.tagName;
 			if (
@@ -198,6 +201,7 @@ export function removeFigmaClipPathFromSVG(svg: SVG): boolean {
 	const findClipPath = () => {
 		for (let i = 0; i < children.length; i++) {
 			const node = children[i];
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 			if (node.type === 'tag') {
 				const tagName = node.tagName;
 				if (defsTag.has(tagName)) {
@@ -206,6 +210,7 @@ export function removeFigmaClipPathFromSVG(svg: SVG): boolean {
 					for (let j = 0; j < defsChildren.length; j++) {
 						const childNode = defsChildren[j];
 						if (
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 							childNode.type === 'tag' &&
 							childNode.tagName === 'clipPath'
 						) {
@@ -214,6 +219,7 @@ export function removeFigmaClipPathFromSVG(svg: SVG): boolean {
 								// Check if <defs> is empty
 								const validChildren = node.children.filter(
 									(test) => {
+										// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 										if (test.type === 'text') {
 											return false;
 										}

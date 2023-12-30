@@ -40,11 +40,11 @@ export async function exportToDirectory(
 		options.autoHeight === false
 			? {
 					height: '1em',
-			  }
+				}
 			: {
 					width: 'auto',
 					height: 'auto',
-			  };
+				};
 
 	// Function to save icon to file
 	const store = async (name: string, target: string) => {

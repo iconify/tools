@@ -96,7 +96,7 @@ export async function exportJSONPackage(
 		? {
 				prefix: iconSet.prefix,
 				...exportedJSON.info,
-		  }
+			}
 		: undefined;
 	const contents: ExportContents = {
 		icons,

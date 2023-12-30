@@ -30,11 +30,11 @@ type Callback<T> = (
 type AsyncCallback<T> = Callback<T | Promise<T>>;
 
 export type ScanDirectoryCallback = AsyncCallback<
-	ScanDirectoryCallbackStringResult | unknown
+	ScanDirectoryCallbackStringResult | undefined
 >;
 
 export type ScanDirectorySyncCallback = Callback<
-	ScanDirectoryCallbackStringResult | unknown
+	ScanDirectoryCallbackStringResult | undefined
 >;
 
 /**

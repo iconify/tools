@@ -52,12 +52,12 @@ interface DownloadNPMPackage {
 export type DownloadParamsMixin<T extends DownloadSourceType> = T extends 'git'
 	? DownloadGitRepo
 	: T extends 'github'
-	? DownloadGitHubRepo
-	: T extends 'gitlab'
-	? DownloadGitLabRepo
-	: T extends 'npm'
-	? DownloadNPMPackage
-	: never;
+		? DownloadGitHubRepo
+		: T extends 'gitlab'
+			? DownloadGitLabRepo
+			: T extends 'npm'
+				? DownloadNPMPackage
+				: never;
 
 /**
  * Combinations

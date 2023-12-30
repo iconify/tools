@@ -67,7 +67,7 @@ export function getSVGOPlugins(options: GetSVGOPluginOptions): PluginConfig[] {
 					},
 					// 'removeOffCanvasPaths', // bugged for some icons
 					'reusePaths',
-			  ]) as PluginConfig[]),
+				]) as PluginConfig[]),
 
 		// Clean up IDs, first run
 		// Sometimes bugs out on animated icons. Do not use with animations!
@@ -162,7 +162,7 @@ export function runSVGO(svg: SVG, options: SVGOOptions = {}) {
 					? () => {
 							// Return prefix with number
 							return prefix + (counter++).toString(36);
-					  }
+						}
 					: prefix
 			);
 		}
