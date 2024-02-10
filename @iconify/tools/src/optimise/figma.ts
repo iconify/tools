@@ -1,6 +1,9 @@
+import { colorToString, stringToColor } from '@iconify/utils';
 import { CheerioElement } from '../misc/cheerio';
 import { SVG } from '../svg';
+import { cleanupInlineStyle } from '../svg/cleanup/inline-style';
 import { defsTag, maskTags, symbolTag } from '../svg/data/tags';
+import { parseSVG } from '../svg/parse';
 import { unwrapEmptyGroup } from './unwrap';
 
 /**
@@ -53,14 +56,11 @@ function checkClipPathNode(
 	};
 	delete attribs['fill'];
 
-	// Check for fill
-	const fill = childNode.attribs['fill']?.toLowerCase();
-	if (
-		fill !== 'white' &&
-		fill !== '#fff' &&
-		fill !== '#ffffff' &&
-		fill !== undefined
-	) {
+	// Check for fill: should be white or undefined
+	const fill = childNode.attribs['fill'];
+	const colorValue = fill ? stringToColor(fill) : null;
+	const colorString = colorValue ? colorToString(colorValue) : null;
+	if (fill && colorString !== '#fff') {
 		console.warn(
 			'Unxepected fill on clip path:',
 			childNode.attribs['fill']
@@ -79,27 +79,6 @@ function checkClipPathNode(
 			}
 			delete attribs['width'];
 			delete attribs['height'];
-
-			// Check for other attributes
-			for (const attr in childNode.attribs) {
-				const value = childNode.attribs[attr];
-				switch (attr) {
-					case 'rx':
-					case 'ry':
-					case 'x':
-					case 'y':
-						if (value === '0') {
-							delete attribs[attr];
-						}
-						break;
-
-					case 'transform':
-						if (value === '') {
-							delete attribs[attr];
-						}
-						break;
-				}
-			}
 			break;
 		}
 
@@ -163,6 +142,73 @@ function remove(svg: SVG): boolean {
 	// HTML changes
 	let content = svg.toString();
 	const backup = content;
+	const isPenpot = content.includes('frame-clip-def');
+
+	// Clean up Penpot mess
+	if (isPenpot) {
+		cleanupInlineStyle(svg);
+		parseSVG(svg, (item) => {
+			const tagName = item.tagName;
+			for (const attr in item.element.attribs) {
+				const value = item.element.attribs[attr];
+				switch (attr) {
+					case 'id':
+						// Keep ID only in clip paths, masks and symbols
+						if (!maskTags.has(tagName) && !symbolTag.has(tagName)) {
+							item.$element.removeAttr(attr);
+						}
+						break;
+
+					case 'class':
+					case 'xmlns:xlink':
+					case 'version':
+						// Class is not used, other attributes are junk
+						item.$element.removeAttr(attr);
+						break;
+
+					case 'transform': {
+						// Remove empty transforms
+						const trimmed = value
+							.replace(/\s+/g, '')
+							.replace(/\.0+/g, '');
+						if (!trimmed || trimmed === 'matrix(1,0,0,1,0,0)') {
+							item.$element.removeAttr(attr);
+						}
+						break;
+					}
+
+					case 'rx':
+					case 'ry':
+					case 'x':
+					case 'y':
+						// Remove unnecessary attributes
+						if (value === '0') {
+							item.$element.removeAttr(attr);
+						}
+						break;
+
+					case 'fill-opacity':
+					case 'stroke-opacity':
+					case 'opacity':
+						// Remove unnecessary attributes
+						if (value === '1') {
+							item.$element.removeAttr(attr);
+						}
+						break;
+
+					case 'fill':
+					case 'stroke': {
+						// Clean up colors
+						const colorValue = stringToColor(value);
+						if (colorValue?.type === 'rgb') {
+							item.$element.attr(attr, colorToString(colorValue));
+						}
+					}
+				}
+			}
+		});
+		content = svg.toString();
+	}
 
 	// Check for duplicate clip paths (Penpot bug)
 	const clipPathBlocks = content.match(
@@ -176,9 +222,6 @@ function remove(svg: SVG): boolean {
 		const lines = content.split(split);
 		content = lines.shift()! + split + lines.join('');
 	}
-
-	// Remove Penpot classes
-	content = content.replaceAll('class="frame-clip-def frame-clip"', '');
 
 	// Remove <defs> to simplify parsing
 	if (content.includes('<defs>')) {
@@ -235,39 +278,26 @@ function remove(svg: SVG): boolean {
 		return false;
 	}
 
-	// Check clip path node
-	// Returns CheckClipPathResult on success, false on error, undefined if this is not clip path we need
-	const checkClipPath = (node: CheerioElement) => {
-		const id = node.attribs['id'];
-		if (id !== clipID) {
-			return;
-		}
-
-		// Found clip path: check it
-		const result = checkClipPathNode(
-			node,
-			svg.viewBox.width,
-			svg.viewBox.height
-		);
-
-		// Remove element
-		cheerio(node).remove();
-		return result;
-	};
-
 	// Find clip path
 	const findClipPath = () => {
 		for (let i = 0; i < children.length; i++) {
 			const node = children[i];
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-			if (node.type === 'tag') {
-				const tagName = node.tagName;
-				if (tagName === 'clipPath') {
-					const result = checkClipPath(node);
-					if (result !== undefined) {
-						return result;
-					}
+			if (node.type === 'tag' && node.tagName === 'clipPath') {
+				const id = node.attribs['id'];
+				if (id === clipID) {
+					// Found clip path: check it
+					const result = checkClipPathNode(
+						node,
+						svg.viewBox.width,
+						svg.viewBox.height
+					);
+
+					// Remove element
+					cheerio(node).remove();
+					return result;
 				}
+				return;
 			}
 		}
 	};
@@ -295,7 +325,8 @@ function remove(svg: SVG): boolean {
 }
 
 /**
- * Removes clip path from SVG, which Figma and Penpot add to icons that might have overflowing elements
+ * Removes clip path from SVG, which Figma and Penpot add to icons that might have overflowing elements.
+ * Also removes mess generated by Penpot
  *
  * Function was originally designed for Figma only, but later added support for Penpot
  */
