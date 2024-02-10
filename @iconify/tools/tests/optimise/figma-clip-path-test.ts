@@ -58,4 +58,37 @@ describe('Cleaning up Figma clip paths', () => {
 			`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g stroke-width="1.5"><path d="M0 0z" stroke="currentColor"/></g></svg>`
 		);
 	});
+
+	test('Penpot export with double clip path bug', () => {
+		const svg = new SVG(
+			`<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="12" xmlns="http://www.w3.org/2000/svg" height="12" id="screenshot-baf79b5d-6e18-809d-8003-dfd1a1d08748" viewBox="0 0 12 12" style="-webkit-print-color-adjust: exact;" fill="none" version="1.1">
+	<g id="shape-baf79b5d-6e18-809d-8003-dfd1a1d08748">
+		<defs>
+			<clipPath class="frame-clip-def frame-clip" id="frame-clip-baf79b5d-6e18-809d-8003-dfd1a1d08748-rumext-id-1">
+				<rect rx="0" ry="0" x="0" y="0" width="12" height="12" transform="" />
+			</clipPath>
+		</defs>
+		<g clip-path="url(#frame-clip-baf79b5d-6e18-809d-8003-dfd1a1d08748-rumext-id-1)">
+			<clipPath class="frame-clip-def frame-clip" id="frame-clip-baf79b5d-6e18-809d-8003-dfd1a1d08748-rumext-id-1">
+				<rect rx="0" ry="0" x="0" y="0" width="12" height="12" transform="" />
+			</clipPath>
+			<g class="fills" id="fills-baf79b5d-6e18-809d-8003-dfd1a1d08748">
+				<rect rx="0" ry="0" x="0" y="0" transform="" width="12" height="12" class="frame-background" />
+			</g>
+			<g class="frame-children">
+				<g id="shape-baf79b5d-6e18-809d-8003-dfceca1d6601">
+					<g class="fills" id="fills-baf79b5d-6e18-809d-8003-dfceca1d6601">
+						<path rx="0" ry="0" d="M6.000,5.293L10.789,0.503L11.496,1.211L6.706,6.001L11.496,10.790L10.789,11.497L5.999,6.707L1.210,11.497L0.503,10.790L5.293,6.000L0.502,1.211L1.210,0.504L6.000,5.293ZL6.000,5.293ZZ" style="fill: rgb(0, 0, 0);" />
+					</g>
+				</g>
+			</g>
+		</g>
+	</g>
+</svg>`
+		);
+		removeFigmaClipPathFromSVG(svg);
+		expect(svg.toMinifiedString()).toBe(
+			`<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="12" xmlns="http://www.w3.org/2000/svg" height="12" id="screenshot-baf79b5d-6e18-809d-8003-dfd1a1d08748" viewBox="0 0 12 12" style="-webkit-print-color-adjust: exact;" fill="none" version="1.1"><g><g class="fills" id="fills-baf79b5d-6e18-809d-8003-dfd1a1d08748"><rect rx="0" ry="0" x="0" y="0" transform="" width="12" height="12" class="frame-background"/></g><g class="frame-children"><g id="shape-baf79b5d-6e18-809d-8003-dfceca1d6601"><g class="fills" id="fills-baf79b5d-6e18-809d-8003-dfceca1d6601"><path rx="0" ry="0" d="M6.000,5.293L10.789,0.503L11.496,1.211L6.706,6.001L11.496,10.790L10.789,11.497L5.999,6.707L1.210,11.497L0.503,10.790L5.293,6.000L0.502,1.211L1.210,0.504L6.000,5.293ZL6.000,5.293ZZ" style="fill: rgb(0, 0, 0);"/></g></g></g></g></svg>`
+		);
+	});
 });

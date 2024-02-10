@@ -464,6 +464,11 @@
 			"require": "./lib/optimise/svgo.cjs",
 			"import": "./lib/optimise/svgo.mjs"
 		},
+		"./lib/optimise/unwrap": {
+			"types": "./lib/optimise/unwrap.d.ts",
+			"require": "./lib/optimise/unwrap.cjs",
+			"import": "./lib/optimise/unwrap.mjs"
+		},
 		"./lib/svg/analyse": {
 			"types": "./lib/svg/analyse.d.ts",
 			"require": "./lib/svg/analyse.cjs",

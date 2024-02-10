@@ -1,6 +1,7 @@
 import { CheerioElement } from '../misc/cheerio';
 import { SVG } from '../svg';
 import { defsTag, maskTags, symbolTag } from '../svg/data/tags';
+import { unwrapEmptyGroup } from './unwrap';
 
 /**
  * Checks if number is tiny, used to remove bad Figma transformations
@@ -53,8 +54,13 @@ function checkClipPathNode(
 	delete attribs['fill'];
 
 	// Check for fill
-	const fill = (childNode.attribs['fill'] ?? '').toLowerCase();
-	if (fill !== 'white' && fill !== '#fff' && fill !== '#ffffff') {
+	const fill = childNode.attribs['fill']?.toLowerCase();
+	if (
+		fill !== 'white' &&
+		fill !== '#fff' &&
+		fill !== '#ffffff' &&
+		fill !== undefined
+	) {
 		console.warn(
 			'Unxepected fill on clip path:',
 			childNode.attribs['fill']
@@ -73,6 +79,27 @@ function checkClipPathNode(
 			}
 			delete attribs['width'];
 			delete attribs['height'];
+
+			// Check for other attributes
+			for (const attr in childNode.attribs) {
+				const value = childNode.attribs[attr];
+				switch (attr) {
+					case 'rx':
+					case 'ry':
+					case 'x':
+					case 'y':
+						if (value === '0') {
+							delete attribs[attr];
+						}
+						break;
+
+					case 'transform':
+						if (value === '') {
+							delete attribs[attr];
+						}
+						break;
+				}
+			}
 			break;
 		}
 
@@ -125,16 +152,47 @@ const urlStart = 'url(#';
 const urlEnd = ')';
 
 /**
- * Removes clip path from SVG, which Figma adds to icons that might have overflowing elements
+ * Does the job
+ *
+ * Can mess with SVG because on failure backup will be restored
  */
-export function removeFigmaClipPathFromSVG(svg: SVG): boolean {
+function remove(svg: SVG): boolean {
+	// Remove empty group that might be present at root
+	unwrapEmptyGroup(svg);
+
+	// HTML changes
+	let content = svg.toString();
+	const backup = content;
+
+	// Check for duplicate clip paths (Penpot bug)
+	const clipPathBlocks = content.match(
+		/<clipPath[^>]*>[\s\S]+?<\/clipPath>/g
+	);
+	if (
+		clipPathBlocks?.length === 2 &&
+		clipPathBlocks[0] === clipPathBlocks[1]
+	) {
+		const split = clipPathBlocks[0];
+		const lines = content.split(split);
+		content = lines.shift()! + split + lines.join('');
+	}
+
+	// Remove Penpot classes
+	content = content.replaceAll('class="frame-clip-def frame-clip"', '');
+
+	// Remove <defs> to simplify parsing
+	if (content.includes('<defs>')) {
+		content = content.replace(/<\/?defs>/g, '');
+	}
+
+	if (content !== backup) {
+		svg.load(content);
+	}
+
 	// Split clip path and shapes
 	const cheerio = svg.$svg;
 	const $root = svg.$svg(':root');
 	const children = $root.children();
-
-	// Create backup
-	const backup = svg.toString();
 
 	// Shapes
 	const shapesToClip: CheerioElement[] = [];
@@ -204,38 +262,6 @@ export function removeFigmaClipPathFromSVG(svg: SVG): boolean {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 			if (node.type === 'tag') {
 				const tagName = node.tagName;
-				if (defsTag.has(tagName)) {
-					// Check child elements
-					const defsChildren = node.children;
-					for (let j = 0; j < defsChildren.length; j++) {
-						const childNode = defsChildren[j];
-						if (
-							// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-							childNode.type === 'tag' &&
-							childNode.tagName === 'clipPath'
-						) {
-							const result = checkClipPath(childNode);
-							if (result !== undefined) {
-								// Check if <defs> is empty
-								const validChildren = node.children.filter(
-									(test) => {
-										// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-										if (test.type === 'text') {
-											return false;
-										}
-										return true;
-									}
-								);
-								if (!validChildren.length) {
-									cheerio(node).remove();
-								}
-
-								return result;
-							}
-						}
-					}
-				}
-
 				if (tagName === 'clipPath') {
 					const result = checkClipPath(node);
 					if (result !== undefined) {
@@ -247,8 +273,7 @@ export function removeFigmaClipPathFromSVG(svg: SVG): boolean {
 	};
 	const clipPath = findClipPath();
 	if (!clipPath) {
-		// Restore backup and return
-		svg.load(backup);
+		// No clip path found
 		return false;
 	}
 
@@ -260,7 +285,6 @@ export function removeFigmaClipPathFromSVG(svg: SVG): boolean {
 		for (const attr in attribs) {
 			if (node.attribs[attr] !== undefined) {
 				// Conflict!
-				svg.load(backup);
 				return false;
 			}
 			cheerio(node).attr(attr, attribs[attr]);
@@ -268,4 +292,27 @@ export function removeFigmaClipPathFromSVG(svg: SVG): boolean {
 	}
 
 	return true;
+}
+
+/**
+ * Removes clip path from SVG, which Figma and Penpot add to icons that might have overflowing elements
+ *
+ * Function was originally designed for Figma only, but later added support for Penpot
+ */
+export function removeFigmaClipPathFromSVG(svg: SVG): boolean {
+	// Create backup
+	const backup = svg.toString();
+
+	// Do stuff
+	try {
+		if (remove(svg)) {
+			return true;
+		}
+	} catch {
+		//
+	}
+
+	// Failed
+	svg.load(backup);
+	return false;
 }
