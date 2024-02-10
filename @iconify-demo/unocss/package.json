@@ -11,18 +11,18 @@
 	"dependencies": {
 		"@iconify/tools": "workspace:^",
 		"@unocss/reset": "^0.58.5",
-		"vue": "^3.4.15"
+		"vue": "^3.4.18"
 	},
 	"devDependencies": {
 		"@antfu/ni": "^0.21.12",
-		"@iconify-json/carbon": "^1.1.28",
+		"@iconify-json/carbon": "^1.1.29",
 		"@iconify/types": "^2.0.0",
 		"@iconify/utils": "^2.1.22",
-		"@types/node": "^20.11.16",
+		"@types/node": "^20.11.17",
 		"@vitejs/plugin-vue": "^4.6.2",
 		"typescript": "^5.3.3",
 		"unocss": "^0.58.5",
-		"vite": "^5.0.12",
+		"vite": "^5.1.1",
 		"vue-tsc": "^1.8.27"
 	}
 }
