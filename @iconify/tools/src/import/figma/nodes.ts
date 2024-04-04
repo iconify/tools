@@ -88,7 +88,8 @@ export function getFigmaIconNodes(
 			case 'CANVAS':
 			case 'FRAME':
 			case 'GROUP':
-			case 'SECTION': {
+			case 'SECTION':
+			case 'COMPONENT_SET': {
 				const parentItem: FigmaParentNodeData = {
 					...node,
 					type: parentNodeType,

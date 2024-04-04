@@ -7,7 +7,8 @@ export type FigmaImportParentNodeType =
 	| 'CANVAS'
 	| 'FRAME'
 	| 'GROUP'
-	| 'SECTION';
+	| 'SECTION'
+	| 'COMPONENT_SET';
 
 // Node types that can be icons
 export type FigmaImportIconNodeType = IconFigmaNode['type'];
