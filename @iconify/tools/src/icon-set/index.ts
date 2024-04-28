@@ -405,8 +405,7 @@ export class IconSet {
 		const attributes = Object.keys(result.attributes)
 			.map(
 				(key) =>
-					` ${key}="${
-						result.attributes[key as keyof typeof result.attributes]
+					` ${key}="${result.attributes[key as keyof typeof result.attributes]
 					}"`
 			)
 			.join('');
@@ -741,6 +740,10 @@ export class IconSet {
 	 * Rename icon
 	 */
 	rename(oldName: string, newName: string): boolean {
+		if (oldName === newName) {
+			return false
+		}
+
 		const entries = this.entries;
 
 		// Remove existing item with new name
