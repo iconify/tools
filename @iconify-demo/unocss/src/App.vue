@@ -26,7 +26,7 @@
 				class="i-custom-svg:loading text-blue-600 hover:text-red-600 icon24 inline-icon"
 			></span>
 			<span
-				class="i-custom-svg:loadin2 text-blue-600 hover:text-red-600 icon24 inline-icon"
+				class="i-custom-svg:loading2 text-blue-600 hover:text-red-600 icon24 inline-icon"
 			></span>
 		</p>
 	</div>

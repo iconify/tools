@@ -1,10 +1,9 @@
 import { promises as fs } from 'node:fs';
 import { defineConfig, presetIcons, presetUno } from 'unocss';
 import { compareColors, stringToColor } from '@iconify/utils/lib/colors';
-import type { IconSet } from '@iconify/tools';
 import {
 	deOptimisePaths,
-	importDirectory,
+	importDirectorySync,
 	parseColors,
 	runSVGO,
 } from '@iconify/tools';
@@ -13,62 +12,52 @@ import type { CustomIconLoader } from '@iconify/utils/lib/loader/types';
 /**
  * Load custom icon set
  */
-function loadCustomIconSet(): CustomIconLoader {
-	const promise = new Promise<IconSet>((resolve, reject) => {
-		importDirectory('assets/svg', {
-			prefix: 'svg',
-		}).then((iconSet) => {
-			// Parse all icons: optimise, clean up palette
-			iconSet
-				.forEachSync((name) => {
-					const svg = iconSet.toSVG(name)!;
-
-					// Change color to `currentColor`
-					const blackColor = stringToColor('black')!;
-
-					parseColors(svg, {
-						defaultColor: 'currentColor',
-						callback: (attr, colorStr, color) => {
-							// console.log('Color:', colorStr, color);
-
-							// Change black to 'currentColor'
-							if (color && compareColors(color, blackColor))
-								return 'currentColor';
-
-							switch (color?.type) {
-								case 'none':
-								case 'current':
-									return color;
-							}
-
-							throw new Error(
-								`Unexpected color "${colorStr}" in attribute ${attr}`
-							);
-						},
-					});
-
-					// Optimise
-					runSVGO(svg);
-
-					// Update paths for compatibility with old software
-					deOptimisePaths(svg);
-
-					// Update icon in icon set
-					iconSet.fromSVG(name, svg);
-				});
-
-			// Resolve with icon set
-			resolve(iconSet);
-				
-		}).catch((err) => {
-			reject(err);
-		});
+function loadCustomIconSet() {
+	// Load icon set
+	const iconSet = importDirectorySync('assets/svg', {
+		prefix: 'svg',
 	});
 
-	return async (name) => {
-		const iconSet = await promise;
-		return iconSet.toSVG(name)?.toMinifiedString();
-	};
+	// Parse all icons: optimise, clean up palette
+	iconSet.forEachSync((name) => {
+		const svg = iconSet.toSVG(name)!;
+
+		// Change color to `currentColor`
+		const blackColor = stringToColor('black')!;
+
+		parseColors(svg, {
+			defaultColor: 'currentColor',
+			callback: (attr, colorStr, color) => {
+				// console.log('Color:', colorStr, color);
+
+				// Change black to 'currentColor'
+				if (color && compareColors(color, blackColor))
+					return 'currentColor';
+
+				switch (color?.type) {
+					case 'none':
+					case 'current':
+						return color;
+				}
+
+				throw new Error(
+					`Unexpected color "${colorStr}" in attribute ${attr}`
+				);
+			},
+		});
+
+		// Optimise
+		runSVGO(svg);
+
+		// Update paths for compatibility with old software
+		deOptimisePaths(svg);
+
+		// Update icon in icon set
+		iconSet.fromSVG(name, svg);
+	});
+
+	// Return as function
+	return () => iconSet.export();
 }
 
 /**

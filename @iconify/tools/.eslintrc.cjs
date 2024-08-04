@@ -26,6 +26,7 @@ module.exports = {
 		'no-unused-vars': ['off'],
 		// '@typescript-eslint/no-unused-vars-experimental': ['error'],
 		'@typescript-eslint/restrict-template-expressions': ['off'],
+		'@typescript-eslint/no-unnecessary-type-assertion': ['off'],
 	},
 	overrides: [
 		{
