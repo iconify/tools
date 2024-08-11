@@ -1,7 +1,8 @@
-import * as cheerio from 'cheerio';
+import type { Element } from 'domhandler';
+import type { Cheerio } from 'cheerio';
 
 /**
  * Shortcuts for Cheerio elements
  */
-export type CheerioElement = cheerio.Element;
-export type WrappedCheerioElement = cheerio.Cheerio<cheerio.Element>;
+export type CheerioElement = Element;
+export type WrappedCheerioElement = Cheerio<CheerioElement>;

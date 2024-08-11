@@ -169,6 +169,7 @@ export class SVG {
 
 		// Load content
 		this.$svg = cheerio.load(content.trim(), {
+			// @ts-expect-error Legacy attribute, kept because Cheerio types are a unstable
 			lowerCaseAttributeNames: false,
 			xmlMode: true,
 		});

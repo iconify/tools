@@ -1,4 +1,4 @@
-import { CheerioElement } from '../../misc/cheerio';
+import type { CheerioElement } from '../../misc/cheerio';
 import type { SVG } from '../../svg';
 import {
 	badAttributes,
@@ -112,6 +112,7 @@ export function cleanupSVGRoot(svg: SVG) {
 
 		$root.children().each((_index, child) => {
 			const $child = cheerio(child);
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 			if (child.type !== 'tag') {
 				$child.appendTo($wrapper);
 				return;

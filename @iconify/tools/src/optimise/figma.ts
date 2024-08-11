@@ -1,5 +1,5 @@
 import { colorToString, stringToColor } from '@iconify/utils';
-import { CheerioElement } from '../misc/cheerio';
+import type { CheerioElement } from '../misc/cheerio';
 import { SVG } from '../svg';
 import { cleanupInlineStyle } from '../svg/cleanup/inline-style';
 import { defsTag, maskTags, symbolTag } from '../svg/data/tags';

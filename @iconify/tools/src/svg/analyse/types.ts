@@ -1,4 +1,4 @@
-import { CheerioElement } from '../../misc/cheerio';
+import type { CheerioElement } from '../../misc/cheerio';
 
 /**
  * Options
