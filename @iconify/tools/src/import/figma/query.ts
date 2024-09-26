@@ -36,7 +36,7 @@ export type FigmaConcurrentQueriesParamsFunction =
 	| 'figmaDownloadImages';
 
 export interface FigmaConcurrentQueriesParams<
-	T extends FigmaConcurrentQueriesParamsFunction
+	T extends FigmaConcurrentQueriesParamsFunction,
 > {
 	// Function that is called
 	function: T;
@@ -62,7 +62,7 @@ function identicalDates(actual: unknown, expected: string | Date): boolean {
  * Get Figma files
  */
 export async function figmaFilesQuery<
-	T extends FigmaIfModifiedSinceOption & FigmaFilesQueryOptions
+	T extends FigmaIfModifiedSinceOption & FigmaFilesQueryOptions,
 >(
 	options: T,
 	cache?: APICacheOptions
@@ -217,15 +217,18 @@ export async function figmaImagesQuery(
 			if (options.version) {
 				params.set('version', options.version);
 			}
-			if (svgOptions.includeID) {
-				params.set('svg_include_id', 'true');
-			}
-			if (svgOptions.simplifyStroke) {
-				params.set('svg_simplify_stroke', 'true');
-			}
-			if (svgOptions.useAbsoluteBounds) {
-				params.set('use_absolute_bounds', 'true');
-			}
+			params.set(
+				'svg_include_id',
+				svgOptions.includeID ? 'true' : 'false'
+			);
+			params.set(
+				'svg_simplify_stroke',
+				svgOptions.simplifyStroke ? 'true' : 'false'
+			);
+			params.set(
+				'use_absolute_bounds',
+				svgOptions.useAbsoluteBounds ? 'true' : 'false'
+			);
 
 			sendAPIQuery(
 				{
