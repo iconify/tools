@@ -4,3 +4,4 @@ node_modules
 debug_packages
 lerna-debug.log
 @debug
+dist/
