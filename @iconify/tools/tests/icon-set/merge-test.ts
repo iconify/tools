@@ -9,10 +9,10 @@ describe('Merging icon sets', () => {
 		const set1 = new IconSet({
 			prefix: 'foo',
 			icons: {
-				'chrome-maximize': {
+				ChromeMaximize: {
 					body: '<g fill="currentColor"><path d="M3 3v10h10V3H3zm9 9H4V4h8v8z"/></g>',
 				},
-				'chrome-minimize': {
+				ChromeMinimize: {
 					body: '<g fill="currentColor"><path d="M14 8v1H3V8h11z"/></g>',
 				},
 			},
@@ -52,16 +52,16 @@ describe('Merging icon sets', () => {
 			prefix: 'bar',
 			lastModified,
 			icons: {
-				'remove': {
+				remove: {
 					body: '<g fill="currentColor"><path d="M15 8H1V7h14v1z"/></g>',
 					width: 16,
 					height: 16,
 				},
-				'chrome-maximize': {
+				ChromeMaximize: {
 					body: '<g fill="currentColor"><path d="M3 3v10h10V3H3zm9 9H4V4h8v8z"/></g>',
 					hidden: true,
 				},
-				'chrome-minimize': {
+				ChromeMinimize: {
 					body: '<g fill="currentColor"><path d="M14 8v1H3V8h11z"/></g>',
 					hidden: true,
 				},

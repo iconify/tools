@@ -34,7 +34,7 @@ describe('Adding tags', () => {
 					body: '<g />',
 				},
 				// Hidden icon
-				baz: {
+				hidden: {
 					body: '<g />',
 					hidden: true,
 					width: 24,

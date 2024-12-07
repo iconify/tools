@@ -10,8 +10,8 @@ describe('Finding matching icons', () => {
 				bar: {
 					body: '<g id="bar" />',
 				},
-				baz: {
-					body: '<g id="baz" />',
+				TestIcon: {
+					body: '<g id="TestIcon" />',
 					width: 20,
 					height: 20,
 				},
@@ -38,17 +38,17 @@ describe('Finding matching icons', () => {
 		expect(
 			findMatchingIcon(iconSet, {
 				...defaultIconProps,
-				body: '<g id="baz" />',
+				body: '<g id="TestIcon" />',
 				width: 20,
 				height: 20,
 			})
-		).toBe('baz');
+		).toBe('TestIcon');
 
 		// Bad dimensions
 		expect(
 			findMatchingIcon(iconSet, {
 				...defaultIconProps,
-				body: '<g id="baz" />',
+				body: '<g id="TestIcon" />',
 			})
 		).toBeNull();
 
@@ -69,7 +69,7 @@ describe('Finding matching icons', () => {
 				bar: {
 					body: '<g />',
 				},
-				baz: {
+				TestIcon: {
 					body: '<g />',
 					width: 20,
 					height: 20,
@@ -87,12 +87,12 @@ describe('Finding matching icons', () => {
 				},
 				// 2 variations, first one is hidden
 				alias3: {
-					parent: 'baz',
+					parent: 'TestIcon',
 					hFlip: true,
 					hidden: true,
 				},
 				alias4: {
-					parent: 'baz',
+					parent: 'TestIcon',
 					hFlip: true,
 				},
 				alias5: {
@@ -143,7 +143,7 @@ describe('Finding matching icons', () => {
 			})
 		).toBeNull();
 
-		// 'baz' and its aliases
+		// 'TestIcon' and its aliases
 		expect(
 			findMatchingIcon(iconSet, {
 				...defaultIconProps,
@@ -151,7 +151,7 @@ describe('Finding matching icons', () => {
 				width: 20,
 				height: 20,
 			})
-		).toBe('baz');
+		).toBe('TestIcon');
 
 		// Matches both 'alias3' and 'alias4', but first one is hidden
 		expect(
