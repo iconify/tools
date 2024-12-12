@@ -11,7 +11,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@iconify/tools": "workspace:^"
+		"@iconify/tools": "workspace:^",
+		"@iconify/types": "^2.0.0"
 	},
 	"devDependencies": {
 		"@types/node": "^20.17.9",
