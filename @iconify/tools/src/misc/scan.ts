@@ -96,7 +96,13 @@ export async function scanDirectory(
 				continue;
 			}
 
-			const stat = await fs.stat(path + subdir + filename);
+			let stat: Stats;
+			try {
+				stat = await fs.stat(path + subdir + filename);
+			} catch (err) {
+				// Failed
+				continue;
+			}
 			if (stat.isDirectory()) {
 				if (subdirs) {
 					await scan(subdir + filename + '/');
@@ -167,7 +173,13 @@ export function scanDirectorySync(
 				continue;
 			}
 
-			const stat = statSync(path + subdir + filename);
+			let stat: Stats;
+			try {
+				stat = statSync(path + subdir + filename);
+			} catch (err) {
+				// Failed
+				continue;
+			}
 			if (stat.isDirectory()) {
 				if (subdirs) {
 					scan(subdir + filename + '/');
