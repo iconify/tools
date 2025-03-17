@@ -17,6 +17,8 @@ export const sizeTags = {
 
 /**
  * Add tags to icon set
+ *
+ * @deprecated
  */
 export function addTagsToIconSet(
 	iconSet: IconSet,

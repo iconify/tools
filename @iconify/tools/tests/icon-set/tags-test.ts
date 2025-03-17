@@ -26,6 +26,15 @@ describe('Adding tags', () => {
 	test('Square icons with same grid', () => {
 		const iconSetData: IconifyJSON = {
 			prefix: 'foo',
+			info: {
+				name: 'Test',
+				author: {
+					name: 'Test',
+				},
+				license: {
+					title: 'MIT',
+				},
+			},
 			icons: {
 				foo: {
 					body: '<g />',
@@ -46,6 +55,14 @@ describe('Adding tags', () => {
 
 		const tags = addTagsToIconSet(iconSet);
 		expect(tags).toEqual([`${sizeTags.gridPrefix}16`, sizeTags.square]);
+		expect(iconSet.export()).toEqual({
+			...iconSetData,
+			info: {
+				...iconSetData.info,
+				total: 2,
+				tags,
+			},
+		});
 	});
 
 	test('Icons with different width', () => {

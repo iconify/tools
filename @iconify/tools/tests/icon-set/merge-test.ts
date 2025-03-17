@@ -6,7 +6,7 @@ import { loadFixture } from '../../lib/tests/helpers';
 
 describe('Merging icon sets', () => {
 	test('Simple merge', () => {
-		const set1 = new IconSet({
+		const oldSet = new IconSet({
 			prefix: 'foo',
 			icons: {
 				ChromeMaximize: {
@@ -29,7 +29,7 @@ describe('Merging icon sets', () => {
 				},
 			},
 		});
-		const set2 = new IconSet({
+		const newSet = new IconSet({
 			prefix: 'bar',
 			icons: {
 				remove: {
@@ -39,10 +39,10 @@ describe('Merging icon sets', () => {
 		});
 
 		// Icons are different
-		expect(hasIconDataBeenModified(set1, set2)).toBe(true);
+		expect(hasIconDataBeenModified(oldSet, newSet)).toBe(true);
 
 		// Merge icon sets
-		const merged = mergeIconSets(set1, set2);
+		const merged = mergeIconSets(oldSet, newSet);
 
 		// Merge should have updated lastModified
 		const lastModified = merged.lastModified;
@@ -71,6 +71,85 @@ describe('Merging icon sets', () => {
 		};
 		expect(merged.export()).toEqual(expected);
 		expect(merged.count()).toBe(1);
+	});
+
+	test('Simple merge, reversed', () => {
+		const newSet = new IconSet({
+			prefix: 'foo',
+			icons: {
+				ChromeMaximize: {
+					body: '<g fill="currentColor"><path d="M3 3v10h10V3H3zm9 9H4V4h8v8z"/></g>',
+				},
+				ChromeMinimize: {
+					body: '<g fill="currentColor"><path d="M14 8v1H3V8h11z"/></g>',
+				},
+			},
+			width: 24,
+			height: 24,
+			// Info should be copied from the new icon set
+			info: {
+				name: 'Foo',
+				author: {
+					name: '',
+				},
+				license: {
+					title: '',
+				},
+				tags: ['Foo'],
+			},
+		});
+		const oldSet = new IconSet({
+			prefix: 'bar',
+			icons: {
+				remove: {
+					body: '<g fill="currentColor"><path d="M15 8H1V7h14v1z"/></g>',
+				},
+			},
+		});
+
+		// Icons are different
+		expect(hasIconDataBeenModified(oldSet, newSet)).toBe(true);
+
+		// Merge icon sets
+		const merged = mergeIconSets(oldSet, newSet);
+
+		// Merge should have updated lastModified
+		const lastModified = merged.lastModified;
+		expect(lastModified).toBeTruthy();
+
+		const expected: IconifyJSON = {
+			prefix: 'foo',
+			lastModified,
+			info: {
+				name: 'Foo',
+				author: {
+					name: '',
+				},
+				license: {
+					title: '',
+				},
+				total: 2,
+				tags: ['Foo'],
+			},
+			icons: {
+				remove: {
+					body: '<g fill="currentColor"><path d="M15 8H1V7h14v1z"/></g>',
+					width: 16,
+					height: 16,
+					hidden: true,
+				},
+				ChromeMaximize: {
+					body: '<g fill="currentColor"><path d="M3 3v10h10V3H3zm9 9H4V4h8v8z"/></g>',
+				},
+				ChromeMinimize: {
+					body: '<g fill="currentColor"><path d="M14 8v1H3V8h11z"/></g>',
+				},
+			},
+			width: 24,
+			height: 24,
+		};
+		expect(merged.export()).toEqual(expected);
+		expect(merged.count()).toBe(2);
 	});
 
 	test('Swap icon and alias', () => {
