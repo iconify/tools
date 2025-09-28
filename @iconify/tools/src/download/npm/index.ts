@@ -45,7 +45,7 @@ export interface DownloadNPMPackageResult extends DownloadSourceMixin<'npm'> {
  * Download NPM package
  */
 export async function downloadNPMPackage<
-	T extends IfModifiedSinceOption & DownloadNPMPackageOptions
+	T extends IfModifiedSinceOption & DownloadNPMPackageOptions,
 >(options: T): Promise<DownloadNPMPackageResult | DocumentNotModified>;
 export async function downloadNPMPackage(
 	options: DownloadNPMPackageOptions

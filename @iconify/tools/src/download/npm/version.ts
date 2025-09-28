@@ -17,7 +17,12 @@ export async function getNPMVersion(
 	options: NPMPackageOptions
 ): Promise<GetNPMVersionResult> {
 	const tag = options.tag || 'latest';
-	const result = await execAsync(`npm view ${options.package}@${tag} --json`);
+	const result = await execAsync(
+		`npm view ${options.package}@${tag} --json`,
+		{
+			maxBuffer: 1024 * 1024 * 8,
+		}
+	);
 
 	interface NPMViewResponse {
 		'name': string;
