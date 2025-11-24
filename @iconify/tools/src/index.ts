@@ -66,5 +66,6 @@ export { execAsync } from './misc/exec';
 export { cleanupIconKeyword } from './misc/keyword';
 export { bumpVersion } from './misc/bump-version';
 export { axiosConfig, fetchCallbacks } from './download/api/config';
+export { setFetch } from './download/api/fetch';
 export { sendAPIQuery } from './download/api/index';
 export { runConcurrentQueries, defaultQueueParams } from './download/api/queue';

@@ -27,7 +27,6 @@
 	"dependencies": {
 		"@iconify/types": "^2.0.0",
 		"@iconify/utils": "^2.3.0",
-		"axios": "^1.13.2",
 		"cheerio": "^1.1.2",
 		"domhandler": "^5.0.3",
 		"extract-zip": "^2.0.1",

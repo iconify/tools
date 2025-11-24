@@ -1,7 +1,7 @@
-import axios from 'axios';
 import { apiCacheKey, getAPICache, storeAPICache } from './cache';
 import type { APICacheOptions, APIQueryParams } from './types';
 import { axiosConfig, fetchCallbacks } from './config';
+import { getFetch } from './fetch.js';
 
 /**
  * Send API query
@@ -43,23 +43,25 @@ async function sendQuery(query: APIQueryParams): Promise<number | string> {
 		return value ?? 404;
 	}
 
+	const fetch = getFetch();
 	try {
-		const response = await axios.get(url, {
+		const response = await fetch(url, {
 			...axiosConfig,
 			headers,
-			responseType: 'text',
 		});
 
 		if (response.status !== 200) {
 			return fail(response.status);
 		}
-		if (typeof response.data !== 'string') {
+
+		const data = await response.text();
+		if (typeof data !== 'string') {
 			return fail();
 		}
 
 		fetchCallbacks.onSuccess?.(url, query);
 
-		return response.data;
+		return data;
 	} catch (err) {
 		return fail();
 	}

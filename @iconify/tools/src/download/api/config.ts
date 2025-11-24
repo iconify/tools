@@ -1,11 +1,11 @@
-import { AxiosRequestConfig } from 'axios';
+import type { RequestOptions } from 'node:http';
 import { APIQueryParams } from './types';
 
 /**
  * Axios config, customisable
  */
 export const axiosConfig: Omit<
-	AxiosRequestConfig,
+	RequestOptions,
 	'headers' | 'responseType' | 'url' | 'method' | 'data'
 > = {
 	// Empty by default. Add properties
