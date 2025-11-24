@@ -27,7 +27,7 @@
 	"dependencies": {
 		"@iconify/types": "^2.0.0",
 		"@iconify/utils": "^2.3.0",
-		"axios": "^1.12.1",
+		"axios": "^1.13.2",
 		"cheerio": "^1.1.2",
 		"domhandler": "^5.0.3",
 		"extract-zip": "^2.0.1",
@@ -38,7 +38,7 @@
 	},
 	"devDependencies": {
 		"@types/jest": "^29.5.14",
-		"@types/node": "^24.3.3",
+		"@types/node": "^24.10.1",
 		"@typescript-eslint/eslint-plugin": "^6.21.0",
 		"@typescript-eslint/parser": "^6.21.0",
 		"cross-env": "^7.0.3",
@@ -47,9 +47,9 @@
 		"eslint-plugin-prettier": "^5.5.4",
 		"jest": "^29.7.0",
 		"prettier": "^3.6.2",
-		"rimraf": "^6.0.1",
-		"ts-jest": "^29.4.1",
-		"typescript": "^5.9.2",
+		"rimraf": "^6.1.2",
+		"ts-jest": "^29.4.5",
+		"typescript": "^5.9.3",
 		"unbuild": "^2.0.0"
 	},
 	"exports": {

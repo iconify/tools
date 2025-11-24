@@ -9,16 +9,16 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"vue": "^3.5.17"
+		"vue": "^3.5.25"
 	},
 	"devDependencies": {
 		"@iconify/tools": "workspace:^",
 		"@iconify/utils": "^2.3.0",
 		"@vitejs/plugin-vue": "^5.2.4",
-		"typescript": "^5.8.3",
+		"typescript": "^5.9.3",
 		"unconfig": "^0.4.5",
 		"unplugin-icons": "^0.18.5",
 		"unplugin-vue-components": "^0.27.5",
-		"vite": "^5.4.19"
+		"vite": "^5.4.21"
 	}
 }
