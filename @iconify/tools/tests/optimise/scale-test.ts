@@ -1,5 +1,5 @@
-import { SVG } from '../../lib/svg';
-import { scaleSVG } from '../../lib/optimise/scale';
+import { SVG } from '../../src/svg/index.js';
+import { scaleSVG } from '../../src/optimise/scale.js';
 
 describe('Scaling icon', () => {
 	test('Scale by 20', () => {

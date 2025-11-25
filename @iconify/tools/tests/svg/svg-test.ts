@@ -1,6 +1,6 @@
-import { SVG } from '../../lib/svg';
-import type { ViewBox } from '../../lib/svg';
-import { loadFixture } from '../../lib/tests/helpers';
+import { SVG } from '../../src/svg/index.js';
+import type { ViewBox } from '../../src/svg/index.js';
+import { loadFixture } from '../../src/tests/helpers.js';
 
 describe('Loading SVG', () => {
 	test('Simple SVG', () => {

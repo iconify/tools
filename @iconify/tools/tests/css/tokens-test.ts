@@ -1,7 +1,7 @@
-import type { CSSToken, CSSTreeToken } from '../../lib/css/parser/types';
-import { getTokens } from '../../lib/css/parser/tokens';
-import { tokensTree } from '../../lib/css/parser/tree';
-import { tokensToString } from '../../lib/css/parser/export';
+import type { CSSToken, CSSTreeToken } from '../../src/css/parser/types.js';
+import { getTokens } from '../../src/css/parser/tokens.js';
+import { tokensTree } from '../../src/css/parser/tree.js';
+import { tokensToString } from '../../src/css/parser/export.js';
 
 describe('getTokens()', () => {
 	test('Simple code', () => {

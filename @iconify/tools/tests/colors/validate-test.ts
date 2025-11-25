@@ -1,7 +1,7 @@
-import { SVG } from '../../lib/svg';
-import { validateColors } from '../../lib/colors/validate';
-import { stringToColor } from '@iconify/utils/lib/colors';
-import { loadFixture } from '../../lib/tests/helpers';
+import { stringToColor } from '@iconify/utils/lib/colors/index.js';
+import { SVG } from '../../src/svg/index.js';
+import { validateColors } from '../../src/colors/validate.js';
+import { loadFixture } from '../../src/tests/helpers.js';
 
 describe('Validating colors', () => {
 	test('Icon without colors', () => {

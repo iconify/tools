@@ -1,5 +1,5 @@
-import { SVG } from '../../lib/svg';
-import { deOptimisePaths } from '../../lib/optimise/flags';
+import { SVG } from '../../src/svg/index.js';
+import { deOptimisePaths } from '../../src/optimise/flags.js';
 
 describe('De-optimise paths', () => {
 	test('Should de-compress arcs', () => {

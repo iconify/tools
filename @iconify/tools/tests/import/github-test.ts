@@ -2,9 +2,9 @@ import { readFile } from 'node:fs/promises';
 import {
 	downloadGitHubRepo,
 	DownloadGitHubRepoResult,
-} from '../../lib/download/github';
-import { prepareDirectoryForExport } from '../../lib/export/helpers/prepare';
-import { isTestingRemote } from '../../lib/tests/helpers';
+} from '../../src/download/github/index.js';
+import { prepareDirectoryForExport } from '../../src/export/helpers/prepare.js';
+import { isTestingRemote } from '../../src/tests/helpers.js';
 
 const target = 'cache/github';
 

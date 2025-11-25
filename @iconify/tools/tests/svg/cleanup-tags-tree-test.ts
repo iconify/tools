@@ -1,7 +1,7 @@
-import { SVG } from '../../lib/svg';
-import { blankIconSet } from '../../lib/icon-set';
-import { checkBadTags } from '../../lib/svg/cleanup/bad-tags';
-import { loadFixture } from '../../lib/tests/helpers';
+import { SVG } from '../../src/svg/index.js';
+import { blankIconSet } from '../../src/icon-set/index.js';
+import { checkBadTags } from '../../src/svg/cleanup/bad-tags.js';
+import { loadFixture } from '../../src/tests/helpers.js';
 
 const goodExamples: string[] = [
 	'animate.svg',

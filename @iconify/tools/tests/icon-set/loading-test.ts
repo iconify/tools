@@ -1,11 +1,11 @@
 import type { IconifyInfo, IconifyJSON } from '@iconify/types';
-import { IconSet } from '../../lib/icon-set';
+import { IconSet } from '../../src/icon-set/index.js';
 import type {
 	IconSetIcon,
 	IconSetIconVariation,
 	ResolvedIconifyIcon,
-} from '../../lib/icon-set/types';
-import { loadFixture } from '../../lib/tests/helpers';
+} from '../../src/icon-set/types.js';
+import { loadFixture } from '../../src/tests/helpers.js';
 
 describe('Loading icon set', () => {
 	test('Simple icon set', () => {

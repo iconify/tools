@@ -1,5 +1,5 @@
-import { SVG } from '../../lib/svg';
-import { cleanupSVGRoot } from '../../lib/svg/cleanup/root-svg';
+import { SVG } from '../../src/svg/index.js';
+import { cleanupSVGRoot } from '../../src/svg/cleanup/root-svg.js';
 
 describe('Cleaning up SVG root element', () => {
 	test('Moving fill to content', () => {

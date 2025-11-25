@@ -1,6 +1,6 @@
-import { SVG } from '../../lib/svg';
-import { parseSVGStyle } from '../../lib/svg/parse-style';
-import { loadFixture } from '../../lib/tests/helpers';
+import { SVG } from '../../src/svg/index.js';
+import { parseSVGStyle } from '../../src/svg/parse-style.js';
+import { loadFixture } from '../../src/tests/helpers.js';
 
 describe('Parsing style', () => {
 	test('Global style', () => {

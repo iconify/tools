@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { SVG } from '../../lib/svg';
-import { analyseSVGStructure } from '../../lib/svg/analyse';
+import { SVG } from '../../src/svg/index.js';
+import { analyseSVGStructure } from '../../src/svg/analyse.js';
 import type {
 	AnalyseSVGStructureResult,
 	LinkToElementWithID,
 	ElementsTreeItem,
-} from '../../lib/svg/analyse/types';
+} from '../../src/svg/analyse/types.js';
 
 /**
  * Generate data to test `ids` property

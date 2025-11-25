@@ -1,8 +1,8 @@
 import {
 	importDirectory,
 	importDirectorySync,
-} from '../../lib/import/directory';
-import { cleanupIconKeyword } from '../../lib/misc/keyword';
+} from '../../src/import/directory.js';
+import { cleanupIconKeyword } from '../../src/misc/keyword.js';
 
 // Content of imported icons
 const importedSetIcon =
@@ -119,7 +119,7 @@ describe('Importing directory', () => {
 			let threw = false;
 			try {
 				importDirectorySync('tests/fixtures');
-			} catch (err) {
+			} catch {
 				threw = true;
 			}
 			expect(threw).toBeTruthy();

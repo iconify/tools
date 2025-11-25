@@ -2,9 +2,9 @@ import { readFile } from 'node:fs/promises';
 import {
 	downloadNPMPackage,
 	DownloadNPMPackageResult,
-} from '../../lib/download/npm';
-import { prepareDirectoryForExport } from '../../lib/export/helpers/prepare';
-import { isTestingRemote } from '../../lib/tests/helpers';
+} from '../../src/download/npm/index.js';
+import { prepareDirectoryForExport } from '../../src/export/helpers/prepare.js';
+import { isTestingRemote } from '../../src/tests/helpers.js';
 
 const target = 'cache/npm';
 

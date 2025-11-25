@@ -1,8 +1,8 @@
 import type { IconifyJSON } from '@iconify/types';
-import { IconSet } from '../../lib/icon-set';
-import { mergeIconSets } from '../../lib/icon-set/merge';
-import { hasIconDataBeenModified } from '../../lib/icon-set/modified';
-import { loadFixture } from '../../lib/tests/helpers';
+import { IconSet } from '../../src/icon-set/index.js';
+import { mergeIconSets } from '../../src/icon-set/merge.js';
+import { hasIconDataBeenModified } from '../../src/icon-set/modified.js';
+import { loadFixture } from '../../src/tests/helpers.js';
 
 describe('Merging icon sets', () => {
 	test('Simple merge', () => {

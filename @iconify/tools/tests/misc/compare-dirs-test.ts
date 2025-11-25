@@ -1,4 +1,4 @@
-import { compareDirectories } from '../../lib/misc/compare-dirs';
+import { compareDirectories } from '../../src/misc/compare-dirs.js';
 
 describe('Comparing directories', () => {
 	const rootDir = 'tests/fixtures/compare1';

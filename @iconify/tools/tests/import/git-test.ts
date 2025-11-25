@@ -1,7 +1,10 @@
 import { readFile } from 'node:fs/promises';
-import { downloadGitRepo, DownloadGitRepoResult } from '../../lib/download/git';
-import { prepareDirectoryForExport } from '../../lib/export/helpers/prepare';
-import { isTestingRemote } from '../../lib/tests/helpers';
+import {
+	downloadGitRepo,
+	DownloadGitRepoResult,
+} from '../../src/download/git/index.js';
+import { prepareDirectoryForExport } from '../../src/export/helpers/prepare.js';
+import { isTestingRemote } from '../../src/tests/helpers.js';
 
 const target = 'cache/git';
 

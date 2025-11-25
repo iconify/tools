@@ -1,10 +1,10 @@
 import type { IconifyJSON } from '@iconify/types';
-import { IconSet } from '../../lib/icon-set';
+import { IconSet } from '../../src/icon-set/index.js';
 import {
 	addTagsToIconSet,
 	sizeTags,
 	paletteTags,
-} from '../../lib/icon-set/tags';
+} from '../../src/icon-set/tags.js';
 
 describe('Adding tags', () => {
 	test('Empty icon set', () => {

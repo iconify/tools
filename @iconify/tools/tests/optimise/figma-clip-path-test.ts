@@ -1,5 +1,5 @@
-import { SVG } from '../../lib/svg';
-import { removeFigmaClipPathFromSVG } from '../../lib/optimise/figma';
+import { SVG } from '../../src/svg/index.js';
+import { removeFigmaClipPathFromSVG } from '../../src/optimise/figma.js';
 
 describe('Cleaning up Figma clip paths', () => {
 	test('Basic icon', () => {

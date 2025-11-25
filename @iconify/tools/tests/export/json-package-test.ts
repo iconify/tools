@@ -1,8 +1,8 @@
 import type { IconifyJSON } from '@iconify/types';
 import { rm, lstat, readFile } from 'node:fs/promises';
-import { exportJSONPackage } from '../../lib/export/json-package';
-import { IconSet } from '../../lib/icon-set';
-import { scanDirectory } from '../../lib/misc/scan';
+import { exportJSONPackage } from '../../src/export/json-package.js';
+import { IconSet } from '../../src/icon-set/index.js';
+import { scanDirectory } from '../../src/misc/scan.js';
 
 // Check if file or directory exists
 async function exists(filename: string): Promise<boolean> {

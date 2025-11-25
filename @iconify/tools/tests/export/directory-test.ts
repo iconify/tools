@@ -1,7 +1,7 @@
 import { rm, lstat } from 'node:fs/promises';
-import { exportToDirectory } from '../../lib/export/directory';
-import { IconSet } from '../../lib/icon-set';
-import { scanDirectory } from '../../lib/misc/scan';
+import { exportToDirectory } from '../../src/export/directory.js';
+import { IconSet } from '../../src/icon-set/index.js';
+import { scanDirectory } from '../../src/misc/scan.js';
 
 // Check if file or directory exists
 async function exists(filename: string): Promise<boolean> {

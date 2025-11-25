@@ -1,4 +1,4 @@
-import { runConcurrentQueries } from '../../lib/download/api/queue';
+import { runConcurrentQueries } from '../../src/download/api/queue.js';
 
 describe('Testing concurrency', () => {
 	test('Simple queue', async () => {

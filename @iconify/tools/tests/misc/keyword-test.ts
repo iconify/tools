@@ -1,4 +1,4 @@
-import { cleanupIconKeyword } from '../../lib/misc/keyword';
+import { cleanupIconKeyword } from '../../src/misc/keyword.js';
 
 describe('Icon keywords', () => {
 	test('Converting strings', () => {

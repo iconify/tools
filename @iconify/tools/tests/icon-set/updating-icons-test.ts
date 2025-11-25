@@ -1,6 +1,6 @@
 import type { IconifyJSON } from '@iconify/types';
-import { blankIconSet } from '../../lib/icon-set';
-import { SVG } from '../../lib/svg';
+import { blankIconSet } from '../../src/icon-set/index.js';
+import { SVG } from '../../src/svg/index.js';
 
 function minify(str: string): string {
 	return (

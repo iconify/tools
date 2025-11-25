@@ -1,4 +1,4 @@
-import { findEndOfQuotedString } from '../../lib/css/parser/strings';
+import { findEndOfQuotedString } from '../../src/css/parser/strings.js';
 
 describe('findEndOfQuotedString()', () => {
 	test('Simple code', () => {

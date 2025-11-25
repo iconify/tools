@@ -1,5 +1,5 @@
-import { SVG } from '../../lib/svg';
-import { convertSVGToMask } from '../../lib/optimise/mask';
+import { SVG } from '../../src/svg/index.js';
+import { convertSVGToMask } from '../../src/optimise/mask.js';
 
 describe('Converting icon to mask', () => {
 	test('Simple icon', () => {

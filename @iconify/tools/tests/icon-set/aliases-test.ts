@@ -1,7 +1,7 @@
 import type { IconifyIcon, IconifyJSON } from '@iconify/types';
 import { getIconData } from '@iconify/utils/lib/icon-set/get-icon';
-import { IconSet } from '../../lib/icon-set';
-import type { ResolvedIconifyIcon } from '../../lib/icon-set/types';
+import { IconSet } from '../../src/icon-set/index.js';
+import type { ResolvedIconifyIcon } from '../../src/icon-set/types.js';
 
 describe('Working with aliases', () => {
 	test('Resolving aliases', () => {

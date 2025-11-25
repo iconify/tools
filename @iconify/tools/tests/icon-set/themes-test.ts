@@ -1,5 +1,5 @@
 import type { IconifyJSON } from '@iconify/types';
-import { IconSet } from '../../lib/icon-set';
+import { IconSet } from '../../src/icon-set/index.js';
 
 describe('Checking themes', () => {
 	test('Suffixes', () => {

@@ -1,6 +1,6 @@
 import { defaultIconProps } from '@iconify/utils/lib/icon/defaults';
-import { IconSet } from '../../lib/icon-set';
-import { findMatchingIcon } from '../../lib/icon-set/match';
+import { IconSet } from '../../src/icon-set/index.js';
+import { findMatchingIcon } from '../../src/icon-set/match.js';
 
 describe('Finding matching icons', () => {
 	test('Simple match', () => {

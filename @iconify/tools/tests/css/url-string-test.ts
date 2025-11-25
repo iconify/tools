@@ -1,4 +1,4 @@
-import { findEndOfURL } from '../../lib/css/parser/strings';
+import { findEndOfURL } from '../../src/css/parser/strings.js';
 
 describe('findEndOfURL()', () => {
 	test('Simple code', () => {

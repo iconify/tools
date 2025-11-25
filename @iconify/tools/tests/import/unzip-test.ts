@@ -1,6 +1,6 @@
 import { rm } from 'node:fs/promises';
-import { unzip } from '../../lib/download/helpers/unzip';
-import { scanDirectory } from '../../lib/misc/scan';
+import { unzip } from '../../src/download/helpers/unzip.js';
+import { scanDirectory } from '../../src/misc/scan.js';
 
 describe('Unzip', () => {
 	test('Simple package', async () => {

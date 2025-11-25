@@ -1,4 +1,4 @@
-import { bumpVersion } from '../../lib/misc/bump-version';
+import { bumpVersion } from '../../src/misc/bump-version.js';
 
 describe('Version number', () => {
 	test('Bumping version', () => {
