@@ -28,9 +28,9 @@
 		"domhandler": "^5.0.3",
 		"extract-zip": "^2.0.1",
 		"local-pkg": "^1.1.2",
+		"modern-tar": "^0.7.2",
 		"pathe": "^2.0.3",
-		"svgo": "^4.0.0",
-		"tar": "^7.5.2"
+		"svgo": "^4.0.0"
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3.3.1",
