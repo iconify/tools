@@ -10,6 +10,10 @@
 		{
 			"matchPackageNames": ["@iconify/utils"],
 			"allowedVersions": "<3.0.0"
+		},
+		{
+			"matchPackageNames": ["unbuild"],
+			"allowedVersions": "<3.0.0"
 		}
 	]
 }
