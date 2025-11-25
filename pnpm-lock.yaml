@@ -144,6 +144,9 @@ importers:
         specifier: ^7.5.2
         version: 7.5.2
     devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3.3.1
+        version: 3.3.1
       '@eslint/js':
         specifier: ^9.39.1
         version: 9.39.1
