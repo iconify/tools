@@ -29,13 +29,11 @@ type Callback<T> = (
 
 type AsyncCallback<T> = Callback<T | Promise<T>>;
 
-export type ScanDirectoryCallback = AsyncCallback<
-	ScanDirectoryCallbackStringResult | undefined
->;
+export type ScanDirectoryCallback =
+	AsyncCallback<ScanDirectoryCallbackStringResult>;
 
-export type ScanDirectorySyncCallback = Callback<
-	ScanDirectoryCallbackStringResult | undefined
->;
+export type ScanDirectorySyncCallback =
+	Callback<ScanDirectoryCallbackStringResult>;
 
 /**
  * Reusable functions
@@ -99,7 +97,7 @@ export async function scanDirectory(
 			let stat: Stats;
 			try {
 				stat = await fs.stat(path + subdir + filename);
-			} catch (err) {
+			} catch {
 				// Failed
 				continue;
 			}
@@ -176,7 +174,7 @@ export function scanDirectorySync(
 			let stat: Stats;
 			try {
 				stat = statSync(path + subdir + filename);
-			} catch (err) {
+			} catch {
 				// Failed
 				continue;
 			}

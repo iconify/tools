@@ -200,7 +200,7 @@ export function cleanupGlobalStyle(svg: SVG) {
 				item.$element.removeAttr(tempDataAttrbiute);
 			});
 		}
-	} catch (err) {
+	} catch {
 		// Failed: restore from backup
 		svg.load(backup);
 	}

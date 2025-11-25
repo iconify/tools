@@ -362,7 +362,7 @@ export function deOptimisePaths(svg: SVG) {
 				if (optimised !== d) {
 					item.$element.attr('d', optimised);
 				}
-			} catch (err) {
+			} catch {
 				//
 			}
 		}
