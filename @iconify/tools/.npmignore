@@ -11,10 +11,9 @@ tsconfig.tsbuildinfo
 tsconfig*.json
 build.js
 build.config.ts
-jest.config.*
-jest.shared.config.cjs
 eslint.config.*
 tsdown.config.*
+vitest.config.*
 src
 spec
 tests

@@ -18,7 +18,7 @@
 		"lint": "eslint src/**/*.ts",
 		"prebuild": "npm run lint && npm run clean",
 		"build": "tsdown",
-		"test": "cross-env NODE_OPTIONS=--experimental-vm-modules TEST_REMOTE=false jest --clearCache --config=jest.config.js && cross-env NODE_OPTIONS=--experimental-vm-modules npx jest --runInBand --config=jest.config.js",
+		"test": "vitest",
 		"test:ci": "cross-env TEST_REMOTE=false npm run test"
 	},
 	"dependencies": {
@@ -35,7 +35,6 @@
 	"devDependencies": {
 		"@eslint/eslintrc": "^3.3.1",
 		"@eslint/js": "^9.39.1",
-		"@types/jest": "^30.0.0",
 		"@types/node": "^24.10.1",
 		"@typescript-eslint/eslint-plugin": "^8.48.0",
 		"@typescript-eslint/parser": "^8.48.0",
@@ -44,12 +43,11 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-prettier": "^5.5.4",
 		"globals": "^16.5.0",
-		"jest": "^30.2.0",
 		"prettier": "^3.6.2",
 		"rimraf": "^6.1.2",
-		"ts-jest": "^29.4.5",
 		"tsdown": "^0.16.7",
-		"typescript": "^5.9.3"
+		"typescript": "^5.9.3",
+		"vitest": "^4.0.14"
 	},
 	"exports": {
 		"./*": "./*",
