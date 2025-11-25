@@ -1,3 +1,11 @@
+import { IconSet, parseColors, isEmptyColor } from '@iconify/tools';
+
+const iconSet = new IconSet({
+	prefix: 'test',
+	icons: {},
+});
+
+// Code sample starts here
 iconSet.forEach(async (name, type) => {
 	if (type !== 'icon') {
 		// Ignore aliases and variations: they inherit content from parent icon, so there is nothing to change

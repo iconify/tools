@@ -4,13 +4,17 @@
 	"private": true,
 	"description": "Code samples used in documentation",
 	"license": "MIT",
-	"scripts": {},
+	"scripts": {
+		"build": "tsc"
+	},
 	"type": "module",
 	"dependencies": {
 		"@iconify/tools": "workspace:^"
 	},
 	"devDependencies": {
 		"@types/node": "^20.19.25",
+		"@iconify/json": "^2.2.410",
+		"@iconify/utils": "^2.3.0",
 		"typescript": "^5.9.3"
 	}
 }

@@ -56,12 +56,12 @@ iconSet.forEach((name, type) => {
 				}
 
 				// Black color: change to 'currentColor'
-				if (compareColors(color, stringToColor('black'))) {
+				if (compareColors(color, stringToColor('black')!)) {
 					return 'currentColor';
 				}
 
 				// White color: belongs to white background rectangle: remove rectangle
-				if (compareColors(color, stringToColor('white'))) {
+				if (compareColors(color, stringToColor('white')!)) {
 					return 'remove';
 				}
 

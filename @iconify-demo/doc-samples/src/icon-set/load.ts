@@ -1,3 +1,11 @@
+import { IconSet } from '@iconify/tools';
+
+const iconSet = new IconSet({
+	prefix: 'test',
+	icons: {},
+});
+
+// Code sample starts here
 iconSet.load({
 	prefix: 'codicon',
 	icons: {

@@ -6,7 +6,7 @@ import { locate } from '@iconify/json';
 // Various functions from Iconify Utils
 import { parseIconSet } from '@iconify/utils/lib/icon-set/parse';
 import { iconToSVG } from '@iconify/utils/lib/svg/build';
-import { defaults } from '@iconify/utils/lib/customisations';
+import { defaultIconCustomisations } from '@iconify/utils/lib/customisations/defaults';
 
 (async () => {
 	// Locate icons
@@ -26,7 +26,7 @@ import { defaults } from '@iconify/utils/lib/customisations';
 
 		// Render icon
 		const renderData = iconToSVG(iconData, {
-			...defaults,
+			...defaultIconCustomisations,
 			height: 'auto',
 		});
 
