@@ -4,6 +4,7 @@
 	"author": "Vjacheslav Trushkin",
 	"license": "MIT",
 	"private": true,
+	"type": "module",
 	"bugs": "https://github.com/iconify/tools/issues",
 	"homepage": "https://github.com/iconify/tools",
 	"repository": {
