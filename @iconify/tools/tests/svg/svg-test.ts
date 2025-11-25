@@ -95,16 +95,24 @@ describe('Loading SVG', () => {
 	});
 
 	test('Missing dimensions', () => {
-		expect(() => {
+		let threwError = false;
+		try {
 			new SVG(
 				'<svg xmlns="http://www.w3.org/2000/svg"><path d="M3 0v1h4v5h-4v1h5v-7h-5zm1 2v1h-4v1h4v1l2-1.5-2-1.5z"/></svg>'
 			);
-		}).toThrowError();
+		} catch {
+			threwError = true;
+		}
+		expect(threwError).toBe(true);
 	});
 
 	test('Empty document', () => {
-		expect(() => {
+		let threwError = false;
+		try {
 			new SVG('');
-		}).toThrowError();
+		} catch {
+			threwError = true;
+		}
+		expect(threwError).toBe(true);
 	});
 });
