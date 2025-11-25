@@ -48,7 +48,6 @@ export class SVG {
 			for (const key in data.attributes) {
 				const value =
 					data.attributes[key as keyof typeof data.attributes];
-				// eslint-disable-next-line @typescript-eslint/restrict-plus-operands
 				svgAttributes += ' ' + key + '="' + value + '"';
 			}
 

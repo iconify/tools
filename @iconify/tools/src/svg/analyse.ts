@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { SVG } from './index';
 import { parseSVG } from './parse';
 import type { ParseSVGCallbackItem } from './parse';

@@ -48,7 +48,6 @@ export interface FindColorsResult {
  * - 'unset' to delete old value
  * - 'remove' to remove shape or rule
  */
-// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 type ParseColorsCallbackResult = Color | string | 'remove' | 'unset';
 type ParseColorsCallback = (
 	attr: ColorAttributes,
@@ -340,7 +339,6 @@ export function parseColors(
 		// Mark all children as removed (direct children as in DOM)
 		function removeChildren(element: ExtendedTagElementWithColors) {
 			element.children.forEach((item) => {
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 				if (item.type !== 'tag') {
 					return;
 				}

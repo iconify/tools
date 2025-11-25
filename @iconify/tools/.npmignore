@@ -13,6 +13,7 @@ build.js
 build.config.ts
 jest.config.*
 jest.shared.config.cjs
+eslint.config.*
 src
 spec
 tests

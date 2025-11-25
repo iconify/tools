@@ -34,7 +34,6 @@ export function parseSVG(svg: SVG, callback: ParseSVGCallback): void {
 		element: CheerioElement,
 		parents: ParseSVGCallbackItem[]
 	) {
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 		if (element.type !== 'tag') {
 			return;
 		}

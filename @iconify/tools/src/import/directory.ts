@@ -187,7 +187,6 @@ export function importDirectory(
 						fulfill
 					);
 				} catch (err) {
-					// eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
 					reject(err);
 				}
 			})

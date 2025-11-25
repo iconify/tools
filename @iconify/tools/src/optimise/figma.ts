@@ -38,14 +38,12 @@ function checkClipPathNode(
 	}
 
 	// Check child nodes: should have only <rect />
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 	const children = clipNode.children.filter((node) => node.type !== 'text');
 	if (children.length !== 1) {
 		return false;
 	}
 
 	const childNode = children[0];
-	// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 	if (childNode.type !== 'tag' || childNode.children.length) {
 		// Not tag or has children
 		return false;
@@ -244,7 +242,6 @@ function remove(svg: SVG): boolean {
 	let clipID: string | undefined;
 	for (let i = 0; i < children.length; i++) {
 		const node = children[i];
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 		if (node.type === 'tag') {
 			const tagName = node.tagName;
 			if (
@@ -282,7 +279,6 @@ function remove(svg: SVG): boolean {
 	const findClipPath = () => {
 		for (let i = 0; i < children.length; i++) {
 			const node = children[i];
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
 			if (node.type === 'tag' && node.tagName === 'clipPath') {
 				const id = node.attribs['id'];
 				if (id === clipID) {

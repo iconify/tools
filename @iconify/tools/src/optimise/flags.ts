@@ -105,7 +105,6 @@ function cleanPath(path: string): string {
 					);
 				}
 
-				// eslint-disable-next-line no-constant-condition
 				while (true) {
 					// Not flag
 					if (currentArgs.length < 3 || currentArgs.length > 4) {
