@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import { readFile } from 'node:fs/promises';
 import {
 	downloadGitHubRepo,
 	DownloadGitHubRepoResult,
@@ -82,7 +82,7 @@ describe('Downloading Git repository using GitHub API', () => {
 
 		// Check contents of package.json
 		const packageContents = JSON.parse(
-			await fs.readFile(`${target}/${branch.subdir}/package.json`, 'utf8')
+			await readFile(`${target}/${branch.subdir}/package.json`, 'utf8')
 		) as Record<string, unknown>;
 		expect(packageContents.version).toBe(branch.version);
 	});
@@ -113,7 +113,7 @@ describe('Downloading Git repository using GitHub API', () => {
 
 		// Check contents of package.json
 		const packageContents = JSON.parse(
-			await fs.readFile(`${target}/${branch.subdir}/package.json`, 'utf8')
+			await readFile(`${target}/${branch.subdir}/package.json`, 'utf8')
 		) as Record<string, unknown>;
 		expect(packageContents.version).toBe(branch.version);
 	});

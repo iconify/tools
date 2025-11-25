@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import { rm, lstat, readFile } from 'node:fs/promises';
 import { exportIconPackage } from '../../lib/export/icon-package';
 import { IconSet } from '../../lib/icon-set';
 import { scanDirectory } from '../../lib/misc/scan';
@@ -6,9 +6,9 @@ import { scanDirectory } from '../../lib/misc/scan';
 // Check if file or directory exists
 async function exists(filename: string): Promise<boolean> {
 	try {
-		const stat = await fs.lstat(filename);
+		const stat = await lstat(filename);
 		return stat.isFile() || stat.isDirectory();
-	} catch (err) {
+	} catch {
 		return false;
 	}
 }
@@ -37,11 +37,11 @@ describe('Exporting to icon package', () => {
 
 		// Clean directory
 		try {
-			await fs.rm(targetDir, {
+			await rm(targetDir, {
 				recursive: true,
 				force: true,
 			});
-		} catch (err) {
+		} catch {
 			//
 		}
 		expect(await exists(targetDir)).toBe(false);
@@ -67,10 +67,7 @@ describe('Exporting to icon package', () => {
 
 		// Check contents of .js files
 		await iconSet.forEach(async (name) => {
-			const content = await fs.readFile(
-				`${targetDir}/${name}.js`,
-				'utf8'
-			);
+			const content = await readFile(`${targetDir}/${name}.js`, 'utf8');
 			const data = iconSet.resolve(name);
 			const expected = `const data = ${JSON.stringify(
 				data,
@@ -82,14 +79,14 @@ describe('Exporting to icon package', () => {
 
 		// Check package.json to make sure it uses wildcard
 		const packageContent = JSON.parse(
-			await fs.readFile(`${targetDir}/package.json`, 'utf8')
+			await readFile(`${targetDir}/package.json`, 'utf8')
 		) as Record<string, unknown>;
 		expect(packageContent['dependencies']).toEqual({
 			'@iconify/types': '*',
 		});
 
 		// Clean up
-		await fs.rm(targetDir, {
+		await rm(targetDir, {
 			recursive: true,
 			force: true,
 		});
@@ -119,11 +116,11 @@ describe('Exporting to icon package', () => {
 
 		// Clean directory
 		try {
-			await fs.rm(targetDir, {
+			await rm(targetDir, {
 				recursive: true,
 				force: true,
 			});
-		} catch (err) {
+		} catch {
 			//
 		}
 		expect(await exists(targetDir)).toBe(false);
@@ -150,10 +147,7 @@ describe('Exporting to icon package', () => {
 
 		// Check contents of .js files
 		await iconSet.forEach(async (name) => {
-			const content = await fs.readFile(
-				`${targetDir}/${name}.js`,
-				'utf8'
-			);
+			const content = await readFile(`${targetDir}/${name}.js`, 'utf8');
 			const data = iconSet.resolve(name);
 			const expected = `const data = ${JSON.stringify(
 				data,
@@ -164,7 +158,7 @@ describe('Exporting to icon package', () => {
 		});
 
 		// Clean up
-		await fs.rm(targetDir, {
+		await rm(targetDir, {
 			recursive: true,
 			force: true,
 		});

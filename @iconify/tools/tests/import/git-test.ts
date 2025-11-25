@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import { readFile } from 'node:fs/promises';
 import { downloadGitRepo, DownloadGitRepoResult } from '../../lib/download/git';
 import { prepareDirectoryForExport } from '../../lib/export/helpers/prepare';
 import { isTestingRemote } from '../../lib/tests/helpers';
@@ -57,7 +57,7 @@ describe('Downloading Git repository', () => {
 
 		// Check contents of package.json
 		const packageContents = JSON.parse(
-			await fs.readFile(`${target}/package.json`, 'utf8')
+			await readFile(`${target}/package.json`, 'utf8')
 		) as Record<string, unknown>;
 		expect(packageContents.version).toBe(branch.version);
 	});
@@ -82,7 +82,7 @@ describe('Downloading Git repository', () => {
 
 		// Check contents of package.json
 		const packageContents = JSON.parse(
-			await fs.readFile(`${target}/package.json`, 'utf8')
+			await readFile(`${target}/package.json`, 'utf8')
 		) as Record<string, unknown>;
 		expect(packageContents.version).toBe(branch.version);
 	});

@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import { rm, lstat } from 'node:fs/promises';
 import { exportToDirectory } from '../../lib/export/directory';
 import { IconSet } from '../../lib/icon-set';
 import { scanDirectory } from '../../lib/misc/scan';
@@ -6,9 +6,9 @@ import { scanDirectory } from '../../lib/misc/scan';
 // Check if file or directory exists
 async function exists(filename: string): Promise<boolean> {
 	try {
-		const stat = await fs.lstat(filename);
+		const stat = await lstat(filename);
 		return stat.isFile() || stat.isDirectory();
-	} catch (err) {
+	} catch {
 		return false;
 	}
 }
@@ -32,11 +32,11 @@ describe('Exporting to directory', () => {
 
 		// Clean directory
 		try {
-			await fs.rm(targetDir, {
+			await rm(targetDir, {
 				recursive: true,
 				force: true,
 			});
-		} catch (err) {
+		} catch {
 			//
 		}
 		expect(await exists(targetDir)).toBe(false);
@@ -56,7 +56,7 @@ describe('Exporting to directory', () => {
 		expect(files).toEqual(['maximize.svg', 'minimize.svg']);
 
 		// Clean up
-		await fs.rm(targetDir, {
+		await rm(targetDir, {
 			recursive: true,
 			force: true,
 		});
@@ -96,11 +96,11 @@ describe('Exporting to directory', () => {
 
 		// Clean directory
 		try {
-			await fs.rm(targetDir, {
+			await rm(targetDir, {
 				recursive: true,
 				force: true,
 			});
-		} catch (err) {
+		} catch {
 			//
 		}
 		expect(await exists(targetDir)).toBe(false);
@@ -128,7 +128,7 @@ describe('Exporting to directory', () => {
 		]);
 
 		// Clean up
-		await fs.rm(targetDir, {
+		await rm(targetDir, {
 			recursive: true,
 			force: true,
 		});
