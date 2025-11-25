@@ -16,7 +16,7 @@
 		"@iconify/utils": "^2.3.0",
 		"@vitejs/plugin-vue": "^5.2.4",
 		"typescript": "^5.9.3",
-		"unconfig": "^0.4.5",
+		"unconfig": "^0.6.1",
 		"unplugin-icons": "^0.18.5",
 		"unplugin-vue-components": "^0.27.5",
 		"vite": "^5.4.21"
