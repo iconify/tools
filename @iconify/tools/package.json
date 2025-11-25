@@ -3,7 +3,7 @@
 	"type": "module",
 	"description": "Collection of functions for cleaning up and parsing SVG for Iconify project",
 	"author": "Vjacheslav Trushkin",
-	"version": "4.1.5",
+	"version": "4.2.0",
 	"license": "MIT",
 	"bugs": "https://github.com/iconify/tools/issues",
 	"homepage": "https://github.com/iconify/tools",
@@ -133,6 +133,11 @@
 			"types": "./lib/download/api/download.d.ts",
 			"require": "./lib/download/api/download.cjs",
 			"import": "./lib/download/api/download.mjs"
+		},
+		"./lib/download/api/fetch": {
+			"types": "./lib/download/api/fetch.d.ts",
+			"require": "./lib/download/api/fetch.cjs",
+			"import": "./lib/download/api/fetch.mjs"
 		},
 		"./lib/download/api": {
 			"types": "./lib/download/api/index.d.ts",
