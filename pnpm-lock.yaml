@@ -144,6 +144,9 @@ importers:
         specifier: ^7.5.2
         version: 7.5.2
     devDependencies:
+      '@eslint/js':
+        specifier: ^9.39.1
+        version: 9.39.1
       '@types/jest':
         specifier: ^30.0.0
         version: 30.0.0
