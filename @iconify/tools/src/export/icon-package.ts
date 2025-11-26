@@ -7,6 +7,7 @@ import {
 	exportCustomFiles,
 	ExportOptionsWithCustomFiles,
 } from './helpers/custom-files';
+import { getTypesVersion } from './helpers/types-version.js';
 
 /**
  * Options
@@ -22,6 +23,9 @@ export interface ExportIconPackageOptions
 
 	// Custom .d.ts file content
 	typesContent?: string;
+
+	// Use wildcard types version, default = true
+	wildcardTypesVersion?: boolean;
 }
 
 /**
@@ -78,6 +82,12 @@ export async function exportIconPackage(
 	// Write custom files
 	await exportCustomFiles(dir, options, files);
 
+	// Get types version
+	const typesVersion =
+		options.wildcardTypesVersion === false
+			? '^' + (await getTypesVersion())
+			: '*';
+
 	// Generate package.json
 	const info = iconSet.info;
 	const { name, description, version, dependencies, ...customPackageProps } =
@@ -96,7 +106,7 @@ export async function exportIconPackage(
 		iconSetInfo: info,
 		...customPackageProps,
 		dependencies: dependencies || {
-			'@iconify/types': '*', // '^' + (await getTypesVersion()),
+			'@iconify/types': typesVersion,
 		},
 	};
 

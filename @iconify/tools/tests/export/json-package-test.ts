@@ -3,6 +3,7 @@ import { rm, lstat, readFile } from 'node:fs/promises';
 import { exportJSONPackage } from '../../src/export/json-package.js';
 import { IconSet } from '../../src/icon-set/index.js';
 import { scanDirectory } from '../../src/misc/scan.js';
+import { getTypesVersion } from '../../src/export/helpers/types-version.js';
 
 // Check if file or directory exists
 async function exists(filename: string): Promise<boolean> {
@@ -52,6 +53,7 @@ describe('Exporting to JSON package', () => {
 		// Export icon set
 		await exportJSONPackage(iconSet, {
 			target: targetDir,
+			wildcardTypesVersion: false,
 		});
 
 		// Make sure directory exists and list files
@@ -77,12 +79,16 @@ describe('Exporting to JSON package', () => {
 		const expectedData = iconSet.export();
 		expect(actualData).toEqual(expectedData);
 
+		// Get types version
+		const typesVersion = await getTypesVersion();
+		expect(typesVersion).toMatch(/^\d+\.\d+\.\d+$/);
+
 		// Check package.json to make sure it uses wildcard
 		const packageContent = JSON.parse(
 			await readFile(`${targetDir}/package.json`, 'utf8')
 		) as Record<string, unknown>;
 		expect(packageContent['dependencies']).toEqual({
-			'@iconify/types': '*',
+			'@iconify/types': `^${typesVersion}`,
 		});
 
 		// Clean up

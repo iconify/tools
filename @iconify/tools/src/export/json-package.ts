@@ -14,6 +14,7 @@ import {
 	exportCustomFiles,
 	ExportOptionsWithCustomFiles,
 } from './helpers/custom-files';
+import { getTypesVersion } from './helpers/types-version.js';
 
 /**
  * Options
@@ -26,6 +27,9 @@ export interface ExportJSONPackageOptions
 
 	// Callback to update package.json data, allowing to add custom stuff
 	customisePackage?: (contents: Record<string, unknown>) => void;
+
+	// Use wildcard types version, default = true
+	wildcardTypesVersion?: boolean;
 }
 
 interface ExportContents {
@@ -105,6 +109,12 @@ export async function exportJSONPackage(
 		chars: exportedJSON.chars,
 	};
 
+	// Get types version
+	const typesVersion =
+		options.wildcardTypesVersion === false
+			? '^' + (await getTypesVersion())
+			: '*';
+
 	// Generate package.json
 	const { name, description, version, dependencies, ...customPackageProps } =
 		options.package || {};
@@ -134,7 +144,7 @@ export async function exportJSONPackage(
 		exports: packageJSONExports,
 		iconSet: packageJSONIconSet,
 		dependencies: dependencies || {
-			'@iconify/types': '*', // '^' + (await getTypesVersion()),
+			'@iconify/types': typesVersion,
 		},
 	};
 

@@ -1,27 +1,30 @@
-import { resolveModule } from 'local-pkg';
-import { promises as fs } from 'fs';
+import { readFile } from 'node:fs/promises';
+import { uniquePromise } from '@cyberalien/svg-utils';
 
 let cache: string;
 
+interface PackageContent {
+	version: string;
+}
+
 async function getVersion(): Promise<string> {
 	const packageName = '@iconify/types/package.json';
-	const filename = resolveModule(packageName);
-	if (!filename) {
-		throw new Error(`Cannot resolve ${packageName}`);
-	}
-	const content = JSON.parse(await fs.readFile(filename, 'utf8')) as Record<
-		string,
-		unknown
-	>;
-	return (cache = content.version as string);
+	const content = await uniquePromise<PackageContent>(
+		packageName,
+		async () => {
+			const filename = import.meta.resolve(packageName);
+			console.log('Reading', filename);
+			return JSON.parse(
+				await readFile(filename.replace('file://', ''), 'utf8')
+			) as PackageContent;
+		}
+	);
+	return (cache = content.version);
 }
 
 /**
  * Get current version of Iconify Types package
  */
 export async function getTypesVersion(): Promise<string> {
-	throw new Error(
-		`getTypesVersion() is deprecated, use wildcard to make packages work with all versions`
-	);
 	return cache || (await getVersion());
 }
