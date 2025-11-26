@@ -1,17 +1,25 @@
-import type { CheerioElement, WrappedCheerioElement } from '../misc/cheerio';
+import {
+	iterateXMLContent,
+	type ParsedXMLTagElement,
+} from '@cyberalien/svg-utils';
 import type { SVG } from './';
+
 /**
  * Item in callback
  */
 export interface ParseSVGCallbackItem {
-	tagName: string;
-	element: CheerioElement;
-	$element: WrappedCheerioElement;
+	// Node
+	node: ParsedXMLTagElement;
+
+	// SVG instance
 	svg: SVG;
+
 	// Parent elements, first item is direct parent, last item is 'svg'
 	parents: ParseSVGCallbackItem[];
+
 	// Set to false to stop parsing
 	testChildren: boolean;
+
 	// Set to true to remove node
 	removeNode: boolean;
 }
@@ -27,28 +35,32 @@ export type ParseSVGCallback = (item: ParseSVGCallbackItem) => void;
  * This function finds all elements in SVG and calls callback for each element.
  */
 export function parseSVG(svg: SVG, callback: ParseSVGCallback): void {
-	const cheerio = svg.$svg;
-	const $root = svg.$svg(':root');
-
-	function checkNode(
-		element: CheerioElement,
-		parents: ParseSVGCallbackItem[]
-	) {
-		if (element.type !== 'tag') {
+	const map = new Map<ParsedXMLTagElement, ParseSVGCallbackItem>();
+	iterateXMLContent([svg.$svg], (node, stack) => {
+		if (node.type !== 'tag') {
 			return;
 		}
 
-		const $element = cheerio(element);
-		const tagName = element.tagName;
+		// Get parent items, make sure check was not aborted
+		// Parents are in reverse order: in stack closest parent is last, in item first
+		const parents: ParseSVGCallbackItem[] = [];
+		for (const parent of stack) {
+			const parentItem = map.get(parent)!; // Always exists
+			if (!parentItem.testChildren) {
+				return 'skip';
+			}
+			parents.unshift(parentItem!);
+		}
+
+		// Create new item
 		const item: ParseSVGCallbackItem = {
-			tagName,
-			element,
-			$element,
 			svg,
+			node,
 			parents,
 			testChildren: true,
 			removeNode: false,
 		};
+		map.set(node, item);
 
 		// Run callback
 		const callbackResult = callback(item);
@@ -57,31 +69,12 @@ export function parseSVG(svg: SVG, callback: ParseSVGCallback): void {
 			throw new Error('parseSVG does not support async callbacks');
 		}
 
-		// Test child nodes
-		const newParents = parents.slice(0);
-		newParents.unshift(item);
-
-		let queue: CheerioElement[] = [];
-		if (tagName !== 'style' && item.testChildren && !item.removeNode) {
-			const children = $element.children().toArray();
-			queue = children.slice(0);
-		}
-
-		while (queue.length) {
-			const queueItem = queue.shift();
-			if (!queueItem || item.removeNode) {
-				// Do not parse child items if item is marked for removal
-				break;
-			}
-
-			checkNode(queueItem, newParents);
-		}
-
-		// Remove node
+		// Check result
 		if (item.removeNode) {
-			$element.remove();
+			return 'remove';
 		}
-	}
-
-	checkNode($root.get(0) as CheerioElement, []);
+		if (!item.testChildren) {
+			return 'skip';
+		}
+	});
 }

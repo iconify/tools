@@ -351,15 +351,16 @@ function cleanPath(path: string): string {
  */
 export function deOptimisePaths(svg: SVG) {
 	parseSVG(svg, (item) => {
-		if (item.tagName !== 'path') {
+		const node = item.node;
+		if (node.tag !== 'path') {
 			return;
 		}
-		const d = item.element.attribs.d;
+		const d = node.attribs.d;
 		if (typeof d === 'string') {
 			try {
 				const optimised = cleanPath(d);
 				if (optimised !== d) {
-					item.$element.attr('d', optimised);
+					node.attribs.d = optimised;
 				}
 			} catch {
 				//

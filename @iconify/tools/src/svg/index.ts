@@ -1,26 +1,26 @@
-import * as cheerio from 'cheerio';
 import type { IconifyIcon } from '@iconify/types';
-import { trimSVG, iconToSVG, prettifySVG } from '@iconify/utils';
+import { iconToSVG, trimSVG } from '@iconify/utils';
 import type { CommonIconProps } from '../icon-set/types';
 import type { IconifyIconCustomisations } from '@iconify/utils/lib/customisations/defaults';
-import type { CheerioElement } from '../misc/cheerio';
+import {
+	parseXMLContent,
+	stringifyXMLContent,
+	type ParsedXMLTagElement,
+} from '@cyberalien/svg-utils';
+import type { IconViewBox } from '@cyberalien/svg-utils/lib/svg/viewbox/types.js';
+import { parseViewBox } from '@cyberalien/svg-utils/lib/svg/viewbox/parse.js';
 
-export interface ViewBox {
-	left: number;
-	top: number;
-	width: number;
-	height: number;
-}
+type ViewBox = IconViewBox;
 
 // Re-export types
-export type { IconifyIconCustomisations, IconifyIcon };
+export type { IconifyIconCustomisations, IconifyIcon, ViewBox };
 
 /**
  * SVG class, used to manipulate icon content.
  */
 export class SVG {
-	// Cheerio tree, initialized in load()
-	public $svg!: cheerio.CheerioAPI;
+	// Root element, initialized in load()
+	public $svg!: ParsedXMLTagElement;
 
 	// Dimensions, initialized in load()
 	public viewBox!: ViewBox;
@@ -35,7 +35,10 @@ export class SVG {
 	/**
 	 * Get SVG as string
 	 */
-	toString(customisations?: IconifyIconCustomisations): string {
+	toString(
+		customisations?: IconifyIconCustomisations,
+		prettyPrint = false
+	): string {
 		// Build icon if customisations are set
 		if (customisations) {
 			const data = iconToSVG(this.getIcon(), customisations);
@@ -55,41 +58,41 @@ export class SVG {
 		}
 
 		// Get icon as is if customisations are not set
-		const $root = this.$svg(':root');
+		const $root = this.$svg;
+		const attribs = $root.attribs;
 		const box = this.viewBox;
 
 		// Add missing viewBox attribute
-		if ($root.attr('viewBox') === undefined) {
-			$root.attr(
-				'viewBox',
-				`${box.left} ${box.top} ${box.width} ${box.height}`
-			);
+		if (!attribs['viewBox']) {
+			attribs['viewBox'] =
+				`${box.left} ${box.top} ${box.width} ${box.height}`;
 		}
 
 		// Add missing width/height
-		if ($root.attr('width') === undefined) {
-			$root.attr('width', box.width.toString());
-		}
-		if ($root.attr('height') === undefined) {
-			$root.attr('height', box.height.toString());
+		for (const prop of ['width', 'height'] as const) {
+			if (!attribs[prop]) {
+				attribs[prop] = box[prop];
+			}
 		}
 
-		return this.$svg.html();
+		return stringifyXMLContent([$root], {
+			prettyPrint,
+		})!;
 	}
 
 	/**
 	 * Get SVG as string without whitespaces
 	 */
 	toMinifiedString(customisations?: IconifyIconCustomisations): string {
-		return trimSVG(this.toString(customisations));
+		// Additional trimming for better result
+		return trimSVG(this.toString(customisations, false));
 	}
 
 	/**
 	 * Get SVG as string with whitespaces
 	 */
 	toPrettyString(customisations?: IconifyIconCustomisations): string {
-		const str = this.toMinifiedString(customisations);
-		return prettifySVG(str) ?? str;
+		return this.toString(customisations, true);
 	}
 
 	/**
@@ -97,8 +100,8 @@ export class SVG {
 	 */
 	getBody(): string {
 		// Make sure icon has no attributes on <svg> that affect content
-		const $root = this.$svg(':root');
-		const attribs = ($root.get(0) as CheerioElement).attribs;
+		const $root = this.$svg;
+		const attribs = $root.attribs;
 		for (const key in attribs) {
 			switch (key.split('-').shift()) {
 				case 'fill':
@@ -110,7 +113,7 @@ export class SVG {
 			}
 		}
 
-		return trimSVG(this.$svg('svg').html() as string);
+		return stringifyXMLContent($root.children)!;
 	}
 
 	/**
@@ -167,51 +170,38 @@ export class SVG {
 		content = content.replace(/<g>\s*<\/g>/g, '');
 
 		// Load content
-		this.$svg = cheerio.load(content.trim(), {
-			// @ts-expect-error Legacy attribute, kept because Cheerio types are a unstable
-			lowerCaseAttributeNames: false,
-			xmlMode: true,
-		});
-
-		// Check root
-		const $root = this.$svg(':root');
-		if (
-			$root.length > 1 ||
-			($root.get(0) as CheerioElement).tagName !== 'svg'
-		) {
-			throw new Error('Invalid SVG file: bad root tag');
+		const root = parseXMLContent(content);
+		if (!root || root.length !== 1) {
+			throw new Error('Invalid SVG file');
 		}
+		const rootTag = root[0];
+		if (rootTag.type !== 'tag' || rootTag.tag !== 'svg') {
+			throw new Error('Invalid SVG file: missing <svg> root element');
+		}
+		this.$svg = rootTag;
 
 		// Get dimensions and origin
-		const viewBox = $root.attr('viewBox');
-		if (viewBox !== undefined) {
-			const list = viewBox.split(' ');
-
-			this.viewBox = {
-				left: parseFloat(list[0]),
-				top: parseFloat(list[1]),
-				width: parseFloat(list[2]),
-				height: parseFloat(list[3]),
-			};
+		const attribs = rootTag.attribs;
+		const viewBox = attribs['viewBox'];
+		if (typeof viewBox === 'string') {
+			const parsed = parseViewBox(viewBox);
+			if (!parsed) {
+				throw new Error('Invalid SVG file: bad viewBox attribute');
+			}
+			this.viewBox = parsed;
 		} else {
-			const width = $root.attr('width');
-			const height = $root.attr('height');
+			const width = attribs['width'];
+			const height = attribs['height'];
 			if (!width || !height) {
 				throw new Error('Invalid SVG file: missing dimensions');
 			}
-			this.viewBox = {
-				left: 0,
-				top: 0,
-				width: parseFloat(width),
-				height: parseFloat(height),
-			};
-		}
-
-		Object.keys(this.viewBox).forEach((key) => {
-			const attr = key as keyof ViewBox;
-			if (isNaN(this.viewBox[attr])) {
-				throw new Error(`Invalid SVG file: invalid ${attr}`);
+			const parsed = parseViewBox(`0 0 ${width} ${height}`);
+			if (!parsed) {
+				throw new Error(
+					'Invalid SVG file: bad size attributes and no viewBox'
+				);
 			}
-		});
+			this.viewBox = parsed;
+		}
 	}
 }

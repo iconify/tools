@@ -1,4 +1,4 @@
-import type { CheerioElement } from '../../misc/cheerio';
+import type { ParsedXMLTagElement } from '@cyberalien/svg-utils';
 
 /**
  * Options
@@ -77,7 +77,7 @@ interface ExtendedTagElementRelations {
  * Extended tag
  */
 export interface ExtendedTagElement
-	extends CheerioElement,
+	extends ParsedXMLTagElement,
 		ExtendedTagElementUses,
 		ExtendedTagElementRelations {
 	// Node index

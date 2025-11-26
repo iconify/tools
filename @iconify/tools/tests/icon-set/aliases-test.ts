@@ -9,13 +9,13 @@ describe('Working with aliases', () => {
 			prefix: 'foo',
 			icons: {
 				bar: {
-					body: '<g id="bar" />',
+					body: '<g id="bar"/>',
 					// Default values
 					width: 16,
 					height: 16,
 				},
 				TestIcon: {
-					body: '<g id="TestIcon" />',
+					body: '<g id="TestIcon"/>',
 					width: 24,
 					height: 24,
 				},
@@ -63,7 +63,7 @@ describe('Working with aliases', () => {
 
 		// Resolve aliases
 		const expectedBar: ResolvedIconifyIcon = {
-			body: '<g id="bar" />',
+			body: '<g id="bar"/>',
 		};
 		expect(iconSet.resolve('bar')).toEqual(expectedBar);
 		expect(iconSet.resolve('alias1')).toEqual(expectedBar);
@@ -75,7 +75,7 @@ describe('Working with aliases', () => {
 		expect(iconSet.resolve('alias7')).toEqual(expectedBar);
 
 		const expectedTestIcon: ResolvedIconifyIcon = {
-			body: '<g id="TestIcon" />',
+			body: '<g id="TestIcon"/>',
 			width: 24,
 			height: 24,
 		};
@@ -99,7 +99,7 @@ describe('Working with aliases', () => {
 			prefix: 'foo',
 			icons: {
 				test: {
-					body: '<g />',
+					body: '<g/>',
 				},
 			},
 			aliases: {
@@ -136,7 +136,7 @@ describe('Working with aliases', () => {
 
 		// Resolve aliases
 		const expectedIcon: IconifyIcon = {
-			body: '<g />',
+			body: '<g/>',
 		};
 
 		// Test both resolve() from IconSet and getIconData() from Utils to make sure both generate identical results
@@ -174,13 +174,13 @@ describe('Working with aliases', () => {
 			prefix: 'foo',
 			icons: {
 				bar: {
-					body: '<g id="bar" />',
+					body: '<g id="bar"/>',
 					// Default values
 					width: 16,
 					height: 16,
 				},
 				TestIcon: {
-					body: '<g id="TestIcon" />',
+					body: '<g id="TestIcon"/>',
 					width: 24,
 					height: 24,
 					hidden: true,
@@ -228,13 +228,13 @@ describe('Working with aliases', () => {
 			lastModified,
 			icons: {
 				bar: {
-					body: '<g id="bar" />',
+					body: '<g id="bar"/>',
 					// Default values
 					width: 16,
 					height: 16,
 				},
 				TestIcon: {
-					body: '<g id="TestIcon" />',
+					body: '<g id="TestIcon"/>',
 					width: 24,
 					height: 24,
 					hidden: true,
@@ -290,7 +290,7 @@ describe('Working with aliases', () => {
 		expect(iconSet.lastModified).not.toBe(lastModified);
 
 		const expectedTestIcon: ResolvedIconifyIcon = {
-			body: '<g id="TestIcon" />',
+			body: '<g id="TestIcon"/>',
 			width: 24,
 			height: 24,
 			hidden: true,
@@ -307,10 +307,10 @@ describe('Working with aliases', () => {
 			lastModified: iconSet.lastModified,
 			icons: {
 				bar: {
-					body: '<g id="bar" />',
+					body: '<g id="bar"/>',
 				},
 				foo: {
-					body: '<g id="TestIcon" />',
+					body: '<g id="TestIcon"/>',
 					width: 24,
 					height: 24,
 					hidden: true,
@@ -354,10 +354,10 @@ describe('Working with aliases', () => {
 			lastModified,
 			icons: {
 				bar: {
-					body: '<g id="bar" />',
+					body: '<g id="bar"/>',
 				},
 				TestIcon: {
-					body: '<g id="TestIcon" />',
+					body: '<g id="TestIcon"/>',
 				},
 			},
 			aliases: {
@@ -386,10 +386,10 @@ describe('Working with aliases', () => {
 			lastModified,
 			icons: {
 				bar: {
-					body: '<g id="bar" />',
+					body: '<g id="bar"/>',
 				},
 				TestIcon: {
-					body: '<g id="TestIcon" />',
+					body: '<g id="TestIcon"/>',
 				},
 			},
 			aliases: {

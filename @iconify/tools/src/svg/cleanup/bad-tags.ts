@@ -14,6 +14,7 @@ import {
 	gradientTags,
 	unsupportedTags,
 } from '../data/tags';
+import { stringifyXMLContent } from '@cyberalien/svg-utils';
 
 // List of required parent tags
 const requiredParentTags: Map<Set<string>, Set<string>> = new Map();
@@ -60,8 +61,8 @@ export function checkBadTags(svg: SVG, options?: CheckBadTagsOptions): void {
 	};
 
 	parseSVG(svg, (item) => {
-		const tagName = item.tagName;
-		const $element = item.$element;
+		const node = item.node;
+		const tagName = node.tag;
 
 		// SVG as root
 		if (tagName === 'svg') {
@@ -75,10 +76,10 @@ export function checkBadTags(svg: SVG, options?: CheckBadTagsOptions): void {
 		// Optional
 		if (keepTitles && tagName === 'title') {
 			// Allow title
-			const content = $element.html();
+			const content = stringifyXMLContent(node.children);
 			if (content?.includes('<') || content?.includes('>')) {
 				// Bad title
-				$element.remove();
+				item.removeNode = true;
 				item.testChildren = false;
 			}
 			return;
@@ -86,7 +87,7 @@ export function checkBadTags(svg: SVG, options?: CheckBadTagsOptions): void {
 
 		// Unsupported: quietly remove it
 		if (unsupportedTags.has(tagName)) {
-			$element.remove();
+			item.removeNode = true;
 			item.testChildren = false;
 			return;
 		}
@@ -96,7 +97,7 @@ export function checkBadTags(svg: SVG, options?: CheckBadTagsOptions): void {
 			const parts = tagName.split(':');
 			if (parts.length > 1) {
 				// Custom tag, most likely Inkscape junk
-				$element.remove();
+				item.removeNode = true;
 				item.testChildren = false;
 				return;
 			}
@@ -104,7 +105,7 @@ export function checkBadTags(svg: SVG, options?: CheckBadTagsOptions): void {
 		}
 
 		// Check for valid parent tag
-		const parentTagName = item.parents[0]?.tagName;
+		const parentTagName = item.parents[0]?.node.tag ?? '';
 		for (const [parents, children] of requiredParentTags) {
 			if (children.has(tagName)) {
 				if (!parents.has(parentTagName)) {

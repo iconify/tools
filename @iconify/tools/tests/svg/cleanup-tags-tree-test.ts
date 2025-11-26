@@ -45,6 +45,8 @@ const badExamples: Record<string, string> = {
 	'bad/svg.svg': 'svg',
 };
 
+const errorParsing = new Set(['bad/script.svg']);
+
 // Icons that contain attributes on <svg> element and should throw exception when attempting to add to icon set
 const throwToSVG: Set<string> = new Set(['bad/svg.svg']);
 
@@ -61,13 +63,15 @@ describe('Checking tags tree', () => {
 	Object.keys(badExamples).forEach((name) => {
 		test(name, async () => {
 			const content = await loadFixture(`elements/${name}`);
-			const svg = new SVG(content);
 			try {
+				const svg = new SVG(content);
 				checkBadTags(svg);
 			} catch (err) {
 				const error = err as Error;
 				expect(error.message).toBe(
-					`Unexpected element: <${badExamples[name]}>`
+					errorParsing.has(name)
+						? 'Invalid SVG file'
+						: `Unexpected element: <${badExamples[name]}>`
 				);
 				return;
 			}
@@ -83,6 +87,11 @@ describe('Checking tags tree', () => {
 		const names = Object.keys(badExamples);
 		for (let i = 0; i < names.length; i++) {
 			const name = names[i];
+			if (errorParsing.has(name)) {
+				// Skip files that throw error when parsing
+				continue;
+			}
+
 			const content = await loadFixture(`elements/${name}`);
 			const svg = new SVG(content);
 

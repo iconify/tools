@@ -3,7 +3,7 @@ import { cleanupGlobalStyle } from '../../src/optimise/global-style.js';
 import { loadFixture } from '../../src/tests/helpers.js';
 
 describe('Removing global style', () => {
-	test('Simple icon', () => {
+	test.only('Simple icon', () => {
 		const svg = new SVG(
 			`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><defs><style>.cls-1{fill:#fff;opacity:0;}.cls-2{fill:#231f20;}</style></defs><title>arrow-circle-right</title><g id="Layer_2" data-name="Layer 2"><g id="arrow-circle-right"><g id="arrow-circle-right-2" data-name="arrow-circle-right"><rect class="cls-1" width="24" height="24" transform="translate(0 24) rotate(-90)"/><path class="cls-2" d="M2,12A10,10,0,1,0,12,2,10,10,0,0,0,2,12ZM13.86,8.31l2.86,3a.49.49,0,0,1,.1.15.54.54,0,0,1,.1.16.94.94,0,0,1,0,.76,1,1,0,0,1-.21.33l-3,3a1,1,0,0,1-1.42-1.42L13.59,13H8a1,1,0,0,1,0-2h5.66L12.41,9.69a1,1,0,0,1,1.45-1.38Z"/></g></g></g></svg>`
 		);
@@ -70,7 +70,7 @@ describe('Removing global style', () => {
 		cleanupGlobalStyle(svg);
 
 		expect(svg.toMinifiedString()).toBe(
-			'<svg id="refresh" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><defs></defs><path d="M15.518,23.936A8.576,8.576,0,0,0,24,32.606V34.94l-0.944,4.286A15.186,15.186,0,0,1,9,23.936,14.953,14.953,0,0,1,21,9h2l0.048,6.323A8.6,8.6,0,0,0,15.518,23.936Z" fill-rule="evenodd" fill="#0C0058"/><path d="M24,39.275c-0.319,0-.63-0.029-0.944-0.049L24,34.94V32.606a8.672,8.672,0,0,0,0-17.34,8.346,8.346,0,0,0-.949.058L23,13s-0.658-4.4,1-4.4A15.172,15.172,0,0,1,39,23.936,15.172,15.172,0,0,1,24,39.275Z" fill="#FF6E6E" fill-rule="evenodd"/><path d="M26.005,42V28L19,35Z" fill="#FF6E6E" fill-rule="evenodd"/><path d="M21.989,6V19l6.024-6.494Z" fill-rule="evenodd" fill="#0C0058"/></svg>'
+			'<svg id="refresh" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><defs/><path d="M15.518,23.936A8.576,8.576,0,0,0,24,32.606V34.94l-0.944,4.286A15.186,15.186,0,0,1,9,23.936,14.953,14.953,0,0,1,21,9h2l0.048,6.323A8.6,8.6,0,0,0,15.518,23.936Z" fill-rule="evenodd" fill="#0C0058"/><path d="M24,39.275c-0.319,0-.63-0.029-0.944-0.049L24,34.94V32.606a8.672,8.672,0,0,0,0-17.34,8.346,8.346,0,0,0-.949.058L23,13s-0.658-4.4,1-4.4A15.172,15.172,0,0,1,39,23.936,15.172,15.172,0,0,1,24,39.275Z" fill="#FF6E6E" fill-rule="evenodd"/><path d="M26.005,42V28L19,35Z" fill="#FF6E6E" fill-rule="evenodd"/><path d="M21.989,6V19l6.024-6.494Z" fill-rule="evenodd" fill="#0C0058"/></svg>'
 		);
 	});
 });

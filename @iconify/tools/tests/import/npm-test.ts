@@ -41,7 +41,7 @@ describe('Downloading NPM package', () => {
 
 	let lastResult: DownloadNPMPackageResult | 'not_modified';
 
-	runTest('Downloading latest tag', async () => {
+	async function downloadLatestTag() {
 		const branch = testBranches[0];
 		const result = await downloadNPMPackage({
 			ifModifiedSince: true,
@@ -62,9 +62,9 @@ describe('Downloading NPM package', () => {
 			await readFile(`${target}${packageDir}/package.json`, 'utf8')
 		) as Record<string, unknown>;
 		expect(packageContents.version).toBe(branch.version);
-	});
+	}
 
-	runTest('Downloading old version', async () => {
+	async function downloadOldVersion() {
 		const branch = testBranches[1];
 		const result = await downloadNPMPackage({
 			ifModifiedSince: true,
@@ -88,9 +88,9 @@ describe('Downloading NPM package', () => {
 			await readFile(`${target}${packageDir}/package.json`, 'utf8')
 		) as Record<string, unknown>;
 		expect(packageContents.version).toBe(branch.version);
-	});
+	}
 
-	runTest('Checking not_modified', async () => {
+	async function checkNotModified() {
 		const branch = testBranches[1];
 
 		// Use last result for ifModifiedSince
@@ -101,9 +101,9 @@ describe('Downloading NPM package', () => {
 			target,
 		});
 		expect(result).toBe('not_modified');
-	});
+	}
 
-	runTest('Checking out latest tag again', async () => {
+	async function checkOutLatestTagAgain() {
 		const branch = testBranches[0];
 		const result = await downloadNPMPackage({
 			ifModifiedSince: lastResult,
@@ -120,5 +120,13 @@ describe('Downloading NPM package', () => {
 			version: branch.version,
 		};
 		expect(result).toEqual(expectedResult);
+	}
+
+	runTest('Testing NPM package', async () => {
+		// Run tests in sequence
+		await downloadLatestTag();
+		await downloadOldVersion();
+		await checkNotModified();
+		await checkOutLatestTagAgain();
 	});
 });

@@ -37,14 +37,13 @@ export function analyseSVGStructure(
 	const fixErrors = options.fixErrors;
 
 	// Root element
-	let root = svg.$svg(':root').get(0) as ExtendedRootTagElement;
+	let root = svg.$svg as ExtendedRootTagElement;
 	if (root._parsed) {
 		// Reload to reset custom properties
 		svg.load(svg.toString());
-		root = svg.$svg(':root').get(0) as ExtendedRootTagElement;
+		root = svg.$svg as ExtendedRootTagElement;
 	}
 	root._parsed = true;
-	const cheerio = svg.$svg;
 
 	// List of all elements
 	const elements: AnalyseSVGStructureResult['elements'] = new Map();
@@ -94,7 +93,7 @@ export function analyseSVGStructure(
 		item: ParseSVGCallbackItem,
 		isMask: boolean
 	): boolean {
-		const element = item.element as ExtendedTagElement;
+		const element = item.node as ExtendedTagElement;
 		const attribs = element.attribs;
 		const index = element._index;
 
@@ -136,7 +135,7 @@ export function analyseSVGStructure(
 		id: string,
 		usedAsMask: boolean
 	) {
-		const element = item.element as ExtendedTagElement;
+		const element = item.node as ExtendedTagElement;
 		const usedByIndex = element._index;
 
 		const link: LinkToElementWithID = {
@@ -158,13 +157,14 @@ export function analyseSVGStructure(
 	// Find all reusable elements and all usages
 	let index = 0;
 	parseSVG(svg, (item) => {
-		const { tagName, parents } = item;
+		const parents = item.parents;
+		const element = item.node as ExtendedTagElement;
+		const tagName = element.tag;
 		if (styleTag.has(tagName)) {
 			item.testChildren = false;
 			return;
 		}
 
-		const element = item.element as ExtendedTagElement;
 		const attribs = element.attribs;
 
 		// Set index
@@ -183,7 +183,7 @@ export function analyseSVGStructure(
 
 		// Get parent element
 		const parentItem = parents[0];
-		const parentElement = parentItem.element as ExtendedTagElement;
+		const parentElement = parentItem.node as ExtendedTagElement;
 
 		// Check for mask or clip path
 		if (maskTags.has(tagName)) {
@@ -196,7 +196,7 @@ export function analyseSVGStructure(
 			if (!gotReusableElement(item, false)) {
 				return;
 			}
-		} else if (defsTag.has(parentItem.tagName)) {
+		} else if (defsTag.has(parentItem.node.tag)) {
 			// Symbol without <symbol> tag
 			if (!gotReusableElement(item, false)) {
 				return;
@@ -244,7 +244,7 @@ export function analyseSVGStructure(
 				if (typeof id === 'string') {
 					if (ids[id] && fixErrors) {
 						console.warn(`Duplicate id "${id}"`);
-						cheerio(element).removeAttr('id');
+						delete attribs['id'];
 					} else {
 						gotElementWithID(element, id, false);
 					}
@@ -268,8 +268,12 @@ export function analyseSVGStructure(
 
 		// Check colors
 		Object.keys(attribs).forEach((attr) => {
-			// Get id
 			let value = attribs[attr];
+			if (typeof value !== 'string') {
+				return;
+			}
+
+			// Get id
 			if (value.slice(0, 5).toLowerCase() !== 'url(#') {
 				return;
 			}
@@ -307,11 +311,14 @@ export function analyseSVGStructure(
 		function fix() {
 			const index = item.usedByIndex;
 			const element = elements.get(index)!;
-			const tagName = element.tagName;
+			const tagName = element.tag;
 
 			function remove() {
-				const $element = cheerio(element);
-				const parent = element.parent as ExtendedTagElement;
+				const parentIndex = element._parentElement;
+				const parent =
+					typeof parentIndex === 'number'
+						? elements.get(parentIndex)
+						: null;
 				if (parent) {
 					if (parent._childElements) {
 						parent._childElements = parent._childElements.filter(
@@ -321,8 +328,11 @@ export function analyseSVGStructure(
 					parent._belongsTo?.forEach((list) => {
 						list.indexes.delete(index);
 					});
+
+					parent.children = parent.children.filter(
+						(node) => node !== element
+					);
 				}
-				$element.remove();
 			}
 
 			// Remove links
@@ -341,11 +351,14 @@ export function analyseSVGStructure(
 			}
 
 			// Remove attributes that use id
-			const matches = new Set(['#' + id, 'url(#' + id + ')']);
+			const matches = new Set<string | number>([
+				'#' + id,
+				'url(#' + id + ')',
+			]);
 			const attribs = element.attribs;
 			for (const attr in attribs) {
 				if (matches.has(attribs[attr])) {
-					cheerio(element).removeAttr(attr);
+					delete attribs[attr];
 				}
 			}
 		}

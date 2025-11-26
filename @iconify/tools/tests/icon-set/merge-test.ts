@@ -161,7 +161,7 @@ describe('Merging icon sets', () => {
 			lastModified: lastModified1,
 			icons: {
 				bar: {
-					body: '<g />',
+					body: '<g/>',
 				},
 			},
 			aliases: {
@@ -183,7 +183,7 @@ describe('Merging icon sets', () => {
 			lastModified: lastModified2,
 			icons: {
 				baz: {
-					body: '<g />',
+					body: '<g/>',
 				},
 			},
 			aliases: {
@@ -211,7 +211,7 @@ describe('Merging icon sets', () => {
 			lastModified,
 			icons: {
 				baz: {
-					body: '<g />',
+					body: '<g/>',
 				},
 			},
 			aliases: {
@@ -242,7 +242,7 @@ describe('Merging icon sets', () => {
 			lastModified: lastModified1,
 			icons: {
 				icon1: {
-					body: '<g />',
+					body: '<g/>',
 				},
 			},
 			aliases: {
@@ -256,7 +256,7 @@ describe('Merging icon sets', () => {
 			lastModified: lastModified2,
 			icons: {
 				icon2: {
-					body: '<g />',
+					body: '<g/>',
 				},
 			},
 			aliases: {
@@ -283,7 +283,7 @@ describe('Merging icon sets', () => {
 			lastModified,
 			icons: {
 				icon2: {
-					body: '<g />',
+					body: '<g/>',
 				},
 			},
 			aliases: {
@@ -349,7 +349,7 @@ describe('Merging icon sets', () => {
 			lastModified: lastModified1,
 			icons: {
 				icon1: {
-					body: '<g />',
+					body: '<g/>',
 				},
 			},
 			aliases: {
@@ -363,7 +363,7 @@ describe('Merging icon sets', () => {
 			lastModified: lastModified2,
 			icons: {
 				icon1: {
-					body: '<g />',
+					body: '<g/>',
 				},
 			},
 			aliases: {
@@ -388,7 +388,7 @@ describe('Merging icon sets', () => {
 			lastModified,
 			icons: {
 				icon1: {
-					body: '<g />',
+					body: '<g/>',
 				},
 			},
 			aliases: {
@@ -408,7 +408,7 @@ describe('Merging icon sets', () => {
 			prefix: 'foo',
 			icons: {
 				icon1: {
-					body: '<g />',
+					body: '<g/>',
 				},
 			},
 			aliases: {
@@ -425,7 +425,7 @@ describe('Merging icon sets', () => {
 			lastModified,
 			icons: {
 				icon1: {
-					body: '<g />',
+					body: '<g/>',
 				},
 			},
 			aliases: {
@@ -452,7 +452,7 @@ describe('Merging icon sets', () => {
 			lastModified,
 			icons: {
 				icon1: {
-					body: '<g />',
+					body: '<g/>',
 				},
 			},
 			aliases: {
@@ -476,7 +476,7 @@ describe('Merging icon sets', () => {
 			lastModified,
 			icons: {
 				icon1: {
-					body: '<g />',
+					body: '<g/>',
 				},
 			},
 			aliases: {
@@ -489,7 +489,7 @@ describe('Merging icon sets', () => {
 			prefix: 'bar',
 			icons: {
 				alias1: {
-					body: '<g />',
+					body: '<g/>',
 				},
 			},
 			aliases: {
@@ -515,7 +515,7 @@ describe('Merging icon sets', () => {
 			lastModified,
 			icons: {
 				alias1: {
-					body: '<g />',
+					body: '<g/>',
 				},
 			},
 			aliases: {

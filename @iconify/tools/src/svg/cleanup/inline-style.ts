@@ -54,16 +54,16 @@ const knownIgnoredRules: Set<string> = new Set([
  */
 export function cleanupInlineStyle(svg: SVG): void {
 	parseSVG(svg, (item) => {
-		const $element = item.$element;
-		const attribs = item.element.attribs;
-		const tagName = item.tagName;
+		const node = item.node;
+		const tagName = node.tag;
+		const attribs = node.attribs;
 
 		// Expand style
-		if (attribs.style) {
+		if (attribs.style && typeof attribs.style === 'string') {
 			const parsedStyle = parseInlineStyle(attribs.style);
 			if (parsedStyle === null) {
 				// Ignore style
-				$element.removeAttr('style');
+				delete attribs.style;
 			} else {
 				const newStyle = Object.create(null) as Record<string, string>;
 
@@ -89,7 +89,7 @@ export function cleanupInlineStyle(svg: SVG): void {
 						tagSpecificAnimatedAttributes[tagName]?.has(prop) ||
 						tagSpecificPresentationalAttributes[tagName]?.has(prop)
 					) {
-						$element.attr(prop, value);
+						attribs[prop] = value;
 						return;
 					}
 
@@ -108,10 +108,10 @@ export function cleanupInlineStyle(svg: SVG): void {
 					if (insideClipPathAttributes.has(prop)) {
 						if (
 							item.parents.find(
-								(item) => item.tagName === 'clipPath'
+								(item) => item.node.tag === 'clipPath'
 							)
 						) {
-							$element.attr(prop, value);
+							attribs[prop] = value;
 						}
 						return;
 					}
@@ -147,9 +147,9 @@ export function cleanupInlineStyle(svg: SVG): void {
 					.map((key) => key + ':' + newStyle[key] + ';')
 					.join('');
 				if (newStyleStr.length) {
-					$element.attr('style', newStyleStr);
+					attribs.style = newStyleStr;
 				} else {
-					$element.removeAttr('style');
+					delete attribs.style;
 				}
 			}
 		}

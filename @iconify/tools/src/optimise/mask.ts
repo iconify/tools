@@ -148,13 +148,14 @@ export function convertSVGToMask(
 		return false;
 	}
 	const { defs, content } = splitSVGDefs(parsed.body);
+	const viewBox = svg.viewBox;
 	const newBody = `<defs>${defs}<mask id="${
 		props.id
 	}">${content}</mask></defs><rect mask="url(#${props.id})" ${
-		svg.viewBox.left ? `x=${svg.viewBox.left} ` : ''
-	}${svg.viewBox.top ? `y=${svg.viewBox.top} ` : ''}width="${
-		svg.viewBox.width
-	}" height="${svg.viewBox.height}" fill="${props.color}" />`;
+		viewBox.left ? `x="${viewBox.left}" ` : ''
+	}${viewBox.top ? `y="${viewBox.top}" ` : ''}width="${
+		viewBox.width
+	}" height="${viewBox.height}" fill="${props.color}" />`;
 
 	// Load SVG
 	const newContent = iconToHTML(newBody, parsed.attribs);

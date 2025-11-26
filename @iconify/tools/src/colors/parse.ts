@@ -262,7 +262,7 @@ export function parseColors(
 			prop,
 			value,
 			parsedColor,
-			item?.tagName,
+			item?.tag,
 			item
 		);
 		if ((callbackResult as unknown) instanceof Promise) {
@@ -327,7 +327,6 @@ export function parseColors(
 	// Analyse SVG
 	const iconData = analyseSVGStructure(svg, options);
 	const { elements, tree } = iconData;
-	const cheerio = svg.$svg;
 	const removedElements: Set<number> = new Set();
 	const parsedElements: Set<number> = new Set();
 
@@ -356,7 +355,6 @@ export function parseColors(
 		element._removed = true;
 		removedElements.add(index);
 		removeChildren(element);
-		cheerio(element).remove();
 	}
 
 	// Parse tree item
@@ -372,7 +370,7 @@ export function parseColors(
 			return;
 		}
 
-		const { tagName, attribs } = element;
+		const { tag, attribs } = element;
 
 		// Copy colors from parent item
 		if (item.parent) {
@@ -390,18 +388,18 @@ export function parseColors(
 		// Check common properties
 		for (let i = 0; i < propsToCheck.length; i++) {
 			const prop = propsToCheck[i] as ColorAttributes;
-			if (prop === 'fill' && animateTags.has(tagName)) {
+			if (prop === 'fill' && animateTags.has(tag)) {
 				// 'fill' has different meaning in animations
 				continue;
 			}
 
 			const value = attribs[prop];
-			if (value !== undefined) {
+			if (typeof value === 'string') {
 				const newValue = checkColor(prop, value, element);
 				if (newValue !== value) {
 					if (newValue === undefined) {
 						// Unset
-						cheerio(element).removeAttr(prop);
+						delete attribs[prop];
 						if (element._colors) {
 							delete element._colors[prop];
 						}
@@ -412,14 +410,14 @@ export function parseColors(
 					} else {
 						// Change attribute
 						// Value in element._colors is changed in checkColor()
-						cheerio(element).attr(prop, newValue);
+						attribs[prop] = newValue;
 					}
 				}
 			}
 		}
 
 		// Check animations
-		if (animateTags.has(tagName)) {
+		if (animateTags.has(tag)) {
 			const attr = attribs.attributeName as ColorAttributes;
 			if (propsToCheck.includes(attr)) {
 				// Valid property
@@ -453,10 +451,7 @@ export function parseColors(
 
 					// Merge values back
 					if (updatedValues) {
-						cheerio(element).attr(
-							elementProp,
-							splitValues.join(';')
-						);
+						attribs[elementProp] = splitValues.join(';');
 					}
 				}
 			}
@@ -467,12 +462,12 @@ export function parseColors(
 			// Get list of properties required to render element
 			let requiredProps: ColorAttributes[] | undefined;
 
-			if (shapeTags.has(tagName)) {
+			if (shapeTags.has(tag)) {
 				requiredProps = shapeColorAttributes;
 			}
 
 			specialColorAttributes.forEach((attr) => {
-				if (tagSpecificPresentationalAttributes[tagName]?.has(attr)) {
+				if (tagSpecificPresentationalAttributes[tag]?.has(attr)) {
 					requiredProps = [attr];
 				}
 			});
@@ -499,10 +494,7 @@ export function parseColors(
 
 							// Add color to results and change attribute
 							findColor(defaultColorValue, true);
-							cheerio(element).attr(
-								prop,
-								colorToString(defaultColorValue)
-							);
+							attribs[prop] = colorToString(defaultColorValue);
 							itemColors[prop] = defaultColorValue;
 						} else {
 							result.hasUnsetColor = true;
@@ -523,6 +515,29 @@ export function parseColors(
 
 	// Parse tree, starting with <svg>
 	parseTreeItem(tree);
+
+	// Delete nodes marked for removal
+	function removeElements(node: ElementsTreeItem, parent?: ElementsTreeItem) {
+		if (parent) {
+			// Check if node is removed
+			const index = node.index;
+			if (
+				removedElements.has(index) ||
+				(elements.get(index) as ExtendedTagElementWithColors)._removed
+			) {
+				parent.children = parent.children.filter(
+					(item) => item.index !== index
+				);
+				return;
+			}
+		}
+
+		// Check child nodes
+		node.children.forEach((child) => {
+			removeElements(child, node);
+		});
+	}
+	removeElements(tree);
 
 	return result;
 }

@@ -1,14 +1,11 @@
+import {
+	splitClassName,
+	type ParsedXMLTagElement,
+} from '@cyberalien/svg-utils';
 import type { SVG } from '../svg';
-import {} from '../svg/data/attributes';
 import { allValidTags, animateTags } from '../svg/data/tags';
-import { parseSVG, ParseSVGCallbackItem } from '../svg/parse';
+import { parseSVG } from '../svg/parse';
 import { parseSVGStyle } from '../svg/parse-style';
-
-function getClassList(value: string): string[];
-function getClassList(value: string | undefined): string[] | undefined;
-function getClassList(value: string | undefined): string[] | undefined {
-	return value?.split(/\s+/);
-}
 
 const tempDataAttrbiute = 'data-gstyle-temp';
 
@@ -22,21 +19,24 @@ export function cleanupGlobalStyle(svg: SVG) {
 	// Find all animated classes
 	const animatedClasses: Set<string> = new Set();
 	parseSVG(svg, (item) => {
-		if (!animateTags.has(item.tagName)) {
+		const node = item.node;
+		const attribs = node.attribs;
+		const tagName = node.tag;
+
+		if (!animateTags.has(tagName)) {
 			return;
 		}
-		const $element = item.$element;
-		if ($element.attr('attributeName') !== 'class') {
+		if (attribs['attributeName'] !== 'class') {
 			return;
 		}
 
 		['from', 'to', 'values'].forEach((attr) => {
-			const value = $element.attr(attr);
+			const value = attribs[attr];
 			if (typeof value !== 'string') {
 				return;
 			}
 			value.split(';').forEach((item) => {
-				getClassList(item).forEach((className) => {
+				splitClassName(item).forEach((className) => {
 					animatedClasses.add(className);
 				});
 			});
@@ -102,13 +102,14 @@ export function cleanupGlobalStyle(svg: SVG) {
 			// Check if element is a match
 			const isMatch = (
 				tagName: string,
-				$element: ParseSVGCallbackItem['$element']
+				node: ParsedXMLTagElement
 			): boolean => {
+				const attribs = node.attribs;
 				for (let i = 0; i < matches.length; i++) {
 					const { type, value } = matches[i];
 					switch (type) {
 						case 'id':
-							if ($element.attr('id') === value) {
+							if (attribs.id === value) {
 								return true;
 							}
 							break;
@@ -120,10 +121,10 @@ export function cleanupGlobalStyle(svg: SVG) {
 							break;
 
 						case 'class': {
-							const className = $element.attr('class');
+							const className = attribs['class'];
 							if (
-								className &&
-								getClassList(className).includes(value)
+								typeof className === 'string' &&
+								splitClassName(className).includes(value)
 							) {
 								return true;
 							}
@@ -136,19 +137,24 @@ export function cleanupGlobalStyle(svg: SVG) {
 
 			// Parse all elements
 			parseSVG(svg, (svgItem) => {
-				const tagName = svgItem.tagName;
-				const $element = svgItem.$element;
-				if (!isMatch(tagName, $element)) {
+				const node = svgItem.node;
+				const tagName = node.tag;
+
+				if (!isMatch(tagName, node)) {
 					return;
 				}
 
 				// Transfer attribute
+				const attribs = node.attribs;
+				const tempDataValue = attribs[tempDataAttrbiute];
 				const addedAttributes = new Set(
-					$element.attr(tempDataAttrbiute)?.split(/\s+/)
+					typeof tempDataValue === 'string'
+						? splitClassName(tempDataValue)
+						: []
 				);
 
 				const prop = styleItem.prop;
-				if ($element.attr(prop) !== undefined) {
+				if (attribs[prop] !== undefined) {
 					// Previously added attribute?
 					if (addedAttributes.has(prop)) {
 						// Two CSS rules are applied to same element: abort parsing and restore content from backup.
@@ -157,12 +163,10 @@ export function cleanupGlobalStyle(svg: SVG) {
 					}
 				}
 
-				$element.attr(prop, styleItem.value);
+				attribs[prop] = styleItem.value;
 				addedAttributes.add(prop);
-				$element.attr(
-					tempDataAttrbiute,
-					Array.from(addedAttributes).join(' ')
-				);
+				attribs[tempDataAttrbiute] =
+					Array.from(addedAttributes).join(' ');
 				containsTempAttr = true;
 			});
 
@@ -176,10 +180,15 @@ export function cleanupGlobalStyle(svg: SVG) {
 
 		// Remove classes
 		parseSVG(svg, (svgItem) => {
-			const $element = svgItem.$element;
+			const node = svgItem.node;
+			const attribs = node.attribs;
 
 			// Get list of classes
-			const classList = getClassList($element.attr('class'));
+			const className = attribs['class'];
+			const classList =
+				typeof className === 'string'
+					? splitClassName(className)
+					: undefined;
 			if (!classList) {
 				return;
 			}
@@ -188,16 +197,16 @@ export function cleanupGlobalStyle(svg: SVG) {
 				(item) => !removeClasses.has(item)
 			);
 			if (!filtered.length) {
-				$element.removeAttr('class');
+				delete attribs['class'];
 			} else {
-				$element.attr('class', filtered.join(' '));
+				attribs['class'] = filtered.join(' ');
 			}
 		});
 
 		// Remove temporary attributes
 		if (containsTempAttr) {
 			parseSVG(svg, (item) => {
-				item.$element.removeAttr(tempDataAttrbiute);
+				delete item.node.attribs[tempDataAttrbiute];
 			});
 		}
 	} catch {

@@ -1,10 +1,10 @@
 import { colorToString, stringToColor } from '@iconify/utils';
-import type { CheerioElement } from '../misc/cheerio';
 import { SVG } from '../svg';
 import { cleanupInlineStyle } from '../svg/cleanup/inline-style';
 import { defsTag, maskTags, symbolTag } from '../svg/data/tags';
 import { parseSVG } from '../svg/parse';
 import { unwrapEmptyGroup } from './unwrap';
+import type { ParsedXMLTagElement } from '@cyberalien/svg-utils';
 
 /**
  * Checks if number is tiny, used to remove bad Figma transformations
@@ -15,8 +15,8 @@ function isTinyNumber(value: string, limit: number): boolean {
 }
 
 interface CheckClipPathResult {
-	node: CheerioElement;
-	attribs: Record<string, string>;
+	node: ParsedXMLTagElement;
+	attribs: Record<string, string | number>;
 }
 
 /**
@@ -25,7 +25,7 @@ interface CheckClipPathResult {
  * Returns CheckClipPathResult on success, false on error
  */
 function checkClipPathNode(
-	clipNode: CheerioElement,
+	clipNode: ParsedXMLTagElement,
 	expectedWidth: number,
 	expectedHeight: number
 ): CheckClipPathResult | false {
@@ -56,7 +56,7 @@ function checkClipPathNode(
 
 	// Check for fill: should be white or undefined
 	const fill = childNode.attribs['fill'];
-	const colorValue = fill ? stringToColor(fill) : null;
+	const colorValue = typeof fill === 'string' ? stringToColor(fill) : null;
 	const colorString = colorValue ? colorToString(colorValue) : null;
 	if (fill && colorString !== '#fff') {
 		console.warn(
@@ -67,10 +67,18 @@ function checkClipPathNode(
 	}
 
 	// Check tag
-	switch (childNode.tagName) {
+	switch (childNode.tag) {
 		case 'rect': {
-			const width = parseInt(childNode.attribs['width']);
-			const height = parseInt(childNode.attribs['height']);
+			const widthValue = attribs['width'];
+			const heightValue = attribs['height'];
+			const width =
+				typeof widthValue === 'string'
+					? parseInt(widthValue)
+					: widthValue;
+			const height =
+				typeof heightValue === 'string'
+					? parseInt(heightValue)
+					: heightValue;
 			if (width !== expectedWidth || height !== expectedHeight) {
 				console.warn('Invalid size of clip path');
 				return false;
@@ -82,16 +90,16 @@ function checkClipPathNode(
 
 		default:
 			// Invalid tag
-			console.warn(
-				'Unexpected tag in Figma clip path:',
-				childNode.tagName
-			);
+			console.warn('Unexpected tag in Figma clip path:', childNode.tag);
 			return false;
 	}
 
 	// Check attributes
 	Object.keys(attribs).forEach((attr) => {
 		const value = attribs[attr];
+		if (typeof value !== 'string') {
+			return;
+		}
 		switch (attr) {
 			case 'transform': {
 				// Remove sub-pixel translate, which is sometimes added by Figma if grid is not precise
@@ -146,14 +154,20 @@ function remove(svg: SVG): boolean {
 	if (isPenpot) {
 		cleanupInlineStyle(svg);
 		parseSVG(svg, (item) => {
-			const tagName = item.tagName;
-			for (const attr in item.element.attribs) {
-				const value = item.element.attribs[attr];
+			const node = item.node;
+			const tagName = node.tag;
+			const attribs = node.attribs;
+
+			Object.keys(attribs).forEach((attr) => {
+				const value = attribs[attr];
+				if (typeof value !== 'string') {
+					return;
+				}
 				switch (attr) {
 					case 'id':
 						// Keep ID only in clip paths, masks and symbols
 						if (!maskTags.has(tagName) && !symbolTag.has(tagName)) {
-							item.$element.removeAttr(attr);
+							delete attribs[attr];
 						}
 						break;
 
@@ -161,7 +175,7 @@ function remove(svg: SVG): boolean {
 					case 'xmlns:xlink':
 					case 'version':
 						// Class is not used, other attributes are junk
-						item.$element.removeAttr(attr);
+						delete attribs[attr];
 						break;
 
 					case 'transform': {
@@ -170,7 +184,7 @@ function remove(svg: SVG): boolean {
 							.replace(/\s+/g, '')
 							.replace(/\.0+/g, '');
 						if (!trimmed || trimmed === 'matrix(1,0,0,1,0,0)') {
-							item.$element.removeAttr(attr);
+							delete attribs[attr];
 						}
 						break;
 					}
@@ -181,7 +195,7 @@ function remove(svg: SVG): boolean {
 					case 'y':
 						// Remove unnecessary attributes
 						if (value === '0') {
-							item.$element.removeAttr(attr);
+							delete attribs[attr];
 						}
 						break;
 
@@ -190,7 +204,7 @@ function remove(svg: SVG): boolean {
 					case 'opacity':
 						// Remove unnecessary attributes
 						if (value === '1') {
-							item.$element.removeAttr(attr);
+							delete attribs[attr];
 						}
 						break;
 
@@ -199,11 +213,11 @@ function remove(svg: SVG): boolean {
 						// Clean up colors
 						const colorValue = stringToColor(value);
 						if (colorValue?.type === 'rgb') {
-							item.$element.attr(attr, colorToString(colorValue));
+							attribs[attr] = colorToString(colorValue);
 						}
 					}
 				}
-			}
+			});
 		});
 		content = svg.toString();
 	}
@@ -231,19 +245,18 @@ function remove(svg: SVG): boolean {
 	}
 
 	// Split clip path and shapes
-	const cheerio = svg.$svg;
-	const $root = svg.$svg(':root');
-	const children = $root.children();
+	const rootNode = svg.$svg;
+	const children = rootNode.children.slice(0);
 
 	// Shapes
-	const shapesToClip: CheerioElement[] = [];
+	const shapesToClip: ParsedXMLTagElement[] = [];
 
 	// Find expected clip path id
 	let clipID: string | undefined;
 	for (let i = 0; i < children.length; i++) {
 		const node = children[i];
 		if (node.type === 'tag') {
-			const tagName = node.tagName;
+			const tagName = node.tag;
 			if (
 				!defsTag.has(tagName) &&
 				!maskTags.has(tagName) &&
@@ -252,7 +265,7 @@ function remove(svg: SVG): boolean {
 				// Tag should have clip path
 				const clipPath = node.attribs['clip-path'];
 				if (
-					!clipPath ||
+					typeof clipPath !== 'string' ||
 					!clipPath.startsWith(urlStart) ||
 					!clipPath.endsWith(urlEnd)
 				) {
@@ -279,7 +292,7 @@ function remove(svg: SVG): boolean {
 	const findClipPath = () => {
 		for (let i = 0; i < children.length; i++) {
 			const node = children[i];
-			if (node.type === 'tag' && node.tagName === 'clipPath') {
+			if (node.type === 'tag' && node.tag === 'clipPath') {
 				const id = node.attribs['id'];
 				if (id === clipID) {
 					// Found clip path: check it
@@ -290,7 +303,9 @@ function remove(svg: SVG): boolean {
 					);
 
 					// Remove element
-					cheerio(node).remove();
+					rootNode.children = rootNode.children.filter(
+						(n) => n !== node
+					);
 					return result;
 				}
 				return;
@@ -307,13 +322,13 @@ function remove(svg: SVG): boolean {
 	const attribs = clipPath.attribs;
 	for (let i = 0; i < shapesToClip.length; i++) {
 		const node = shapesToClip[i];
-		cheerio(node).removeAttr('clip-path');
+		delete node.attribs['clip-path'];
 		for (const attr in attribs) {
 			if (node.attribs[attr] !== undefined) {
 				// Conflict!
 				return false;
 			}
-			cheerio(node).attr(attr, attribs[attr]);
+			node.attribs[attr] = attribs[attr];
 		}
 	}
 

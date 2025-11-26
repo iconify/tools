@@ -12,12 +12,12 @@ describe('Parsing SVG', () => {
 
 		// Parse
 		parseSVG(svg, (item) => {
-			if (item.tagName === 'g') {
+			if (item.node.tag === 'g') {
 				// Check for grid
-				const attribs = item.element.attribs;
+				const attribs = item.node.attribs;
 				if (attribs.id === 'grid') {
 					// Remove element, do not parse child elements
-					item.$element.remove();
+					item.removeNode = true;
 					item.testChildren = false;
 				}
 			}

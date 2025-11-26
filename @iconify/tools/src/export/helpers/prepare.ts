@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import { mkdir, rm } from 'node:fs/promises';
 import { normalize } from 'pathe';
 
 /**
@@ -38,21 +38,21 @@ export async function prepareDirectoryForExport(
 	if (options.cleanup) {
 		// Remove old files
 		try {
-			await fs.rm(dir, {
+			await rm(dir, {
 				recursive: true,
 				force: true,
 			});
-		} catch (err) {
+		} catch {
 			//
 		}
 	}
 
 	// Create directory if missing
 	try {
-		await fs.mkdir(dir, {
+		await mkdir(dir, {
 			recursive: true,
 		});
-	} catch (err) {
+	} catch {
 		//
 	}
 

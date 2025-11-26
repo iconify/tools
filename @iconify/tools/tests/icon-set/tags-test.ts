@@ -12,7 +12,7 @@ describe('Adding tags', () => {
 			prefix: 'foo',
 			icons: {
 				foo: {
-					body: '<g />',
+					body: '<g/>',
 					hidden: true,
 				},
 			},
@@ -37,14 +37,14 @@ describe('Adding tags', () => {
 			},
 			icons: {
 				foo: {
-					body: '<g />',
+					body: '<g/>',
 				},
 				bar: {
-					body: '<g />',
+					body: '<g/>',
 				},
 				// Hidden icon
 				hidden: {
-					body: '<g />',
+					body: '<g/>',
 					hidden: true,
 					width: 24,
 					height: 32,
@@ -70,12 +70,12 @@ describe('Adding tags', () => {
 			prefix: 'foo',
 			icons: {
 				foo: {
-					body: '<g />',
+					body: '<g/>',
 					width: 24,
 					height: 24,
 				},
 				bar: {
-					body: '<g />',
+					body: '<g/>',
 					width: 20,
 					height: 24,
 				},
@@ -102,12 +102,12 @@ describe('Adding tags', () => {
 			},
 			icons: {
 				foo: {
-					body: '<g />',
+					body: '<g/>',
 					width: 16,
 					height: 16,
 				},
 				bar: {
-					body: '<g />',
+					body: '<g/>',
 					width: 24,
 					height: 32,
 				},
@@ -134,12 +134,12 @@ describe('Adding tags', () => {
 			},
 			icons: {
 				foo: {
-					body: '<g />',
+					body: '<g/>',
 					width: 16,
 					height: 16,
 				},
 				bar: {
-					body: '<g />',
+					body: '<g/>',
 					width: 24,
 					height: 32,
 				},

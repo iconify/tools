@@ -1,17 +1,7 @@
 import type { IconifyJSON } from '@iconify/types';
+import { trimSVG } from '@iconify/utils';
 import { blankIconSet } from '../../src/icon-set/index.js';
 import { SVG } from '../../src/svg/index.js';
-
-function minify(str: string): string {
-	return (
-		str
-			// Replace new line only after one of allowed characters that are not part of common attributes
-			.replace(/(["';}><])\s*\n\s*/g, '$1')
-			// Keep one space in case it is inside attribute
-			.replace(/\s*\n\s*/g, ' ')
-			.trim()
-	);
-}
 
 describe('Updating icons', () => {
 	test('Adding icons', () => {
@@ -42,7 +32,7 @@ describe('Updating icons', () => {
 		expect(iconSet.lastModified).toBe(lastModified);
 
 		exported.icons.foo = {
-			body: '<g id="foo" />',
+			body: '<g id="foo"/>',
 		};
 		list.push('foo');
 		expect(iconSet.list()).toEqual(list);
@@ -62,7 +52,7 @@ describe('Updating icons', () => {
 		expect(iconSet.lastModified).toBe(lastModified);
 
 		exported.icons.bar = {
-			body: '<g id="bar" />',
+			body: '<g id="bar"/>',
 			width: 24,
 			height: 24,
 		};
@@ -249,13 +239,13 @@ describe('Updating icons', () => {
 			width: 100,
 			height: 100,
 		});
-		expect(svg.getBody()).toBe(minify(svgBody2));
+		expect(trimSVG(svg.getBody())).toBe(trimSVG(svgBody2));
 		expect(iconSet.lastModified).toBe(lastModified);
 
 		// Overwrite 'foo', category and character should be copied from old entry
 		expect(iconSet.fromSVG('foo', svg)).toBe(true);
 		exported.icons.foo = {
-			body: minify(svgBody2),
+			body: trimSVG(svgBody2),
 			width: 100,
 			height: 100,
 		};

@@ -1,25 +1,32 @@
+import { stringifyXMLContent } from '@cyberalien/svg-utils';
 import type { SVG } from '../svg';
 
 /**
  * Removes empty group from SVG root element
  */
 export function unwrapEmptyGroup(svg: SVG) {
-	const cheerio = svg.$svg;
-	const $root = svg.$svg(':root');
-	const children = $root.children();
+	const root = svg.$svg;
 
-	if (children.length !== 1 || children[0].tagName !== 'g') {
+	if (root.children.length !== 1) {
 		return;
 	}
-	const groupNode = children[0];
-	const html = cheerio(groupNode).html();
-	if (!html) {
+	const groupNode = root.children[0];
+
+	if (
+		groupNode.type !== 'tag' ||
+		groupNode.tag !== 'g' ||
+		!groupNode.children.length
+	) {
 		return;
 	}
 
 	// Check attributes
+	const html = stringifyXMLContent(groupNode.children);
 	for (const attr in groupNode.attribs) {
 		const value = groupNode.attribs[attr];
+		if (typeof value !== 'string') {
+			continue;
+		}
 		switch (attr) {
 			case 'id': {
 				// Check if ID is used
@@ -37,5 +44,5 @@ export function unwrapEmptyGroup(svg: SVG) {
 	}
 
 	// Unwrap group
-	$root.html(html);
+	root.children = groupNode.children;
 }

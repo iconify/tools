@@ -33,7 +33,7 @@ describe('Cleaning up SVG', () => {
 		const svg = new SVG(await loadFixture('batch-asterisk.svg'));
 		cleanupSVG(svg);
 		expect(svg.toMinifiedString()).toBe(
-			'<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"> <g fill="#000000"><path d="M 42.588,20.196C 41.058,21.078, 36.348,22.911, 32.034,24.00 c 4.314,1.089, 9.024,2.922, 10.557,3.804C 45.456,29.46, 46.44,33.129, 44.784,36.00c-1.656,2.871-5.325,3.852-8.193,2.196 c-1.533-0.885-5.475-4.053-8.574-7.245C 29.232,35.235, 30.00,40.233, 30.00,42.00c0.00,3.312-2.688,6.00-6.00,6.00s-6.00-2.688-6.00-6.00 c0.00-1.767, 0.768-6.765, 1.986-11.049c-3.099,3.192-7.041,6.36-8.574,7.245C 8.541,39.852, 4.872,38.871, 3.216,36.00S 2.541,29.46, 5.412,27.804 C 6.942,26.922, 11.652,25.089, 15.969,24.00C 11.652,22.911, 6.942,21.078, 5.412,20.196C 2.541,18.54, 1.56,14.871, 3.216,12.00s 5.325-3.852, 8.196-2.196 c 1.533,0.885, 5.475,4.053, 8.574,7.245C 18.768,12.765, 18.00,7.767, 18.00,6.00c0.00-3.312, 2.688-6.00, 6.00-6.00s 6.00,2.688, 6.00,6.00c0.00,1.767-0.768,6.765-1.986,11.049 c 3.099-3.192, 7.044-6.36, 8.574-7.245c 2.868-1.656, 6.54-0.675, 8.193,2.196C 46.44,14.871, 45.456,18.54, 42.588,20.196z"/></g></svg>'
+			'<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><g fill="#000000"><path d="M 42.588,20.196C 41.058,21.078, 36.348,22.911, 32.034,24.00 c 4.314,1.089, 9.024,2.922, 10.557,3.804C 45.456,29.46, 46.44,33.129, 44.784,36.00c-1.656,2.871-5.325,3.852-8.193,2.196 c-1.533-0.885-5.475-4.053-8.574-7.245C 29.232,35.235, 30.00,40.233, 30.00,42.00c0.00,3.312-2.688,6.00-6.00,6.00s-6.00-2.688-6.00-6.00 c0.00-1.767, 0.768-6.765, 1.986-11.049c-3.099,3.192-7.041,6.36-8.574,7.245C 8.541,39.852, 4.872,38.871, 3.216,36.00S 2.541,29.46, 5.412,27.804 C 6.942,26.922, 11.652,25.089, 15.969,24.00C 11.652,22.911, 6.942,21.078, 5.412,20.196C 2.541,18.54, 1.56,14.871, 3.216,12.00s 5.325-3.852, 8.196-2.196 c 1.533,0.885, 5.475,4.053, 8.574,7.245C 18.768,12.765, 18.00,7.767, 18.00,6.00c0.00-3.312, 2.688-6.00, 6.00-6.00s 6.00,2.688, 6.00,6.00c0.00,1.767-0.768,6.765-1.986,11.049 c 3.099-3.192, 7.044-6.36, 8.574-7.245c 2.868-1.656, 6.54-0.675, 8.193,2.196C 46.44,14.871, 45.456,18.54, 42.588,20.196z"/></g></svg>'
 		);
 	});
 
@@ -78,7 +78,7 @@ describe('Cleaning up SVG', () => {
 		const svg = new SVG(await loadFixture('bpmn-trash.svg'));
 		cleanupSVG(svg);
 		expect(svg.toMinifiedString()).toBe(
-			'<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2048" viewBox="0 0 2048 2048"><defs></defs><g id="layer1" transform="translate(0,995.63783)"><g transform="matrix(96.752895,0,0,96.752895,55.328158,-100816.34)" id="layer1-6" display="inline"><path d="m 3.4296875,1038.3672 1.3325877,12.7308 10.5912408,0 1.228186,-12.7284 -13.1520736,0 z m 1.4921875,1.3437 10.185547,0 -0.972656,10.0411 -8.1582035,0 z" id="rect4089" color="#000000" display="inline" visibility="visible" opacity="1" color-interpolation="sRGB" fill="#000000" fill-opacity="1" fill-rule="nonzero" stroke="none" stroke-width="1.343629" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-dasharray="none" stroke-dashoffset="0" stroke-opacity="1" color-rendering="auto"/><g id="g4275" transform="matrix(1,0,0,0.90111263,0,103.41515)"><path id="path4092" d="m 7.0333918,1040.9794 0.9432241,7.504" fill="none" stroke="#000000" stroke-width="1.343629" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-opacity="1" stroke-dasharray="none"/><path id="path4092-2" d="m 12.990235,1040.9794 -0.943224,7.504" fill="none" stroke="#000000" stroke-width="1.343629" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-opacity="1" stroke-dasharray="none"/></g><path d="m 7.2638322,1035.194 -4.2854023,1.2542 0,0.6276 14.0667651,0 0,-0.6276 -4.337726,-1.2542 z" id="rect4121" fill="#000000" fill-opacity="1" stroke="none"/><path d="m 7.6269598,1033.8929 4.7697062,0 0,1.737 -4.7697062,0 z" id="rect4121-6" display="inline" fill="#000000" fill-opacity="1" stroke="#000000" stroke-width="0.72291225" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-dashoffset="0" stroke-opacity="1"/></g></g></svg>'
+			'<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="2048" viewBox="0 0 2048 2048"><defs/><g id="layer1" transform="translate(0,995.63783)"><g transform="matrix(96.752895,0,0,96.752895,55.328158,-100816.34)" id="layer1-6" display="inline"><path d="m 3.4296875,1038.3672 1.3325877,12.7308 10.5912408,0 1.228186,-12.7284 -13.1520736,0 z m 1.4921875,1.3437 10.185547,0 -0.972656,10.0411 -8.1582035,0 z" id="rect4089" color="#000000" display="inline" visibility="visible" opacity="1" color-interpolation="sRGB" fill="#000000" fill-opacity="1" fill-rule="nonzero" stroke="none" stroke-width="1.343629" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-dasharray="none" stroke-dashoffset="0" stroke-opacity="1" color-rendering="auto"/><g id="g4275" transform="matrix(1,0,0,0.90111263,0,103.41515)"><path id="path4092" d="m 7.0333918,1040.9794 0.9432241,7.504" fill="none" stroke="#000000" stroke-width="1.343629" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-opacity="1" stroke-dasharray="none"/><path id="path4092-2" d="m 12.990235,1040.9794 -0.943224,7.504" fill="none" stroke="#000000" stroke-width="1.343629" stroke-linecap="round" stroke-linejoin="miter" stroke-miterlimit="4" stroke-opacity="1" stroke-dasharray="none"/></g><path d="m 7.2638322,1035.194 -4.2854023,1.2542 0,0.6276 14.0667651,0 0,-0.6276 -4.337726,-1.2542 z" id="rect4121" fill="#000000" fill-opacity="1" stroke="none"/><path d="m 7.6269598,1033.8929 4.7697062,0 0,1.737 -4.7697062,0 z" id="rect4121-6" display="inline" fill="#000000" fill-opacity="1" stroke="#000000" stroke-width="0.72291225" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="4" stroke-dasharray="none" stroke-dashoffset="0" stroke-opacity="1"/></g></g></svg>'
 		);
 	});
 
@@ -125,27 +125,15 @@ describe('Cleaning up SVG', () => {
 	});
 
 	test('font-face.svg', async () => {
-		// Intercept console.warn
-		const warn = console.warn;
+		let threwError = false;
 		try {
-			let warned = false;
-			console.warn = () => {
-				warned = true;
-			};
-
 			const content = await loadFixture('font-face.svg');
 			const svg = new SVG(content);
 			cleanupSVG(svg);
-			expect(
-				svg.toMinifiedString().replace('<defs></defs>', '<defs/>')
-			).toBe(
-				'<svg viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="200" height="200"><defs/><path d="M393.142857 548.571429A82.285714 82.285714 0 0 1 475.428571 630.857143v201.142857A82.285714 82.285714 0 0 1 393.142857 914.285714h-201.142857A82.285714 82.285714 0 0 1 109.714286 832v-201.142857A82.285714 82.285714 0 0 1 192 548.571429h201.142857z m438.857143 0A82.285714 82.285714 0 0 1 914.285714 630.857143v201.142857A82.285714 82.285714 0 0 1 832 914.285714h-201.142857A82.285714 82.285714 0 0 1 548.571429 832v-201.142857A82.285714 82.285714 0 0 1 630.857143 548.571429h201.142857z m-438.857143 54.857142h-201.142857a27.428571 27.428571 0 0 0-27.428571 27.428572v201.142857c0 15.140571 12.288 27.428571 27.428571 27.428571h201.142857a27.428571 27.428571 0 0 0 27.428572-27.428571v-201.142857a27.428571 27.428571 0 0 0-27.428572-27.428572z m438.857143 0h-201.142857a27.428571 27.428571 0 0 0-27.428572 27.428572v201.142857c0 15.140571 12.288 27.428571 27.428572 27.428571h201.142857a27.428571 27.428571 0 0 0 27.428571-27.428571v-201.142857a27.428571 27.428571 0 0 0-27.428571-27.428572zM393.142857 109.714286A82.285714 82.285714 0 0 1 475.428571 192v201.142857A82.285714 82.285714 0 0 1 393.142857 475.428571h-201.142857A82.285714 82.285714 0 0 1 109.714286 393.142857v-201.142857A82.285714 82.285714 0 0 1 192 109.714286h201.142857z m438.857143 0A82.285714 82.285714 0 0 1 914.285714 192v201.142857A82.285714 82.285714 0 0 1 832 475.428571h-201.142857A82.285714 82.285714 0 0 1 548.571429 393.142857v-201.142857A82.285714 82.285714 0 0 1 630.857143 109.714286h201.142857z m-438.857143 54.857143h-201.142857a27.428571 27.428571 0 0 0-27.428571 27.428571v201.142857c0 15.140571 12.288 27.428571 27.428571 27.428572h201.142857a27.428571 27.428571 0 0 0 27.428572-27.428572v-201.142857a27.428571 27.428571 0 0 0-27.428572-27.428571z m438.857143 0h-201.142857a27.428571 27.428571 0 0 0-27.428572 27.428571v201.142857c0 15.140571 12.288 27.428571 27.428572 27.428572h201.142857a27.428571 27.428571 0 0 0 27.428571-27.428572v-201.142857a27.428571 27.428571 0 0 0-27.428571-27.428571z"/></svg>'
-			);
-
-			expect(warned).toBe(true);
-		} finally {
-			console.warn = warn;
+		} catch {
+			threwError = true;
 		}
+		expect(threwError).toBe(true);
 	});
 
 	test('Icon with mask-type', async () => {

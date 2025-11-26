@@ -1,3 +1,4 @@
+import { stringifyXMLContent } from '@cyberalien/svg-utils';
 import type { SVG } from '.';
 import { parseInlineStyle } from '../css/parse';
 import { tokensToString } from '../css/parser/export';
@@ -90,21 +91,23 @@ function assertNotOldCode(value: unknown) {
  */
 export function parseSVGStyle(svg: SVG, callback: ParseSVGStyleCallback): void {
 	parseSVG(svg, (item) => {
-		const tagName = item.tagName;
-		const $element = item.$element;
+		const node = item.node;
+		const tagName = node.tag;
 
 		// Parse <style> tag
 		function parseStyleItem() {
-			const content = $element.text();
-			if (typeof content !== 'string') {
-				$element.remove();
+			const content = stringifyXMLContent(node.children);
+			if (!content) {
+				item.removeNode = true;
 				return;
 			}
 
 			const tokens = getTokens(content);
 			if (!(tokens instanceof Array)) {
 				// Invalid style
-				throw new Error('Error parsing style');
+				throw new Error(
+					'Error parsing style. This parser can handle only basic CSS'
+				);
 			}
 
 			// Parse all tokens
@@ -316,10 +319,15 @@ export function parseSVGStyle(svg: SVG, callback: ParseSVGStyleCallback): void {
 
 				if (!tree.length) {
 					// Empty
-					$element.remove();
+					item.removeNode = true;
 				} else {
 					const newContent = tokensToString(tree);
-					item.$element.text('\n' + newContent);
+					node.children = [
+						{
+							type: 'text',
+							content: '\n' + newContent,
+						},
+					];
 				}
 			}
 		}
@@ -331,15 +339,15 @@ export function parseSVGStyle(svg: SVG, callback: ParseSVGStyleCallback): void {
 		}
 
 		// Parse style
-		const attribs = item.element.attribs;
-		if (attribs.style === undefined) {
+		const attribs = node.attribs;
+		if (!attribs.style || typeof attribs.style !== 'string') {
 			return;
 		}
 
 		const parsedStyle = parseInlineStyle(attribs.style);
 		if (parsedStyle === null) {
 			// Ignore style
-			$element.removeAttr('style');
+			delete attribs.style;
 			return;
 		}
 
@@ -371,9 +379,9 @@ export function parseSVGStyle(svg: SVG, callback: ParseSVGStyleCallback): void {
 				.map((key) => key + ':' + parsedStyle[key] + ';')
 				.join('');
 			if (!newStyle.length) {
-				$element.removeAttr('style');
+				delete attribs.style;
 			} else {
-				$element.attr('style', newStyle);
+				attribs.style = newStyle;
 			}
 		}
 	});

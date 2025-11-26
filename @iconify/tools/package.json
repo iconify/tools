@@ -22,10 +22,9 @@
 		"test:ci": "cross-env TEST_REMOTE=false npm run test"
 	},
 	"dependencies": {
+		"@cyberalien/svg-utils": "^1.0.11",
 		"@iconify/types": "^2.0.0",
 		"@iconify/utils": "^3.0.2",
-		"cheerio": "^1.1.2",
-		"domhandler": "^5.0.3",
 		"fflate": "^0.8.2",
 		"local-pkg": "^1.1.2",
 		"modern-tar": "^0.7.2",
@@ -331,10 +330,6 @@
 		"./lib/misc/bump-version": {
 			"types": "./lib/misc/bump-version.d.ts",
 			"import": "./lib/misc/bump-version.js"
-		},
-		"./lib/misc/cheerio": {
-			"types": "./lib/misc/cheerio.d.ts",
-			"import": "./lib/misc/cheerio.js"
 		},
 		"./lib/misc/compare-dirs": {
 			"types": "./lib/misc/compare-dirs.d.ts",

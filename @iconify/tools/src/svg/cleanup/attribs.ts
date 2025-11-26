@@ -13,9 +13,9 @@ import { parseSVG } from '../parse';
  */
 export function removeBadAttributes(svg: SVG): void {
 	parseSVG(svg, (item) => {
-		const tagName = item.tagName;
-		const attribs = item.element.attribs;
-		const $element = item.$element;
+		const node = item.node;
+		const tagName = node.tag;
+		const attribs = node.attribs;
 
 		// Common tags
 		Object.keys(attribs).forEach((attr) => {
@@ -26,7 +26,7 @@ export function removeBadAttributes(svg: SVG): void {
 				badSoftwareAttributes.has(attr) ||
 				badAttributePrefixes.has(attr.split('-').shift() as string)
 			) {
-				$element.removeAttr(attr);
+				delete attribs[attr];
 				return;
 			}
 
@@ -35,7 +35,7 @@ export function removeBadAttributes(svg: SVG): void {
 				defsTag.has(tagName) &&
 				!tagSpecificPresentationalAttributes[tagName].has(attr)
 			) {
-				$element.removeAttr(attr);
+				delete attribs[attr];
 				return;
 			}
 
@@ -48,14 +48,14 @@ export function removeBadAttributes(svg: SVG): void {
 					case 'xlink': {
 						// Deprecated: use without namespace
 						if (attribs[newAttr] === undefined) {
-							$element.attr(newAttr, attribs[attr]);
+							attribs[newAttr] = attribs[attr];
 						}
 						break;
 					}
 				}
 
 				// Remove all namespace attributes
-				$element.removeAttr(attr);
+				delete attribs[attr];
 			}
 		});
 	});

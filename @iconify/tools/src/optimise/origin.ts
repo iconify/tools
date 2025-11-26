@@ -6,14 +6,16 @@ import { runSVGO } from './svgo';
  */
 export function resetSVGOrigin(svg: SVG) {
 	const viewBox = svg.viewBox;
-	if (viewBox.left !== 0 || viewBox.top !== 0) {
+	const left = viewBox.left ?? 0;
+	const top = viewBox.top ?? 0;
+	if (left || top) {
 		// Shift content
 		const content = `<svg width="${viewBox.width}" height="${
 			viewBox.height
 		}" viewBox="0 0 ${viewBox.width} ${
 			viewBox.height
-		}"><g transform="translate(${0 - viewBox.left} ${
-			0 - viewBox.top
+		}"><g transform="translate(${0 - left} ${
+			0 - top
 		})">${svg.getBody()}</g></svg>`;
 		svg.load(content);
 

@@ -1,4 +1,4 @@
-import type { CheerioElement } from '../../misc/cheerio';
+import type { ParsedXMLTagElement } from '@cyberalien/svg-utils';
 import type { SVG } from '../../svg';
 import {
 	badAttributes,
@@ -16,17 +16,15 @@ import { maskTags, reusableElementsWithPalette } from '../data/tags';
  * Clean up SVG
  */
 export function cleanupSVGRoot(svg: SVG) {
-	const cheerio = svg.$svg;
-	const $root = svg.$svg(':root');
-	const root = $root.get(0) as CheerioElement;
+	const root = svg.$svg;
 	const tagName = 'svg';
-	if (root.tagName !== tagName) {
-		throw new Error(`Unexpected root tag <${root.tagName}>`);
+	if (root.tag !== tagName) {
+		throw new Error(`Unexpected root tag <${root.tag}>`);
 	}
 	const attribs = root.attribs;
 
 	// Check attributes
-	const moveToChildren: typeof attribs = {};
+	const moveToChildren = Object.create(null) as typeof attribs;
 	Object.keys(attribs).forEach((attr) => {
 		const value = attribs[attr];
 
@@ -39,7 +37,7 @@ export function cleanupSVGRoot(svg: SVG) {
 			badAttributePrefixes.has(attr.split('-').shift() as string) ||
 			attr.split(':').length > 1
 		) {
-			$root.removeAttr(attr);
+			delete attribs[attr];
 			return;
 		}
 
@@ -48,11 +46,15 @@ export function cleanupSVGRoot(svg: SVG) {
 			case 'width':
 			case 'height':
 				// Cleanup dimensions
+				if (typeof value !== 'string') {
+					// Number
+					return;
+				}
 				if (value.slice(-2) === 'px') {
 					// Remove 'px'
 					const num = value.replace('px', '');
 					if (parseFloat(num).toString() === num) {
-						$root.attr(attr, num);
+						attribs[attr] = num;
 					}
 				}
 				return;
@@ -69,7 +71,7 @@ export function cleanupSVGRoot(svg: SVG) {
 			tagSpecificPresentationalAttributes.g.has(attr)
 		) {
 			moveToChildren[attr] = value;
-			$root.removeAttr(attr);
+			delete attribs[attr];
 			return;
 		}
 
@@ -80,7 +82,7 @@ export function cleanupSVGRoot(svg: SVG) {
 					return;
 
 				case 'class':
-					$root.removeAttr(attr);
+					delete attribs[attr];
 					return;
 			}
 			throw new Error(`Unexpected attribute "${attr}" on <${tagName}>`);
@@ -95,29 +97,32 @@ export function cleanupSVGRoot(svg: SVG) {
 			// Junk
 			attr.slice(0, 6) === 'xmlns:'
 		) {
-			$root.removeAttr(attr);
+			delete attribs[attr];
 			return;
 		}
 
 		console.warn(`Removing unexpected attribute on SVG: ${attr}`);
-		$root.removeAttr(attr);
+		delete attribs[attr];
 	});
 
 	if (Object.keys(moveToChildren).length) {
 		// Wrap child elements
-		const $wrapper = cheerio('<g />');
-		for (const key in moveToChildren) {
-			$wrapper.attr(key, moveToChildren[key]);
-		}
+		const nodesToMove = root.children;
+		const wrapper: ParsedXMLTagElement = {
+			type: 'tag',
+			tag: 'g',
+			attribs: moveToChildren,
+			children: [],
+		};
+		root.children = [];
 
-		$root.children().each((_index, child) => {
-			const $child = cheerio(child);
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+		for (const child of nodesToMove) {
 			if (child.type !== 'tag') {
-				$child.appendTo($wrapper);
-				return;
+				wrapper.children.push(child);
+				continue;
 			}
-			const tagName = child.tagName;
+
+			const tagName = child.tag;
 			if (
 				tagName === 'style' ||
 				tagName === 'title' ||
@@ -125,11 +130,11 @@ export function cleanupSVGRoot(svg: SVG) {
 				maskTags.has(tagName)
 			) {
 				// Do not wrap these elements
-				return;
+				root.children.push(child);
+			} else {
+				wrapper.children.push(child);
 			}
-			$child.appendTo($wrapper);
-		});
-
-		$wrapper.appendTo($root);
+		}
+		root.children.push(wrapper);
 	}
 }
