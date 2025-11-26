@@ -6,7 +6,7 @@ import { SVG, parseColors } from '@iconify/tools';
 	);
 
 	// Add 'currentColor' to shapes that use default color
-	await parseColors(svg, {
+	parseColors(svg, {
 		defaultColor: 'currentColor',
 	});
 

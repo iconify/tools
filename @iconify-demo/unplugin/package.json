@@ -13,7 +13,7 @@
 	},
 	"devDependencies": {
 		"@iconify/tools": "workspace:^",
-		"@iconify/utils": "^2.3.0",
+		"@iconify/utils": "^3.0.2",
 		"@vitejs/plugin-vue": "^6.0.2",
 		"typescript": "^5.9.3",
 		"unconfig": "^7.4.1",

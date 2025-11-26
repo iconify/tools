@@ -16,7 +16,7 @@
 	"devDependencies": {
 		"@iconify-json/carbon": "^1.2.14",
 		"@iconify/types": "^2.0.0",
-		"@iconify/utils": "^2.3.0",
+		"@iconify/utils": "^3.0.2",
 		"@types/node": "^24.10.1",
 		"@vitejs/plugin-vue": "^6.0.2",
 		"typescript": "^5.9.3",
