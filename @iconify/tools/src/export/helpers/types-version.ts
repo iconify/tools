@@ -13,7 +13,6 @@ async function getVersion(): Promise<string> {
 		packageName,
 		async () => {
 			const filename = import.meta.resolve(packageName);
-			console.log('Reading', filename);
 			return JSON.parse(
 				await readFile(filename.replace('file://', ''), 'utf8')
 			) as PackageContent;

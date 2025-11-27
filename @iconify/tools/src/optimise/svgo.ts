@@ -1,7 +1,8 @@
 import { optimize } from 'svgo';
 import type { Config, PluginConfig } from 'svgo';
 import type { SVG } from '../svg';
-import { replaceIDs } from '@iconify/utils/lib/svg/id';
+import { changeSVGIDs } from '@cyberalien/svg-utils/lib/svg/ids/change.js';
+import { parseXMLContent, stringifyXMLContent } from '@cyberalien/svg-utils';
 
 interface CleanupIDsOption {
 	// Cleanup IDs, value is prefix to add to IDs, default is 'svgID'. False to disable it
@@ -156,15 +157,14 @@ export function runSVGO(svg: SVG, options: SVGOOptions = {}) {
 			options.cleanupIDs !== undefined ? options.cleanupIDs : 'svgID';
 		if (prefix !== false) {
 			let counter = 0;
-			content = replaceIDs(
-				content,
-				typeof prefix === 'string'
-					? () => {
-							// Return prefix with number
-							return prefix + (counter++).toString(36);
-						}
-					: prefix
-			);
+			const xml = parseXMLContent(content);
+			if (xml) {
+				changeSVGIDs(xml, () => prefix + (counter++).toString(36));
+				const newContent = stringifyXMLContent(xml);
+				if (newContent) {
+					content = newContent;
+				}
+			}
 		}
 	}
 
