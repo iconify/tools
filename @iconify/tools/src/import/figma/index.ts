@@ -20,7 +20,7 @@ import type { FigmaIconNode, FigmaImportResult } from './types/result';
  * Import icon set from Figma
  */
 export async function importFromFigma<
-	T extends FigmaIfModifiedSinceOption & FigmaImportOptions
+	T extends FigmaIfModifiedSinceOption & FigmaImportOptions,
 >(options: T): Promise<FigmaImportResult | DocumentNotModified>;
 export async function importFromFigma(
 	options: FigmaImportOptions
@@ -33,7 +33,7 @@ export async function importFromFigma(
 				// 24 hours
 				ttl: options.cacheAPITTL || 60 * 60 * 24,
 				dir: options.cacheDir,
-		  }
+			}
 		: undefined;
 
 	const cacheSVGOptions: APICacheOptions | undefined = options.cacheDir
@@ -41,7 +41,7 @@ export async function importFromFigma(
 				// 30 days
 				ttl: options.cacheSVGTTL || 60 * 60 * 24 * 30,
 				dir: options.cacheDir,
-		  }
+			}
 		: undefined;
 
 	// Get document
@@ -91,7 +91,7 @@ export async function importFromFigma(
 			const svg = new SVG(item.content);
 			cleanupSVG(svg);
 			iconSet.fromSVG(item.keyword, svg);
-		} catch (err) {
+		} catch {
 			missing.push(item);
 			continue;
 		}

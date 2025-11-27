@@ -44,7 +44,6 @@ export function findEndOfURL(
 	let index = (start || 0) + 4;
 	const length = code.length;
 
-	// eslint-disable-next-line no-constant-condition
 	while (true) {
 		if (index >= length) {
 			return styleParseError('Cannot find end of URL', code, start);
@@ -74,7 +73,6 @@ export function findEndOfURL(
 
 			default:
 				// unquoted url
-				// eslint-disable-next-line no-constant-condition
 				while (true) {
 					switch (next) {
 						case ')':

@@ -25,7 +25,7 @@ export async function exportCustomFiles(
 			// Delete file, if exists
 			try {
 				await fs.unlink(dir + '/' + filename);
-			} catch (err) {
+			} catch {
 				//
 			}
 			continue;

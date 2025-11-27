@@ -21,7 +21,6 @@ function findTokens(code: string, tokens: string[]): FindTokensResult[] {
 
 	tokens.forEach((token) => {
 		let index = 0;
-		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			index = lc.indexOf(token, index);
 			if (index === -1) {

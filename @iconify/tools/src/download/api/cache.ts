@@ -82,7 +82,7 @@ export async function getAPICache(
 		return content.version === cacheVersion && content.expires > time
 			? content.data
 			: null;
-	} catch (err) {
+	} catch {
 		return null;
 	}
 }
@@ -109,7 +109,7 @@ async function getStoredFiles(dir: string, clear = false): Promise<void> {
 		await fs.mkdir(dir, {
 			recursive: true,
 		});
-	} catch (err) {
+	} catch {
 		//
 	}
 
