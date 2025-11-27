@@ -10,6 +10,7 @@ import {
 } from '../../download/api/queue';
 import type { APICacheOptions, APIQueryParams } from '../../download/api/types';
 import type { DocumentNotModified } from '../../download/types/modified';
+import { getFigmaErrorMessage } from './error.js';
 import type {
 	FigmaAPIError,
 	FigmaAPIImagesResponse,
@@ -124,7 +125,7 @@ export async function figmaFilesQuery(
 				}
 				// Set ifModifiedSince to last cached time
 				ifModifiedSince = parsedData.lastModified;
-			} catch (err) {
+			} catch {
 				// Bad data
 				await clearAPICache(cache.dir);
 				return true;
@@ -139,15 +140,17 @@ export async function figmaFilesQuery(
 			params: new URLSearchParams(params),
 		};
 		versionCheckParams.params.set('depth', '1');
-		const data = await sendAPIQuery(versionCheckParams);
+		const response = await sendAPIQuery(versionCheckParams);
 		try {
-			if (typeof data === 'string') {
-				const parsedData = JSON.parse(data) as FigmaDocument;
+			if (response.success) {
+				const parsedData = JSON.parse(
+					response.content
+				) as FigmaDocument;
 				if (identicalDates(parsedData.lastModified, ifModifiedSince)) {
 					return false;
 				}
 			}
-		} catch (err) {
+		} catch {
 			//
 		}
 
@@ -160,16 +163,18 @@ export async function figmaFilesQuery(
 	}
 
 	// Send query
-	const data = await sendAPIQuery(queryParams, cache);
-	if (typeof data === 'number') {
-		throw new Error(`Error retrieving document from API: ${data}`);
+	const response = await sendAPIQuery(queryParams, cache);
+	if (!response.success) {
+		throw new Error(
+			getFigmaErrorMessage(response.error, response.response)
+		);
 	}
 
 	// Parse JSON
 	let parsedData: Record<string, unknown>;
 	try {
-		parsedData = JSON.parse(data) as Record<string, unknown>;
-	} catch (err) {
+		parsedData = JSON.parse(response.content) as Record<string, unknown>;
+	} catch {
 		throw new Error(`Error retrieving document from API: invalid data`);
 	}
 	if (typeof parsedData.status === 'number') {
@@ -240,15 +245,22 @@ export async function figmaImagesQuery(
 				},
 				cache
 			)
-				.then((data) => {
-					if (typeof data === 'number') {
-						reject(data);
+				.then((response) => {
+					if (!response.success) {
+						reject(
+							getFigmaErrorMessage(
+								response.error,
+								response.response
+							)
+						);
 						return;
 					}
 
 					let parsedData: FigmaAPIImagesResponse;
 					try {
-						parsedData = JSON.parse(data) as FigmaAPIImagesResponse;
+						parsedData = JSON.parse(
+							response.content
+						) as FigmaAPIImagesResponse;
 					} catch {
 						reject('Bad API response');
 						return;

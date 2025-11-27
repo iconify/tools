@@ -29,7 +29,7 @@ export async function unzip(
 			// Check path
 			if (
 				filePath.startsWith('/') ||
-				filePath.includes('..') ||
+				filePath.includes('../') ||
 				filePath.includes(':')
 			) {
 				throw new Error('Invalid file path in zip: ' + filePath);

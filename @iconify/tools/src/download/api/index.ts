@@ -1,5 +1,5 @@
 import { apiCacheKey, getAPICache, storeAPICache } from './cache';
-import type { APICacheOptions, APIQueryParams } from './types';
+import type { APICacheOptions, APIQueryParams, APIQueryResult } from './types';
 import { axiosConfig, fetchCallbacks } from './config';
 import { getFetch } from './fetch.js';
 
@@ -9,38 +9,42 @@ import { getFetch } from './fetch.js';
 export async function sendAPIQuery(
 	query: APIQueryParams,
 	cache?: APICacheOptions
-): Promise<number | string> {
+): Promise<APIQueryResult> {
 	const cacheKey = cache ? apiCacheKey(query) : '';
 	if (cache) {
 		const cached = await getAPICache(cache.dir, cacheKey);
 		if (cached) {
-			return cached;
+			return { success: true, content: cached };
 		}
 	}
-	const result = await sendQuery(query);
-	if (cache && typeof result !== 'number') {
+	const response = await sendQuery(query);
+	if (cache && response.success) {
 		try {
-			await storeAPICache(cache, cacheKey, result);
-		} catch (err) {
+			await storeAPICache(cache, cacheKey, response.content);
+		} catch {
 			console.error('Error writing API cache');
 		}
 	}
-	return result;
+	return response;
 }
 
 /**
  * Send query
  */
-async function sendQuery(query: APIQueryParams): Promise<number | string> {
+async function sendQuery(query: APIQueryParams): Promise<APIQueryResult> {
 	const params = query.params ? query.params.toString() : '';
 	const url = query.uri + (params ? '?' + params : '');
 	const headers = query.headers;
 
 	fetchCallbacks.onStart?.(url, query);
 
-	function fail(value?: number) {
-		fetchCallbacks.onError?.(url, query, value);
-		return value ?? 404;
+	function fail(response?: Response, status?: number): APIQueryResult {
+		fetchCallbacks.onError?.(url, query, status);
+		return {
+			success: false,
+			response,
+			error: status ?? 404,
+		};
 	}
 
 	const fetch = getFetch();
@@ -51,18 +55,21 @@ async function sendQuery(query: APIQueryParams): Promise<number | string> {
 		});
 
 		if (response.status !== 200) {
-			return fail(response.status);
+			return fail(response, response.status);
 		}
 
 		const data = await response.text();
 		if (typeof data !== 'string') {
-			return fail();
+			return fail(response);
 		}
 
 		fetchCallbacks.onSuccess?.(url, query);
 
-		return data;
-	} catch (err) {
+		return {
+			success: true,
+			content: data,
+		};
+	} catch {
 		return fail();
 	}
 }

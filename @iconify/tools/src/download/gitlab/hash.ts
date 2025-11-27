@@ -10,14 +10,16 @@ export async function getGitLabRepoHash(
 	const uri = `${options.uri || defaultGitLabBaseURI}/${
 		options.project
 	}/repository/branches/${options.branch}/`;
-	const data = await sendAPIQuery({
+	const response = await sendAPIQuery({
 		uri,
 		headers: {
 			Authorization: 'token ' + options.token,
 		},
 	});
-	if (typeof data !== 'string') {
-		throw new Error(`Error downloading data from GitLab API: ${data}`);
+	if (!response.success) {
+		throw new Error(
+			`Error downloading data from GitLab API: ${response.error}`
+		);
 	}
 
 	interface GitLabAPIResponse {
@@ -26,7 +28,9 @@ export async function getGitLabRepoHash(
 			id: string;
 		};
 	}
-	const content = JSON.parse(data) as GitLabAPIResponse | GitLabAPIResponse[];
+	const content = JSON.parse(response.content) as
+		| GitLabAPIResponse
+		| GitLabAPIResponse[];
 	const item = (content instanceof Array ? content : [content]).find(
 		(item) =>
 			item.name === options.branch && typeof item.commit.id === 'string'

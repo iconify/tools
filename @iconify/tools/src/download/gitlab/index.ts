@@ -13,9 +13,6 @@ import type { DownloadSourceMixin } from '../types/sources';
 interface IfModifiedSinceOption {
 	// Download only if it was modified since hash
 	ifModifiedSince: string | DownloadGitLabRepoResult;
-
-	// Filter files
-	filter?: UnzipFilterCallback;
 }
 
 /**
@@ -33,6 +30,9 @@ export interface DownloadGitLabRepoOptions
 
 	// Log commands
 	log?: boolean;
+
+	// Filter files
+	filter?: UnzipFilterCallback;
 }
 
 /**

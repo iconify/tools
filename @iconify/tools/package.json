@@ -3,7 +3,7 @@
 	"type": "module",
 	"description": "Collection of functions for cleaning up and parsing SVG for Iconify project",
 	"author": "Vjacheslav Trushkin",
-	"version": "5.0.0-beta.3",
+	"version": "5.0.0-beta.5",
 	"publishConfig": {
 		"tag": "next"
 	},
@@ -292,6 +292,10 @@
 		"./lib/import/figma": {
 			"types": "./lib/import/figma/index.d.ts",
 			"import": "./lib/import/figma/index.js"
+		},
+		"./lib/import/figma/error": {
+			"types": "./lib/import/figma/error.d.ts",
+			"import": "./lib/import/figma/error.js"
 		},
 		"./lib/import/figma/index": {
 			"types": "./lib/import/figma/index.d.ts",
