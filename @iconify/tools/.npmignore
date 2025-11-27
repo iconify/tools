@@ -3,6 +3,7 @@
 .DS_Store
 .env
 .eslintrc.cjs
+eslintignore
 *.map
 node_modules
 npm-debug.log
