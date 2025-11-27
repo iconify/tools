@@ -2,10 +2,16 @@ import { unzip as unzipAsync } from 'fflate';
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join, normalize } from 'pathe';
 
+export type UnzipFilterCallback = (file: string) => boolean;
+
 /**
  * Unzip archive
  */
-export async function unzip(source: string, path: string): Promise<void> {
+export async function unzip(
+	source: string,
+	path: string,
+	filter?: UnzipFilterCallback
+): Promise<void> {
 	const dir = normalize(path);
 	const data = await readFile(source);
 
@@ -15,8 +21,12 @@ export async function unzip(source: string, path: string): Promise<void> {
 	): Promise<void> {
 		const createdDirs = new Set<string>();
 		for (const name in data) {
-			// const content = data[name];
 			const filePath = normalize(join(dir, name));
+			if (filter && !filter(filePath)) {
+				continue;
+			}
+
+			// Check path
 			if (
 				filePath.startsWith('/') ||
 				filePath.includes('..') ||

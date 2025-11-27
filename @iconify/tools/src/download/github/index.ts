@@ -7,12 +7,15 @@ import type { DocumentNotModified } from '../types/modified';
 import { getGitHubRepoHash } from './hash';
 import type { GitHubAPIOptions } from './types';
 import { downloadFile } from '../api/download';
-import { unzip } from '../helpers/unzip';
+import { unzip, type UnzipFilterCallback } from '../helpers/unzip';
 import type { DownloadSourceMixin } from '../types/sources';
 
 interface IfModifiedSinceOption {
 	// Download only if it was modified since hash
 	ifModifiedSince: string | DownloadGitHubRepoResult;
+
+	// Filter files
+	filter?: UnzipFilterCallback;
 }
 
 /**
@@ -72,7 +75,7 @@ async function findMatchingDirs(
  * Download GitHub repo using API
  */
 export async function downloadGitHubRepo<
-	T extends IfModifiedSinceOption & DownloadGitHubRepoOptions
+	T extends IfModifiedSinceOption & DownloadGitHubRepoOptions,
 >(options: T): Promise<DownloadGitHubRepoResult | DocumentNotModified>;
 export async function downloadGitHubRepo(
 	options: DownloadGitHubRepoOptions
@@ -89,8 +92,8 @@ export async function downloadGitHubRepo(
 			typeof ifModifiedSince === 'string'
 				? ifModifiedSince
 				: ifModifiedSince.downloadType === 'github'
-				? ifModifiedSince.hash
-				: null;
+					? ifModifiedSince.hash
+					: null;
 		if (hash === expectedHash) {
 			return 'not_modified';
 		}
@@ -110,7 +113,7 @@ export async function downloadGitHubRepo(
 	try {
 		const stat = await fs.stat(archiveTarget);
 		exists = stat.isFile();
-	} catch (err) {
+	} catch {
 		//
 	}
 
@@ -156,14 +159,14 @@ export async function downloadGitHubRepo(
 					force: true,
 					recursive: true,
 				});
-			} catch (err) {
+			} catch {
 				//
 			}
 		}
 	}
 
 	// Unpack it
-	await unzip(archiveTarget, rootDir);
+	await unzip(archiveTarget, rootDir, options.filter);
 
 	// Get actual dir
 	const matchingDirs = await findMatchingDirs(rootDir, hash);
