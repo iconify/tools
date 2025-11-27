@@ -12,29 +12,35 @@ First install it by running this command:
 npm install @iconify/tools --save
 ```
 
+### CommonJS support
+
+As of version 5, support for CommonJS has been dropped.
+
+If you need to use CommonJS, install version 4: `npm install @iconify/tools@cjs`.
+
 ## Functions
 
 Functions incuded in Iconify Tools:
 
--   Download packages from git repository, GitHub API, GitLab API, NPM repository.
--   Import SVGs from directory (and downloaded package), Figma API.
--   Clean up, optimise, validate icons.
--   Parse or change icon palette.
--   Export icon sets in various formats.
+- Download packages from git repository, GitHub API, GitLab API, NPM repository.
+- Import SVGs from directory (and downloaded package), Figma API.
+- Clean up, optimise, validate icons.
+- Parse or change icon palette.
+- Export icon sets in various formats.
 
 See [Iconify Tools documentation](https://iconify.design/docs/libraries/tools/).
 
 ### Limitations
 
-This library is optinionated.
+This library is opinionated.
 
 It does not allow the following content in icons:
 
--   Scripts and event listeners.
--   Any remote resources: images, fonts, links, etc...
--   Raster images. They do not belong in scalable icons.
--   Text. Text is rendered differently in various operating systems, so it should not be used in SVG. Convert text to shapes.
--   All tags and attributes that are not approved are removed, including all XML namespaces.
+- Scripts and event listeners.
+- Any remote resources: images, fonts, links, etc...
+- Raster images. They do not belong in scalable icons.
+- Text. Text is rendered differently in various operating systems, so it should not be used in SVG. Convert text to shapes.
+- All tags and attributes that are not approved are removed, including all XML namespaces.
 
 All limitations listed above are by design.
 
@@ -44,11 +50,11 @@ Iconify Tools library is designed to export icons that are safe to use in any en
 
 The following code example does the following:
 
--   Imports set of SVG from directory.
--   Cleans up all icons.
--   Changes colors in all icons to `currentColor`.
--   Optimises icons.
--   Exports icons as `IconifyJSON` icon set.
+- Imports set of SVG from directory.
+- Cleans up all icons.
+- Changes colors in all icons to `currentColor`.
+- Optimises icons.
+- Exports icons as `IconifyJSON` icon set.
 
 ```js
 import { promises as fs } from 'fs';
