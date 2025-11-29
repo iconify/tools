@@ -44,7 +44,7 @@
 		"globals": "^16.5.0",
 		"prettier": "^3.6.2",
 		"rimraf": "^6.1.2",
-		"tsdown": "^0.16.7",
+		"tsdown": "^0.16.8",
 		"typescript": "^5.9.3",
 		"vitest": "^4.0.14"
 	},
