@@ -12,7 +12,7 @@
 		"@iconify/tools": "workspace:^"
 	},
 	"devDependencies": {
-		"@iconify/json": "^2.2.410",
+		"@iconify/json": "^2.2.415",
 		"@iconify/utils": "^3.1.0",
 		"@types/node": "^24.10.1",
 		"typescript": "^5.9.3"
