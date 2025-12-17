@@ -364,13 +364,17 @@ export async function figmaDownloadImages(
 					},
 					cache
 				)
-					.then((data) => {
-						if (typeof data === 'string') {
+					.then((response) => {
+						if (!response.success) {
+							reject(response.error);
+							return;
+						}
+						if (typeof response.content === 'string') {
 							count++;
-							item.content = data;
+							item.content = response.content;
 							resolve(undefined);
 						} else {
-							reject(data);
+							reject(response.content);
 						}
 					})
 					.catch(reject);
