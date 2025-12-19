@@ -11,7 +11,7 @@
 	"dependencies": {
 		"@iconify/tools": "workspace:^",
 		"@unocss/reset": "^66.5.10",
-		"vue": "^3.5.25"
+		"vue": "^3.5.26"
 	},
 	"devDependencies": {
 		"@iconify-json/carbon": "^1.2.15",
