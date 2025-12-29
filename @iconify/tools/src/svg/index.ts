@@ -1,5 +1,5 @@
 import type { IconifyIcon } from '@iconify/types';
-import { iconToSVG, trimSVG } from '@iconify/utils';
+import { iconToSVG, prettifySVG, trimSVG } from '@iconify/utils';
 import type { CommonIconProps } from '../icon-set/types';
 import type { IconifyIconCustomisations } from '@iconify/utils/lib/customisations/defaults';
 import {
@@ -54,7 +54,10 @@ export class SVG {
 				svgAttributes += ' ' + key + '="' + value + '"';
 			}
 
-			return '<svg' + svgAttributes + '>' + data.body + '</svg>';
+			const svg = '<svg' + svgAttributes + '>' + data.body + '</svg>';
+			return prettyPrint === true
+				? prettifySVG(svg) || svg
+				: trimSVG(svg);
 		}
 
 		// Get icon as is if customisations are not set
@@ -75,17 +78,19 @@ export class SVG {
 			}
 		}
 
-		return stringifyXMLContent([$root], {
+		const result = stringifyXMLContent([$root], {
 			prettyPrint,
 		})!;
+
+		// Additional trim for content (such as multi-line "d" attributes) because XML parser does not trim attributes
+		return prettyPrint === false ? trimSVG(result) : result;
 	}
 
 	/**
 	 * Get SVG as string without whitespaces
 	 */
 	toMinifiedString(customisations?: IconifyIconCustomisations): string {
-		// Additional trimming for better result
-		return trimSVG(this.toString(customisations, false));
+		return this.toString(customisations, false);
 	}
 
 	/**

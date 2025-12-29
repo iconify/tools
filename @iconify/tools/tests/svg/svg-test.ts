@@ -118,4 +118,20 @@ describe('Loading SVG', () => {
 		}
 		expect(threwError).toBe(true);
 	});
+
+	test('Bugged SVG', () => {
+		const svg = new SVG(
+			'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3h7v18h-14v-18h7Z"/><path d="M14.5 3.5v3h-5v-3"/><path d="M9 13l2 2l4 -4" stroke-dasharray="10" stroke-dashoffset="10"><animate attributeName="stroke-dashoffset" values="10;0" dur="0.2s" fill="freeze"/></path></g><path d="M6 4H10V6H14V4H18V20H6V4Z" fill="currentColor" fill-opacity="0.3"/></svg>'
+		);
+		expect(
+			svg.toString(
+				{
+					height: 'auto',
+				},
+				true
+			)
+		).toBe(
+			'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">\n\t<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n\t\t<path d="M12 3h7v18h-14v-18h7Z" />\n\t\t<path d="M14.5 3.5v3h-5v-3" />\n\t\t<path d="M9 13l2 2l4 -4" stroke-dasharray="10" stroke-dashoffset="10">\n\t\t\t<animate attributeName="stroke-dashoffset" values="10;0" dur="0.2s" fill="freeze" />\n\t\t</path>\n\t</g>\n\t<path d="M6 4H10V6H14V4H18V20H6V4Z" fill="currentColor" fill-opacity="0.3" />\n</svg>\n'
+		);
+	});
 });
