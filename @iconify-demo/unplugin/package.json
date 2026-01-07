@@ -19,6 +19,6 @@
 		"unconfig": "^7.4.2",
 		"unplugin-icons": "^22.5.0",
 		"unplugin-vue-components": "^30.0.0",
-		"vite": "^7.3.0"
+		"vite": "^7.3.1"
 	}
 }
