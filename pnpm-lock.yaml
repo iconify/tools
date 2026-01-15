@@ -21,8 +21,8 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0
       '@types/node':
-        specifier: ^24.10.4
-        version: 24.10.4
+        specifier: ^24.10.9
+        version: 24.10.9
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -37,8 +37,8 @@ importers:
         version: 2.0.0
     devDependencies:
       '@types/node':
-        specifier: ^24.10.4
-        version: 24.10.4
+        specifier: ^24.10.9
+        version: 24.10.9
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -65,20 +65,20 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0
       '@types/node':
-        specifier: ^24.10.4
-        version: 24.10.4
+        specifier: ^24.10.9
+        version: 24.10.9
       '@vitejs/plugin-vue':
         specifier: ^6.0.3
-        version: 6.0.3(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6))(vue@3.5.26(typescript@5.9.3))
+        version: 6.0.3(vite@7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6))(vue@3.5.26(typescript@5.9.3))
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
       unocss:
         specifier: ^66.5.12
-        version: 66.5.12(postcss@8.5.6)(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6))
+        version: 66.5.12(postcss@8.5.6)(vite@7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6))
       vite:
         specifier: ^7.3.0
-        version: 7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6)
+        version: 7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6)
       vue-tsc:
         specifier: ^3.2.1
         version: 3.2.1(typescript@5.9.3)
@@ -97,7 +97,7 @@ importers:
         version: 3.1.0
       '@vitejs/plugin-vue':
         specifier: ^6.0.3
-        version: 6.0.3(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6))(vue@3.5.26(typescript@5.9.3))
+        version: 6.0.3(vite@7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6))(vue@3.5.26(typescript@5.9.3))
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -112,7 +112,7 @@ importers:
         version: 30.0.0(@babel/parser@7.28.5)(vue@3.5.26(typescript@5.9.3))
       vite:
         specifier: ^7.3.0
-        version: 7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6)
+        version: 7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6)
 
   '@iconify/tools':
     dependencies:
@@ -148,8 +148,8 @@ importers:
         specifier: ^30.0.0
         version: 30.0.0
       '@types/node':
-        specifier: ^24.10.4
-        version: 24.10.4
+        specifier: ^24.10.9
+        version: 24.10.9
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.51.0
         version: 8.51.0(@typescript-eslint/parser@8.51.0(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
@@ -185,7 +185,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.16
-        version: 4.0.16(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6)
+        version: 4.0.16(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6)
 
 packages:
 
@@ -917,8 +917,8 @@ packages:
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
-  '@types/node@24.10.4':
-    resolution: {integrity: sha512-vnDVpYPMzs4wunl27jHrfmwojOGKya0xyM3sH+UE5iv5uPS6vX7UIoh6m+vQc5LGBq52HBKPIn/zcSZVzeDEZg==}
+  '@types/node@24.10.9':
+    resolution: {integrity: sha512-ne4A0IpG3+2ETuREInjPNhUGis1SFjv1d5asp8MzEAGtOZeTeHVDOYqOgqfhvseqg/iXty2hjBf1zAOb7RNiNw==}
 
   '@types/stack-utils@2.0.3':
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
@@ -2519,7 +2519,7 @@ snapshots:
 
   '@jest/pattern@30.0.1':
     dependencies:
-      '@types/node': 24.10.4
+      '@types/node': 24.10.9
       jest-regex-util: 30.0.1
 
   '@jest/schemas@30.0.5':
@@ -2532,7 +2532,7 @@ snapshots:
       '@jest/schemas': 30.0.5
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 24.10.4
+      '@types/node': 24.10.9
       '@types/yargs': 17.0.35
       chalk: 4.1.2
 
@@ -2718,7 +2718,7 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
-  '@types/node@24.10.4':
+  '@types/node@24.10.9':
     dependencies:
       undici-types: 7.16.0
 
@@ -2821,13 +2821,13 @@ snapshots:
       '@typescript-eslint/types': 8.51.0
       eslint-visitor-keys: 4.2.1
 
-  '@unocss/astro@66.5.12(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6))':
+  '@unocss/astro@66.5.12(vite@7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6))':
     dependencies:
       '@unocss/core': 66.5.12
       '@unocss/reset': 66.5.12
-      '@unocss/vite': 66.5.12(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6))
+      '@unocss/vite': 66.5.12(vite@7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6))
     optionalDependencies:
-      vite: 7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6)
+      vite: 7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6)
 
   '@unocss/cli@66.5.12':
     dependencies:
@@ -2955,7 +2955,7 @@ snapshots:
     dependencies:
       '@unocss/core': 66.5.12
 
-  '@unocss/vite@66.5.12(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6))':
+  '@unocss/vite@66.5.12(vite@7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6))':
     dependencies:
       '@jridgewell/remapping': 2.3.5
       '@unocss/config': 66.5.12
@@ -2966,12 +2966,12 @@ snapshots:
       pathe: 2.0.3
       tinyglobby: 0.2.15
       unplugin-utils: 0.3.1
-      vite: 7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6)
+      vite: 7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6)
 
-  '@vitejs/plugin-vue@6.0.3(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6))(vue@3.5.26(typescript@5.9.3))':
+  '@vitejs/plugin-vue@6.0.3(vite@7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6))(vue@3.5.26(typescript@5.9.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.0-beta.53
-      vite: 7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6)
+      vite: 7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6)
       vue: 3.5.26(typescript@5.9.3)
 
   '@vitest/expect@4.0.16':
@@ -2983,13 +2983,13 @@ snapshots:
       chai: 6.2.1
       tinyrainbow: 3.0.3
 
-  '@vitest/mocker@4.0.16(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6))':
+  '@vitest/mocker@4.0.16(vite@7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6))':
     dependencies:
       '@vitest/spy': 4.0.16
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6)
+      vite: 7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6)
 
   '@vitest/pretty-format@4.0.16':
     dependencies:
@@ -3559,7 +3559,7 @@ snapshots:
   jest-mock@30.2.0:
     dependencies:
       '@jest/types': 30.2.0
-      '@types/node': 24.10.4
+      '@types/node': 24.10.9
       jest-util: 30.2.0
 
   jest-regex-util@30.0.1: {}
@@ -3567,7 +3567,7 @@ snapshots:
   jest-util@30.2.0:
     dependencies:
       '@jest/types': 30.2.0
-      '@types/node': 24.10.4
+      '@types/node': 24.10.9
       chalk: 4.1.2
       ci-info: 4.3.1
       graceful-fs: 4.2.11
@@ -3969,9 +3969,9 @@ snapshots:
 
   undici-types@7.16.0: {}
 
-  unocss@66.5.12(postcss@8.5.6)(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6)):
+  unocss@66.5.12(postcss@8.5.6)(vite@7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6)):
     dependencies:
-      '@unocss/astro': 66.5.12(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6))
+      '@unocss/astro': 66.5.12(vite@7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6))
       '@unocss/cli': 66.5.12
       '@unocss/core': 66.5.12
       '@unocss/postcss': 66.5.12(postcss@8.5.6)
@@ -3989,9 +3989,9 @@ snapshots:
       '@unocss/transformer-compile-class': 66.5.12
       '@unocss/transformer-directives': 66.5.12
       '@unocss/transformer-variant-group': 66.5.12
-      '@unocss/vite': 66.5.12(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6))
+      '@unocss/vite': 66.5.12(vite@7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6))
     optionalDependencies:
-      vite: 7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6)
+      vite: 7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6)
     transitivePeerDependencies:
       - postcss
       - supports-color
@@ -4045,7 +4045,7 @@ snapshots:
     dependencies:
       punycode: 2.1.1
 
-  vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6):
+  vite@7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6):
     dependencies:
       esbuild: 0.27.2
       fdir: 6.5.0(picomatch@4.0.3)
@@ -4054,15 +4054,15 @@ snapshots:
       rollup: 4.53.3
       tinyglobby: 0.2.15
     optionalDependencies:
-      '@types/node': 24.10.4
+      '@types/node': 24.10.9
       fsevents: 2.3.3
       jiti: 2.6.1
       tsx: 4.20.6
 
-  vitest@4.0.16(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6):
+  vitest@4.0.16(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6):
     dependencies:
       '@vitest/expect': 4.0.16
-      '@vitest/mocker': 4.0.16(vite@7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6))
+      '@vitest/mocker': 4.0.16(vite@7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6))
       '@vitest/pretty-format': 4.0.16
       '@vitest/runner': 4.0.16
       '@vitest/snapshot': 4.0.16
@@ -4079,10 +4079,10 @@ snapshots:
       tinyexec: 1.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vite: 7.3.0(@types/node@24.10.4)(jiti@2.6.1)(tsx@4.20.6)
+      vite: 7.3.0(@types/node@24.10.9)(jiti@2.6.1)(tsx@4.20.6)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 24.10.4
+      '@types/node': 24.10.9
     transitivePeerDependencies:
       - jiti
       - less
