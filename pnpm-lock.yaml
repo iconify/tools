@@ -15,8 +15,8 @@ importers:
         version: link:../../@iconify/tools
     devDependencies:
       '@iconify/json':
-        specifier: ^2.2.422
-        version: 2.2.422
+        specifier: ^2.2.433
+        version: 2.2.433
       '@iconify/utils':
         specifier: ^3.1.0
         version: 3.1.0
@@ -618,8 +618,8 @@ packages:
   '@iconify-json/carbon@1.2.15':
     resolution: {integrity: sha512-9tW0nZY5QtKkMhuYzW09BM1345SyXNuA+gx2ub0j/fnfHOD5XVimMJ/D76H3tTez25NJbPYCLIQoFhvJc1HVBQ==}
 
-  '@iconify/json@2.2.422':
-    resolution: {integrity: sha512-HJ2xj4381CoXiSJaNv8uywVZJfSXMq2lR8WtI/eLPhAFLSoMsin74yhLlcd84xTPLn6xmzC6TGqL6EQLXHFSBQ==}
+  '@iconify/json@2.2.433':
+    resolution: {integrity: sha512-9jLUb472cTux0pphkyswS/zl/Ty27b8VvuzI/BEsOYbLWgKAS1b9NBN9/etM6YP9+GnKbA97txbj6B1P6dkWgQ==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -2490,7 +2490,7 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
-  '@iconify/json@2.2.422':
+  '@iconify/json@2.2.433':
     dependencies:
       '@iconify/types': 2.0.0
       pathe: 2.0.3
