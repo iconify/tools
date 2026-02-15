@@ -17,7 +17,7 @@
 		"@vitejs/plugin-vue": "^6.0.4",
 		"typescript": "^5.9.3",
 		"unconfig": "^7.5.0",
-		"unplugin-icons": "^22.5.0",
+		"unplugin-icons": "^23.0.1",
 		"unplugin-vue-components": "^30.0.0",
 		"vite": "^7.3.1"
 	}
