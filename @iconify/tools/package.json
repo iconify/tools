@@ -43,7 +43,7 @@
 		"eslint-plugin-prettier": "^5.5.5",
 		"globals": "^16.5.0",
 		"prettier": "^3.8.1",
-		"rimraf": "^6.1.2",
+		"rimraf": "^6.1.3",
 		"tsdown": "^0.20.3",
 		"typescript": "^5.9.3",
 		"vitest": "^4.0.18"
