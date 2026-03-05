@@ -10,7 +10,7 @@
 	},
 	"dependencies": {
 		"@iconify/tools": "workspace:^",
-		"@unocss/reset": "^66.6.2",
+		"@unocss/reset": "^66.6.5",
 		"vue": "^3.5.29"
 	},
 	"devDependencies": {
@@ -20,7 +20,7 @@
 		"@types/node": "^24.11.0",
 		"@vitejs/plugin-vue": "^6.0.4",
 		"typescript": "^5.9.3",
-		"unocss": "^66.6.2",
+		"unocss": "^66.6.5",
 		"vite": "^7.3.1",
 		"vue-tsc": "^3.2.5"
 	}
