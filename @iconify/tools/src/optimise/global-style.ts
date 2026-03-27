@@ -48,7 +48,6 @@ export function cleanupGlobalStyle(svg: SVG) {
 
 	// Parse style
 	try {
-		console.log('Parsing global style');
 		parseSVGStyle(svg, (styleItem) => {
 			const returnValue = styleItem.value;
 			if (styleItem.type !== 'global') {
