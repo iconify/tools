@@ -48,6 +48,7 @@ export function cleanupGlobalStyle(svg: SVG) {
 
 	// Parse style
 	try {
+		console.log('Parsing global style');
 		parseSVGStyle(svg, (styleItem) => {
 			const returnValue = styleItem.value;
 			if (styleItem.type !== 'global') {
@@ -154,6 +155,9 @@ export function cleanupGlobalStyle(svg: SVG) {
 				);
 
 				const prop = styleItem.prop;
+				// Allow duplicate attributes, usually this means that two CSS rules are applied to same element.
+				// Should work in same order as in CSS, so second rule will override first one, but it is not guaranteed.
+				/*
 				if (attribs[prop] !== undefined) {
 					// Previously added attribute?
 					if (addedAttributes.has(prop)) {
@@ -162,6 +166,7 @@ export function cleanupGlobalStyle(svg: SVG) {
 						throw new Error('Duplicate attribute');
 					}
 				}
+				*/
 
 				attribs[prop] = styleItem.value;
 				addedAttributes.add(prop);

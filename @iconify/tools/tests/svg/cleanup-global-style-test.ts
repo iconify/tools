@@ -45,7 +45,8 @@ describe('Removing global style', () => {
 		);
 	});
 
-	test('Multiple rules, failing', () => {
+	// No longer relevant, should not fail
+	test.skip('Multiple rules, failing', () => {
 		const content = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24"><defs><style>.cls-1{fill:#fff;opacity:0;}.cls-2{fill:#231f20;}</style></defs><rect class="cls-1 cls-2" width="24" height="24"/></svg>`;
 		const svg = new SVG(content);
 		cleanupGlobalStyle(svg);
@@ -71,6 +72,17 @@ describe('Removing global style', () => {
 
 		expect(svg.toMinifiedString()).toBe(
 			'<svg id="refresh" xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><defs/><path d="M15.518,23.936A8.576,8.576,0,0,0,24,32.606V34.94l-0.944,4.286A15.186,15.186,0,0,1,9,23.936,14.953,14.953,0,0,1,21,9h2l0.048,6.323A8.6,8.6,0,0,0,15.518,23.936Z" fill-rule="evenodd" fill="#0C0058"/><path d="M24,39.275c-0.319,0-.63-0.029-0.944-0.049L24,34.94V32.606a8.672,8.672,0,0,0,0-17.34,8.346,8.346,0,0,0-.949.058L23,13s-0.658-4.4,1-4.4A15.172,15.172,0,0,1,39,23.936,15.172,15.172,0,0,1,24,39.275Z" fill="#FF6E6E" fill-rule="evenodd"/><path d="M26.005,42V28L19,35Z" fill="#FF6E6E" fill-rule="evenodd"/><path d="M21.989,6V19l6.024-6.494Z" fill-rule="evenodd" fill="#0C0058"/></svg>'
+		);
+	});
+
+	test('Multiple rules', () => {
+		const content =
+			'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><defs><style>.cls-1,.cls-2{fill:#aecbfa;fill-rule:evenodd}.cls-2{fill:#669df6}</style></defs><g data-name="Product Icons"><path class="cls-1" d="M6.73 10.83v2.63a4.91 4.91 0 0 0 1.71 1.74v-4.37Z"/><path class="cls-2" d="M9.89 8.41v7.53A7.62 7.62 0 0 0 11 16a8 8 0 0 0 1 0V8.41Z"/><path class="cls-1" d="M13.64 11.86v3.29a5 5 0 0 0 1.7-1.82v-1.47Z"/><path d="m17.74 16.32-1.42 1.42a.42.42 0 0 0 0 .6l3.54 3.54a.42.42 0 0 0 .59 0l1.43-1.43a.42.42 0 0 0 0-.59l-3.54-3.54a.42.42 0 0 0-.6 0" style="fill:#4285f4;fill-rule:evenodd"/><path class="cls-2" d="M11 2a9 9 0 1 0 9 9 9 9 0 0 0-9-9m0 15.69A6.68 6.68 0 1 1 17.69 11 6.68 6.68 0 0 1 11 17.69"/></g></svg>';
+		const svg = new SVG(content);
+		cleanupGlobalStyle(svg);
+
+		expect(svg.toMinifiedString()).toBe(
+			'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><defs/><g data-name="Product Icons"><path d="M6.73 10.83v2.63a4.91 4.91 0 0 0 1.71 1.74v-4.37Z" fill="#aecbfa" fill-rule="evenodd"/><path d="M9.89 8.41v7.53A7.62 7.62 0 0 0 11 16a8 8 0 0 0 1 0V8.41Z" fill="#669df6" fill-rule="evenodd"/><path d="M13.64 11.86v3.29a5 5 0 0 0 1.7-1.82v-1.47Z" fill="#aecbfa" fill-rule="evenodd"/><path d="m17.74 16.32-1.42 1.42a.42.42 0 0 0 0 .6l3.54 3.54a.42.42 0 0 0 .59 0l1.43-1.43a.42.42 0 0 0 0-.59l-3.54-3.54a.42.42 0 0 0-.6 0" style="fill:#4285f4;fill-rule:evenodd"/><path d="M11 2a9 9 0 1 0 9 9 9 9 0 0 0-9-9m0 15.69A6.68 6.68 0 1 1 17.69 11 6.68 6.68 0 0 1 11 17.69" fill="#669df6" fill-rule="evenodd"/></g></svg>'
 		);
 	});
 });
