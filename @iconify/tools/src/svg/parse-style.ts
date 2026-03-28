@@ -23,13 +23,11 @@ interface ParseSVGStyleCallbackItemCommon {
 	prop: string;
 	value: string;
 }
-interface ParseSVGStyleCallbackItemInline
-	extends ParseSVGStyleCallbackItemCommon {
+interface ParseSVGStyleCallbackItemInline extends ParseSVGStyleCallbackItemCommon {
 	type: 'inline';
 	item: ParseSVGCallbackItem;
 }
-interface ParseSVGStyleCallbackItemGlobal
-	extends ParseSVGStyleCallbackItemCommon {
+interface ParseSVGStyleCallbackItemGlobal extends ParseSVGStyleCallbackItemCommon {
 	type: 'global';
 	token: CSSRuleToken;
 	selectors: string[];
@@ -38,19 +36,16 @@ interface ParseSVGStyleCallbackItemGlobal
 	nextTokens: CSSToken[];
 }
 
-interface ParseSVGStyleCallbackItemGlobalAtRule
-	extends ParseSVGStyleCallbackItemCommon {
+interface ParseSVGStyleCallbackItemGlobalAtRule extends ParseSVGStyleCallbackItemCommon {
 	token: CSSAtRuleToken;
 	childTokens: CSSToken[];
 	prevTokens: (CSSToken | null)[];
 	nextTokens: CSSToken[];
 }
-interface ParseSVGStyleCallbackItemGlobalGenericAtRule
-	extends ParseSVGStyleCallbackItemGlobalAtRule {
+interface ParseSVGStyleCallbackItemGlobalGenericAtRule extends ParseSVGStyleCallbackItemGlobalAtRule {
 	type: 'at-rule';
 }
-interface ParseSVGStyleCallbackItemGlobalKeyframesAtRule
-	extends ParseSVGStyleCallbackItemGlobalAtRule {
+interface ParseSVGStyleCallbackItemGlobalKeyframesAtRule extends ParseSVGStyleCallbackItemGlobalAtRule {
 	type: 'keyframes';
 	from: Record<string, string>;
 }
@@ -96,12 +91,16 @@ export function parseSVGStyle(svg: SVG, callback: ParseSVGStyleCallback): void {
 
 		// Parse <style> tag
 		function parseStyleItem() {
-			const content = stringifyXMLContent(node.children);
+			let content = stringifyXMLContent(node.children);
 			if (!content) {
 				item.removeNode = true;
 				return;
 			}
 
+			// Remove '<![CDATA['
+			content = content.replace('<![CDATA[', '').replace(']]>', '');
+
+			// Parse style
 			const tokens = getTokens(content);
 			if (!(tokens instanceof Array)) {
 				// Invalid style
