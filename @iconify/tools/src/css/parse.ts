@@ -1,3 +1,4 @@
+import { isBadSVGColor, isSVGColorAttribute } from '../svg/data/colors.js';
 import { getTokens } from './parser/tokens';
 
 /**
@@ -14,6 +15,11 @@ export function parseInlineStyle(style: string): Record<string, string> | null {
 		const token = tokens[i];
 		if (token.type !== 'rule') {
 			return null;
+		}
+
+		// Skip bad colors
+		if (isSVGColorAttribute(token.prop) && isBadSVGColor(token.value)) {
+			continue;
 		}
 
 		results[token.prop] = token.value;

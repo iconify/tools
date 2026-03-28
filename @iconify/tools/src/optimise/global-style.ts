@@ -6,6 +6,7 @@ import type { SVG } from '../svg';
 import { allValidTags, animateTags } from '../svg/data/tags';
 import { parseSVG } from '../svg/parse';
 import { parseSVGStyle } from '../svg/parse-style';
+import { isBadSVGColor, isSVGColorAttribute } from '../svg/data/colors.js';
 
 const tempDataAttrbiute = 'data-gstyle-temp';
 
@@ -166,6 +167,14 @@ export function cleanupGlobalStyle(svg: SVG) {
 					}
 				}
 				*/
+
+				// Skip bad colors
+				if (
+					isSVGColorAttribute(prop) &&
+					isBadSVGColor(styleItem.value)
+				) {
+					return;
+				}
 
 				attribs[prop] = styleItem.value;
 				addedAttributes.add(prop);
