@@ -134,4 +134,31 @@ describe('Loading SVG', () => {
 			'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">\n\t<g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">\n\t\t<path d="M12 3h7v18h-14v-18h7Z" />\n\t\t<path d="M14.5 3.5v3h-5v-3" />\n\t\t<path d="M9 13l2 2l4 -4" stroke-dasharray="10" stroke-dashoffset="10">\n\t\t\t<animate attributeName="stroke-dashoffset" values="10;0" dur="0.2s" fill="freeze" />\n\t\t</path>\n\t</g>\n\t<path d="M6 4H10V6H14V4H18V20H6V4Z" fill="currentColor" fill-opacity="0.3" />\n</svg>\n'
 		);
 	});
+
+	test('Size in pixels', () => {
+		const svg = new SVG(
+			`<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"	width="250px" height="250px">
+<rect fill="#00A0DF" width="250" height="250"/>
+</svg>
+`
+		);
+		const expected: ViewBox = {
+			left: 0,
+			top: 0,
+			width: 250,
+			height: 250,
+		};
+		expect(svg.viewBox).toEqual(expected);
+		expect(
+			svg.toString(
+				{
+					height: 'auto',
+				},
+				true
+			)
+		).toBe(
+			'<svg xmlns="http://www.w3.org/2000/svg" width="250" height="250" viewBox="0 0 250 250">\n\t<rect fill="#00A0DF" width="250" height="250" />\n</svg>\n'
+		);
+	});
 });

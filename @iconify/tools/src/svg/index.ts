@@ -195,11 +195,18 @@ export class SVG {
 			}
 			this.viewBox = parsed;
 		} else {
-			const width = attribs['width'];
-			const height = attribs['height'];
+			let width = attribs['width'];
+			let height = attribs['height'];
 			if (!width || !height) {
 				throw new Error('Invalid SVG file: missing dimensions');
 			}
+			if (typeof width === 'string') {
+				width = parseFloat(width);
+			}
+			if (typeof height === 'string') {
+				height = parseFloat(height);
+			}
+
 			const parsed = parseViewBox(`0 0 ${width} ${height}`);
 			if (!parsed) {
 				throw new Error(
