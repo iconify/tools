@@ -1,6 +1,6 @@
 import type { IconifyIcon } from '@iconify/types';
 import { iconToSVG, prettifySVG, trimSVG } from '@iconify/utils';
-import type { CommonIconProps } from '../icon-set/types';
+import type { CommonIconProps } from '../icon-set/types.js';
 import type { IconifyIconCustomisations } from '@iconify/utils/lib/customisations/defaults';
 import {
 	parseXMLContent,

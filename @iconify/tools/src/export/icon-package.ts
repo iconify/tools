@@ -1,12 +1,12 @@
-import { promises as fs } from 'fs';
-import type { IconSet } from '../icon-set';
-import type { ExportTargetOptions } from './helpers/prepare';
-import { prepareDirectoryForExport } from './helpers/prepare';
-import { writeJSONFile } from '../misc/write-json';
+import fs from 'node:fs/promises';
+import type { IconSet } from '../icon-set/index.js';
+import type { ExportTargetOptions } from './helpers/prepare.js';
+import { prepareDirectoryForExport } from './helpers/prepare.js';
+import { writeJSONFile } from '../misc/write-json.js';
 import {
 	exportCustomFiles,
-	ExportOptionsWithCustomFiles,
-} from './helpers/custom-files';
+	type ExportOptionsWithCustomFiles,
+} from './helpers/custom-files.js';
 import { getTypesVersion } from './helpers/types-version.js';
 
 /**

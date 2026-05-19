@@ -1,4 +1,4 @@
-import { styleParseError, StyleParseError } from './error';
+import { styleParseError, StyleParseError } from './error.js';
 
 /**
  * Find end of quoted string

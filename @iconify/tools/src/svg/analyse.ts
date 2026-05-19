@@ -1,6 +1,6 @@
-import type { SVG } from './index';
-import { parseSVG } from './parse';
-import type { ParseSVGCallbackItem } from './parse';
+import type { SVG } from './index.js';
+import { parseSVG } from './parse.js';
+import type { ParseSVGCallbackItem } from './parse.js';
 import type {
 	AnalyseSVGStructureResult,
 	ExtendedRootTagElement,
@@ -8,21 +8,21 @@ import type {
 	LinkToElementWithID,
 	ElementsTreeItem,
 	AnalyseSVGStructureOptions,
-} from './analyse/types';
+} from './analyse/types.js';
 import {
 	commonColorPresentationalAttributes,
 	markerAttributes,
 	tagSpecificNonPresentationalAttributes,
 	urlPresentationalAttributes,
-} from './data/attributes';
+} from './data/attributes.js';
 import {
 	defsTag,
 	maskTags,
 	reusableElementsWithPalette,
 	styleTag,
 	useTag,
-} from './data/tags';
-import { analyseTagError } from './analyse/error';
+} from './data/tags.js';
+import { analyseTagError } from './analyse/error.js';
 
 /**
  * Find all IDs, links, which elements use palette, which items aren't used

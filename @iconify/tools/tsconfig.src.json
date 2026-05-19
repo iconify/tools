@@ -8,6 +8,7 @@
 		"sourceMap": false,
 		"strict": true,
 		"moduleResolution": "nodenext",
+		"types": ["node"],
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true
 	}

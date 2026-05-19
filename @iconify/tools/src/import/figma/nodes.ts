@@ -1,12 +1,12 @@
-import type { FigmaDocument, FigmaNode, IconFigmaNode } from './types/api';
+import type { FigmaDocument, FigmaNode, IconFigmaNode } from './types/api.js';
 import type {
 	FigmaImportIconNodeType,
 	FigmaImportNodeData,
 	FigmaImportParentNodeType,
 	FigmaParentNodeData,
-} from './types/nodes';
-import type { FigmaGetIconNodesOptions } from './types/options';
-import type { FigmaNodesImportResult } from './types/result';
+} from './types/nodes.js';
+import type { FigmaGetIconNodesOptions } from './types/options.js';
+import type { FigmaNodesImportResult } from './types/result.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function assertNever(v: never) {

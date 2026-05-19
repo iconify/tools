@@ -1,6 +1,6 @@
-import type { SVG } from '../svg';
-import { resetSVGOrigin } from './origin';
-import { runSVGO } from './svgo';
+import type { SVG } from '../svg/index.js';
+import { resetSVGOrigin } from './origin.js';
+import { runSVGO } from './svgo.js';
 
 /**
  * Scale icon

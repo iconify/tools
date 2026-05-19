@@ -1,14 +1,14 @@
-import { promises as fs } from 'fs';
+import { promises as fs } from 'node:fs';
 import {
-	ExportTargetOptions,
+	type ExportTargetOptions,
 	prepareDirectoryForExport,
-} from '../../export/helpers/prepare';
-import type { DocumentNotModified } from '../types/modified';
-import { getGitHubRepoHash } from './hash';
-import type { GitHubAPIOptions } from './types';
-import { downloadFile } from '../api/download';
-import { unzip, type UnzipFilterCallback } from '../helpers/unzip';
-import type { DownloadSourceMixin } from '../types/sources';
+} from '../../export/helpers/prepare.js';
+import type { DocumentNotModified } from '../types/modified.js';
+import { getGitHubRepoHash } from './hash.js';
+import type { GitHubAPIOptions } from './types.js';
+import { downloadFile } from '../api/download.js';
+import { unzip, type UnzipFilterCallback } from '../helpers/unzip.js';
+import type { DownloadSourceMixin } from '../types/sources.js';
 
 interface IfModifiedSinceOption {
 	// Download only if it was modified since hash

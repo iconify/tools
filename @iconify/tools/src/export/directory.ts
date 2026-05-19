@@ -1,8 +1,8 @@
-import { promises as fs } from 'fs';
+import fs from 'node:fs/promises';
 import type { IconifyIconCustomisations } from '@iconify/utils/lib/customisations/defaults';
-import type { IconSet } from '../icon-set';
-import type { ExportTargetOptions } from './helpers/prepare';
-import { prepareDirectoryForExport } from './helpers/prepare';
+import type { IconSet } from '../icon-set/index.js';
+import type { ExportTargetOptions } from './helpers/prepare.js';
+import { prepareDirectoryForExport } from './helpers/prepare.js';
 
 /**
  * Options

@@ -1,6 +1,6 @@
-import { promises as fs } from 'fs';
-import { normalizeDir } from '../export/helpers/prepare';
-import { scanDirectory } from './scan';
+import { readFile } from 'node:fs/promises';
+import { normalizeDir } from '../export/helpers/prepare.js';
+import { scanDirectory } from './scan.js';
 
 /**
  * Extensions that are treated as text
@@ -69,8 +69,8 @@ export async function compareDirectories(
 
 		if (!isText) {
 			// Compare binary files
-			const content1 = await fs.readFile(dir1 + '/' + file);
-			const content2 = await fs.readFile(dir2 + '/' + file);
+			const content1 = await readFile(dir1 + '/' + file);
+			const content2 = await readFile(dir2 + '/' + file);
 			if (Buffer.compare(content1, content2) !== 0) {
 				return false;
 			}
@@ -78,8 +78,8 @@ export async function compareDirectories(
 		}
 
 		// Text files
-		let content1 = await fs.readFile(dir1 + '/' + file, 'utf8');
-		let content2 = await fs.readFile(dir2 + '/' + file, 'utf8');
+		let content1 = await readFile(dir1 + '/' + file, 'utf8');
+		let content2 = await readFile(dir2 + '/' + file, 'utf8');
 		if (content1 === content2) {
 			continue;
 		}

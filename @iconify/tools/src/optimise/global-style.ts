@@ -2,10 +2,10 @@ import {
 	splitClassName,
 	type ParsedXMLTagElement,
 } from '@cyberalien/svg-utils';
-import type { SVG } from '../svg';
-import { allValidTags, animateTags } from '../svg/data/tags';
-import { parseSVG } from '../svg/parse';
-import { parseSVGStyle } from '../svg/parse-style';
+import type { SVG } from '../svg/index.js';
+import { allValidTags, animateTags } from '../svg/data/tags.js';
+import { parseSVG } from '../svg/parse.js';
+import { parseSVGStyle } from '../svg/parse-style.js';
 import { isBadSVGColor, isSVGColorAttribute } from '../svg/data/colors.js';
 
 const tempDataAttrbiute = 'data-gstyle-temp';

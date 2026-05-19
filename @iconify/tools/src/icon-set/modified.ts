@@ -1,4 +1,4 @@
-import type { IconSet } from '.';
+import type { IconSet } from './index.js';
 
 /**
  * Check if icons in an icon set were updated.

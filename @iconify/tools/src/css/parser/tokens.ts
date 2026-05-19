@@ -1,11 +1,11 @@
-import { styleParseError, StyleParseError } from './error';
-import { findEndOfQuotedString, findEndOfURL } from './strings';
+import { styleParseError, StyleParseError } from './error.js';
+import { findEndOfQuotedString, findEndOfURL } from './strings.js';
 import {
 	mergeTextTokens,
 	textTokensToRule,
 	textTokensToSelector,
-} from './text';
-import type { CSSToken, TextToken } from './types';
+} from './text.js';
+import type { CSSToken, TextToken } from './types.js';
 
 interface FindTokensResult {
 	token: string;

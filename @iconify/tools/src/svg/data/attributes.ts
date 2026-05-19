@@ -3,7 +3,7 @@
  * Icons cannot have anything that requires external resources, anything that renders inconsistently.
  */
 
-import { filterChildTags, shapeTags } from './tags';
+import { filterChildTags, shapeTags } from './tags.js';
 
 /***** Attributes that are not part of tag specific stuff *****/
 /**

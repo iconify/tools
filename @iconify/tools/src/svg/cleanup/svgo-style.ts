@@ -1,11 +1,11 @@
-import type { SVG } from '../../svg';
+import type { SVG } from '../index.js';
 import {
 	badAttributes,
 	badAttributePrefixes,
 	badSoftwareAttributes,
-} from '../data/attributes';
-import { parseSVGStyle } from '../parse-style';
-import { runSVGO } from '../../optimise/svgo';
+} from '../data/attributes.js';
+import { parseSVGStyle } from '../parse-style.js';
+import { runSVGO } from '../../optimise/svgo.js';
 
 /**
  * Expand inline style

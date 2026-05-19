@@ -1,5 +1,5 @@
-import type { SVG } from '../svg';
-import { runSVGO } from './svgo';
+import type { SVG } from '../svg/index.js';
+import { runSVGO } from './svgo.js';
 
 /**
  * Reset origin to 0 0

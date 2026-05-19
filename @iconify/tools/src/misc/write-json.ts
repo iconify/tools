@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs';
+import { writeFile } from 'node:fs/promises';
 
 /**
  * Write JSON file
@@ -7,5 +7,5 @@ export async function writeJSONFile(
 	filename: string,
 	data: unknown
 ): Promise<void> {
-	return fs.writeFile(filename, JSON.stringify(data, null, '\t') + '\n');
+	return writeFile(filename, JSON.stringify(data, null, '\t') + '\n');
 }

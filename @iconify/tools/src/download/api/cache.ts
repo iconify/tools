@@ -1,7 +1,7 @@
-import { promises as fs } from 'fs';
-import { createHash } from 'crypto';
-import type { APICacheOptions, APIQueryParams } from './types';
-import { scanDirectory } from '../../misc/scan';
+import { promises as fs } from 'node:fs';
+import { createHash } from 'node:crypto';
+import type { APICacheOptions, APIQueryParams } from './types.js';
+import { scanDirectory } from '../../misc/scan.js';
 
 const cacheVersion = 1;
 

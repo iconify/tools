@@ -1,5 +1,5 @@
-import type { SVG } from '../svg';
-import { parseSVG } from '../svg/parse';
+import type { SVG } from '../svg/index.js';
+import { parseSVG } from '../svg/parse.js';
 
 /**
  * Command constants

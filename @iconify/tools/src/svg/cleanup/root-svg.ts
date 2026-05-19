@@ -1,5 +1,5 @@
 import type { ParsedXMLTagElement } from '@cyberalien/svg-utils';
-import type { SVG } from '../../svg';
+import type { SVG } from '../index.js';
 import {
 	badAttributes,
 	badAttributePrefixes,
@@ -9,8 +9,8 @@ import {
 	stylingAttributes,
 	tagSpecificNonPresentationalAttributes,
 	tagSpecificPresentationalAttributes,
-} from '../data/attributes';
-import { maskTags, reusableElementsWithPalette } from '../data/tags';
+} from '../data/attributes.js';
+import { maskTags, reusableElementsWithPalette } from '../data/tags.js';
 
 /**
  * Clean up SVG

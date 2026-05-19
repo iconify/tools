@@ -1,4 +1,4 @@
-import type { ExtendedTagElement } from './types';
+import type { ExtendedTagElement } from './types.js';
 
 /**
  * Get tag for error message

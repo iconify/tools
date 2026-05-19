@@ -1,5 +1,5 @@
-import { promises as fs, readdirSync, statSync } from 'fs';
-import type { Stats } from 'fs';
+import { promises as fs, readdirSync, statSync } from 'node:fs';
+import type { Stats } from 'node:fs';
 
 /**
  * Callback

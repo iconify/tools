@@ -1,5 +1,5 @@
-import { promises as fs } from 'fs';
-import { writeJSONFile } from '../../misc/write-json';
+import fs from 'node:fs/promises';
+import { writeJSONFile } from '../../misc/write-json.js';
 
 /**
  * Options

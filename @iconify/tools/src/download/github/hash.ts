@@ -1,5 +1,5 @@
-import { sendAPIQuery } from '../api';
-import type { GitHubAPIOptions } from './types';
+import { sendAPIQuery } from '../api/index.js';
+import type { GitHubAPIOptions } from './types.js';
 
 /**
  * Get latest hash from GitHub using API

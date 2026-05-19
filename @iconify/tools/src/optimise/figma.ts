@@ -1,9 +1,9 @@
 import { colorToString, stringToColor } from '@iconify/utils';
-import { SVG } from '../svg';
-import { cleanupInlineStyle } from '../svg/cleanup/inline-style';
-import { defsTag, maskTags, symbolTag } from '../svg/data/tags';
-import { parseSVG } from '../svg/parse';
-import { unwrapEmptyGroup } from './unwrap';
+import { SVG } from '../svg/index.js';
+import { cleanupInlineStyle } from '../svg/cleanup/inline-style.js';
+import { defsTag, maskTags, symbolTag } from '../svg/data/tags.js';
+import { parseSVG } from '../svg/parse.js';
+import { unwrapEmptyGroup } from './unwrap.js';
 import type { ParsedXMLTagElement } from '@cyberalien/svg-utils';
 
 /**

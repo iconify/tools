@@ -1,4 +1,4 @@
-import type { CSSToken, CSSTreeToken } from './types';
+import type { CSSToken, CSSTreeToken } from './types.js';
 
 /**
  * Convert tokens list to tree

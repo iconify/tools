@@ -1,6 +1,6 @@
 import { defaultIconDimensions } from '@iconify/utils/lib/icon/defaults';
-import type { IconSet } from '.';
-import { detectIconSetPalette } from '../colors/detect';
+import type { IconSet } from './index.js';
+import { detectIconSetPalette } from '../colors/detect.js';
 
 // Palette
 export const paletteTags = {

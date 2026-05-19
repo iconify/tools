@@ -1,4 +1,4 @@
-import type { CSSRuleToken, CSSTokenWithSelector, TextToken } from './types';
+import type { CSSRuleToken, CSSTokenWithSelector, TextToken } from './types.js';
 
 /**
  * Merge text tokens to string

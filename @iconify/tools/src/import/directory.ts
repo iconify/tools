@@ -1,9 +1,10 @@
-import { promises as fs, readFileSync } from 'fs';
-import { blankIconSet, IconSet } from '../icon-set';
-import { cleanupIconKeyword } from '../misc/keyword';
-import { scanDirectory, scanDirectorySync } from '../misc/scan';
-import { SVG } from '../svg';
-import { CleanupSVGOptions, cleanupSVG } from '../svg/cleanup';
+import { readFile } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
+import { blankIconSet, IconSet } from '../icon-set/index.js';
+import { cleanupIconKeyword } from '../misc/keyword.js';
+import { scanDirectory, scanDirectorySync } from '../misc/scan.js';
+import { SVG } from '../svg/index.js';
+import { CleanupSVGOptions, cleanupSVG } from '../svg/cleanup.js';
 
 /**
  * Entry for file
@@ -180,7 +181,7 @@ export function importDirectory(
 						},
 						files,
 						(filename, done) => {
-							fs.readFile(filename, 'utf8')
+							readFile(filename, 'utf8')
 								.then(done)
 								.catch(reject);
 						},

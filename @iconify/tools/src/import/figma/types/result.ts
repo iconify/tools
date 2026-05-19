@@ -1,4 +1,4 @@
-import type { IconSet } from '../../../icon-set';
+import type { IconSet } from '../../../icon-set/index.js';
 
 /**
  * Result for found icons

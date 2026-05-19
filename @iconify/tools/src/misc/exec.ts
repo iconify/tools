@@ -1,6 +1,6 @@
 import { resolve } from 'pathe';
-import { exec } from 'child_process';
-import type { ExecOptions } from 'child_process';
+import { exec } from 'node:child_process';
+import type { ExecOptions } from 'node:child_process';
 
 export interface ExecResult {
 	stdout: string;

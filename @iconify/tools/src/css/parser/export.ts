@@ -1,4 +1,4 @@
-import type { CSSTreeToken } from './types';
+import type { CSSTreeToken } from './types.js';
 
 const tab = '\t';
 const nl = '\n';

@@ -1,20 +1,20 @@
-import type { APICacheOptions } from '../../download/api/types';
-import { blankIconSet } from '../../icon-set';
-import type { DocumentNotModified } from '../../download/types/modified';
-import { SVG } from '../../svg';
-import { cleanupSVG } from '../../svg/cleanup';
-import { getFigmaIconNodes } from './nodes';
+import type { APICacheOptions } from '../../download/api/types.js';
+import { blankIconSet } from '../../icon-set/index.js';
+import type { DocumentNotModified } from '../../download/types/modified.js';
+import { SVG } from '../../svg/index.js';
+import { cleanupSVG } from '../../svg/cleanup.js';
+import { getFigmaIconNodes } from './nodes.js';
 import {
 	figmaDownloadImages,
 	figmaFilesQuery,
 	figmaImagesQuery,
-} from './query';
+} from './query.js';
 import type {
 	FigmaImportOptions,
 	FigmaIfModifiedSinceOption,
 	FigmaFilesQueryOptions,
-} from './types/options';
-import type { FigmaIconNode, FigmaImportResult } from './types/result';
+} from './types/options.js';
+import type { FigmaIconNode, FigmaImportResult } from './types/result.js';
 
 /**
  * Import icon set from Figma

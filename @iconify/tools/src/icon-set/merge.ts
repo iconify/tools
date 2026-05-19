@@ -1,6 +1,6 @@
-import { IconSet } from '.';
-import { findMatchingIcon } from './match';
-import { hasIconDataBeenModified } from './modified';
+import { IconSet } from './index.js';
+import { findMatchingIcon } from './match.js';
+import { hasIconDataBeenModified } from './modified.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function assertNever(v: never) {

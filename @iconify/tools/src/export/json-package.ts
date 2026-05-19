@@ -1,19 +1,19 @@
-import { promises as fs } from 'fs';
+import fs from 'node:fs/promises';
 import { defaultIconDimensions } from '@iconify/utils/lib/icon/defaults';
-import type { IconSet } from '../icon-set';
-import type { ExportTargetOptions } from './helpers/prepare';
-import { prepareDirectoryForExport } from './helpers/prepare';
+import type { IconSet } from '../icon-set/index.js';
+import type { ExportTargetOptions } from './helpers/prepare.js';
+import { prepareDirectoryForExport } from './helpers/prepare.js';
 import type {
 	IconifyChars,
 	IconifyInfo,
 	IconifyJSON,
 	IconifyMetaData,
 } from '@iconify/types';
-import { writeJSONFile } from '../misc/write-json';
+import { writeJSONFile } from '../misc/write-json.js';
 import {
 	exportCustomFiles,
-	ExportOptionsWithCustomFiles,
-} from './helpers/custom-files';
+	type ExportOptionsWithCustomFiles,
+} from './helpers/custom-files.js';
 import { getTypesVersion } from './helpers/types-version.js';
 
 /**

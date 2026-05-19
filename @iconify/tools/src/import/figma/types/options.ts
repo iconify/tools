@@ -1,9 +1,9 @@
-import type { IconSet } from '../../../icon-set';
+import type { IconSet } from '../../../icon-set/index.js';
 import type {
 	FigmaImportNodeFilter,
 	FigmaImportParentNodeFilter,
-} from './nodes';
-import type { FigmaIconNode } from './result';
+} from './nodes.js';
+import type { FigmaIconNode } from './result.js';
 
 /**
  * Options for importing SVG

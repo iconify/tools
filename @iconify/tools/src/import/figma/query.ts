@@ -1,27 +1,27 @@
-import { sendAPIQuery } from '../../download/api';
+import { sendAPIQuery } from '../../download/api/index.js';
 import {
 	apiCacheKey,
 	clearAPICache,
 	getAPICache,
-} from '../../download/api/cache';
+} from '../../download/api/cache.js';
 import {
 	ConcurrentQueriesParamsWithCount,
 	runConcurrentQueries,
-} from '../../download/api/queue';
-import type { APICacheOptions, APIQueryParams } from '../../download/api/types';
-import type { DocumentNotModified } from '../../download/types/modified';
+} from '../../download/api/queue.js';
+import type { APICacheOptions, APIQueryParams } from '../../download/api/types.js';
+import type { DocumentNotModified } from '../../download/types/modified.js';
 import { getFigmaErrorMessage } from './error.js';
 import type {
 	FigmaAPIError,
 	FigmaAPIImagesResponse,
 	FigmaDocument,
-} from './types/api';
+} from './types/api.js';
 import type {
 	FigmaIfModifiedSinceOption,
 	FigmaFilesQueryOptions,
 	FigmaImagesQueryOptions,
-} from './types/options';
-import type { FigmaIconNode, FigmaNodesImportResult } from './types/result';
+} from './types/options.js';
+import type { FigmaIconNode, FigmaNodesImportResult } from './types/result.js';
 
 /**
  * Extra parameters added to runConcurrentQueries()

@@ -1,5 +1,5 @@
-import type { IconSet } from '../icon-set';
-import { isEmptyColor, parseColors } from './parse';
+import type { IconSet } from '../icon-set/index.js';
+import { isEmptyColor, parseColors } from './parse.js';
 
 /**
  * Detect palette

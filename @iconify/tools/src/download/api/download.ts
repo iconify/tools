@@ -1,6 +1,6 @@
-import { writeFile } from 'fs/promises';
-import type { APIQueryParams } from './types';
-import { axiosConfig, fetchCallbacks } from './config';
+import { writeFile } from 'node:fs/promises';
+import type { APIQueryParams } from './types.js';
+import { axiosConfig, fetchCallbacks } from './config.js';
 import { getFetch } from './fetch.js';
 
 /**

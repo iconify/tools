@@ -1,5 +1,5 @@
-import type { FigmaDocument, IconFigmaNode } from './api';
-import type { FigmaIconNode, FigmaNodesImportResult } from './result';
+import type { FigmaDocument, IconFigmaNode } from './api.js';
+import type { FigmaIconNode, FigmaNodesImportResult } from './result.js';
 
 // Node types that can be parent nodes
 // 'CANVAS' in API is equal to 'PAGE' in plugins

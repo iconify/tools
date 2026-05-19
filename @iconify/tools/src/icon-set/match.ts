@@ -1,6 +1,6 @@
 import { defaultIconProps } from '@iconify/utils/lib/icon/defaults';
 import type { FullIconifyIcon } from '@iconify/utils/lib/icon/defaults';
-import type { IconSet } from '.';
+import type { IconSet } from './index.js';
 
 // Maximum depth for looking for parent icons
 const maxIteration = 5;

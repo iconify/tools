@@ -1,5 +1,5 @@
-import { sendAPIQuery } from '../api';
-import { defaultGitLabBaseURI, GitLabAPIOptions } from './types';
+import { sendAPIQuery } from '../api/index.js';
+import { defaultGitLabBaseURI, type GitLabAPIOptions } from './types.js';
 
 /**
  * Get latest hash from GitHub using API

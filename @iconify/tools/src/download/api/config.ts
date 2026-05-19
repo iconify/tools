@@ -1,5 +1,5 @@
 import type { RequestOptions } from 'node:http';
-import { APIQueryParams } from './types';
+import { APIQueryParams } from './types.js';
 
 /**
  * Axios config, customisable

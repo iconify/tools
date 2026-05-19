@@ -4,9 +4,9 @@ import {
 	colorToString,
 } from '@iconify/utils/lib/colors';
 import type { Color } from '@iconify/utils/lib/colors/types';
-import type { SVG } from '../svg';
-import { animateTags, shapeTags } from '../svg/data/tags';
-import { parseSVGStyle } from '../svg/parse-style';
+import type { SVG } from '../svg/index.js';
+import { animateTags, shapeTags } from '../svg/data/tags.js';
+import { parseSVGStyle } from '../svg/parse-style.js';
 import {
 	allowDefaultColorValue,
 	ColorAttributes,
@@ -14,16 +14,16 @@ import {
 	defaultColorValues,
 	shapeColorAttributes,
 	specialColorAttributes,
-} from './attribs';
-import { tagSpecificPresentationalAttributes } from '../svg/data/attributes';
-import { analyseSVGStructure } from '../svg/analyse';
+} from './attribs.js';
+import { tagSpecificPresentationalAttributes } from '../svg/data/attributes.js';
+import { analyseSVGStructure } from '../svg/analyse.js';
 import type {
 	AnalyseSVGStructureResult,
 	ElementsTreeItem,
 	ExtendedTagElement,
 	ElementsMap,
 	AnalyseSVGStructureOptions,
-} from '../svg/analyse/types';
+} from '../svg/analyse/types.js';
 
 /**
  * Result

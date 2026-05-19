@@ -1,5 +1,5 @@
-import type { SVG } from '../../svg';
-import { parseSVG } from '../parse';
+import type { SVG } from '../index.js';
+import { parseSVG } from '../parse.js';
 import {
 	allValidTags,
 	animateMotionChildTags,
@@ -13,7 +13,7 @@ import {
 	gradientChildTags,
 	gradientTags,
 	unsupportedTags,
-} from '../data/tags';
+} from '../data/tags.js';
 import { stringifyXMLContent } from '@cyberalien/svg-utils';
 
 // List of required parent tags

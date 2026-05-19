@@ -15,7 +15,7 @@ import { iconToSVG } from '@iconify/utils/lib/svg/build';
 import type { IconifyIconCustomisations } from '@iconify/utils/lib/customisations/defaults';
 import { minifyIconSet } from '@iconify/utils/lib/icon-set/minify';
 import { convertIconSetInfo } from '@iconify/utils/lib/icon-set/convert-info';
-import { filterProps, defaultCommonProps } from './props';
+import { filterProps, defaultCommonProps } from './props.js';
 import type {
 	CheckThemeResult,
 	CommonIconProps,
@@ -28,8 +28,8 @@ import type {
 	IconSetIconVariation,
 	IconSetSyncForEachCallback,
 	ResolvedIconifyIcon,
-} from './types';
-import { SVG } from '../svg';
+} from './types.js';
+import { SVG } from '../svg/index.js';
 import type {
 	ParentIconsList,
 	ParentIconsTree,

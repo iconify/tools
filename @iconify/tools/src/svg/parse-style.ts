@@ -1,15 +1,15 @@
 import { stringifyXMLContent } from '@cyberalien/svg-utils';
-import type { SVG } from '.';
-import { parseInlineStyle } from '../css/parse';
-import { tokensToString } from '../css/parser/export';
-import { getTokens } from '../css/parser/tokens';
-import { tokensTree } from '../css/parser/tree';
+import type { SVG } from './index.js';
+import { parseInlineStyle } from '../css/parse.js';
+import { tokensToString } from '../css/parser/export.js';
+import { getTokens } from '../css/parser/tokens.js';
+import { tokensTree } from '../css/parser/tree.js';
 import type {
 	CSSAtRuleToken,
 	CSSRuleToken,
 	CSSToken,
-} from '../css/parser/types';
-import { parseSVG, ParseSVGCallbackItem } from './parse';
+} from '../css/parser/types.js';
+import { parseSVG, ParseSVGCallbackItem } from './parse.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function assertNever(v: never) {

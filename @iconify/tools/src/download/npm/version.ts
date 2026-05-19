@@ -1,6 +1,6 @@
-import { promises as fs } from 'fs';
-import type { NPMPackageOptions } from './types';
-import { execAsync } from '../../misc/exec';
+import fs from 'node:fs/promises';
+import type { NPMPackageOptions } from './types.js';
+import { execAsync } from '../../misc/exec.js';
 
 export interface GetNPMVersionResult {
 	// Version

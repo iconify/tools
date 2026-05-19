@@ -1,4 +1,4 @@
-import { execAsync } from '../..';
+import { execAsync } from '../../misc/exec.js';
 
 /**
  * Reset Git repo contents

@@ -1,6 +1,6 @@
 import { Color } from '@iconify/utils/lib/colors/types';
-import { isEmptyColor, parseColors } from '../colors/parse';
-import { SVG } from '../svg';
+import { isEmptyColor, parseColors } from '../colors/parse.js';
+import { SVG } from '../svg/index.js';
 import { iconToHTML, parseSVGContent, splitSVGDefs } from '@iconify/utils';
 
 // Callback to check if color matches

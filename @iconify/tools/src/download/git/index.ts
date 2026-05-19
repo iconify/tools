@@ -1,13 +1,13 @@
 import {
-	ExportTargetOptions,
+	type ExportTargetOptions,
 	prepareDirectoryForExport,
-} from '../../export/helpers/prepare';
-import { execAsync } from '../../misc/exec';
-import type { DocumentNotModified } from '../types/modified';
-import type { DownloadSourceMixin } from '../types/sources';
-import { getGitRepoBranch } from './branch';
-import { getGitRepoHash } from './hash';
-import { resetGitRepoContents } from './reset';
+} from '../../export/helpers/prepare.js';
+import { execAsync } from '../../misc/exec.js';
+import type { DocumentNotModified } from '../types/modified.js';
+import type { DownloadSourceMixin } from '../types/sources.js';
+import { getGitRepoBranch } from './branch.js';
+import { getGitRepoHash } from './hash.js';
+import { resetGitRepoContents } from './reset.js';
 
 interface IfModifiedSinceOption {
 	// Download only if it was modified since hash

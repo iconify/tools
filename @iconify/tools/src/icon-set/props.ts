@@ -2,7 +2,7 @@ import {
 	commonObjectProps,
 	unmergeObjects,
 } from '@iconify/utils/lib/misc/objects';
-import type { CommonIconProps } from './types';
+import type { CommonIconProps } from './types.js';
 import { defaultIconProps } from '@iconify/utils';
 
 /**

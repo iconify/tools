@@ -1,5 +1,5 @@
-import type { SVG } from '../../svg';
-import { parseInlineStyle } from '../../css/parse';
+import type { SVG } from '../index.js';
+import { parseInlineStyle } from '../../css/parse.js';
 import {
 	badAttributes,
 	badAttributePrefixes,
@@ -9,8 +9,8 @@ import {
 	tagSpecificNonPresentationalAttributes,
 	tagSpecificPresentationalAttributes,
 	tagSpecificInlineStyles,
-} from '../data/attributes';
-import { parseSVG } from '../parse';
+} from '../data/attributes.js';
+import { parseSVG } from '../parse.js';
 
 /**
  * Allowed rules

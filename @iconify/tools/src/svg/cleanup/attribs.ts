@@ -1,12 +1,12 @@
-import type { SVG } from '../../svg';
+import type { SVG } from '../index.js';
 import {
 	badAttributes,
 	badAttributePrefixes,
 	badSoftwareAttributes,
 	tagSpecificPresentationalAttributes,
-} from '../data/attributes';
-import { defsTag } from '../data/tags';
-import { parseSVG } from '../parse';
+} from '../data/attributes.js';
+import { defsTag } from '../data/tags.js';
+import { parseSVG } from '../parse.js';
 
 /**
  * Remove useless attributes

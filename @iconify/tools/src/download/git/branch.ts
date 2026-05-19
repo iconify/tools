@@ -1,5 +1,5 @@
-import type { ExportTargetOptions } from '../../export/helpers/prepare';
-import { execAsync } from '../../misc/exec';
+import type { ExportTargetOptions } from '../../export/helpers/prepare.js';
+import { execAsync } from '../../misc/exec.js';
 
 /**
  * Get current branch from cloned git repo

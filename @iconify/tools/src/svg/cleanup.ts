@@ -1,10 +1,10 @@
-import type { SVG } from '.';
-import { removeBadAttributes } from './cleanup/attribs';
-import { CheckBadTagsOptions, checkBadTags } from './cleanup/bad-tags';
-import { cleanupInlineStyle } from './cleanup/inline-style';
-import { cleanupRootStyle } from './cleanup/root-style';
-import { cleanupSVGRoot } from './cleanup/root-svg';
-import { convertStyleToAttrs } from './cleanup/svgo-style';
+import type { SVG } from './index.js';
+import { removeBadAttributes } from './cleanup/attribs.js';
+import { CheckBadTagsOptions, checkBadTags } from './cleanup/bad-tags.js';
+import { cleanupInlineStyle } from './cleanup/inline-style.js';
+import { cleanupRootStyle } from './cleanup/root-style.js';
+import { cleanupSVGRoot } from './cleanup/root-svg.js';
+import { convertStyleToAttrs } from './cleanup/svgo-style.js';
 
 /**
  * Options

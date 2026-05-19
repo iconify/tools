@@ -1,6 +1,6 @@
 import { optimize } from 'svgo';
 import type { Config, PluginConfig } from 'svgo';
-import type { SVG } from '../svg';
+import type { SVG } from '../svg/index.js';
 import { changeSVGIDs } from '@cyberalien/svg-utils/lib/svg/ids/change.js';
 import { parseXMLContent, stringifyXMLContent } from '@cyberalien/svg-utils';
 

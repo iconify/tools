@@ -2,7 +2,7 @@ import {
 	iterateXMLContent,
 	type ParsedXMLTagElement,
 } from '@cyberalien/svg-utils';
-import type { SVG } from './';
+import type { SVG } from './index.js';
 
 /**
  * Item in callback

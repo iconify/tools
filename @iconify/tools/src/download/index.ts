@@ -1,25 +1,25 @@
 import {
 	downloadGitHubRepo,
-	DownloadGitHubRepoOptions,
-	DownloadGitHubRepoResult,
-} from './github';
+	type DownloadGitHubRepoOptions,
+	type DownloadGitHubRepoResult,
+} from './github/index.js';
 import {
 	downloadGitRepo,
-	DownloadGitRepoOptions,
-	DownloadGitRepoResult,
-} from './git';
+	type DownloadGitRepoOptions,
+	type DownloadGitRepoResult,
+} from './git/index.js';
 import {
 	downloadNPMPackage,
-	DownloadNPMPackageOptions,
-	DownloadNPMPackageResult,
-} from './npm';
-import type { DocumentNotModified } from './types/modified';
-import type { DownloadSourceMixin, DownloadSourceType } from './types/sources';
+	type DownloadNPMPackageOptions,
+	type DownloadNPMPackageResult,
+} from './npm/index.js';
+import type { DocumentNotModified } from './types/modified.js';
+import type { DownloadSourceMixin, DownloadSourceType } from './types/sources.js';
 import {
 	downloadGitLabRepo,
-	DownloadGitLabRepoOptions,
-	DownloadGitLabRepoResult,
-} from './gitlab';
+	type DownloadGitLabRepoOptions,
+	type DownloadGitLabRepoResult,
+} from './gitlab/index.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function assertNever(v: never) {

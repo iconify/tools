@@ -1,5 +1,5 @@
 import { isBadSVGColor, isSVGColorAttribute } from '../svg/data/colors.js';
-import { getTokens } from './parser/tokens';
+import { getTokens } from './parser/tokens.js';
 
 /**
  * Parse inline style

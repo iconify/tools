@@ -1,5 +1,5 @@
 import { stringifyXMLContent } from '@cyberalien/svg-utils';
-import type { SVG } from '../svg';
+import type { SVG } from '../svg/index.js';
 
 /**
  * Removes empty group from SVG root element

@@ -1,6 +1,6 @@
-import { apiCacheKey, getAPICache, storeAPICache } from './cache';
-import type { APICacheOptions, APIQueryParams, APIQueryResult } from './types';
-import { axiosConfig, fetchCallbacks } from './config';
+import { apiCacheKey, getAPICache, storeAPICache } from './cache.js';
+import type { APICacheOptions, APIQueryParams, APIQueryResult } from './types.js';
+import { axiosConfig, fetchCallbacks } from './config.js';
 import { getFetch } from './fetch.js';
 
 /**

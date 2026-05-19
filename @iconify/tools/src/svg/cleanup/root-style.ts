@@ -1,5 +1,5 @@
-import type { SVG } from '..';
-import { parseSVGStyle } from '../parse-style';
+import type { SVG } from '../index.js';
+import { parseSVGStyle } from '../parse-style.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function assertNever(v: never) {

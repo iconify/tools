@@ -1,7 +1,7 @@
 import { colorToString } from '@iconify/utils/lib/colors';
-import type { SVG } from '../svg/index';
-import { parseColors, ParseColorsOptions } from './parse';
-import type { FindColorsResult } from './parse';
+import type { SVG } from '../svg/index.js';
+import { parseColors, ParseColorsOptions } from './parse.js';
+import type { FindColorsResult } from './parse.js';
 
 /**
  * Validate colors in icon
