@@ -1,0 +1,14 @@
+{
+	"include": ["./src/**/*.ts"],
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "nodenext",
+		"declaration": true,
+		"declarationMap": false,
+		"sourceMap": false,
+		"strict": true,
+		"moduleResolution": "nodenext",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true
+	}
+}

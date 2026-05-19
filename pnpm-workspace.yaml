@@ -1,3 +1,19 @@
 packages:
-    - '@iconify/tools'
-    - '@iconify-demo/*'
+  - '@iconify/tools'
+  - '@iconify-demo/*'
+allowBuilds:
+  esbuild: true
+minimumReleaseAgeExclude:
+  - '@iconify/json@2.2.476'
+  - '@typescript-eslint/eslint-plugin@8.59.4'
+  - '@typescript-eslint/parser@8.59.4'
+  - '@typescript-eslint/project-service@8.59.4'
+  - '@typescript-eslint/scope-manager@8.59.4'
+  - '@typescript-eslint/tsconfig-utils@8.59.4'
+  - '@typescript-eslint/type-utils@8.59.4'
+  - '@typescript-eslint/types@8.59.4'
+  - '@typescript-eslint/typescript-estree@8.59.4'
+  - '@typescript-eslint/utils@8.59.4'
+  - '@typescript-eslint/visitor-keys@8.59.4'
+  - '@vue/language-core@3.3.1'
+  - vue-tsc@3.3.1

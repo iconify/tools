@@ -1,0 +1,15 @@
+{
+	"include": ["./tests/**/*.ts"],
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "nodenext",
+		"declaration": true,
+		"declarationMap": false,
+		"sourceMap": false,
+		"strict": true,
+		"moduleResolution": "nodenext",
+		"types": ["node", "vitest/globals"],
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true
+	}
+}
