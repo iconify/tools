@@ -20,8 +20,7 @@ interface IfModifiedSinceOption {
  * Options for downloadNPMPackage()
  */
 export interface DownloadNPMPackageOptions
-	extends ExportTargetOptions,
-		Partial<IfModifiedSinceOption> {
+	extends ExportTargetOptions, Partial<IfModifiedSinceOption> {
 	// Package
 	package: string;
 
@@ -30,6 +29,10 @@ export interface DownloadNPMPackageOptions
 
 	// Log commands
 	log?: boolean;
+
+	// Use fetch instead of 'npm' command to get version
+	// Can be used in environments where 'npm' command is not available
+	fetch?: boolean;
 }
 
 /**

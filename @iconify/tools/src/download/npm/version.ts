@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises';
 import type { NPMPackageOptions } from './types.js';
 import { execAsync } from '../../misc/exec.js';
+import { getFetch } from '../api/fetch.js';
 
 export interface GetNPMVersionResult {
 	// Version
@@ -17,12 +18,7 @@ export async function getNPMVersion(
 	options: NPMPackageOptions
 ): Promise<GetNPMVersionResult> {
 	const tag = options.tag || 'latest';
-	const result = await execAsync(
-		`npm view ${options.package}@${tag} --json`,
-		{
-			maxBuffer: 1024 * 1024 * 8,
-		}
-	);
+	const packageName = options.package;
 
 	interface NPMViewResponse {
 		'name': string;
@@ -38,10 +34,30 @@ export async function getNPMVersion(
 			unpackedSize: number;
 		};
 	}
-	const data = JSON.parse(result.stdout) as NPMViewResponse;
+
+	let data: NPMViewResponse;
+	if (options.fetch) {
+		// Fetch from registry.npmjs.org
+		const fetch = getFetch();
+		data = (await fetch(
+			`https://registry.npmjs.org/${packageName}/${tag}`
+		).then((res) => res.json())) as NPMViewResponse;
+	} else {
+		// Execute 'npm' command
+		const result = await execAsync(
+			`npm view ${packageName}@${tag} --json`,
+			{
+				maxBuffer: 1024 * 1024 * 8,
+			}
+		);
+		data = JSON.parse(result.stdout) as NPMViewResponse;
+	}
+
 	return {
 		version: data.version,
-		file: data.dist?.tarball,
+		file:
+			data.dist?.tarball ??
+			`https://registry.npmjs.org/${packageName}/-/${packageName.split('/').pop()!}-${data.version}.tgz`,
 	};
 }
 

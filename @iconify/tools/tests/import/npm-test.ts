@@ -47,6 +47,7 @@ describe('Downloading NPM package', () => {
 			ifModifiedSince: true,
 			package: testPackage,
 			target,
+			fetch: true,
 		});
 		const expectedResult: typeof result = {
 			downloadType: 'npm',
@@ -99,6 +100,7 @@ describe('Downloading NPM package', () => {
 			package: testPackage,
 			tag: branch.tag,
 			target,
+			exec: false,
 		});
 		expect(result).toBe('not_modified');
 	}
