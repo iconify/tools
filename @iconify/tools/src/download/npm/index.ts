@@ -9,6 +9,7 @@ import { untar } from '../helpers/untar.js';
 import type { DocumentNotModified } from '../types/modified.js';
 import type { DownloadSourceMixin } from '../types/sources.js';
 import { getNPMVersion, getPackageVersion } from './version.js';
+import type { NPMPackageOptions } from './types.js';
 
 interface IfModifiedSinceOption {
 	// Clone only if it was modified since version
@@ -20,19 +21,12 @@ interface IfModifiedSinceOption {
  * Options for downloadNPMPackage()
  */
 export interface DownloadNPMPackageOptions
-	extends ExportTargetOptions, Partial<IfModifiedSinceOption> {
-	// Package
-	package: string;
-
-	// Tag, default is 'latest'
-	tag?: string;
-
+	extends
+		NPMPackageOptions,
+		ExportTargetOptions,
+		Partial<IfModifiedSinceOption> {
 	// Log commands
 	log?: boolean;
-
-	// Use fetch instead of 'npm' command to get version
-	// Can be used in environments where 'npm' command is not available
-	fetch?: boolean;
 }
 
 /**
