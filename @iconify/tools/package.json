@@ -1,53 +1,18 @@
 {
 	"name": "@iconify/tools",
-	"type": "module",
+	"version": "5.0.13",
 	"description": "Collection of functions for cleaning up and parsing SVG for Iconify project",
-	"author": "Vjacheslav Trushkin",
-	"version": "5.0.12",
-	"license": "MIT",
-	"bugs": "https://github.com/iconify/tools/issues",
 	"homepage": "https://github.com/iconify/tools",
+	"bugs": "https://github.com/iconify/tools/issues",
+	"license": "MIT",
+	"author": "Vjacheslav Trushkin",
 	"repository": {
 		"type": "git",
 		"url": "git://github.com/iconify/tools.git"
 	},
+	"type": "module",
 	"module": "./lib/index.js",
 	"types": "./lib/index.d.ts",
-	"scripts": {
-		"clean": "rimraf lib tests-compiled tsconfig.tsbuildinfo",
-		"lint": "eslint src/**/*.ts",
-		"prebuild": "npm run lint && npm run clean",
-		"build": "tsdown",
-		"test": "vitest",
-		"test:ci": "cross-env TEST_REMOTE=false npm run test"
-	},
-	"dependencies": {
-		"@cyberalien/svg-utils": "^1.2.15",
-		"@iconify/types": "^2.0.0",
-		"@iconify/utils": "^3.1.3",
-		"fflate": "^0.8.3",
-		"modern-tar": "^0.7.6",
-		"pathe": "^2.0.3",
-		"svgo": "^4.0.1"
-	},
-	"devDependencies": {
-		"@eslint/eslintrc": "^3.3.5",
-		"@eslint/js": "^9.39.4",
-		"@types/jest": "^30.0.0",
-		"@types/node": "^24.12.4",
-		"@typescript-eslint/eslint-plugin": "^8.59.4",
-		"@typescript-eslint/parser": "^8.59.4",
-		"cross-env": "^10.1.0",
-		"eslint": "^9.39.4",
-		"eslint-config-prettier": "^10.1.8",
-		"eslint-plugin-prettier": "^5.5.5",
-		"globals": "^16.5.0",
-		"prettier": "^3.8.3",
-		"rimraf": "^6.1.3",
-		"tsdown": "^0.20.3",
-		"typescript": "^5.9.3",
-		"vitest": "^4.1.6"
-	},
 	"exports": {
 		"./*": "./*",
 		".": {
@@ -454,5 +419,40 @@
 			"types": "./lib/tests/helpers.d.ts",
 			"import": "./lib/tests/helpers.js"
 		}
+	},
+	"scripts": {
+		"clean": "rimraf lib tests-compiled tsconfig.tsbuildinfo",
+		"lint": "eslint src/**/*.ts",
+		"prebuild": "npm run lint && npm run clean",
+		"build": "tsdown",
+		"test": "vitest",
+		"test:ci": "cross-env TEST_REMOTE=false npm run test"
+	},
+	"dependencies": {
+		"@cyberalien/svg-utils": "^1.2.19",
+		"@iconify/types": "^2.0.0",
+		"@iconify/utils": "^3.1.4",
+		"fflate": "^0.8.3",
+		"modern-tar": "^0.8.4",
+		"pathe": "^2.0.3",
+		"svgo": "^4.0.2"
+	},
+	"devDependencies": {
+		"@eslint/eslintrc": "^3.3.6",
+		"@eslint/js": "^9.39.5",
+		"@types/jest": "^30.0.0",
+		"@types/node": "^24.13.3",
+		"@typescript-eslint/eslint-plugin": "^8.67.0",
+		"@typescript-eslint/parser": "^8.67.0",
+		"cross-env": "^10.1.0",
+		"eslint": "^9.39.4",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-prettier": "^5.5.6",
+		"globals": "^16.5.0",
+		"prettier": "^3.9.6",
+		"rimraf": "^6.1.3",
+		"tsdown": "^0.20.3",
+		"typescript": "^5.9.3",
+		"vitest": "^4.1.11"
 	}
 }
