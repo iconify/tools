@@ -435,7 +435,7 @@
 		"fflate": "^0.8.3",
 		"modern-tar": "^0.8.4",
 		"pathe": "^2.0.3",
-		"svgo": "^4.0.2"
+		"svgo": "^4.1.0"
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3.3.6",
