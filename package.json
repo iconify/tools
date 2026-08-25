@@ -16,7 +16,7 @@
 		"@debug/*",
 		"@iconify-demo/*"
 	],
-	"packageManager": "pnpm@11.22.0",
+	"packageManager": "pnpm@11.24.0",
 	"scripts": {
 		"build": "pnpm recursive run build",
 		"test": "pnpm recursive run test",
