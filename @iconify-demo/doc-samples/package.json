@@ -15,6 +15,6 @@
 		"@iconify/json": "^2.2.520",
 		"@iconify/utils": "^3.1.4",
 		"@types/node": "^24.13.3",
-		"typescript": "^5.9.3"
+		"typescript": "^7.0.2"
 	}
 }
